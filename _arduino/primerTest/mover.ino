@@ -1,4 +1,5 @@
 void llevaraCerro(){
+  tiempo = tiempoInicial/3;
   bx = digitalRead(btnX);
   by = digitalRead(btnY);
   bz = digitalRead(btnZ);

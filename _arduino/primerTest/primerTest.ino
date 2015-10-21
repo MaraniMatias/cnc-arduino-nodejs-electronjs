@@ -6,14 +6,13 @@ const int btnX=A5,btnY=A4,btnZ=A3;
 
 bool bEstado = true,
 x=true,y=true,z=true; // usado para indicar estados
-int sentido=1, 
+
+int bx,by,bz,// variable para finales de carrera
 xyzp[] = {0,0,0}, // cantidad de pasos para cade eje
 xp=0,yp=0,zp=0;   // guardar ultimo paso usado
-
-int bx,by,bz;// variable para finales de carrera
  
 //int unavuelta=100;
-float tiempo = 10.0; // minimo 2.3
+float tiempo,tiempoInicial = 12.0; // minimo 2.3
 
 int i=0, inChar=0; String inString = "";
 bool comenzar = false;
@@ -47,7 +46,7 @@ void setup() {
 void loop() {   // 123,346,00; -124,-235,-00
   if(x==true||y==true||z==true){llevaraCerro();}
   
-  if (Serial.available()) {
+  if (Serial.available()){
     estado(); // ilumina led estado.
     int inChar = Serial.read();
       if(inChar!=','){
@@ -74,6 +73,12 @@ void loop() {   // 123,346,00; -124,-235,-00
   }
 
 if(comenzar){
+  int m = 0;
+  if(xyzp[0]!=0){m++;}
+  if(xyzp[1]!=0){m++;}
+  if(xyzp[2]!=0){m++;}
+  tiempo = tiempoInicial/m ;
+  
   if(0<xyzp[0]){
     xyzp[0]--;moverX(0);
   }
@@ -100,6 +105,7 @@ if(comenzar){
     xyzp[0]=0;
     xyzp[1]=0;
     xyzp[2]=0;
+    m=0;
     Serial.write("fin");
     //Serial.print(78, DEC)// gives "78" 
   }
