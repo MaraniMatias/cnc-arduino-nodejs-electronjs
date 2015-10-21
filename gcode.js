@@ -3,8 +3,6 @@ var gc = require("interpret-gcode");
 var fs = require("fs");
 var data = fs.readFileSync(fileDir);
 var fileContent = data.toString();
-var events = require('events');
-var eventEmitter = new events.EventEmitter();
 
 // serial
 var SerialPort = require("serialport").SerialPort;
@@ -39,31 +37,25 @@ var sp = new SerialPort(portName, {
 
 
 var indexLinea = 0;
-
-//eventEmitter.on('onEviarLine',
-//  function (lineSend) {
-    sp.on("open", function () {
-      //console.log('Conexion serial abierta.');
+sp.on("open", function () {
+  //console.log('Conexion serial abierta.');
+  sp.write(history[indexLinea].x+"\n", function(err, results) {
+   console.log("Cordenadas: %s",history[indexLinea].x);
+   if(err){console.log('err ' + err);}
+    //console.log('results ' + results);
+  });
+  sp.on('data', function(data){
+    console.log('\t Arduino envia "%s"',data);
+    if(indexLinea < history.length) {
+      console.log("Cordenadas: %s",history[indexLinea].x);
       sp.write(history[indexLinea].x+"\n", function(err, results) {
-       console.log("Cordenadas: %s",history[indexLinea].x);
-       if(err){console.log('err ' + err);}
+        if(err){console.log('err ' + err);}
         //console.log('results ' + results);
       });
-      sp.on('data', function(data){
-        console.log('\t Arduino envia "%s"',data);
-        if(indexLinea < history.length) {
-          console.log("Cordenadas: %s",history[indexLinea].x);
-          sp.write(history[indexLinea].x+"\n", function(err, results) {
-            if(err){console.log('err ' + err);}
-            //console.log('results ' + results);
-          });
-          indexLinea++
-        };
+      indexLinea++
+    }else{
+      sp.close();
+    };
 
-      });
-    });
-//  }
-//);
-
-
-//eventEmitter.emit('onEviarLine',history[indexLinea].x);
+  });
+});
