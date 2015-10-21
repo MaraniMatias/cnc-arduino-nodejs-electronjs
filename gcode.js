@@ -3,6 +3,8 @@ var gc = require("interpret-gcode");
 var fs = require("fs");
 var data = fs.readFileSync(fileDir);
 var fileContent = data.toString();
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
 
 // serial
 var SerialPort = require("serialport").SerialPort;
@@ -27,7 +29,7 @@ serialPort.list(function (err, ports) {
 //  ##########
 */
 
-var serialPort = new SerialPort(portName, {
+var sp = new SerialPort(portName, {
   baudrate: 9600
   //dataBits: 8,
   //parity: 'none',
@@ -36,32 +38,27 @@ var serialPort = new SerialPort(portName, {
 });
 
 
-  enviarLinea(history[6].x)
+var indexLinea = 0;
+
+eventEmitter.on('onEviarLine',
+  function (lineSend) {
+    sp.on("open", function () {
+      //console.log('Conexion serial abierta.');
+      sp.write(lineSend+"\n", function(err, results) {
+        if(err){console.log('err ' + err);}
+        //console.log('results ' + results);
+      });
+      sp.on('data', function(data){
+        console.log('Arduino envia "%s" para linea "%s"',data,indexLinea);
+        indexLinea++;
+        sp.write(history[indexLinea].x+"\n", function(err, results) {
+          if(err){console.log('err ' + err);}
+          //console.log('results ' + results);
+        });
+      });
+    });
+  }
+);
 
 
-function enviarLinea(lineSend) {
-  serialPort.on("open", function () {
-    //console.log('Conexion serial abierta.');
-    serialPort.on('data', function(data) {
-      console.log('data received:\n' + data);
-    });
-    serialPort.write(lineSend+"\n", function(err, results) {
-      if(err){console.log('err ' + err);}
-      //console.log('results ' + results);
-    });
-  });
-
-}
-/*
-  serialPort.on("open", function () {
-    //console.log('Conexion serial abierta.');
-    serialPort.on('data', function(data) {
-      console.log('data received:\n' + data);
-    });
-    serialPort.write(lineSend+"\n", function(err, results) {
-      //console.log('err ' + err);
-      //console.log('results ' + results);
-    });
-  });
-*/
-
+eventEmitter.emit('onEviarLine',history[indexLinea].x);
