@@ -1,0 +1,26 @@
+body {
+  padding: 50px 80px;
+  padding: 0px;
+  font: 14px "Helvetica Nueue", "Lucida Grande", Arial, sans-serif;
+}
+#rData{
+  float:left;
+  margin-left:100px;
+  margin-right:auto;
+  width:470px;
+}
+#sData{
+  float: left;
+  margin-left:100px;
+  margin-right:auto;
+  width:470px;
+}
+h2{
+  text-align:center;
+}
+#myCanvas {
+  border: 2px dashed grey;
+}
+#btnHolder, #sliderTxt{
+  text-align:center;
+ }
