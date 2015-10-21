@@ -3,8 +3,16 @@ var gc = require("interpret-gcode");
 var fs = require("fs");
 var data = fs.readFileSync(fileDir);
 var fileContent = data.toString();
-history = gc(fileContent);
-//console.log(history);
+
+// serial
+var SerialPort = require("serialport").SerialPort;
+var portName = '/dev/ttyACM2'; //change this to your Arduino port
+var sendData = "";
+var receivedData = "";
+// serial
+
+  history = gc(fileContent);
+  //console.log(history[6].x);
 
 /*
 // listado de puertos
@@ -18,10 +26,6 @@ serialPort.list(function (err, ports) {
 });
 //  ##########
 */
-var SerialPort = require("serialport").SerialPort;
-var portName = '/dev/ttyACM0'; //change this to your Arduino port
-var sendData = "";
-var receivedData = "";
 
 var serialPort = new SerialPort(portName, {
   baudrate: 9600
@@ -32,14 +36,32 @@ var serialPort = new SerialPort(portName, {
 });
 
 
+  enviarLinea(history[6].x)
 
-serialPort.on("open", function () {
-  console.log('Conexion serial abierta.');
-  serialPort.on('data', function(data) {
-    console.log('data received:\n' + data);
+
+function enviarLinea(lineSend) {
+  serialPort.on("open", function () {
+    //console.log('Conexion serial abierta.');
+    serialPort.on('data', function(data) {
+      console.log('data received:\n' + data);
+    });
+    serialPort.write(lineSend+"\n", function(err, results) {
+      if(err){console.log('err ' + err);}
+      //console.log('results ' + results);
+    });
   });
-  serialPort.write("w\n", function(err, results) {
-    console.log('err ' + err);
-    console.log('results ' + results);
+
+}
+/*
+  serialPort.on("open", function () {
+    //console.log('Conexion serial abierta.');
+    serialPort.on('data', function(data) {
+      console.log('data received:\n' + data);
+    });
+    serialPort.write(lineSend+"\n", function(err, results) {
+      //console.log('err ' + err);
+      //console.log('results ' + results);
+    });
   });
-});
+*/
+

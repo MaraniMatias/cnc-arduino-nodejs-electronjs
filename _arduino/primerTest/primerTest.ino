@@ -14,7 +14,7 @@ xp=0,yp=0,zp=0;   // guardar ultimo paso usado
 //int unavuelta=100;
 float tiempo,tiempoInicial = 12.0; // minimo 2.3
 
-int i=0, inChar=0; String inString = "";
+int i=0, inChar=0,progreso = 0; String inString = "";
 bool comenzar = false;
 
 void setup() {
@@ -47,7 +47,6 @@ void loop() {   // 123,346,00; -124,-235,-00
   if(x==true||y==true||z==true){llevaraCerro();}
   
   if (Serial.available()){
-    estado(); // ilumina led estado.
     int inChar = Serial.read();
       if(inChar!=','){
         if(inChar=='-'){
@@ -69,7 +68,6 @@ void loop() {   // 123,346,00; -124,-235,-00
       //Serial.println(xyzp[2]);
       comenzar=true;
     }
-    estado(); // ilumina led estado.
   }
 
 if(comenzar){
@@ -106,7 +104,8 @@ if(comenzar){
     xyzp[1]=0;
     xyzp[2]=0;
     m=0;
-    Serial.write("fin");
+    progreso++;
+    Serial.write("fin");//write print
     //Serial.print(78, DEC)// gives "78" 
   }
 }
