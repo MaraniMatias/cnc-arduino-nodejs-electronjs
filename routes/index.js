@@ -16,7 +16,10 @@ app.get('/', function(req, res){
   res.render('index.jade', {titulo: "Arduino" });
 });
 
+app.get('/conect/:usb', function(req, res){
 
+  res.json(req.params.usb);
+});
 
 //serialListener();
 app.io.on('connection', function (socket) {
