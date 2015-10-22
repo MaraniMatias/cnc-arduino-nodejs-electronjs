@@ -29,32 +29,26 @@ block content
         .ui.grid
           .row
             .column
-              label State {{hola}}
+              label Listado de Arduino
                 .ui.fluid.dropdown.selection(tabindex='0')
-                  select
-                    option(value='') State
-                    option(value='AL') Alabama
-                    option(value='AK') Alaska
-                    option(value='AZ') Arizona
                   i.dropdown.icon
-                  .default.text State
+                  .default.text Ninguno
                   .menu.transition.hidden(tabindex='-1')
-                    .item(data-value='AL') Alabama
-                    .item(data-value='AK') Alaska
-                    .item(data-value='AZ') Arizona
+                    .item(ng-click='setUSB()' data-value='') Ninguno
+                    .item(ng-repeat='usb in port' ng-click='setUSB(usb.comName)' data-value='{{usb.comName}}') {{usb.manufacturer}}
 
           .row
             .column.center.aligned
-              button.ui.red.basic.button Red
-              button.ui.black.basic.button Black
+              button.ui.green.basic.button Abrrir
+              button.ui.basic.button Cerrar
 
     .ten.wide.column
       .ui.segment
         .column
-          {{port}}
-          {ports[0].comName}
-          {ports[0].manufacturer}
-          {ports[0].serialNumber}
+          a
+            {{usb.comName}}
+            {{usb.manufacturer}}
+            {{usb.serialNumber}}
 
     .three.wide.column
       .ui.segment.form
