@@ -23,39 +23,25 @@ block content
       a.item Link
 
   .ui.three.column.row.stackable.grid
-    .three.wide.column
+    .ten.wide.column
+      .ui.segment
+        .column
+
+    .six.wide.column
       .ui.segment
         .ui.top.attached.label  Conectar con arduino
         .ui.grid
           .row
             .column
               label Listado de Arduino
-                .ui.fluid.dropdown.selection(tabindex='0')
-                  i.dropdown.icon
-                  .default.text Ninguno
-                  .menu.transition.hidden(tabindex='-1')
-                    .item(ng-click='setUSB()' data-value='') Ninguno
-                    .item(ng-repeat='usb in port' ng-click='setUSB(usb.comName)' data-value='{{usb.comName}}') {{usb.manufacturer}}
+                .ui.action
+                  .ui.dropdown.selection(tabindex='0' ng-click='updateUSB()')
+                    i.dropdown.icon
+                    .default.text Ninguno
+                    .menu.transition.hidden(tabindex='-1')
+                      .item(ng-repeat='usb in port' ng-click='setUSB(usb.comName)' data-value='{{usb.comName}}') {{usb.manufacturer}}
+                  button.ui.teal.icon.button(ng-click='updateUSB()')
+                    i.repeat.icon
 
-          .row
-            .column.center.aligned
-              button.ui.green.basic.button Abrrir
-              button.ui.basic.button Cerrar
-
-    .ten.wide.column
-      .ui.segment
-        .column
-          a
-            {{usb.comName}}
-            {{usb.manufacturer}}
-            {{usb.serialNumber}}
-
-    .three.wide.column
-      .ui.segment.form
-          .two.fields
-            .field
-              label First name
-              input(placeholder='First Name', type='text')
-            .field
-              label Segundo Nombre
-              input(placeholder='Segundo Nombre', type='text')
+                  button.ui.green.basic.button Abrrir
+                  button.ui.basic.button Cerrar

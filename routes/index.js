@@ -1,6 +1,6 @@
 var app = module.parent.exports.app;
 var serialPort = require("serialport");
-var portName = '/dev/ttyACM0'; //change this to your Arduino port
+var portName = ''; //change this to your Arduino port
 var sendData = "";
 var SerialPort = serialPort.SerialPort;
 
@@ -15,6 +15,7 @@ app.get('/portslist', function(req, res){
 app.get('/', function(req, res){
   res.render('index.jade', {titulo: "Arduino" });
 });
+
 
 
 //serialListener();

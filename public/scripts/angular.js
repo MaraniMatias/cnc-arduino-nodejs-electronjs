@@ -1,18 +1,19 @@
-app.controller('TodoListController',['puertoUSB','$http','$scope',
-function(puertoUSB,$http,$scope){
+app.controller('TodoListController',['pUSB','$http','$scope',
+function(pUSB,$http,$scope){
 
-$scope.setUSB=function(data){
-  $scope.puertoUSB=data;
-}
+  $scope.setUSB=function(port){
+    $scope.pUSB=port;
+    console.log(port);
+  }
 
-
-  $http.get('/portslist').success(function (data) {
-    //if(angular.isArray(data)){
-      $scope.port=data;
-    //}else{
-    //  $scope.port="nada"
-    //}
-  });
-
+  $scope.updateUSB=function(port){
+    $http.get('/portslist').success(function (data) {
+      if(data){
+        $scope.port=data;
+      }else{
+        $scope.port=[];
+      }
+    });
+  }
 
 }]);
