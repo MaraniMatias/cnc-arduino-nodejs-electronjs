@@ -1,8 +1,10 @@
+
 body {
-  padding: 50px 80px;
-  padding: 0px;
-  font: 14px "Helvetica Nueue", "Lucida Grande", Arial, sans-serif;
+  /*padding: 50px 80px;
+  padding: 0px;*/
+  font: 14px  "ssans-serif";
 }
+/*
 #rData{
   float:left;
   margin-left:100px;
@@ -23,4 +25,11 @@ h2{
 }
 #btnHolder, #sliderTxt{
   text-align:center;
+}
+*/
+
+.ui.grid > .row {
+  padding: 0rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.51rem;
 }

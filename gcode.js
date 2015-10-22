@@ -6,7 +6,7 @@ var fileContent = data.toString();
 
 // serial
 var SerialPort = require("serialport").SerialPort;
-var portName = '/dev/ttyACM2'; //change this to your Arduino port
+var portName = '/dev/ttyACM0'; //change this to your Arduino port
 var sendData = "";
 var receivedData = "";
 // serial

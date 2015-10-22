@@ -1,14 +1,23 @@
 var app = module.parent.exports.app;
-var serialPort;
+var serialPort = require("serialport");
 var portName = '/dev/ttyACM0'; //change this to your Arduino port
 var sendData = "";
-var SerialPort = require("serialport").SerialPort;
+var SerialPort = serialPort.SerialPort;
+
+/* GET listado de puertos. */
+app.get('/portslist', function(req, res){
+  serialPort.list(function (err, ports){
+    res.json(ports);
+  });
+});
 
 /* GET home page. */
 app.get('/', function(req, res){
-  res.render('index.jade', { titulo: "Arduino" });
+  res.render('index.jade', {titulo: "Arduino" });
 });
 
+
+//serialListener();
 app.io.on('connection', function (socket) {
   console.log("user connected");
   socket.emit('onconnection', {pollOneValue:sendData});
@@ -22,25 +31,6 @@ app.io.on('connection', function (socket) {
     serialPort.write(data + 'P');
   });
 });
-serialListener();
-
-//app.io.route('ready', function(req,res) {
-//  console.log(req.socket.id);
-//  req.io.respond({
-//    header  : 'Socket.io',
-//    success : 'Hola biembenido desde la app.js'
-//  })
-//})
-
-function listPort(){
-  serialPort.list(function (err, ports) {
-  ports.forEach(function(port) {
-    console.log(port.comName);
-    console.log(port.pnpId);
-    console.log(port.manufacturer);
-  });
-});
-}
 
 
 // Listen to serial port

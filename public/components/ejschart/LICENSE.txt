@@ -1,0 +1,271 @@
+Emprise Corporation Development Software License Agreement
+
+This is only a summary of the complete Emprise Corporation End User License Agreement ("EULA"). 
+For complete license conditions see the conditions that follow the words "READ CAREFULLY" in this 
+license document:
+
+All sales of software licenses that include non-obfuscated source code (for example the "Developer"
+and "Enterprise" versions of Emprise JavaScript Charts) are final and no returns will be accepted.
+
+All licenses are PER INDIVIDUAL DEVELOPER unless otherwise specified. One developer may use a single 
+license on multiple machines as long as they are not used concurrently or shared by other developers. 
+This means, for instance, a single license may be used on an office machine, a home machine, and a laptop. 
+
+Client-side elements are licensed ROYALTY FREE. You pay to use them in design time. You do not pay 
+additional royalties when you create an executable and distribute the component with that executable. 
+This condition is subject to further conditions as described in this license.
+
+Server-side elements are licensed DEPLOYMENT FREE. You pay to use them in design time. You do not 
+pay per-server deployment fees when you deploy your application.
+Distribution of elements for use in design time is NOT covered under this license. If you wish to 
+distribute our elements as part of a design environment, that requires a special OEM license and does 
+involve the payment of royalties.
+
+*This summary is subject to further conditions and clarification. For the exact license terms 
+and conditions please read the full Emprise Corporation End User License Agreement below.
+
+
+READ CAREFULLY
+
+This Emprise Corporation End User License Agreement ("EULA") is a legal agreement between you (either 
+an individual or a single entity) and Emprise Corporation for all Emprise Corporation software products 
+that have been purchased by the customer unless superseded by another special license agreement. This 
+license includes all computer software and associated media and printed materials, and may include 
+"online" or electronic documentation, herein collectively referred to as the "SOFTWARE PRODUCT" or 
+"SOFTWARE". By installing, copying, or otherwise using the SOFTWARE PRODUCT, you agree to be bound by 
+the terms of this EULA.
+
+IT IS NECESSARY FOR YOU TO AGREE TO BE BOUND BY THE TERMS OF THIS LICENSE BEFORE YOU ARE 
+PERMITTED TO CONTINUE TO INSTALL THE SOFTWARE.BY COMPLETING A COMMERCIAL TRANSACTION TO PURCHASE AN 
+Emprise Corporation SOFTWARE PRODUCT, OR BY INSTALLING, COPYING, OR OTHERWISE USING THE SOFTWARE, 
+YOU AGREE TO BE BOUND BY THE TERMS OF THIS LICENSE INCUDING THE WARRANTY DISCLAIMERS, LIMITATIONS 
+ON LIABILITY AND TERMINATION PROVISIONS.
+
+
+I. OWNERSHIP; GRANT OF LICENSE.
+
+This is a license agreement and NOT an agreement for sale. Emprise Corporation continues to own the 
+copy of the SOFTWARE contained on the disk or CD-ROM and all copies thereof. Your rights to the SOFTWARE 
+are specified in this LICENSE, and Emprise Corporation retains all rights not expressly granted to you 
+in this LICENSE. Emprise Corporation hereby grants to you, and you accept, a non-exclusive, non-transferable 
+license to use, copy and modify the SOFTWARE only as authorized below.
+
+
+II. PERMITTED USES.
+
+This LICENSE grants you the following rights:
+
+A. The SOFTWARE is licensed per individual developer. You may make copies on more than one computer, 
+as long as the use of the SOFTWARE is by the same developer. If you have purchased an "Enterprise" 
+license, you may use a copy of the SOFTWARE on for any number of developers at a single site.  A 
+single site is defined as a single physical building.  The SOFTWARE is in "use" on a computer when 
+it is loaded into temporary memory (i.e. RAM) or installed into permanent memory (e.g. hard disk, 
+CD-ROM, or other storage devise) of that computer. However, installation on a network server for the 
+sole purpose of internal distribution to one or more other computer(s) shall not constitute "use" 
+for which a separate license is required, provided you have a separate license for each computer to 
+which the SOFTWARE is distributed.
+
+B. Solely with respect to electronic documents included with the SOFTWARE, you may make a copy 
+(either in hard copy or electronic form) for each developer for which the Software has been licensed 
+as described in Section II.A, above; provided, that such copies shall be used only by such developer 
+for internal purposes and are not to be republished or distributed to any other third party or 
+developer.
+
+C. You may use the personal or trial versions only for the limited purposes of demonstrations, 
+trials and design time evaluations.
+
+
+III. PROHIBITED USES.
+
+You may not, without the prior written permission of Emprise Corporation:
+
+A. Disassemble, decompile or "unlock", decode or otherwise reverse translate or engineer, or attempt 
+in any manner to reconstruct or discover any source code or underlying algorithms of SOFTWARE provided 
+in object code form only.
+
+B. Use, copy, modify, or merge copies of the SOFTWARE and any accompanying documents except as 
+permitted in this LICENSE.
+
+C. Transfer, rent, lease, or sublicense the SOFTWARE.
+
+D. Separate the software programs comprising the SOFTWARE for use by more than one user at a time.
+
+
+IV. SOURCE CODE.
+
+Provided you have purchased a license to the non-obfuscated source code, you may make modifications, 
+enhancements, derivative works and/or extensions to that licensed source code provided to you under the
+terms set forth in this section IV.
+
+While Emprise Corporation does not claim any ownership rights in applications, frameworks or components 
+developed using the SOFTWARE, in the event you develop any modifications, enhancements, derivative works 
+and/or extensions to the licensed source code, either independently or jointly with Emprise Corporation, 
+such modifications, enhancements, derivative works and/or extensions and all rights associated therewith 
+will be the exclusive property of Emprise Corporation. You will not grant, either expressly or impliedly, 
+any rights, title, interest, or licenses to any such modifications, enhancements, derivative works and/or 
+extensions to any third party. You will, however, be entitled to use such modifications, enhancements, 
+derivative works and/or extensions under the terms set forth in this agreement. You hereby assign all right, 
+title and interest in and to such modifications, enhancements, derivative works and/or extensions to the 
+licensed source code to Emprise Corporation. You also agree to execute, acknowledge and deliver to Emprise 
+Corporation all documents and do all things Emprise Corporation deems necessary or desirable, at no cost to 
+you but at Emprise Corporation expense, to enable Emprise Corporation to obtain and secure such modifications, 
+enhancements, derivative works and/or extensions anywhere in the World. You agree to secure all necessary 
+rights and obligations from relevant employees, or third parties in order to satisfy the above obligations. 
+You may not distribute the Emprise Corporation source code, or any modification, enhancement, derivative 
+work and/or extension thereto, in source code form. 
+
+The source code contained herein and in related files is provided to the registered developer for the sole 
+purposes of education and troubleshooting. Under no circumstances may any portion of the source code be 
+distributed, disclosed or otherwise made available to any third party without the express, prior written 
+consent of Emprise Corporation. 
+
+Under no circumstances may the source code be used in whole or in part, as the basis for creating a product 
+that provides the same, or substantially the same, functionality as any Emprise Corporation product. You will 
+not take any action, or assist or otherwise aid anyone else in taking any action, that would limit Emprise 
+Corporation' independent development, sale, assignment, licensing or use of its own software or any modification, 
+enhancement, derivative work and/or extension thereto. 
+
+You will not modify or delete, in whole or part, any copyright, trade secret, proprietary, confidential or 
+other notice thereon or therein without the express, prior written consent of Emprise Corporation.
+If you purchase any license that includes source code in your organization, all licenses in your organization 
+must be purchased with source code.
+
+YOU UNDERSTAND AND ACKNOWLEDGE THAT SOURCE CODE IS LICENSED AS IS, AND THAT Emprise Corporation DOES NOT PROVIDE 
+ANY TECHNICAL SUPPORT FOR SOURCE CODE.
+
+
+V. REDISTRIBUTABLE elements.
+
+A. In addition to the license and rights granted in Sections I and II, Emprise Corporation grants you the 
+right to use the application programming interface (known as "API") portion of the SOFTWARE which is either on 
+disk, CD-ROM or electronic format provided: 
+
+You may use the API to create your own components, as long as, it is NOT the basis for creating a product 
+that provides the same, or substantially the same, functionality as any Emprise Corporation product; and
+
+In the event you develop any modifications, enhancements, derivative works and/or extensions to the API, 
+either independently or jointly with Emprise Corporation, such modifications, enhancements, derivative works 
+and/or extensions and all rights associated therewith will be the exclusive property of Emprise Corporation. 
+You will not grant, either expressly or impliedly, any rights, title, interest, or licenses to any such 
+modifications, enhancements, derivative works and/or extensions to any third party. You will, however, be 
+entitled to use such modifications, enhancements, derivative works and/or extensions under the terms set forth 
+in this agreement. You hereby assign all right, title and interest in and to such modifications, enhancements, 
+derivative works and/or extensions to the API to Emprise Corporation. You also agree to execute, acknowledge 
+and deliver to Emprise Corporation all documents and do all things Emprise Corporation deems necessary or 
+desirable, at no cost to you but at Emprise Corporation's expense, to enable Emprise Corporation to obtain and 
+secure such modifications, enhancements, derivative works and/or extensions anywhere in the World. You agree 
+to secure all necessary rights and obligations from relevant employees or third parties in order to satisfy 
+the above obligations.
+
+B. In addition to the license and rights granted in Sections I and II, Emprise Corporation grants you a 
+non-exclusive, royalty-free right to reproduce and distribute the obfuscated distribution code version of 
+those portions of the SOFTWARE designated in the SOFTWARE as (i) those portions of the SOFTWARE which are 
+identified in the documentation as the JavaScript ("JS"), Include ("INC"), VBX ("VBX") and/or OCX ("OCX") 
+Controls and/or DLL Controls and/or class files and/or jar files; (ii) those portions of the SOFTWARE which 
+are identified in the documentation as REDISTRIBUTABLE DLLs ("DLLs") (collectively the "REDISTRIBUTABLES"); 
+provided:
+
+	* You distribute the REDISTRIBUTABLES in object code form only in conjunction with and as part of your 
+	software application product which adds significant and primary functionality; 
+
+	* You do not use Emprise Corporation' name, logo or trademarks to market your software application product; 
+	
+	* You include a valid copyright notice on your SOFTWARE
+	 
+C. In addition to the other requirements set forth in this Section V, you hereby agree to indemnify, hold 
+harmless, and defend Emprise Corporation from and against any and all liabilities, damages, losses, costs and 
+expenses (including reasonable attorneys' fees) arising from or related to any claim, action, proceeding or 
+allegation that arises or results, either directly or indirectly, from the use and distribution of any of 
+your software application product(s) or components.
+
+
+VI. SPECIAL EXCEPTIONS.
+
+Emprise Corporation may offer special exceptions to the terms of this license agreement in the form of 
+an addendum, memorandum of understanding, or full replacement of this license. If so the terms of that license 
+will supersede and take precedence over relevant portions of this license.
+
+
+VII. COPYRIGHT.
+
+All title and copyrights in and to the SOFTWARE (including but not limited to any images, photographs, 
+animation, video, audio, music, text and "applets" incorporated into the SOFTWARE) and the accompanying 
+printed materials are owned by Emprise Corporation or its suppliers. The SOFTWARE is protected by US 
+copyright laws and international treaty provisions. All rights are reserved worldwide. You must treat 
+the SOFTWARE like any other copyrighted material, except that you may, in addition to the copies permitted 
+in this LICENSE, make one copy of the SOFTWARE solely for backup or archival purposes. No part of the 
+accompanying printed materials may be reproduced, transmitted, transcribed, stored in any retrieval 
+system, or translated into any language by any means without the express prior written permission of 
+Emprise Corporation.
+
+
+VIII. TERMINATION.
+
+This LICENSE and your right to use the SOFTWARE will terminate immediately without notice from Emprise 
+Corporation if you fail to comply with the terms and conditions of this LICENSE. Upon termination, you 
+agree to destroy the SOFTWARE, including all accompanying documents and copies. This is in addition to 
+and not in lieu of any criminal, civil or other remedies available to Emprise Corporation. 
+
+
+IX. CONFIDENTIALITY.
+
+You acknowledge that the SOFTWARE and any source code provided to you pursuant to this LICENSE, as 
+well as any modification, enhancement, derivative work and/or extension thereto includes valuable trade 
+secrets of Emprise Corporation. You agree to maintain in confidence the Emprise Corporation Source Code 
+(in source code form), and any modification, enhancement, derivative work and/or extension thereto, by 
+using at least the same physical and other security measures as you use for your own confidential technical 
+information and documentation, but in no event less that a commercially reasonable standard of care. You 
+further agree not to disclose the Emprise Corporation Source Code (in source code form), or any aspect 
+thereof, or any modification, enhancement, derivative work and/or extension thereto, or any aspect thereof, 
+to anyone other than employees or contractors who have a need to know or obtain access to such information 
+in order to support your authorized use of the SOFTWARE and who are bound to protect such information against 
+any other use or disclosure. You agree to assume full responsibility for such employees' or contractors' 
+use, or misuse, of such disclosed source code as if it was your use. These obligations shall not apply to 
+any information generally available to the public, independently developed or obtained without reliance on 
+Emprise Corporation' information, or approved in writing for release by Emprise Corporation without restriction.
+
+
+X. LIMITED WARRANTY.
+
+A. Except with respect to REDISTRIBUTABLES and source code, which are provided "AS IS," without warranty 
+of any kind, Emprise Corporation warrants that the SOFTWARE will perform substantially in accordance with 
+the accompanying printed materials for a period of thirty (30) days from the date of receipt. Emprise Corporation 
+does not warranty that the SOFTWARE will be error-free. SOURCE CODE IS LICENSED "AS IS". Emprise Corporation 
+DOES NOT PROVIDE ANY TECHNICAL SUPPORT FOR SOURCE CODE.
+
+B. Emprise Corporation' and its suppliers' entire liability, in contract, tort or otherwise, and your 
+exclusive remedy under the performance warranty set forth in Section XI.A, shall be, at Emprise Corporation' 
+option, either (a) return of the purchase price paid, or (b) repair or replacement of the defective SOFTWARE. 
+SOFTWARE purchased other than directly from Emprise Corporation shall be returned to the place it was purchased. 
+This limited warranty is void if failure of the SOFTWARE has resulted from accident, abuse, or misapplication. 
+Any replacement SOFTWARE will be warranted for the remainder of the original thirty (30) day period. 
+
+C. EXCEPT AS EXPRESSLY SET FORTH IN THIS SECTION XI, Emprise Corporation AND ITS SUPPLIERS DISCLAIM ALL 
+OTHER WARRANTIES, EITHER EXPRESS OR IMPLIED, WHETHER ARISING BY STATUTE OR OTHERWISE IN LAW OR FROM A COURSE 
+OF DEALING OR USAGE OR TRADE, INCLUDING, BUT NOT LIMITED TO, ANY IMPLIED WARRANTIES OF ACCURACY, COMPLETENESS, 
+PERFORMANCE, CURRENCY, MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE WITH REGARD TO THE SOFTWARE.
+
+
+XI. LIMITATION OF LIABILITIES.
+
+Emprise Corporation' liability, whether in contract, tort, or otherwise, arising out of Licensee's use of, 
+or in connection with, the SOFTWARE, or otherwise under this Agreement, shall not exceed the amount of the 
+license fee paid by you to Emprise Corporation. IN NO EVENT SHALL Emprise Corporation OR ITS SUPPLIERS BE 
+LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT, OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, 
+DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY OTHER 
+PECUNIARY LOSS) ARISING OUT OF THE USE OF OR INABILITY TO USE THE SOFTWARE, EVEN IF Emprise Corporation HAS 
+BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+
+Some states, provinces, and jurisdictions do not allow the exclusion or limitation of liability for 
+consequential or incidental damages, or the exclusion of implied warranties or limitations on how long 
+a warranty may last, so the limitations in Sections XI and XII may not apply to you.
+
+
+XII. MISCELLANEOUS.
+
+In the event of invalidity of any provision of this LICENSE, the parties agree that such invalidity shall 
+not affect the validity of the remaining portions. You agree that you will not export or re-export the 
+Software without the appropriate United States or foreign government licenses. This LICENSE is governed by 
+the laws of the United States seate of Connecticut as applied to agreements entered into and to be performed 
+entirely within Connecticut. This is the entire agreement between you and Emprise Corporation which supersedes 
+any prior agreement, whether written or oral, relating to this subject matter.

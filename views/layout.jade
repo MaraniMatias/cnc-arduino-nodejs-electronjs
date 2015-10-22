@@ -1,6 +1,25 @@
 doctype html
-html(lang='en')
-  include header
-  body
-    block content
+html(lang='es', ng-app="todoApp" )
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width')
+    title Arduino NodeJS
+    link(rel='stylesheet', href='/components/semantic-ui/dist/semantic.css')
+    link(rel="stylesheet", href="/stylesheets/style.css")
 
+    script(src='/socket.io/socket.io.js')
+    script(src='/components/jquery/dist/jquery.js')
+    script(src='/components/semantic-ui/dist/semantic.js')
+    script(src='/components/angular/angular.js')
+    script(src='/components/angular/angular.js')
+
+
+  body(ng-controller="TodoListController")
+    block content
+    script(type='text/javascript').
+      $('.ui.dropdown').dropdown();
+      var app = angular.module('todoApp', [])
+                    .value('alerts', []);
+
+
+    script(src='/scripts/angular.js')

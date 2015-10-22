@@ -5,7 +5,7 @@ const int pinZ[] = {8,9,10,11}; // pin de motores
 const int btnX=A5,btnY=A4,btnZ=A3;
 
 bool bEstado = true,
-x=true,y=true,z=true; // usado para indicar estados
+x=false,y=false,z=false; // usado para indicar estados
 
 int bx,by,bz,// variable para finales de carrera
 xyzp[] = {0,0,0}, // cantidad de pasos para cade eje
@@ -14,7 +14,7 @@ xp=0,yp=0,zp=0;   // guardar ultimo paso usado
 //int unavuelta=100;
 float tiempo,tiempoInicial = 12.0; // minimo 2.3
 
-int i=0, inChar=0,progreso = 0; String inString = "";
+int i=0, inChar=0; String inString = "";
 bool comenzar = false;
 
 void setup() {
@@ -43,12 +43,14 @@ void setup() {
   //---Motor:END
 }
 
-void loop() {   // 123,346,00; -124,-235,-00
-  if(x==true||y==true||z==true){llevaraCerro();}
-  
+void loop() {   // 123,346,00; -124,-235,-00 
   if (Serial.available()){
     int inChar = Serial.read();
       if(inChar!=','){
+        
+        if (inChar == 'o' ) {
+          x=true;y=true;z=true;
+        }
         if(inChar=='-'){
           inString += "-";
         }
@@ -60,15 +62,22 @@ void loop() {   // 123,346,00; -124,-235,-00
         i++;
         inString="";
       }
-    if (inChar == '\n' || inChar == ';' ) {
-      i=0;
-      inString = "";
-      //Serial.println(xyzp[0]);
-      //Serial.println(xyzp[1]);
-      //Serial.println(xyzp[2]);
-      comenzar=true;
-    }
+      if (inChar == '\n' || inChar == ';' ) {
+        i=0;
+        inString = "";
+        //Serial.println(xyzp[0]);
+        //Serial.println(xyzp[1]);
+        //Serial.println(xyzp[2]);
+        if(x==false||y==false||z==false){
+          comenzar=true;
+        }
+      }
   }
+
+if(x==true||y==true||z==true){
+llevaraCerro();
+}
+
 
 if(comenzar){
   int m = 0;
@@ -104,8 +113,7 @@ if(comenzar){
     xyzp[1]=0;
     xyzp[2]=0;
     m=0;
-    progreso++;
-    Serial.write("fin");//write print
+    Serial.write("Fin");//write print
     //Serial.print(78, DEC)// gives "78" 
   }
 }
