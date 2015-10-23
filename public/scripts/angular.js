@@ -1,6 +1,7 @@
 app.controller('TodoListController',['pUSB','$http','$scope',
 function(pUSB,$http,$scope){ $scope.inputpasosmm='200';
   var varpasosmm = 'pasos';$scope.setmmpass=function(valor){varpasosmm=valor;}
+$scope.SelecArduino="Selec Arduino";
 
   $scope.moverManual=function(nume,eje,sentido){
     var str = undefined;
@@ -49,10 +50,11 @@ function(pUSB,$http,$scope){ $scope.inputpasosmm='200';
     }
   }
   $scope.setUSB=function(port){
-    $scope.pUSB=port;
+    $scope.pUSB = port.comName;
+    $scope.SelecArduino = port.manufacturer;
     if($scope.pUSB!=''){
     $http({ url: "/conect",method: "POST",
-      data: {comUSB : port}
+      data: {comUSB : port.comName}
     }).success(function(data, status, headers, config) {
       console.log('success conect',data);
     }).error(function(data, status, headers, config) {
@@ -62,8 +64,7 @@ function(pUSB,$http,$scope){ $scope.inputpasosmm='200';
       console.log("Select puerto");
     }
   }
-
-  $scope.updateUSB=function(){
+  $scope.$on('updateUSB',function(){
     $http.get('/portslist').success(function (data) {
       if(data){
         $scope.port=data;
@@ -71,8 +72,8 @@ function(pUSB,$http,$scope){ $scope.inputpasosmm='200';
         $scope.port=[];
       }
     });
-  }
-
+  });
+$scope.$emit('updateUSB');
 //######################
 
 $scope.ejeXposicion = 0.000;
