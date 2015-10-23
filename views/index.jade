@@ -30,23 +30,49 @@ block content
     .six.wide.column
       .ui.segment
         .ui.top.attached.label  Conectar con arduino
-        .ui.grid
-          .fourten.wide.column
+        .ui.two.column.grid
+          .column
             .ui.action
-              .ui.dropdown.selection(tabindex='0')
+              .ui.fluid.dropdown.selection(tabindex='0')
                 i.dropdown.icon
                 .default.text Listado de Arduino
                 .menu.transition.hidden(tabindex='-1')
                   .item(ng-repeat='usb in port' ng-click='setUSB(usb.comName)' data-value='{{usb.comName}}') {{usb.manufacturer}}
-              button.ui.teal.icon.button(ng-click='updateUSB()')
-                i.repeat.icon
-          .two.wide.column
+          .column
+            button.ui.teal.icon.button(ng-click='updateUSB()') Actualizar
+
+      .ui.segment
+        .ui.top.attached.label Control manual  (200 pasos -> 2.5mm)
+        .ui.one.column.grid
+          .column
+            .ui.action.input.fluid
+              input(placeholder='Enviar comando.',ng-model='comando', type='text')
+              button.ui.blue.button(type="submit",ng-click='enviarDatos(comando)') Enviar
+
+        .ui.three.column.grid
+          .column
+            .ui.right.labeled.input
+              input(ng-model='inputpasosmm', placeholder='0', type='text')
+              .ui.dropdown.label
+                .text pasos
+                i.dropdown.icon
+                .menu
+                  .item(ng-click='setmmpass("mm")') mm
+                  .item(ng-click='setmmpass("pasos")') pasos
+          .column
+          .column
             button.ui.red.basic.button(ng-click='moverOrigen()') [0,0,0]
 
-      .ui.segment.column
-        //.ui.top.attached.label Control manual
-        label Control manual
-          .ui.action
-            .ui.action.input
-              input(placeholder='Enviar comando.',ng-model='comando', type='text')
-              button.ui.blue.button(ng-click='enviarDatos(comando)') Enviar
+
+        .ui.one.column.grid.center.aligned
+          .column
+            button.ui.red.button(ng-click='moverManual(inputpasosmm,"X","+")') X+
+            button.ui.red.button(ng-click='moverManual(inputpasosmm,"X","-")') -X
+            button.ui.blue.button(ng-click='enviarDatos("[0,100,0]")') Y+
+            button.ui.blue.button(ng-click='enviarDatos("[0,-100,0]")') -Y
+            button.ui.yellow.button(ng-click='enviarDatos("[0,0,50]")') Z+
+            button.ui.yellow.button(ng-click='enviarDatos("[0,0,-50]")') -Z
+
+              //input(placeholder='Enviar comando.', type='text')
+
+

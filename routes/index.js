@@ -13,7 +13,7 @@ app.get('/portslist', function(req, res){
 
 /* GET home page. */
 app.get('/', function(req, res){
-  res.render('index.jade', {titulo: "Arduino" });
+  res.render('index.jade', {titulo: "Arduino",sp:sp.path});
 });
 
 app.post('/comando', function (req, res) {
