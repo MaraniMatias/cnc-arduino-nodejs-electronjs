@@ -49,9 +49,9 @@ block content
               input(placeholder='Enviar comando.',ng-model='comando', type='text')
               button.ui.blue.button(type="submit",ng-click='enviarDatos(comando)') Enviar
 
-        .ui.three.column.grid
+        .ui.one.column.grid
           .column
-            .ui.right.labeled.input
+            .ui.right.labeled.input.fluid
               input(ng-model='inputpasosmm', placeholder='0', type='text')
               .ui.dropdown.label
                 .text pasos
@@ -59,9 +59,7 @@ block content
                 .menu
                   .item(ng-click='setmmpass("mm")') mm
                   .item(ng-click='setmmpass("pasos")') pasos
-          .column
-          .column
-            button.ui.red.basic.button(ng-click='moverOrigen()') [0,0,0]
+              button.ui.red.basic.button(ng-click='moverOrigen()') [0,0,0]
 
 
         .ui.one.column.grid.center.aligned

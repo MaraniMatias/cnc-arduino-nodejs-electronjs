@@ -1,8 +1,7 @@
-var app = module.parent.exports.app;
-var serialPort = require("serialport");
-var sp = '';
-var sendData = "";
-var SerialPort = serialPort.SerialPort;
+var app = module.parent.exports.app,
+ serialPort = require("serialport"),
+ sp = '', sendData = "", motor = {paos:200,avance:2.5},
+ SerialPort = serialPort.SerialPort;
 
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
