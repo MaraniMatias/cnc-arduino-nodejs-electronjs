@@ -1,0 +1,24 @@
+extends ./layout
+block menu
+  .ui.inverted.menu
+    .header.item !{titulo}
+    .active.item Link
+    a.item Link {{hola}}
+    .ui.dropdown.item(tabindex='0')
+      | Dropdown
+      i.dropdown.icon
+      .menu(tabindex='-1')
+        .item Action
+        .item Another Action
+        .item Something else here
+        .divider
+        .item Separated Link
+        .divider
+        .item One more separated link
+    .right.menu
+      .item
+        .ui.transparent.inverted.icon.input
+          i.search.icon
+          input(placeholder='Search', type='text')
+      a.item Link
+  block content
