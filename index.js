@@ -4,8 +4,8 @@
 var express = require('express.io');
 var fs = require('fs');
 var app = exports.app = express();
+app.use(express.bodyParser());
 app.http().io();
-
 var pub = __dirname + '/public';
 
 require('./routes');

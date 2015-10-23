@@ -1,6 +1,6 @@
 var app = module.parent.exports.app;
 var serialPort = require("serialport");
-var portName = ''; //change this to your Arduino port
+var sp = '';
 var sendData = "";
 var SerialPort = serialPort.SerialPort;
 
@@ -16,9 +16,30 @@ app.get('/', function(req, res){
   res.render('index.jade', {titulo: "Arduino" });
 });
 
-app.get('/conect/:usb', function(req, res){
+app.post('/comando', function (req, res) {
+  console.log(req.body.comando);
+  sp.write(req.body.comando+"\n");
+  sp.on('data', function(data) {
+    console.log("comando: %s",data);
+    res.json({status:data});
+  });
+});
 
-  res.json(req.params.usb);
+app.post('/moverOrigen', function (req, res) {
+  sp.write("o\n");
+  sp.on('data', function(data) {
+    res.json({status:data});
+  });
+});
+
+app.post('/conect', function (req, res) {
+  sp = new SerialPort(req.body.comUSB, {
+    baudrate: 9600//,dataBits: 8,parity: 'none',stopBits: 1,flowControl: false
+  });
+  sp.on("open", function () {
+    console.log('Comunicacion serial abierta desde conect');
+  });
+  res.json({status:req.body.comUSB});
 });
 
 //serialListener();
@@ -29,10 +50,10 @@ app.io.on('connection', function (socket) {
   socket.emit('updateData',{pollOneValue:data});
   });
   socket.on('buttonval', function(data) {
-    serialPort.write(data + 'E');
+    sp.write(data + 'E');
   });
   socket.on('sliderval', function(data) {
-    serialPort.write(data + 'P');
+    sp.write(data + 'P');
   });
 });
 
@@ -41,7 +62,7 @@ app.io.on('connection', function (socket) {
 function serialListener()
 {
     var receivedData = "";
-    serialPort = new SerialPort(portName, {
+    sp = new SerialPort(portName, {
         baudrate: 9600,
         // defaults for Arduino serial communication
         dataBits: 8,
@@ -50,10 +71,10 @@ function serialListener()
         flowControl: false
     });
 
-    serialPort.on("open", function () {
+    sp.on("open", function () {
       console.log('open serial communication');
             // Listens to incoming data
-        serialPort.on('data', function(data) {
+        sp.on('data', function(data) {
             console.log('data received: ' + data);
             receivedData += data.toString();
           if (receivedData .indexOf('E') >= 0 && receivedData .indexOf('B') >= 0) {

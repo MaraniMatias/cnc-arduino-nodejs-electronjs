@@ -31,17 +31,22 @@ block content
       .ui.segment
         .ui.top.attached.label  Conectar con arduino
         .ui.grid
-          .row
-            .column
-              label Listado de Arduino
-                .ui.action
-                  .ui.dropdown.selection(tabindex='0' ng-click='updateUSB()')
-                    i.dropdown.icon
-                    .default.text Ninguno
-                    .menu.transition.hidden(tabindex='-1')
-                      .item(ng-repeat='usb in port' ng-click='setUSB(usb.comName)' data-value='{{usb.comName}}') {{usb.manufacturer}}
-                  button.ui.teal.icon.button(ng-click='updateUSB()')
-                    i.repeat.icon
+          .fourten.wide.column
+            .ui.action
+              .ui.dropdown.selection(tabindex='0')
+                i.dropdown.icon
+                .default.text Listado de Arduino
+                .menu.transition.hidden(tabindex='-1')
+                  .item(ng-repeat='usb in port' ng-click='setUSB(usb.comName)' data-value='{{usb.comName}}') {{usb.manufacturer}}
+              button.ui.teal.icon.button(ng-click='updateUSB()')
+                i.repeat.icon
+          .two.wide.column
+            button.ui.red.basic.button(ng-click='moverOrigen()') [0,0,0]
 
-                  button.ui.green.basic.button Abrrir
-                  button.ui.basic.button Cerrar
+      .ui.segment.column
+        //.ui.top.attached.label Control manual
+        label Control manual
+          .ui.action
+            .ui.action.input
+              input(placeholder='Enviar comando.',ng-model='comando', type='text')
+              button.ui.blue.button(ng-click='enviarDatos(comando)') Enviar
