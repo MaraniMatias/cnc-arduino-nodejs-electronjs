@@ -73,4 +73,12 @@ function(pUSB,$http,$scope){ $scope.inputpasosmm='200';
     });
   }
 
+//######################
+
+$scope.ejeXposicion = 0.000;
+$scope.ejeYposicion = 0.000;
+$scope.ejeZposicion = 0.000;
+
+
+
 }]);

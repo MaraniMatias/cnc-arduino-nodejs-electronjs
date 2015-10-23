@@ -1,27 +1,5 @@
-extends ./layout
+extends ./menu
 block content
-  .ui.inverted.menu
-    .header.item !{titulo}
-    .active.item Link
-    a.item Link {{hola}}
-    .ui.dropdown.item(tabindex='0')
-      | Dropdown
-      i.dropdown.icon
-      .menu(tabindex='-1')
-        .item Action
-        .item Another Action
-        .item Something else here
-        .divider
-        .item Separated Link
-        .divider
-        .item One more separated link
-    .right.menu
-      .item
-        .ui.transparent.inverted.icon.input
-          i.search.icon
-          input(placeholder='Search', type='text')
-      a.item Link
-
   .ui.three.column.row.stackable.grid
     .ten.wide.column
       .ui.segment
@@ -41,6 +19,25 @@ block content
           .column
             button.ui.teal.icon.button(ng-click='updateUSB()') Actualizar
 
+
+      .ui.segment
+        .ui.one.column.grid
+          .column
+            table.ui.red.table
+              thead
+                  tr
+                    th Eje
+                    th Posición (mm)
+                tbody
+                  tr
+                    td X
+                    td {{ejeXposicion | number:3}}
+                  tr
+                    td Y
+                    td {{ejeXposicion | number:3}}
+                  tr
+                    td Z
+                    td {{ejeXposicion | number:3}}
       .ui.segment
         .ui.top.attached.label Control manual  (200 pasos -> 2.5mm)
         .ui.one.column.grid
@@ -70,7 +67,3 @@ block content
             button.ui.blue.button(ng-click='enviarDatos("[0,-100,0]")') -Y
             button.ui.yellow.button(ng-click='enviarDatos("[0,0,50]")') Z+
             button.ui.yellow.button(ng-click='enviarDatos("[0,0,-50]")') -Z
-
-              //input(placeholder='Enviar comando.', type='text')
-
-
