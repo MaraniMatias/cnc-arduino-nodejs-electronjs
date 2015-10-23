@@ -2,8 +2,12 @@ extends ./menu
 block content
   .ui.three.column.row.stackable.grid
     .ten.wide.column
-      .ui.segment
-        .column g-code
+      .ui.segment g-code
+        .column(data-ng-controller='HomeCtrl')
+          //form(name='upload', ng-submit='uploadFile()')
+          input(type='file', name='file', uploader-model='file')
+          br
+          button(ng-click='uploadFile()') Enviar
 
     .six.wide.column
       .ui.segment
@@ -87,3 +91,4 @@ block content
             button.ui.blue.button(ng-click='enviarDatos("[0,-100,0]")') -Y
             button.ui.yellow.button(ng-click='enviarDatos("[0,0,50]")') Z+
             button.ui.yellow.button(ng-click='enviarDatos("[0,0,-50]")') -Z
+

@@ -76,10 +76,52 @@ $scope.SelecArduino="Selec Arduino";
 $scope.$emit('updateUSB');
 //######################
 
-$scope.ejeXposicion = 0.000;
-$scope.ejeYposicion = 0.000;
-$scope.ejeZposicion = 0.000;
+//$scope.ejeXposicion = 0.000;
+//$scope.ejeYposicion = 0.000;
+//$scope.ejeZposicion = 0.000;
+
+}])
 
 
+.controller('HomeCtrl', ['$scope', 'upload', function ($scope, upload){
+  $scope.uploadFile = function(){
+    var file = $scope.file;
+    console.log(file);
+    upload.uploadFile(file).then(function(res){
+      console.log(res);
+    })
+  }
+}])
 
-}]);
+.directive('uploaderModel', ["$parse", function ($parse) {
+  return {
+    restrict: 'A',
+    link: function (scope, iElement, iAttrs){
+      iElement.on("change", function(e){
+        $parse(iAttrs.uploaderModel).assign(scope, iElement[0].files[0]);
+      });
+    }
+  };
+}])
+
+.service('upload', ["$http", "$q", function ($http, $q)
+{
+  this.uploadFile = function(file){
+    var deferred = $q.defer();
+    var formData = new FormData();
+    formData.append("file", file);
+    return $http.post("/cargarGCODE", formData, {
+      headers: {
+        "Content-type": undefined
+      },
+      transformRequest: angular.identity
+    })
+    .success(function(res){
+      deferred.resolve(res);
+    })
+    .error(function(msg, code){
+      deferred.reject(msg);
+    })
+    return deferred.promise;
+  }
+}])

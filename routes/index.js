@@ -1,7 +1,9 @@
 var app = module.parent.exports.app,
- serialPort = require("serialport"),
- sp = '', sendData = "", motor = {paos:200,avance:2.5},
- SerialPort = serialPort.SerialPort;
+  gc = require("interpret-gcode"),
+  fs = require('fs'),
+  serialPort = require("serialport"),
+  sp = '', sendData = "", motor = {paos:200,avance:2.5},
+  SerialPort = serialPort.SerialPort;
 
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
@@ -16,10 +18,10 @@ app.get('/', function(req, res){
 });
 
 app.post('/comando', function (req, res) {
-  console.log(req.body.comando);
+  //console.log(req.body.comando);
   sp.write(req.body.comando+"\n");
   sp.on('data', function(data) {
-    console.log("comando: %s",data);
+    //console.log("comando: %s",data);
     res.json({status:data});
   });
 });
@@ -36,11 +38,41 @@ app.post('/conect', function (req, res) {
     baudrate: 9600//,dataBits: 8,parity: 'none',stopBits: 1,flowControl: false
   });
   sp.on("open", function () {
-    console.log('Comunicacion serial abierta desde conect');
+    //console.log('Comunicacion serial abierta desde conect');
   });
   res.json({status:req.body.comUSB});
 });
 
+
+app.post('/cargarGCODE', function (req, res) {
+  var tmp_path = req.files.file.path;
+  //var nombreArchivo = req.files.file.name;
+  //var target_path='./public/files/'+nombreArchivo;
+  var data = fs.readFileSync(tmp_path);
+  var fileContent = data.toString();
+  var history = gc(fileContent);
+
+
+  var indexLinea = 0;
+  console.log("Cordenadas: %s",history[indexLinea].x);
+  sp.write(history[indexLinea].x+"\n");
+  sp.on('data', function(data){
+    console.log('\t Arduino envia "%s"',data);
+    if(indexLinea < history.length) {
+      console.log("Cordenadas: %s",history[indexLinea].x);
+      sp.write(history[indexLinea].x+"\n", function(err, results) {
+        if(err){console.log('err ' + err);}
+      });
+      indexLinea++
+    }
+  });
+
+
+});
+
+
+
+/*
 //serialListener();
 app.io.on('connection', function (socket) {
   console.log("user connected");
@@ -58,8 +90,7 @@ app.io.on('connection', function (socket) {
 
 
 // Listen to serial port
-function serialListener()
-{
+function serialListener(){
     var receivedData = "";
     sp = new SerialPort(portName, {
         baudrate: 9600,
@@ -86,3 +117,4 @@ function serialListener()
 
     });
 }
+*/

@@ -34,28 +34,32 @@ var sp = new SerialPort(portName, {
   //stopBits: 1,
   //flowControl: false
 });
+serialListener(sp,history);
 
+ function serialListener(sp,history){
+  var indexLinea = 0;
+  sp.on("open", function () {
+    //console.log('Conexion serial abierta.');
+    sp.write(history[indexLinea].x+"\n", function(err, results) {
+     console.log("Cordenadas: %s",history[indexLinea].x);
+     if(err){console.log('err ' + err);}
+      //console.log('results ' + results);
+    });
+    sp.on('data', function(data){
+      console.log('\t Arduino envia "%s"',data);
+      if(indexLinea < history.length) {
+        console.log("Cordenadas: %s",history[indexLinea].x);
+        sp.write(history[indexLinea].x+"\n", function(err, results) {
+          if(err){console.log('err ' + err);}
+          //console.log('results ' + results);
+        });
+        indexLinea++
+      }else{
+        sp.close();
+      };
 
-var indexLinea = 0;
-sp.on("open", function () {
-  //console.log('Conexion serial abierta.');
-  sp.write(history[indexLinea].x+"\n", function(err, results) {
-   console.log("Cordenadas: %s",history[indexLinea].x);
-   if(err){console.log('err ' + err);}
-    //console.log('results ' + results);
+    });
   });
-  sp.on('data', function(data){
-    console.log('\t Arduino envia "%s"',data);
-    if(indexLinea < history.length) {
-      console.log("Cordenadas: %s",history[indexLinea].x);
-      sp.write(history[indexLinea].x+"\n", function(err, results) {
-        if(err){console.log('err ' + err);}
-        //console.log('results ' + results);
-      });
-      indexLinea++
-    }else{
-      sp.close();
-    };
+}
 
-  });
-});
+
