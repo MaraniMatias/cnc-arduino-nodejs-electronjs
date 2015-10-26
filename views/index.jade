@@ -1,94 +1,101 @@
 extends ./menu
 block content
-  .ui.three.column.row.stackable.grid
-    .ten.wide.column
-      .ui.segment g-code
-        .column(data-ng-controller='HomeCtrl')
-          //form(name='upload', ng-submit='uploadFile()')
-          input(type='file', name='file', uploader-model='file')
-          br
-          button(ng-click='uploadFile()') Enviar
+  .ui.container
+    .ui.tow.column.row.stackable.grid
+      .ten.wide.column
+        .ui.segment g-code
+          .column
 
-    .six.wide.column
-      .ui.segment
-        .ui.top.red.attached.label  GCode
-        .column
-          .ui.two.column.grid
-            .column
-              .ui.icon.buttons.basic
-                button.ui.button
-                    i.upload.icon
-                  button.ui.button
+      .five.wide.column(data-ng-controller='HomeCtrl')
+        .ui.segment
+          .ui.top.red.attached.label  GCode
+          .column
+            .ui.one.column.grid
+              .column.center.aligned
+                .ui.icon.buttons
+                  button.ui.button(ng-class='dplay' ng-click='uploadFile()')
                     i.play.icon
-                  button.ui.button
+                  button.ui.button(ng-class='dpause')
                     i.pause.icon
-                  button.ui.button
+                  button.ui.button(ng-class='dstop')
                     i.stop.icon
-                  button.ui.button
+                  button.ui.button(ng-class='dtrash')
                     i.trash.icon
+                  span.ui.button.btn-file Archivo
+                    input(type='file' uploader-model='file' onchange="angular.element(this).scope().setFile(this)")
+            .ui.one.column.grid
+                table.ui.very.basic.table
+                  thead
+                    tbody
+                      tr
+                        td Archivo:
+                        td {{codeArchivo.name}}
+                      tr
+                        td Ejecutado:
+                        td {{codeEjecutado | number}}
+                      tr
+                        td Total:
+                        td {{codeTotal | number}}
+                      tr
+                        td Hora de inicio
+                        td {{horaInicio | date:'HH:mm'}}
+
+        //.ui.segment
+          .ui.one.column.gr          .column
+              table.ui.red.table
+                thead
+                    tr
+                      th Eje
+                      th Posición (mm)
+                  tbody
+                    tr
+                      td X
+                      td {{ejeXposicion | number:3}}
+                    tr
+                      td Y
+                      td {{ejeXposicion | number:3}}
+                    tr
+                      td Z
+                      td {{ejeXposicion | number:3}}
+        .ui.segment
+          .ui.top.attached.green.label Control manual  (200 pasos -> 2.5mm)
+          .ui.one.column.grid
             .column
-              p Cargando
+              .ui.action.input.fluid
+                input(placeholder='Enviar comando.',ng-model='comando', type='text')
+                button.ui.primary.button(type="submit",ng-click='enviarDatos(comando)') Enviar
 
           .ui.one.column.grid
             .column
-              table.ui.red.table
-                thead
-                  tbody
-                    tr
-                      td Ejecutado:
-                      td {{codeEjecutado | number}}
-                    tr
-                      td Total:
-                      td {{codeTotal | number:3}}
-                    tr
-                      td Hora de inicio
-                      td {{horaInicio | date}}
+              .ui.right.action.left.icon.input.fluid
+                  //i.search.icon
+                  input(ng-model='inputpasosmm', placeholder='0', type='text')
+                  .ui.basic.floating.dropdown.button
+                    .text pasos
+                    i.dropdown.icon
+                    .menu
+                      .item(ng-click='setmmpass("mm")') mm
+                      .item(ng-click='setmmpass("pasos")') pasos
 
-      //.ui.segment
-        .ui.one.column.grid
-          .column
-            table.ui.red.table
-              thead
-                  tr
-                    th Eje
-                    th Posición (mm)
-                tbody
-                  tr
-                    td X
-                    td {{ejeXposicion | number:3}}
-                  tr
-                    td Y
-                    td {{ejeXposicion | number:3}}
-                  tr
-                    td Z
-                    td {{ejeXposicion | number:3}}
-      .ui.segment
-        .ui.top.attached.green.label Control manual  (200 pasos -> 2.5mm)
-        .ui.one.column.grid
-          .column
-            .ui.action.input.fluid
-              input(placeholder='Enviar comando.',ng-model='comando', type='text')
-              button.ui.blue.button(type="submit",ng-click='enviarDatos(comando)') Enviar
-
-        .ui.one.column.grid
-          .column
-            .ui.right.labeled.input.fluid
-              input(ng-model='inputpasosmm', placeholder='0', type='text')
-              .ui.dropdown.label
-                .text pasos
-                i.dropdown.icon
-                .menu
-                  .item(ng-click='setmmpass("mm")') mm
-                  .item(ng-click='setmmpass("pasos")') pasos
-              button.ui.red.basic.button(ng-click='moverOrigen()') [0,0,0]
-
-
-        .ui.one.column.grid.center.aligned
-          .column
-            button.ui.red.button(ng-click='moverManual(inputpasosmm,"X","+")') X+
-            button.ui.red.button(ng-click='moverManual(inputpasosmm,"X","-")') -X
-            button.ui.blue.button(ng-click='enviarDatos("[0,100,0]")') Y+
-            button.ui.blue.button(ng-click='enviarDatos("[0,-100,0]")') -Y
-            button.ui.yellow.button(ng-click='enviarDatos("[0,0,50]")') Z+
-            button.ui.yellow.button(ng-click='enviarDatos("[0,0,-50]")') -Z
+          .ui.one.column.grid.center.aligned
+              .row
+                .ui.four.column.grid
+                  .row
+                    .column
+                      button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","+")') X+
+                    .column
+                      button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","-")') -X
+                    .column
+                      button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","-")') -Y
+                    .column
+                      button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","+")') Y+
+              .row
+                .ui.three.column.grid
+                  .row
+                    .column
+                      button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","+")') Z+
+                    .column
+                      button.ui.secondary.tiny.button(ng-click='moverOrigen()') [0,0,0]
+                    .column
+                      button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","-")') -Z
 

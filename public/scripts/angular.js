@@ -1,7 +1,25 @@
 app.controller('TodoListController',['pUSB','$http','$scope',
-function(pUSB,$http,$scope){ $scope.inputpasosmm='200';
-  var varpasosmm = 'pasos';$scope.setmmpass=function(valor){varpasosmm=valor;}
-$scope.SelecArduino="Selec Arduino";
+function(pUSB,$http,$scope){
+  $scope.inputpasosmm='200';
+  var varpasosmm = 'pasos';
+  $scope.setmmpass=function(valor){varpasosmm=valor;}
+  $scope.SelecArduino="Selec Arduino";
+
+
+  $scope.codeArchivo = '';
+  $scope.codeEjecutado=0;
+  $scope.codeTotal=0;
+  $scope.horaInicio=Date.now();
+
+  $scope.setFile = function(element) {
+    $scope.$apply(function($scope) {
+      $scope.codeArchivo  = element.files[0];
+      // llamar a funciones para acomodar lineas totales
+      // y indacar a node.js el archvio estilo a la funcion udatefile
+    });
+  };
+
+
 
   $scope.moverManual=function(nume,eje,sentido){
     var str = undefined;
@@ -86,9 +104,8 @@ $scope.$emit('updateUSB');
 .controller('HomeCtrl', ['$scope', 'upload', function ($scope, upload){
   $scope.uploadFile = function(){
     var file = $scope.file;
-    console.log(file);
     upload.uploadFile(file).then(function(res){
-      console.log(res);
+      console.log(res.data);
     })
   }
 }])
@@ -104,8 +121,7 @@ $scope.$emit('updateUSB');
   };
 }])
 
-.service('upload', ["$http", "$q", function ($http, $q)
-{
+.service('upload', ["$http", "$q", function ($http, $q){
   this.uploadFile = function(file){
     var deferred = $q.defer();
     var formData = new FormData();

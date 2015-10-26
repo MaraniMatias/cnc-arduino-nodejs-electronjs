@@ -1,4 +1,5 @@
 var app = module.parent.exports.app,
+  async    = require("async"),
   gc = require("interpret-gcode"),
   fs = require('fs'),
   serialPort = require("serialport"),
@@ -8,20 +9,20 @@ var app = module.parent.exports.app,
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
   serialPort.list(function (err, ports){
-    res.json(ports);
+    if(ports==undefined){
+     res.json([{manufacturer:"Sin Arduino",comName:''}]);
+    }else{res.json(ports);}
   });
 });
 
 /* GET home page. */
 app.get('/', function(req, res){
-  res.render('index.jade', {titulo: "Arduino",sp:sp.path});
+  res.render('index.jade', {titulo: "CNC Mar",sp:sp.path});
 });
 
 app.post('/comando', function (req, res) {
-  //console.log(req.body.comando);
   sp.write(req.body.comando+"\n");
   sp.on('data', function(data) {
-    //console.log("comando: %s",data);
     res.json({status:data});
   });
 });
@@ -34,12 +35,10 @@ app.post('/moverOrigen', function (req, res) {
 });
 
 app.post('/conect', function (req, res) {
-  sp = new SerialPort(req.body.comUSB, {
-    baudrate: 9600//,dataBits: 8,parity: 'none',stopBits: 1,flowControl: false
-  });
-  sp.on("open", function () {
-    //console.log('Comunicacion serial abierta desde conect');
-  });
+  if(req.body.comUSB!=''){
+    sp = new SerialPort(req.body.comUSB/*,{dataBits: 8,parity: 'none',stopBits: 1,flowControl: false}*/);
+    sp.on("open", function () {/*console.log('GET: /conect -> open');*/});
+  }
   res.json({status:req.body.comUSB});
 });
 
@@ -51,8 +50,16 @@ app.post('/cargarGCODE', function (req, res) {
   var data = fs.readFileSync(tmp_path);
   var fileContent = data.toString();
   var history = gc(fileContent);
+  var gcode = [];
 
+  async.mapSeries(history, function(doc,done){
+    gcode.push({ejes:doc.x,code:doc.code});
+    done();
+  },function(){
+    res.json(gcode);
+  });
 
+/*
   var indexLinea = 0;
   console.log("Cordenadas: %s",history[indexLinea].x);
   sp.write(history[indexLinea].x+"\n");
@@ -66,7 +73,7 @@ app.post('/cargarGCODE', function (req, res) {
       indexLinea++
     }
   });
-
+*/
 
 });
 
@@ -118,3 +125,7 @@ function serialListener(){
     });
 }
 */
+
+
+
+//app.get('/chart', function(req, res){  res.render('chart.jade', {titulo: "Arduino"});});
