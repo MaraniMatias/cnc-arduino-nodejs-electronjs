@@ -141,3 +141,33 @@ $scope.$emit('updateUSB');
     return deferred.promise;
   }
 }])
+
+io.emit('sign up',$('#from').val());
+$('#from').on('change',function(){
+  console.log('sign up from '+ $('#from').val());
+  io.emit('sign up',$('#from').val());
+})
+
+$('form').submit(function(){
+  var msg={
+    from:$('#from').val(),
+    to:$('#to').val(),
+    txt:$('#m').val(),
+    time:new Date()
+  };
+  console.log('send message: ' + msg.txt + ' from ' + msg.from + ' to ' + msg.to);
+  $('#messages').append($('<li>').text($('#m').val() + ' by me @ '+ new Date()));
+
+  comment = {msj:$('#m').val(),by : 'me',time:new Date()};
+  console.log(comment);
+
+  io.emit('chat message', msg);
+  $('#m').val('');
+  return false;
+});
+io.on('chat message', function(msg){
+  console.log('Receive message: ' + msg.txt + ' from ' + msg.from + ' to ' + msg.to);
+  if(msg.to==$('#from').val()) {
+    $('#messages').append($('<li>').text(msg.txt + ' by ' + msg.from + ' @: ' +msg.time));
+  }
+});

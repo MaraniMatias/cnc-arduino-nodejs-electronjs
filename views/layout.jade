@@ -12,11 +12,12 @@ html(lang='es', ng-app="todoApp" )
     script(src='/components/semantic-ui/dist/semantic.js')
     script(src='/components/angular/angular.js')
     script(src='/components/angular/angular.js')
-
+    script(src='/socket.io/socket.io.js')
 
   body(ng-controller="TodoListController")
     block menu
     script(type='text/javascript').
+      var io = io.connect()
       $('.ui.dropdown').dropdown();
       var app = angular.module('todoApp', [])
                     .value('pUSB','')

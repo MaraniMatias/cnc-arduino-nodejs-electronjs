@@ -3,8 +3,30 @@ block content
   .ui.container
     .ui.tow.column.row.stackable.grid
       .ten.wide.column
+        .ui.message(ng-click="closeAlert($index)" ng-repeat="alert in alerts" class="{{alert.type}}")
+          i.close.icon(ng-click="closeAlert($index)")
+          .header {{alert.header}}
+          div {{alert.msg}}
+          ul.list(ng-show="{{alert.list}}")
+            li(ng-repeat="item in alert.list") {{item}}
         .ui.segment g-code
           .column
+            br
+            form
+              div From:
+                select#from
+                  option(value="Tom") Tom
+                  option(value="Jerry") Jerry
+                  option(value="Qwerty") Qwerty
+              div To:
+                select#to
+                  option(value="Jerry") Jerry
+                  option(value="Tom") Tom
+                  option(value="Qwerty") Qwerty
+              ul#messages
+              form(action="")
+                input#m( autocomplete="off")
+                button Send
 
       .five.wide.column(data-ng-controller='HomeCtrl')
         .ui.segment
