@@ -1,10 +1,11 @@
-app.controller('TodoListController',['pUSB','$http','$scope',
-function(pUSB,$http,$scope){
+app.controller('TodoListController',['addMessage','pUSB','$http','$scope',
+function(addMessage,pUSB,$http,$scope){
   $scope.inputpasosmm='200';
   var varpasosmm = 'pasos';
   $scope.setmmpass=function(valor){varpasosmm=valor;}
   $scope.SelecArduino="Selec Arduino";
 
+addMessage('menssaje','titulo')
 
   $scope.codeArchivo = '';
   $scope.codeEjecutado=0;
@@ -99,7 +100,28 @@ $scope.$emit('updateUSB');
 //$scope.ejeZposicion = 0.000;
 
 }])
-
+.controller("message",['alerts','addMessage','$scope','$interval', '$http',
+              function(alerts,addMessage,$scope,$interval,$http){
+// # message alert
+  $scope.alerts=alerts;
+  $scope.addAlert = function(type,msg,header,list) {
+    addMessage(type,msg,header,list);
+  };
+  $scope.closeAlert = function(index) {
+    $scope.alerts.splice(index, 1);
+  };
+}])
+// # message alert //ver getuikit.com/docs/notify.html
+.factory('addMessage', ['alerts',function(alerts) {
+  return function(msg,header,type) {
+    switch(type){
+      case 1: type='info';break;case 2: type='success';break;
+      case 3: type='warning';break;case 4: type='negative';break;
+      case 5: type='black';break;default:type='';
+    }
+    alerts.push({type:type,header:header, msg:msg});
+  };
+}])
 
 .controller('HomeCtrl', ['$scope', 'upload', function ($scope, upload){
   $scope.uploadFile = function(){
