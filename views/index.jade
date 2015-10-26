@@ -14,12 +14,12 @@ block content
           .ui.one.column.grid
             .row
               .column.ui.segment
-                .ui.top.attached.progress.indicating(data-percent='28')
-                  .bar(style='transition-duration: 300ms; width: 28%;')
+                .ui.top.attached.progress.indicating(data-percent='{{progress}}')
+                  .bar(style='transition-duration: 300ms; width: {{progress}}%;')
                 .ui.one.column.grid
                   .ui.raised
                     .ui.red.ribbon.label Intepretando GCode
-                    span Completado: 56%
+                    span Completado: {{progress}}%
 
                 .ui.one.column.grid
                   .column
@@ -39,20 +39,20 @@ block content
                         input#m( autocomplete="off")
                         button Send
 
-                .ui.bottom.attached.progress.indicating(data-percent='66')
-                  .bar(style='transition-duration: 300ms; width: 66%;')
+                .ui.bottom.attached.progress.indicating(data-percent='{{progress}}')
+                  .bar(style='transition-duration: 300ms; width: {{progress}}%;')
 
       .six.wide.column(data-ng-controller='HomeCtrl')
 
           .ui.one.column.grid
             .row
               .column.ui.segment
-                .ui.top.attached.progress.indicating(data-percent='28')
-                  .bar(style='transition-duration: 300ms; width: 28%;')
+                .ui.top.attached.progress.indicating(data-percent='{{progress}}')
+                  .bar(style='transition-duration: 300ms; width: {{progress}}%;')
                 .ui.one.column.grid
                   .ui.raised
                     .ui.orange.ribbon.label Archivo GCode
-                    span Completado: 56%
+                    span {{codeArchivo.name}}
 
                 .ui.one.column.grid
                   .column.center.aligned
@@ -72,9 +72,6 @@ block content
                     table.ui.very.basic.table
                       thead
                         tbody
-                          tr
-                            td Archivo:
-                            td {{codeArchivo.name}}
                           tr
                             td Ejecutado:
                             td {{codeEjecutado | number}}

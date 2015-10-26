@@ -1,13 +1,14 @@
-app.controller('TodoListController',['addMessage','pUSB','$http','$scope',
-function(addMessage,pUSB,$http,$scope){
+app.controller('TodoListController',['progress','addMessage','pUSB','$http','$scope',
+function(progress,addMessage,pUSB,$http,$scope){
   $scope.inputpasosmm='200';
   var varpasosmm = 'pasos';
   $scope.setmmpass=function(valor){varpasosmm=valor;}
   $scope.SelecArduino="Selec Arduino";
+  $scope.progress = progress;
 
-addMessage('menssaje','titulo')
+  addMessage('menssaje','titulo',1)
 
-  $scope.codeArchivo = '';
+  $scope.codeArchivo = {name:'Sin Archivo'};
   $scope.codeEjecutado=0;
   $scope.codeTotal=0;
   $scope.horaInicio=Date.now();
