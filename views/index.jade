@@ -47,11 +47,11 @@ block content
                     .ui.icon.buttons
                       button.ui.button(ng-class='btnplay' ng-click='comenzar()')
                         i.play.icon
-                      button.ui.button(ng-class='btnpause')
+                      button.ui.button(ng-class='btnpause' ng-click='pausa()')
                         i.pause.icon
-                      button.ui.button(ng-class='btnstop')
+                      button.ui.button(ng-class='btnstop' ng-click='parar()')
                         i.stop.icon
-                      button.ui.button(ng-class='btntrash')
+                      button.ui.button(ng-class='btntrash' ng-click='borrar()')
                         i.trash.icon
                       span.ui.button.btn-file(ng-class='btnupdate') Archivo
                         input(type='file' uploader-model='file'  onchange="angular.element(this).scope().setFile(this)")

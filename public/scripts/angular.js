@@ -1,14 +1,27 @@
 app.controller('main',['addMessage','pUSB','$http','$scope','upload',
 function(addMessage,pUSB,$http,$scope,upload){
+  $scope.SelecArduino="Selec Arduino";
+
   $scope.inputpasosmm='200';
   var varpasosmm = 'pasos';
   $scope.setmmpass=function(valor){varpasosmm=valor;}
-  $scope.SelecArduino="Selec Arduino";
 
-  $scope.btnplay='disabled';
-  $scope.btnpause='disabled';
-  $scope.btnstop='disabled';
-  $scope.btntrash='disabled';
+  btnDisabled(false,true)
+  function btnDisabled(b,v) {
+    if(true==b && true==v){
+      $scope.btnplay   = '';
+      $scope.btnpause  = 'disabled';
+      $scope.btnstop   = '';
+      $scope.btntrash  = 'disabled';
+      $scope.btnupdate = 'disabled';
+    }else{
+      $scope.btnplay   = (v||b)?'disabled':'';
+      $scope.btnpause  = !b?'disabled':'';
+      $scope.btnstop   = !b?'disabled':'';
+      $scope.btntrash  = (v||b)?'disabled':'';
+      $scope.btnupdate = !v?'disabled':'';
+    }
+  }
 
   $scope.codeArchivo  = {name:'Sin Archivo'};
   $scope.horaInicio   = '--:--';
@@ -17,17 +30,13 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   function progreso(line) {
     $scope.codeEjecutado = line+1;
-    //$scope.progress = ((line+1)*100)/$scope.codeTotal;
     return ((line+1)*100)/$scope.codeTotal;
   }
 
   $scope.setFile = function(element) {
     $scope.$apply(function($scope) {
-      $scope.btnplay='';
-      $scope.btntrash='';
-      $scope.btnupdate='disabled';
+      btnDisabled(false,false)
       $scope.codeArchivo  = element.files[0];
-        //var file = $scope.file;
         upload.uploadFile(element.files[0]).then(function(res){
           $scope.codeTotal  = res.data.lineas;
         })
@@ -106,19 +115,26 @@ function(addMessage,pUSB,$http,$scope,upload){
   });
   $scope.$emit('updateUSB');
 //######################
-
+  $scope.parar = function(){
+    btnDisabled(false,false)
+    //upload.parar();
+  }
+  $scope.pausa = function(){
+    btnDisabled(false,false)
+    //upload.parar();
+  }
+  $scope.borrar = function(){
+    btnDisabled(false,true);
+    //upload.borrar();
+  }
   //$scope.ejeXposicion = 0.000;
   //$scope.ejeYposicion = 0.000;
   //$scope.ejeZposicion = 0.000;
 
   $scope.comenzar = function(){
     $scope.horaInicio = Date.now();
-    $scope.btnplay='disabled';
-    $scope.btnpause='';
-    $scope.btnstop='';
-    upload.comenzar().then(function(res){
-      console.log(res);
-    })
+    btnDisabled(true,false);
+    upload.comenzar();
   }
 
   io.emit('connection');
