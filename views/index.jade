@@ -9,7 +9,7 @@ block content
                 .ui.message(ng-click="closeAlert($index)" ng-repeat="alert in alerts" class="{{alert.type}}")
                   //i.close.icon(ng-click="closeAlert($index)")
                   .header {{alert.header}}
-                  {{alert.msg}}
+                  div {{alert.msg}}
 
           .ui.one.column.grid
             .row
@@ -23,6 +23,26 @@ block content
 
                 .ui.one.column.grid
                   .column
+                    table.ui.very.basic.table.compact
+                      thead
+                        tr
+                          th Ejes
+                          th G-Code
+                          th Repuesta
+                      tbody#tablagcode
+                        tr
+                          td [ 0, 0, 0 ]
+                          td G1 X0 Y0 Z0 F100(Penetrate)
+                          td fin
+                        tr
+                          td [ -200, 0, 0 ]
+                          td G1 X-200 Y0 Z0
+                          td fin
+                        tr
+                          td [ 0, 200, 0 ]
+                          td G1 X0 Y200 Z0
+                          td
+
                     form
                       div From:
                         select#from
@@ -42,7 +62,7 @@ block content
                 .ui.bottom.attached.progress.indicating(data-percent='{{progress}}')
                   .bar(style='transition-duration: 300ms; width: {{progress}}%;')
 
-      .six.wide.column(data-ng-controller='HomeCtrl')
+      .six.wide.column
 
           .ui.one.column.grid
             .row
@@ -57,16 +77,16 @@ block content
                 .ui.one.column.grid
                   .column.center.aligned
                     .ui.icon.buttons
-                      button.ui.button(ng-class='dplay' ng-click='uploadFile()')
+                      button.ui.button(ng-class='btnplay' ng-click='comenzar()')
                         i.play.icon
-                      button.ui.button(ng-class='dpause')
+                      button.ui.button(ng-class='btnpause')
                         i.pause.icon
-                      button.ui.button(ng-class='dstop')
+                      button.ui.button(ng-class='btnstop')
                         i.stop.icon
-                      button.ui.button(ng-class='dtrash')
+                      button.ui.button(ng-class='btntrash')
                         i.trash.icon
-                      span.ui.button.btn-file Archivo
-                        input(type='file' uploader-model='file' onchange="angular.element(this).scope().setFile(this)")
+                      span.ui.button.btn-file(ng-class='btnupdate') Archivo
+                        input(type='file' uploader-model='file'  onchange="angular.element(this).scope().setFile(this)")
 
                 .ui.one.column.grid
                     table.ui.very.basic.table

@@ -3,7 +3,8 @@ var app = module.parent.exports.app,
   gc = require("interpret-gcode"),
   fs = require('fs'),
   serialPort = require("serialport"),
-  sp = '', sendData = "", motor = {paos:200,avance:2.5},
+  sp = '', sendData = "",  gcode='',
+  motor = {paos:200,avance:2.5},
   SerialPort = serialPort.SerialPort;
 
 /* GET listado de puertos. */
@@ -42,26 +43,12 @@ app.post('/conect', function (req, res) {
   res.json({status:req.body.comUSB});
 });
 
+app.get('/comenzar', function(req, res){
+  var indexLinea = 0;
+  console.log("Cordenadas: %s",gcode[indexLinea].ejes);
 
-app.post('/cargarGCODE', function (req, res) {
-  var tmp_path = req.files.file.path;
-  //var nombreArchivo = req.files.file.name;
-  //var target_path='./public/files/'+nombreArchivo;
-  var data = fs.readFileSync(tmp_path);
-  var fileContent = data.toString();
-  var history = gc(fileContent);
-  var gcode = [];
-
-  async.mapSeries(history, function(doc,done){
-    gcode.push({ejes:doc.x,code:doc.code});
-    done();
-  },function(){
-    res.json(gcode);
-  });
 
 /*
-  var indexLinea = 0;
-  console.log("Cordenadas: %s",history[indexLinea].x);
   sp.write(history[indexLinea].x+"\n");
   sp.on('data', function(data){
     console.log('\t Arduino envia "%s"',data);
@@ -75,6 +62,25 @@ app.post('/cargarGCODE', function (req, res) {
   });
 */
 
+  res.json({rta:'ok'});
+});
+
+app.post('/cargar', function (req, res) {
+  var tmp_path = req.files.file.path;
+  //var nombreArchivo = req.files.file.name;
+  //var target_path='./public/files/'+nombreArchivo;
+  var data = fs.readFileSync(tmp_path);
+  var fileContent = data.toString();
+  var history = gc(fileContent);
+  gcode = [];
+
+  async.mapSeries(history, function(doc,done){
+    gcode.push({ejes:doc.x,code:doc.code});
+    done();
+  },function(){
+    console.log(gcode);
+    res.json({lineas:gcode.length});
+  });
 });
 
 
@@ -140,12 +146,12 @@ var client=function(username,socket){
 
 
 app.io.on('connection',function(socket){
-
   //console.log('a user connected.');
-   socket.on('disconnect',function(){
+  socket.on('disconnect',function(){
     console.log('user disconnected');
     removeSocket(socket);
-   });
+  });
+
   socket.on('chat message',function(msg){
     console.log('from socket' +socket.id);
     console.log('message: ' + msg.txt + ' from ' + msg.from + ' to ' + msg.to);

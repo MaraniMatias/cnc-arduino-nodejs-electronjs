@@ -1,23 +1,34 @@
-app.controller('TodoListController',['progress','addMessage','pUSB','$http','$scope',
-function(progress,addMessage,pUSB,$http,$scope){
+app.controller('TodoListController',['addMessage','pUSB','$http','$scope','upload',
+function(addMessage,pUSB,$http,$scope,upload){
   $scope.inputpasosmm='200';
   var varpasosmm = 'pasos';
   $scope.setmmpass=function(valor){varpasosmm=valor;}
   $scope.SelecArduino="Selec Arduino";
-  $scope.progress = progress;
 
-  addMessage('menssaje','titulo',1)
+  $scope.btnplay='disabled';
+  $scope.btnpause='disabled';
+  $scope.btnstop='disabled';
+  $scope.btntrash='disabled';
 
-  $scope.codeArchivo = {name:'Sin Archivo'};
-  $scope.codeEjecutado=0;
-  $scope.codeTotal=0;
-  $scope.horaInicio=Date.now();
+  //addMessage('menssaje','titulo',1)
+
+  $scope.codeArchivo  = {name:'Sin Archivo'};
+  $scope.horaInicio   = '--:--';
+  $scope.codeTotal    = 0;
+
+  $scope.codeEjecutado= 0;
+  $scope.progress     = 0;
 
   $scope.setFile = function(element) {
     $scope.$apply(function($scope) {
+      $scope.btnplay='';
+      $scope.btntrash='';
+      $scope.btnupdate='disabled';
       $scope.codeArchivo  = element.files[0];
-      // llamar a funciones para acomodar lineas totales
-      // y indacar a node.js el archvio estilo a la funcion udatefile
+        //var file = $scope.file;
+        upload.uploadFile(element.files[0]).then(function(res){
+          $scope.codeTotal  = res.data.lineas;
+        })
     });
   };
 
@@ -96,9 +107,19 @@ function(progress,addMessage,pUSB,$http,$scope){
 $scope.$emit('updateUSB');
 //######################
 
-//$scope.ejeXposicion = 0.000;
-//$scope.ejeYposicion = 0.000;
-//$scope.ejeZposicion = 0.000;
+  //$scope.ejeXposicion = 0.000;
+  //$scope.ejeYposicion = 0.000;
+  //$scope.ejeZposicion = 0.000;
+
+  $scope.comenzar = function(){
+    $scope.horaInicio = Date.now();
+    $scope.btnplay='disabled';
+    $scope.btnpause='';
+    $scope.btnstop='';
+    upload.comenzar().then(function(res){
+      console.log(res);
+    })
+  }
 
 }])
 .controller("message",['alerts','addMessage','$scope','$interval', '$http',
@@ -124,15 +145,6 @@ $scope.$emit('updateUSB');
   };
 }])
 
-.controller('HomeCtrl', ['$scope', 'upload', function ($scope, upload){
-  $scope.uploadFile = function(){
-    var file = $scope.file;
-    upload.uploadFile(file).then(function(res){
-      console.log(res.data);
-    })
-  }
-}])
-
 .directive('uploaderModel', ["$parse", function ($parse) {
   return {
     restrict: 'A',
@@ -145,22 +157,25 @@ $scope.$emit('updateUSB');
 }])
 
 .service('upload', ["$http", "$q", function ($http, $q){
+  this.comenzar = function(){
+    var deferred = $q.defer();
+    return $http.get("/comenzar")
+    .success(function(res){deferred.resolve(res);})
+    .error(function(msg, code){deferred.reject(msg);})
+    return deferred.promise;
+  }
   this.uploadFile = function(file){
     var deferred = $q.defer();
     var formData = new FormData();
     formData.append("file", file);
-    return $http.post("/cargarGCODE", formData, {
+    return $http.post("/cargar", formData, {
       headers: {
         "Content-type": undefined
       },
       transformRequest: angular.identity
     })
-    .success(function(res){
-      deferred.resolve(res);
-    })
-    .error(function(msg, code){
-      deferred.reject(msg);
-    })
+    .success(function(res){deferred.resolve(res);})
+    .error(function(msg, code){deferred.reject(msg);})
     return deferred.promise;
   }
 }])
@@ -190,7 +205,13 @@ $('form').submit(function(){
 });
 io.on('chat message', function(msg){
   console.log('Receive message: ' + msg.txt + ' from ' + msg.from + ' to ' + msg.to);
-  if(msg.to==$('#from').val()) {
+  //if(msg.to==$('#from').val()) {
     $('#messages').append($('<li>').text(msg.txt + ' by ' + msg.from + ' @: ' +msg.time));
-  }
+    $('#tablagcode').append(
+      $('<tr>')
+        .append($('<td>').text(msg.txt))
+        .append($('<td>').text(msg.from))
+        .append($('<td>').text(msg.time))
+      );
+  //}
 });
