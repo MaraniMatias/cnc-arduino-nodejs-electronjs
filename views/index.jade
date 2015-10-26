@@ -26,38 +26,13 @@ block content
                     table.ui.very.basic.table.compact
                       thead
                         tr
-                          th Ejes
+                          th.collapsing linea
+                          th.collapsing X
+                          th.collapsing Y
+                          th.collapsing Z
                           th G-Code
                           th Repuesta
                       tbody#tablagcode
-                        tr
-                          td [ 0, 0, 0 ]
-                          td G1 X0 Y0 Z0 F100(Penetrate)
-                          td fin
-                        tr
-                          td [ -200, 0, 0 ]
-                          td G1 X-200 Y0 Z0
-                          td fin
-                        tr
-                          td [ 0, 200, 0 ]
-                          td G1 X0 Y200 Z0
-                          td
-
-                    form
-                      div From:
-                        select#from
-                          option(value="Tom") Tom
-                          option(value="Jerry") Jerry
-                          option(value="Qwerty") Qwerty
-                      div To:
-                        select#to
-                          option(value="Jerry") Jerry
-                          option(value="Tom") Tom
-                          option(value="Qwerty") Qwerty
-                      ul#messages
-                      form(action="")
-                        input#m( autocomplete="off")
-                        button Send
 
                 .ui.bottom.attached.progress.indicating(data-percent='{{progress}}')
                   .bar(style='transition-duration: 300ms; width: {{progress}}%;')

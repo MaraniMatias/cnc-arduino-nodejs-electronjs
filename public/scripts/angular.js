@@ -1,5 +1,6 @@
 app.controller('TodoListController',['addMessage','pUSB','$http','$scope','upload',
 function(addMessage,pUSB,$http,$scope,upload){
+
   $scope.inputpasosmm='200';
   var varpasosmm = 'pasos';
   $scope.setmmpass=function(valor){varpasosmm=valor;}
@@ -10,14 +11,14 @@ function(addMessage,pUSB,$http,$scope,upload){
   $scope.btnstop='disabled';
   $scope.btntrash='disabled';
 
-  //addMessage('menssaje','titulo',1)
-
   $scope.codeArchivo  = {name:'Sin Archivo'};
   $scope.horaInicio   = '--:--';
   $scope.codeTotal    = 0;
 
   $scope.codeEjecutado= 0;
   $scope.progress     = 0;
+
+
 
   $scope.setFile = function(element) {
     $scope.$apply(function($scope) {
@@ -31,8 +32,6 @@ function(addMessage,pUSB,$http,$scope,upload){
         })
     });
   };
-
-
 
   $scope.moverManual=function(nume,eje,sentido){
     var str = undefined;
@@ -104,7 +103,7 @@ function(addMessage,pUSB,$http,$scope,upload){
       }
     });
   });
-$scope.$emit('updateUSB');
+  $scope.$emit('updateUSB');
 //######################
 
   //$scope.ejeXposicion = 0.000;
@@ -121,19 +120,27 @@ $scope.$emit('updateUSB');
     })
   }
 
+  io.emit('connection');
+  io.on('lineaGCode', function (data) {
+    $('#tablagcode').append(
+      $('<tr>')
+        .append($('<td>').text(data.nro))
+        .append($('<td>').text(data.ejes[0]))
+        .append($('<td>').text(data.ejes[1]))
+        .append($('<td>').text(data.ejes[2]))
+        .append($('<td>').text(data.code))
+        .append($('<td>').text(data.rta))
+      );
+  });
+
 }])
-.controller("message",['alerts','addMessage','$scope','$interval', '$http',
-              function(alerts,addMessage,$scope,$interval,$http){
-// # message alert
+
+.controller("message",['alerts','$scope',function(alerts,$scope){
   $scope.alerts=alerts;
-  $scope.addAlert = function(type,msg,header,list) {
-    addMessage(type,msg,header,list);
-  };
   $scope.closeAlert = function(index) {
     $scope.alerts.splice(index, 1);
   };
 }])
-// # message alert //ver getuikit.com/docs/notify.html
 .factory('addMessage', ['alerts',function(alerts) {
   return function(msg,header,type) {
     switch(type){
@@ -180,6 +187,11 @@ $scope.$emit('updateUSB');
   }
 }])
 
+
+
+
+
+/*
 io.emit('sign up',$('#from').val());
 $('#from').on('change',function(){
   console.log('sign up from '+ $('#from').val());
@@ -215,3 +227,4 @@ io.on('chat message', function(msg){
       );
   //}
 });
+*/

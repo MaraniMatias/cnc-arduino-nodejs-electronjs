@@ -7,6 +7,7 @@ var app = module.parent.exports.app,
   motor = {paos:200,avance:2.5},
   SerialPort = serialPort.SerialPort;
 
+app.io.route('connection', function(req) {});
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
   serialPort.list(function (err, ports){
@@ -24,7 +25,7 @@ app.get('/', function(req, res){
 app.post('/comando', function (req, res) {
   sp.write(req.body.comando+"\n");
   sp.on('data', function(data) {
-    res.json({status:data});
+    req.io.broadcast('lineaGCode', {nro:indexLinea,code:req.body.comando});
   });
 });
 
@@ -45,10 +46,13 @@ app.post('/conect', function (req, res) {
 
 app.get('/comenzar', function(req, res){
   var indexLinea = 0;
-  console.log("Cordenadas: %s",gcode[indexLinea].ejes);
 
+  for (var i = 0; i < gcode.length; i++) {
+    req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code});
+  };
 
 /*
+  console.log("Cordenadas: %s",gcode[indexLinea].ejes);
   sp.write(history[indexLinea].x+"\n");
   sp.on('data', function(data){
     console.log('\t Arduino envia "%s"',data);
@@ -62,7 +66,7 @@ app.get('/comenzar', function(req, res){
   });
 */
 
-  res.json({rta:'ok'});
+  //res.json({rta:'ok'});
 });
 
 app.post('/cargar', function (req, res) {
@@ -78,7 +82,6 @@ app.post('/cargar', function (req, res) {
     gcode.push({ejes:doc.x,code:doc.code});
     done();
   },function(){
-    console.log(gcode);
     res.json({lineas:gcode.length});
   });
 });
@@ -132,62 +135,4 @@ function serialListener(){
 }
 */
 
-
-
 //app.get('/chart', function(req, res){  res.render('chart.jade', {titulo: "Arduino"});});
-
-
-///----
-var clients=[]; //record all clients
-var client=function(username,socket){
-  this.username=username;
-  this.socket=socket;
-}
-
-
-app.io.on('connection',function(socket){
-  //console.log('a user connected.');
-  socket.on('disconnect',function(){
-    console.log('user disconnected');
-    removeSocket(socket);
-  });
-
-  socket.on('chat message',function(msg){
-    console.log('from socket' +socket.id);
-    console.log('message: ' + msg.txt + ' from ' + msg.from + ' to ' + msg.to);
-    if(clients.indexOf(socket)<=-1){
-      clients.push(new client(msg.from,socket)); // add new client
-    }
-    var skt=findSocketByUser(msg.to);
-    if(skt!==null) {
-      console.log('socket' +socket.id + ' skt ' +skt.id);
-      skt.emit('chat message', msg); //socket is only for that socket, io will broadcast
-    }
-  });
-
-  socket.on('sign up',function(user){
-    console.log('on sign up from '+ user);
-    var skt=findSocketByUser(user);
-    if(skt===null)
-      clients.push(new client(user,socket));
-    return;
-  });
-
-});
-
-function removeSocket(socket){
-  for(var i=0;i<clients.length;i++){
-    if(clients[i].socket==socket){
-      clients.splice(i,1);//remove this client
-    }
-  }
-}
-
-function findSocketByUser(user){
-  for(var i=0;i<clients.length;i++){
-    if(clients[i].username==user){
-      return clients[i].socket;
-    }
-  }
-  return null;
-}
