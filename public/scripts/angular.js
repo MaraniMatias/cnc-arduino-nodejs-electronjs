@@ -93,54 +93,46 @@ function(addMessage,pUSB,$http,$scope,upload){
     $scope.pUSB = port.comName;
     $scope.SelecArduino = port.manufacturer;
     if($scope.pUSB!=''){
-    $http({ url: "/conect",method: "POST",
-      data: {comUSB : port.comName}
-    }).success(function(data, status, headers, config) {
-      console.log('success conect',data);
-    }).error(function(data, status, headers, config) {
-      console.log('error conect',data);
-    });
+      $http({ url: "/conect",method: "POST",
+        data: {comUSB : port.comName}
+      }).success(function(data, status, headers, config) {
+        console.log('success conect',data);
+      }).error(function(data, status, headers, config) {
+        console.log('error conect',data);
+      });
     }else{
       console.log("Select puerto");
     }
   }
   $scope.$on('updateUSB',function(){
     $http.get('/portslist').success(function (data) {
-      if(data){
-        $scope.port=data;
-      }else{
-        $scope.port=[];
-      }
+      if(data){$scope.port=data;}else{$scope.port=[];}
     });
   });
   $scope.$emit('updateUSB');
 //######################
-  $scope.parar = function(){
-    btnDisabled(false,false)
+
+  $scope.parar = function(){btnDisabled(false,false)
     //upload.parar();
   }
-  $scope.pausa = function(){
-    btnDisabled(false,false)
+  $scope.pausa = function(){btnDisabled(false,false);
     //upload.parar();
   }
-  $scope.borrar = function(){
-    btnDisabled(false,true);
+  $scope.borrar = function(){btnDisabled(false,true);
     //upload.borrar();
   }
-  //$scope.ejeXposicion = 0.000;
-  //$scope.ejeYposicion = 0.000;
-  //$scope.ejeZposicion = 0.000;
-
   $scope.comenzar = function(){
     $scope.horaInicio = Date.now();
     btnDisabled(true,false);
     upload.comenzar();
+
+    $('#tablagcode tr').remove();
+
   }
 
   io.emit('connection');
   io.on('lineaGCode', function (data) {
     var prgrss = progreso(data.nro).toFixed(2);
-
     $('#tablagcode').append(
       $('<tr>')
         .append($('<td>').text(data.nro))
