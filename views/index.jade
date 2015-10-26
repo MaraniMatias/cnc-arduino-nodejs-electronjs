@@ -103,6 +103,8 @@ block content
               .ui.one.column.grid.center.aligned
                 .row
                   .column
+                .row
+                  .column
                     .ui.action.input.fluid
                       input(placeholder='Enviar comando.',ng-model='comando', type='text')
                       button.ui.primary.button(type="submit",ng-click='enviarDatos(comando)') Enviar
@@ -119,23 +121,23 @@ block content
                             .item(ng-click='setmmpass("pasos")') pasos
 
                 .row
-                    .ui.four.column.grid.center.aligned
-                      .row
-                        .column
-                          button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","+")') X+
-                        .column
-                          button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","-")') -X
-                        .column
-                          button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","-")') -Y
-                        .column
-                          button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","+")') Y+
+                  .ui.four.column.grid.center.aligned
+                    .row
+                      .column
+                        button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","+")') X+
+                      .column
+                        button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","-")') -X
+                      .column
+                        button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","-")') -Y
+                      .column
+                        button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","+")') Y+
                 .row
-                    .ui.three.column.grid.center.aligned
-                      .row
-                        .column
-                          button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","+")') Z+
-                        .column
-                          button.ui.secondary.tiny.button(ng-click='moverOrigen()') [0,0,0]
-                        .column
-                          button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","-")') -Z
+                  .ui.three.column.grid.center.aligned
+                    .row
+                      .column
+                        button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","+")') Z+
+                      .column
+                        button.ui.secondary.tiny.button(ng-click='moverOrigen()') [0,0,0]
+                      .column
+                        button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","-")') -Z
 
