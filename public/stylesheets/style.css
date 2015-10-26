@@ -1,9 +1,7 @@
 
 body {
-  /*padding: 50px 80px;
-  padding: 0px;*/
   background-color: #F5F5F5;
-  font: 14px  "ssans-serif";
+  font: 15px  "ssans-serif";
 }
 .btn-file {
   position: relative;
@@ -25,6 +23,14 @@ body {
 input[readonly] {
   background-color: white !important;
   cursor: text !important;
+}
+.ui.grid > .row {
+    padding: 0.7rem;
+}
+.ui.container {
+  width: 100%;
+  display: block;
+  max-width: 94% !important;
 }
 /*
 #rData{
@@ -49,9 +55,3 @@ h2{
   text-align:center;
 }
 */
-
-.ui.grid > .row {
-  padding: 0rem;
-  padding-top: 0.2rem;
-  padding-bottom: 0.51rem;
-}

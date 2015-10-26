@@ -1,143 +1,153 @@
 extends ./menu
 block content
   .ui.container
-    .ui.tow.column.row.stackable.grid
+    .ui.tow.column.stackable.grid
       .ten.wide.column
-        .column(ng-controller="message", ng-show="alerts.length > 0")
-          .ui.message(ng-click="closeAlert($index)" ng-repeat="alert in alerts" class="{{alert.type}}")
-            //i.close.icon(ng-click="closeAlert($index)")
-            .header {{alert.header}}
-            {{alert.msg}}
+          .ui.one.column.grid
+              //.row
+              .column(ng-controller="message", ng-show="alerts.length > 0")
+                .ui.message(ng-click="closeAlert($index)" ng-repeat="alert in alerts" class="{{alert.type}}")
+                  //i.close.icon(ng-click="closeAlert($index)")
+                  .header {{alert.header}}
+                  {{alert.msg}}
 
-        .ui.segment
-          //.ui.top.attached.progress.indicating(data-percent='28')
-              .bar(style='transition-duration: 300ms; width: 28%;')
-          .ui.top.attached.label GCode loading
-          .column
-            form
-              div From:
-                select#from
-                  option(value="Tom") Tom
-                  option(value="Jerry") Jerry
-                  option(value="Qwerty") Qwerty
-              div To:
-                select#to
-                  option(value="Jerry") Jerry
-                  option(value="Tom") Tom
-                  option(value="Qwerty") Qwerty
-              ul#messages
-              form(action="")
-                input#m( autocomplete="off")
-                button Send
+          .ui.one.column.grid
+            .row
+              .column.ui.segment
+                .ui.top.attached.progress.indicating(data-percent='28')
+                  .bar(style='transition-duration: 300ms; width: 28%;')
+                .ui.one.column.grid
+                  .ui.raised
+                    .ui.red.ribbon.label Intepretando GCode
+                    span Completado: 56%
 
-          .ui.bottom.attached.progress.indicating(data-percent='66')
-            .bar(style='transition-duration: 300ms; width: 66%;')
+                .ui.one.column.grid
+                  .column
+                    form
+                      div From:
+                        select#from
+                          option(value="Tom") Tom
+                          option(value="Jerry") Jerry
+                          option(value="Qwerty") Qwerty
+                      div To:
+                        select#to
+                          option(value="Jerry") Jerry
+                          option(value="Tom") Tom
+                          option(value="Qwerty") Qwerty
+                      ul#messages
+                      form(action="")
+                        input#m( autocomplete="off")
+                        button Send
+
+                .ui.bottom.attached.progress.indicating(data-percent='66')
+                  .bar(style='transition-duration: 300ms; width: 66%;')
 
       .six.wide.column(data-ng-controller='HomeCtrl')
-        .ui.one.column.grid
-          .row
-            .column.ui.segment
-              .ui.top.attached.progress.indicating(data-percent='28')
-                .bar(style='transition-duration: 300ms; width: 28%;')
-              .ui.one.column.grid
-                .ui.raised
-                  .ui.orange.ribbon.label Archivo GCode
-                  span Completado: 56%
 
-              .ui.one.column.grid
-                .column.center.aligned
-                  .ui.icon.buttons
-                    button.ui.button(ng-class='dplay' ng-click='uploadFile()')
-                      i.play.icon
-                    button.ui.button(ng-class='dpause')
-                      i.pause.icon
-                    button.ui.button(ng-class='dstop')
-                      i.stop.icon
-                    button.ui.button(ng-class='dtrash')
-                      i.trash.icon
-                    span.ui.button.btn-file Archivo
-                      input(type='file' uploader-model='file' onchange="angular.element(this).scope().setFile(this)")
+          .ui.one.column.grid
+            .row
+              .column.ui.segment
+                .ui.top.attached.progress.indicating(data-percent='28')
+                  .bar(style='transition-duration: 300ms; width: 28%;')
+                .ui.one.column.grid
+                  .ui.raised
+                    .ui.orange.ribbon.label Archivo GCode
+                    span Completado: 56%
 
-              .ui.one.column.grid
-                  table.ui.very.basic.table
-                    thead
-                      tbody
-                        tr
-                          td Archivo:
-                          td {{codeArchivo.name}}
-                        tr
-                          td Ejecutado:
-                          td {{codeEjecutado | number}}
-                        tr
-                          td Total:
-                          td {{codeTotal | number}}
-                        tr
-                          td Hora de inicio
-                          td {{horaInicio | date:'HH:mm'}}
+                .ui.one.column.grid
+                  .column.center.aligned
+                    .ui.icon.buttons
+                      button.ui.button(ng-class='dplay' ng-click='uploadFile()')
+                        i.play.icon
+                      button.ui.button(ng-class='dpause')
+                        i.pause.icon
+                      button.ui.button(ng-class='dstop')
+                        i.stop.icon
+                      button.ui.button(ng-class='dtrash')
+                        i.trash.icon
+                      span.ui.button.btn-file Archivo
+                        input(type='file' uploader-model='file' onchange="angular.element(this).scope().setFile(this)")
 
-                  //.ui.segment
-                    .ui.one.column.gr          .column
-                        table.ui.red.table
-                          thead
-                              tr
-                                th Eje
-                                th Posición (mm)
-                            tbody
-                              tr
-                                td X
-                                td {{ejeXposicion | number:3}}
-                              tr
-                                td Y
-                                td {{ejeXposicion | number:3}}
-                              tr
-                                td Z
-                                td {{ejeXposicion | number:3}}
+                .ui.one.column.grid
+                    table.ui.very.basic.table
+                      thead
+                        tbody
+                          tr
+                            td Archivo:
+                            td {{codeArchivo.name}}
+                          tr
+                            td Ejecutado:
+                            td {{codeEjecutado | number}}
+                          tr
+                            td Total:
+                            td {{codeTotal | number}}
+                          tr
+                            td Hora de inicio
+                            td {{horaInicio | date:'HH:mm'}}
 
-          .row
-            .column.ui.segment
-              .ui.one.column.grid
-                .ui.raised
-                  .ui.green.ribbon.label Control manual
-                  span (200 pasos -> 2.5mm)
+                    //.ui.segment
+                      .ui.one.column.gr          .column
+                          table.ui.red.table
+                            thead
+                                tr
+                                  th Eje
+                                  th Posición (mm)
+                              tbody
+                                tr
+                                  td X
+                                  td {{ejeXposicion | number:3}}
+                                tr
+                                  td Y
+                                  td {{ejeXposicion | number:3}}
+                                tr
+                                  td Z
+                                  td {{ejeXposicion | number:3}}
 
-              .ui.one.column.grid.center.aligned
-                .row
-                  .column
-                .row
-                  .column
-                    .ui.action.input.fluid
-                      input(placeholder='Enviar comando.',ng-model='comando', type='text')
-                      button.ui.primary.button(type="submit",ng-click='enviarDatos(comando)') Enviar
-                .row
-                  .column
-                    .ui.right.action.left.icon.input.fluid
-                        //i.search.icon
-                        input(ng-model='inputpasosmm', placeholder='0', type='text')
-                        .ui.basic.floating.dropdown.button
-                          .text pasos
-                          i.dropdown.icon
-                          .menu
-                            .item(ng-click='setmmpass("mm")') mm
-                            .item(ng-click='setmmpass("pasos")') pasos
+            .row
+              .column.ui.segment
+                .ui.one.column.grid
+                  .ui.raised
+                    .ui.green.ribbon.label Control manual
+                    span (200 pasos -> 2.5mm)
 
-                .row
-                  .ui.four.column.grid.center.aligned
-                    .row
-                      .column
-                        button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","+")') X+
-                      .column
-                        button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","-")') -X
-                      .column
-                        button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","-")') -Y
-                      .column
-                        button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","+")') Y+
-                .row
-                  .ui.three.column.grid.center.aligned
-                    .row
-                      .column
-                        button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","+")') Z+
-                      .column
-                        button.ui.secondary.tiny.button(ng-click='moverOrigen()') [0,0,0]
-                      .column
-                        button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","-")') -Z
+                .ui.one.column.grid.center.aligned
+                  .row
+                    .column
+                  .row
+                    .column
+                      .ui.action.input.fluid
+                        input(placeholder='Enviar comando.',ng-model='comando', type='text')
+                        button.ui.primary.button(type="submit",ng-click='enviarDatos(comando)') Enviar
+                  .row
+                    .column
+                      .ui.right.action.left.icon.input.fluid
+                          //i.search.icon
+                          input(ng-model='inputpasosmm', placeholder='0', type='text')
+                          .ui.basic.floating.dropdown.button
+                            .text pasos
+                            i.dropdown.icon
+                            .menu
+                              .item(ng-click='setmmpass("mm")') mm
+                              .item(ng-click='setmmpass("pasos")') pasos
+
+                  .row
+                    .ui.four.column.grid.center.aligned
+                      .row
+                        .column
+                          button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","+")') X+
+                        .column
+                          button.ui.red.button.tiny(ng-click='moverManual(inputpasosmm,"X","-")') -X
+                        .column
+                          button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","-")') -Y
+                        .column
+                          button.ui.blue.button.tiny(ng-click='moverManual(inputpasosmm,"Y","+")') Y+
+                  .row
+                    .ui.three.column.grid.center.aligned
+                      .row
+                        .column
+                          button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","+")') Z+
+                        .column
+                          button.ui.secondary.tiny.button(ng-click='moverOrigen()') [0,0,0]
+                        .column
+                          button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","-")') -Z
 
