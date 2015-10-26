@@ -14,13 +14,13 @@ block content
           .ui.one.column.grid
             .row
               .column.ui.segment
-                .ui.top.attached.progress.indicating(data-percent='{{progress}}')
-                  .bar(style='transition-duration: 300ms; width: {{progress}}%;')
+                .ui.top.attached.progress.indicating#progressbar(data-percent='0')
+                  .bar#bar(style='transition-duration: 300ms;')
                 .ui.one.column.grid
                   .ui.raised
                     .ui.red.ribbon.label Intepretando GCode
-                    span Completado: {{progress}}%
-
+                    span Completado:
+                      span#progress  0%
                 .ui.one.column.grid
                   .column
                     table.ui.very.basic.table.compact
@@ -31,19 +31,12 @@ block content
                           th.collapsing Y
                           th.collapsing Z
                           th G-Code
-                          th Repuesta
                       tbody#tablagcode
 
-                .ui.bottom.attached.progress.indicating(data-percent='{{progress}}')
-                  .bar(style='transition-duration: 300ms; width: {{progress}}%;')
-
       .six.wide.column
-
           .ui.one.column.grid
             .row
               .column.ui.segment
-                .ui.top.attached.progress.indicating(data-percent='{{progress}}')
-                  .bar(style='transition-duration: 300ms; width: {{progress}}%;')
                 .ui.one.column.grid
                   .ui.raised
                     .ui.orange.ribbon.label Archivo GCode
