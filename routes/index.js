@@ -49,6 +49,8 @@ app.get('/comenzar', function(req, res){
   var indexLinea = 0;
 
   for (var i = 0; i < gcode.length; i++) {
+  //for (var i = 0; i < gcode.length; i++) {
+    console.log(gcode[i].ejes);
     req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code});
   };
 
@@ -73,14 +75,15 @@ app.post('/cargar', function (req, res) {
   var data = fs.readFileSync(tmp_path);
   var fileContent = data.toString();
   var history = gc(fileContent);
-  gcode = [];
 
+  gcode = [];
   async.mapSeries(history, function(doc,done){
     gcode.push({ejes:doc.x,code:doc.code});
     done();
   },function(){
     res.json({lineas:gcode.length});
   });
+
 });
 
 

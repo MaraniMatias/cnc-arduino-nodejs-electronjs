@@ -24,12 +24,11 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   $scope.codeArchivo  = {name:'Sin Archivo'};
   $scope.horaInicio   = '--:--';
-  $scope.codeTotal    = 0;
-  $scope.codeEjecutado     = 0;
 
   function progreso(line) {
-    $scope.codeEjecutado = line+1;
-    return ((line+1)*100)/$scope.codeTotal;
+    line++;
+    $('#codeEjecutado').text(" "+line);
+    return (line*100)/$('#codeTotal').text();
   }
 
   $scope.setFile = function(element) {
@@ -37,7 +36,7 @@ function(addMessage,pUSB,$http,$scope,upload){
       btnDisabled(false,false)
       $scope.codeArchivo  = element.files[0];
         upload.uploadFile(element.files[0]).then(function(res){
-          $scope.codeTotal  = res.data.lineas;
+          $('#codeTotal').text(" "+res.data.lineas);
         })
     });
   };
@@ -123,6 +122,15 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   io.emit('connection');
   io.on('lineaGCode', function (data) {
+
+    var n = $("#tablagcode tr").size();
+    if(n >= 13){
+      //console.log(
+        $("#tablagcode tr")[n-13].remove();
+      //);
+    }
+
+
     $('#tablagcode').append(
       $('<tr>')
         .append($('<td>').text(data.nro))
@@ -169,13 +177,13 @@ function(addMessage,pUSB,$http,$scope,upload){
   };
 }])
 
-.service('upload', ["$http", "$q", function ($http, $q){
+.service('upload', ["$http", "$q","addMessage", function ($http, $q,addMessage){
   this.comenzar = function(){
     var deferred = $q.defer();
     return $http.get("/comenzar")
     .success(function(res){deferred.resolve(res);})
     .error(function(msg, code){deferred.reject(msg);})
-    return deferred.promise;
+    addMessage( deferred.promise,"Error",4);
   }
   this.uploadFile = function(file){
     var deferred = $q.defer();
@@ -189,6 +197,6 @@ function(addMessage,pUSB,$http,$scope,upload){
     })
     .success(function(res){deferred.resolve(res);})
     .error(function(msg, code){deferred.reject(msg);})
-    return deferred.promise;
+    addMessage( deferred.promise,"Error",4);
   }
 }])
