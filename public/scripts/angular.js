@@ -1,7 +1,6 @@
 app.controller('main',['addMessage','pUSB','$http','$scope','upload',
 function(addMessage,pUSB,$http,$scope,upload){
   $scope.SelecArduino="Selec Arduino";
-
   $scope.inputpasosmm='200';
   var varpasosmm = 'pasos';
   $scope.setmmpass=function(valor){varpasosmm=valor;}
@@ -59,34 +58,33 @@ function(addMessage,pUSB,$http,$scope,upload){
         console.log('error comando',data);
       });
     }else{
-      console.log("Select puerto");
+      addMessage("Por favor selecione el arduino","Error",4);
     }
   }
 
   $scope.enviarDatos=function(comando){
     if($scope.pUSB!=''){
-      $scope.comando='';
-      console.log("comando %s",comando);
-      $http({ url: "/comando",method: "POST",data: {comando : comando}
-      }).success(function(data, status, headers, config) {
-        console.log('success comando',data);
-      }).error(function(data, status, headers, config) {
-        console.log('error comando',data);
-      });
+      if(comando!==undefined && comando!="" ){
+        $scope.comando='';
+        $http({ url: "/comando",method: "POST",data: {comando : comando}
+        }).error(function(data, status, headers, config) {
+          addMessage(data.error.message,"Error",4);
+        });
+      }else{
+        addMessage("Escriba comando para enviar.","Error",4);
+      }
     }else{
-      console.log("Select puerto");
+      addMessage("Por favor selecione el arduino.","Error",4);
     }
   }
   $scope.moverOrigen=function(){
     if($scope.pUSB!=''){
       $http({ url: "/moverOrigen",method: "POST",data: {}
-      }).success(function(data, status, headers, config) {
-        console.log('success comando',data);
       }).error(function(data, status, headers, config) {
-        console.log('error comando',data);
+        addMessage(data.error.message,"Error",4);
       });
     }else{
-      console.log("Select puerto");
+      addMessage("Por favor selecione el arduino","Error",4);
     }
   }
   $scope.setUSB=function(port){
@@ -95,13 +93,11 @@ function(addMessage,pUSB,$http,$scope,upload){
     if($scope.pUSB!=''){
       $http({ url: "/conect",method: "POST",
         data: {comUSB : port.comName}
-      }).success(function(data, status, headers, config) {
-        console.log('success conect',data);
       }).error(function(data, status, headers, config) {
-        console.log('error conect',data);
+        addMessage(data.error.message,"Error",4);
       });
     }else{
-      console.log("Select puerto");
+      addMessage("Por favor selecione el arduino","Error",4);
     }
   }
   $scope.$on('updateUSB',function(){
@@ -110,7 +106,6 @@ function(addMessage,pUSB,$http,$scope,upload){
     });
   });
   $scope.$emit('updateUSB');
-//######################
 
   $scope.parar = function(){btnDisabled(false,false)
     //upload.parar();
@@ -121,18 +116,13 @@ function(addMessage,pUSB,$http,$scope,upload){
   $scope.borrar = function(){btnDisabled(false,true);
     //upload.borrar();
   }
-  $scope.comenzar = function(){
-    $scope.horaInicio = Date.now();
-    btnDisabled(true,false);
+  $scope.comenzar = function(){$scope.horaInicio = Date.now();
+    btnDisabled(true,false); $('#tablagcode tr').remove();
     upload.comenzar();
-
-    $('#tablagcode tr').remove();
-
   }
 
   io.emit('connection');
   io.on('lineaGCode', function (data) {
-    var prgrss = progreso(data.nro).toFixed(2);
     $('#tablagcode').append(
       $('<tr>')
         .append($('<td>').text(data.nro))
@@ -141,9 +131,12 @@ function(addMessage,pUSB,$http,$scope,upload){
         .append($('<td>').text(data.ejes[2]))
         .append($('<td>').text(data.code))
       );
-    $('#progress').text(" "+prgrss+"%");
-    $('#bar').width(prgrss+"%");
-    $('#progressbar').attr("data-percent", prgrss );
+    if(data.nro){
+      var prgrss = progreso(data.nro).toFixed(2);
+      $('#progress').text(" "+prgrss+"%");
+      $('#bar').width(prgrss+"%");
+      $('#progressbar').attr("data-percent", prgrss );
+    }
   });
 
 }])

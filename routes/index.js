@@ -25,23 +25,24 @@ app.get('/', function(req, res){
 app.post('/comando', function (req, res) {
   sp.write(req.body.comando+"\n");
   sp.on('data', function(data) {
-    req.io.broadcast('lineaGCode', {nro:indexLinea,code:req.body.comando});
+    req.io.broadcast('lineaGCode', {nro:0,ejes:'',code:req.body.comando});
   });
 });
 
 app.post('/moverOrigen', function (req, res) {
   sp.write("o\n");
   sp.on('data', function(data) {
-    res.json({status:data});
+    req.io.broadcast('lineaGCode', {nro:0,ejes:'',code:req.body.comando});
   });
 });
 
 app.post('/conect', function (req, res) {
   if(req.body.comUSB!=''){
     sp = new SerialPort(req.body.comUSB/*,{dataBits: 8,parity: 'none',stopBits: 1,flowControl: false}*/);
-    sp.on("open", function () {/*console.log('GET: /conect -> open');*/});
+    sp.on("open", function () {
+    req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Arduino conectado por puerto "+req.body.comUSB});
+  });
   }
-  res.json({status:req.body.comUSB});
 });
 
 app.get('/comenzar', function(req, res){
@@ -65,14 +66,10 @@ app.get('/comenzar', function(req, res){
     }
   });
 */
-
-  //res.json({rta:'ok'});
 });
 
 app.post('/cargar', function (req, res) {
   var tmp_path = req.files.file.path;
-  //var nombreArchivo = req.files.file.name;
-  //var target_path='./public/files/'+nombreArchivo;
   var data = fs.readFileSync(tmp_path);
   var fileContent = data.toString();
   var history = gc(fileContent);
