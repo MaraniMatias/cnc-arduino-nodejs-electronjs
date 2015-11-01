@@ -12,7 +12,7 @@ xyzp[] = {0,0,0}, // cantidad de pasos para cade eje
 xp=0,yp=0,zp=0;   // guardar ultimo paso usado
  
 //int unavuelta=100;
-float tiempo,tiempoInicial = 12.0; // minimo 2.3
+float tiempo, tiempoInicial = 10.0; // minimo 2.3
 
 int i=0, inChar=0; String inString = "";
 bool comenzar = false;
@@ -44,13 +44,12 @@ void setup() {
 }
 
 void loop() {   // 123,346,00; -124,-235,-00 
-  if (Serial.available()){
+  while(Serial.available()){
     int inChar = Serial.read();
       if(inChar!=','){
         
-        if (inChar == 'o' ) {
-          x=true;y=true;z=true;
-        }
+        //if (inChar == 'o' ) {x=true;y=true;z=true;}
+        
         if(inChar=='-'){
           inString += "-";
         }
@@ -74,10 +73,7 @@ void loop() {   // 123,346,00; -124,-235,-00
       }
   }
 
-if(x==true||y==true||z==true){
-llevaraCerro();
-}
-
+//llevaraCerro();
 
 if(comenzar){
   int m = 0;
@@ -87,34 +83,33 @@ if(comenzar){
   tiempo = tiempoInicial/m ;
   
   if(0<xyzp[0]){
-    xyzp[0]--;moverX(0);
+    xyzp[0]--;moverX(0);estado();
   }
   if(xyzp[0]<0){
-    xyzp[0]++;moverX(1);
+    xyzp[0]++;moverX(1);estado();
   }
   
   if(0<xyzp[1]){
-    xyzp[1]--;moverY(0);
+    xyzp[1]--;moverY(0);estado();
   }  
   if(xyzp[1]<0){
-    xyzp[1]++;moverY(1); 
+    xyzp[1]++;moverY(1);estado();
   }  
   
   if(0<xyzp[2]){
-    xyzp[2]--;moverZ(0);
+    xyzp[2]--;moverZ(0);estado();
   }  
   if(xyzp[2]<0){
-    xyzp[2]++;moverZ(1);
+    xyzp[2]++;moverZ(1);estado();
   }  
   
-  if(0==xyzp[0] && 0==xyzp[1] && 0==xyzp[2] ){
+  if(0==xyzp[0] && 0==xyzp[1] && 0==xyzp[2]){
+    Serial.print("A");
+    Serial.print("fin");
+    Serial.print("B");
+    digitalWrite(pinEstado,LOW);
     comenzar=false;
-    xyzp[0]=0;
-    xyzp[1]=0;
-    xyzp[2]=0;
     m=0;
-    Serial.write("Fin");//write print
-    //Serial.print(78, DEC)// gives "78" 
   }
 }
 

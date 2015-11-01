@@ -31,6 +31,9 @@ block content
                           th.collapsing Y
                           th.collapsing Z
                           th G-Code
+                          th.collapsing Pasos x
+                          th.collapsing Pasos y
+                          th.collapsing Pasos z
                       tbody#tablagcode
 
       .six.wide.column
@@ -114,7 +117,7 @@ block content
                         .column
                           button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","+")') Z+
                         .column
-                          button.ui.secondary.tiny.button(ng-click='moverOrigen()') [0,0,0]
+                          button.ui.secondary.tiny.button(ng-click='moverOrigen()' ng-show="false") [0,0,0]
                         .column
                           button.ui.yellow.button.tiny(ng-click='moverManual(inputpasosmm,"Z","-")') -Z
 

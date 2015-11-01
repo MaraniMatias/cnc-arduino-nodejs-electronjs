@@ -108,12 +108,19 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   $scope.parar = function(){btnDisabled(false,false)
     //upload.parar();
+    $('#codeEjecutado').text(" 0");
+    $('#progress').text(" 0%");
+    $('#bar').width("0%");
+    $('#progressbar').attr("data-percent", 0 );
+
   }
   $scope.pausa = function(){btnDisabled(false,false);
     //upload.parar();
   }
   $scope.borrar = function(){btnDisabled(false,true);
     //upload.borrar();
+    $('#codeTotal').text(" 0");
+    $scope.codeArchivo={name:"Sin Archivo"};
   }
   $scope.comenzar = function(){$scope.horaInicio = Date.now();
     btnDisabled(true,false); $('#tablagcode tr').remove();
@@ -124,20 +131,18 @@ function(addMessage,pUSB,$http,$scope,upload){
   io.on('lineaGCode', function (data) {
 
     var n = $("#tablagcode tr").size();
-    if(n >= 13){
-      //console.log(
-        $("#tablagcode tr")[n-13].remove();
-      //);
-    }
-
+    if(n >= 15){$("#tablagcode tr")[n-15].remove();}
 
     $('#tablagcode').append(
       $('<tr>')
-        .append($('<td>').text(data.nro))
-        .append($('<td>').text(data.ejes[0]))
-        .append($('<td>').text(data.ejes[1]))
-        .append($('<td>').text(data.ejes[2]))
+        .append($('<td class="center aligned collapsing">').text(data.nro))
+        .append($('<td class="center aligned ">').text(data.ejes[0]))
+        .append($('<td class="center aligned ">').text(data.ejes[1]))
+        .append($('<td class="center aligned ">').text(data.ejes[2]))
         .append($('<td>').text(data.code))
+        .append($('<td>').text(data.pasos[0]))
+        .append($('<td>').text(data.pasos[1]))
+        .append($('<td>').text(data.pasos[2]))
       );
     if(data.nro){
       var prgrss = progreso(data.nro).toFixed(2);

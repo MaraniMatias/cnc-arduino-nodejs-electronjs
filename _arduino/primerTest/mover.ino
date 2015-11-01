@@ -1,18 +1,19 @@
 void llevaraCerro(){
-  tiempo = tiempoInicial/2;
-  bx = digitalRead(btnX);
-  by = digitalRead(btnY);
-  bz = digitalRead(btnZ);
-  
-  if(bx == HIGH){x=false;}
-  if(by == HIGH){y=false;} 
-  if(bz == HIGH){z=false;}
-  
-  if(x){moverX(1);}
-  if(y){moverY(1);}
-  if(z){moverZ(1);}
+  if(x==true||y==true||z==true){
+    tiempo = tiempoInicial/2;
+    bx = digitalRead(btnX);
+    by = digitalRead(btnY);
+    bz = digitalRead(btnZ);
+    
+    if(bx == HIGH){x=false;}
+    if(by == HIGH){y=false;}
+    if(bz == HIGH){z=false;}
+    
+    if(x){moverX(1);}
+    if(y){moverY(1);}
+    if(z){moverZ(1);}
+  }
 }
-
 void moverX(int sent){
   switch (sent) {
     case 0:

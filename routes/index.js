@@ -3,9 +3,10 @@ var app = module.parent.exports.app,
   gc = require("interpret-gcode"),
   fs = require('fs'),
   serialPort = require("serialport"),
-  sp = '', sendData = "",  gcode='',
-  motor = {paos:200,avance:2.5},
+  sp = '',  gcode='', cleanData = '', readData = ''
+  motor = {pasos:200,avance:0.025},
   SerialPort = serialPort.SerialPort;
+
 
 app.io.route('connection', function(req) {});
 /* GET listado de puertos. */
@@ -22,55 +23,83 @@ app.get('/', function(req, res){
   res.render('index.jade', {titulo: "CNC Mar",sp:sp.path});
 });
 
-app.post('/comando', function (req, res) {
-  sp.write(req.body.comando+"\n");
-  sp.on('data', function(data) {
-    req.io.broadcast('lineaGCode', {nro:0,ejes:'',code:req.body.comando});
-  });
-});
-
-app.post('/moverOrigen', function (req, res) {
-  sp.write("o\n");
-  sp.on('data', function(data) {
-    req.io.broadcast('lineaGCode', {nro:0,ejes:'',code:req.body.comando});
-  });
-});
-
 app.post('/conect', function (req, res) {
+  console.log("Post -> /conect");
   if(req.body.comUSB!=''){
-    sp = new SerialPort(req.body.comUSB/*,{dataBits: 8,parity: 'none',stopBits: 1,flowControl: false}*/);
+    sp = new SerialPort(req.body.comUSB,{
+      //dataBits: 8,
+      baudrate:9600,
+      parity: 'none',
+      //stopBits: 1,
+      flowControl: false
+    });
     sp.on("open", function () {
-    req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Arduino conectado por puerto "+req.body.comUSB});
+       console.log("Puerto Selecionado %s",req.body.comUSB);
+       req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Arduino conectado por puerto "+req.body.comUSB,pasos:''});
+    });
+   }
+});
+
+app.post('/comando', function (req, res) {
+  console.log("Post -> /comando, %s",req.body.comando);
+  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Comando manual: "+req.body.comando,pasos:''});
+  sp.write(req.body.comando+"\n");
+  sp.on('data', function (data) {
+    readData += data.toString();
+    if (readData.indexOf('B') >= 0 && readData.indexOf('A') >= 0) {
+    cleanData = readData.substring(readData.indexOf('A') + 1, readData.indexOf('B'));
+    readData = '';
+    req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Arduino imprime: "+cleanData,pasos:''});
+    }
   });
-  }
 });
 
 app.get('/comenzar', function(req, res){
-  var indexLinea = 0;
-
-  for (var i = 0; i < gcode.length; i++) {
-  //for (var i = 0; i < gcode.length; i++) {
-    console.log(gcode[i].ejes);
-    req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code});
-  };
+  console.log("GET -> /comenzar")
+  function getPasos(i){
+    if(i!==0){var a = gcode[i-1].ejes}else{var a = gcode[i].ejes;}
+    var x=[0,0,0],b = gcode[i].ejes;
+    //console.log("B: %s - A: %s = ",b,a);
+    x[0] = Math.round((b[0]-a[0])*motor.pasos / motor.avance);
+    x[1] = Math.round((b[1]-a[1])*motor.pasos / motor.avance);
+    x[2] = Math.round((b[2]-a[2])*motor.pasos / motor.avance);
+    return x;
+  }
+if(sp!==''){
 
 /*
-  console.log("Cordenadas: %s",gcode[indexLinea].ejes);
-  sp.write(history[indexLinea].x+"\n");
+  for (var i = 0; i < gcode.length; i++) {//gcode.length
+    console.log("x: %s",getPasos(i));
+    req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+  };
+*/
+
+  console.log("I: 0 - Cordenadas: %s",gcode[0].ejes);
+  req.io.broadcast('lineaGCode', {nro:0,ejes:gcode[0].ejes,code:gcode[0].code,pasos:getPasos(0)});
+  sp.write(getPasos(0)+"\n",function(err, results) {});
+
+  var i = 0;
   sp.on('data', function(data){
     console.log('\t Arduino envia "%s"',data);
-    if(indexLinea < history.length) {
-      console.log("Cordenadas: %s",history[indexLinea].x);
-      sp.write(history[indexLinea].x+"\n", function(err, results) {
-        if(err){console.log('err ' + err);}
-      });
-      indexLinea++
+    i++;
+    if(i < gcode.length){
+      console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
+      req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+      sp.write(getPasos(i)+"\n",function(err, results) {if(err){console.log('err ' + err);}});
+    }else{
+      console.log("termine :D")
+      req.io.broadcast('lineaGCode', {nro:i,ejes:'',code:"Terminad :D",pasos:''});
     }
   });
-*/
+
+
+}else{
+  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Selecione el arduino",pasos:''});
+}
 });
 
 app.post('/cargar', function (req, res) {
+  console.log("POST -> /cargar");
   var tmp_path = req.files.file.path;
   var data = fs.readFileSync(tmp_path);
   var fileContent = data.toString();
@@ -81,6 +110,7 @@ app.post('/cargar', function (req, res) {
     gcode.push({ejes:doc.x,code:doc.code});
     done();
   },function(){
+    req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado.",pasos:''});
     res.json({lineas:gcode.length});
   });
 
@@ -88,51 +118,10 @@ app.post('/cargar', function (req, res) {
 
 
 
-/*
-//serialListener();
-app.io.on('connection', function (socket) {
-  console.log("user connected");
-  socket.emit('onconnection', {pollOneValue:sendData});
-  app.io.on('update', function(data) {
-  socket.emit('updateData',{pollOneValue:data});
-  });
-  socket.on('buttonval', function(data) {
-    sp.write(data + 'E');
-  });
-  socket.on('sliderval', function(data) {
-    sp.write(data + 'P');
-  });
+app.get('/chart', function(req, res){  res.render('chart.jade', {titulo: "Arduino"});});
+
+app.post('/moverOrigen', function (req, res) {
+  sp.write("o\n");
+  sp.on('data', function(data) {});
+  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:req.body.comando,pasos:''});
 });
-
-
-// Listen to serial port
-function serialListener(){
-    var receivedData = "";
-    sp = new SerialPort(portName, {
-        baudrate: 9600,
-        // defaults for Arduino serial communication
-        dataBits: 8,
-        parity: 'none',
-        stopBits: 1,
-        flowControl: false
-    });
-
-    sp.on("open", function () {
-      console.log('open serial communication');
-            // Listens to incoming data
-        sp.on('data', function(data) {
-            console.log('data received: ' + data);
-            receivedData += data.toString();
-          if (receivedData .indexOf('E') >= 0 && receivedData .indexOf('B') >= 0) {
-            sendData = receivedData .substring(receivedData .indexOf('B') + 1, receivedData .indexOf('E'));
-            receivedData = '';
-         }
-         // send the incoming data to browser with websockets.
-       app.io.emit('update', sendData);
-      });
-
-    });
-}
-*/
-
-//app.get('/chart', function(req, res){  res.render('chart.jade', {titulo: "Arduino"});});
