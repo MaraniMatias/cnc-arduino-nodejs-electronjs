@@ -1,0 +1,9 @@
+(M3)
+G21 (All units in mm)
+G1 X0 Y0 Z0 F100(Penetrate)
+G1 X0.3 Y0 Z-0 F400
+G1 X0 Y0.2 Z0
+G0 Z1
+(M5)
+G0 X0 Y0
+(M2)

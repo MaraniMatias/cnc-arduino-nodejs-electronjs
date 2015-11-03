@@ -1,4 +1,4 @@
-var fileDir = './_arduino/g-code/g0_0001.ngc';
+var fileDir = './g-code/g0_0001.ngc';
 var gc = require("interpret-gcode");
 var fs = require("fs");
 var data = fs.readFileSync(fileDir);
@@ -6,7 +6,7 @@ var fileContent = data.toString();
 
 // serial
 var SerialPort = require("serialport").SerialPort;
-var portName = '/dev/ttyACM0'; //change this to your Arduino port
+var portName = '/dev/ttyACM1'; //change this to your Arduino port
 var sendData = "";
 var receivedData = "";
 // serial

@@ -1,6 +1,6 @@
 app.controller('main',['addMessage','pUSB','$http','$scope','upload',
 function(addMessage,pUSB,$http,$scope,upload){
-  $scope.SelecArduino="Selec Arduino";
+  $scope.SelecArduino="Selec Arduino";$scope.btnClass="disabled";
   $scope.inputpasosmm='200';
   var varpasosmm = 'pasos';
   $scope.setmmpass=function(valor){varpasosmm=valor;}
@@ -33,7 +33,8 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   $scope.setFile = function(element) {
     $scope.$apply(function($scope) {
-      btnDisabled(false,false)
+      btnDisabled(false,false);
+
       $scope.codeArchivo  = element.files[0];
         upload.uploadFile(element.files[0]).then(function(res){
           $('#codeTotal').text(" "+res.data.lineas);
@@ -42,19 +43,23 @@ function(addMessage,pUSB,$http,$scope,upload){
   };
 
   $scope.moverManual=function(nume,eje,sentido){
-    var str = undefined;
+    var str = undefined;$scope.btnClass="disabled";
     switch (eje) {
       case "X": str= "["+sentido+nume+",0,0]"; break;
       case "Y": str = "[0,"+sentido+nume+",0]"; break;
       case "Z": str = "[0,0,"+sentido+nume+"]"; break;
       default:  str ="[0,0,0]" ; break;
     }
-    if($scope.pUSB!=''){
-      $http({ url: "/comando",method: "POST",data: {comando : str}
-      }).success(function(data, status, headers, config) {
-        console.log('success comando',data);
-      }).error(function(data, status, headers, config) {
-        console.log('error comando',data);
+
+    if($scope.pUSB!==''&&str!==undefined){
+      $http.get('/comando/'+str)
+      .success(function(data, status, headers, config) {
+        if(data){ $scope.btnClass="";
+          //$("#tablagcode tr:last-child").addClass('positive');
+        }
+      })
+      .error(function(data, status, headers, config) {
+          addMessage(data.error.message,"Error",4);
       });
     }else{
       addMessage("Por favor selecione el arduino","Error",4);
@@ -63,10 +68,14 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   $scope.enviarDatos=function(comando){
     if($scope.pUSB!=''){
+      $scope.btnClass="disabled";
       if(comando!==undefined && comando!="" ){
         $scope.comando='';
-        $http({ url: "/comando",method: "POST",data: {comando : comando}
-        }).error(function(data, status, headers, config) {
+        $http.get('/comando/'+comando)
+        .success(function(data, status, headers, config) {
+          if(data){ $scope.btnClass="";}
+        })
+        .error(function(data, status, headers, config) {
           addMessage(data.error.message,"Error",4);
         });
       }else{
@@ -76,7 +85,7 @@ function(addMessage,pUSB,$http,$scope,upload){
       addMessage("Por favor selecione el arduino.","Error",4);
     }
   }
-  $scope.moverOrigen=function(){
+  /*$scope.moverOrigen=function(){
     if($scope.pUSB!=''){
       $http({ url: "/moverOrigen",method: "POST",data: {}
       }).error(function(data, status, headers, config) {
@@ -85,14 +94,17 @@ function(addMessage,pUSB,$http,$scope,upload){
     }else{
       addMessage("Por favor selecione el arduino","Error",4);
     }
-  }
+  }*/
   $scope.setUSB=function(port){
     $scope.pUSB = port.comName;
     $scope.SelecArduino = port.manufacturer;
     if($scope.pUSB!=''){
       $http({ url: "/conect",method: "POST",
         data: {comUSB : port.comName}
-      }).error(function(data, status, headers, config) {
+      }).success(function(data, status, headers, config) {
+        if(data){$scope.btnClass="";}
+      })
+      .error(function(data, status, headers, config) {
         addMessage(data.error.message,"Error",4);
       });
     }else{
@@ -112,9 +124,10 @@ function(addMessage,pUSB,$http,$scope,upload){
     $('#progress').text(" 0%");
     $('#bar').width("0%");
     $('#progressbar').attr("data-percent", 0 );
-
+    $scope.btnClass="";
   }
   $scope.pausa = function(){btnDisabled(false,false);
+    $scope.btnClass="";
     //upload.parar();
   }
   $scope.borrar = function(){btnDisabled(false,true);
@@ -131,7 +144,7 @@ function(addMessage,pUSB,$http,$scope,upload){
   io.on('lineaGCode', function (data) {
 
     var n = $("#tablagcode tr").size();
-    if(n >= 15){$("#tablagcode tr")[n-15].remove();}
+    if(n > 14){$("#tablagcode tr")[n-14].remove();}
 
     $('#tablagcode').append(
       $('<tr>')
@@ -186,7 +199,14 @@ function(addMessage,pUSB,$http,$scope,upload){
   this.comenzar = function(){
     var deferred = $q.defer();
     return $http.get("/comenzar")
-    .success(function(res){deferred.resolve(res);})
+    .success(function(res){
+      if(!res){
+        addMessage("algo salio mal :(","Error",4);
+      }else{
+        $scope.btnClass="disabled";
+      }
+      deferred.resolve(res);
+    })
     .error(function(msg, code){deferred.reject(msg);})
     addMessage( deferred.promise,"Error",4);
   }

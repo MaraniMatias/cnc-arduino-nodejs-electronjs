@@ -3,98 +3,92 @@ var app = module.parent.exports.app,
   gc = require("interpret-gcode"),
   fs = require('fs'),
   serialPort = require("serialport"),
-  sp = '',  gcode='', cleanData = '', readData = ''
+  sp = '', gcode=[],
   motor = {pasos:200,avance:0.025},
   SerialPort = serialPort.SerialPort;
-
 
 app.io.route('connection', function(req) {});
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
   serialPort.list(function (err, ports){
     if(ports==undefined){
-     res.json([{manufacturer:"Sin Arduino",comName:''}]);
-    }else{res.json(ports);}
+      res.json([{manufacturer:"Sin Arduino",comName:''}]);
+    }else{
+      res.json(ports);
+    }
   });
 });
 
 /* GET home page. */
 app.get('/', function(req, res){
-  res.render('index.jade', {titulo: "CNC Mar",sp:sp.path});
+  res.render('index.jade', {titulo: "CNC Mar"});
 });
 
 app.post('/conect', function (req, res) {
   console.log("Post -> /conect");
   if(req.body.comUSB!=''){
+    comPort=req.body.comUSB;
     sp = new SerialPort(req.body.comUSB,{
-      //dataBits: 8,
-      baudrate:9600,
-      parity: 'none',
-      //stopBits: 1,
-      flowControl: false
-    });
-    sp.on("open", function () {
-       console.log("Puerto Selecionado %s",req.body.comUSB);
-       req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Arduino conectado por puerto "+req.body.comUSB,pasos:''});
-    });
+      parser: serialPort.parsers.readline("\n"),
+      dataBits: 8, baudrate:9600, parity: 'none',
+      stopBits: 1, flowControl: false
+    },false);// para que no abra la conecion al crear
+    console.log("Puerto Selecionado %s",req.body.comUSB);
+    req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Arduino conectado por puerto "+req.body.comUSB,pasos:''});
+    res.json(true);
    }
 });
 
-app.post('/comando', function (req, res) {
-  console.log("Post -> /comando, %s",req.body.comando);
-  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Comando manual: "+req.body.comando,pasos:''});
-  sp.write(req.body.comando+"\n");
-  sp.on('data', function (data) {
-    readData += data.toString();
-    if (readData.indexOf('B') >= 0 && readData.indexOf('A') >= 0) {
-    cleanData = readData.substring(readData.indexOf('A') + 1, readData.indexOf('B'));
-    readData = '';
-    req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Arduino imprime: "+cleanData,pasos:''});
-    }
-  });
+app.get('/comando/:code', function (req, res) {
+  console.log("Post -> /comando, %s",req.params.code);
+  sp.open(function(err) {
+    sp.drain(function(){});
+    sp.write(new Buffer(req.params.code+'\n'),function(err) {
+      req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Comando manual: "+req.params.code,pasos:''});
+      sp.on('data',function(data){
+        console.log("arduino termino: %s",data?'terminado':'');
+        sp.close(function(err) {
+          res.json(data);
+        });//close
+      });
+    });//write
+  });// open
+
 });
 
 app.get('/comenzar', function(req, res){
   console.log("GET -> /comenzar")
-  function getPasos(i){
-    if(i!==0){var a = gcode[i-1].ejes}else{var a = gcode[i].ejes;}
-    var x=[0,0,0],b = gcode[i].ejes;
+  function getPasos(l){
+    if(l!==0){
+      var a = gcode[l-1].ejes
+    }else{
+      var a = gcode[l].ejes;
+    }
+    var x=[0,0,0],b = gcode[l].ejes;
     //console.log("B: %s - A: %s = ",b,a);
     x[0] = Math.round((b[0]-a[0])*motor.pasos / motor.avance);
     x[1] = Math.round((b[1]-a[1])*motor.pasos / motor.avance);
     x[2] = Math.round((b[2]-a[2])*motor.pasos / motor.avance);
     return x;
   }
-if(sp!==''){
+if(sp!=='' && gcode.length>0){
 
-/*
-  for (var i = 0; i < gcode.length; i++) {//gcode.length
-    console.log("x: %s",getPasos(i));
-    req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+  for (var i = 1; i < gcode.length; i++) {//gcode.length
+    sp.open(function(err) {
+      sp.drain(function(){});
+      sp.write(new Buffer(getPasos(i)+'\n'),function(err,results) {
+        sp.close(function(err) {
+            console.log("I: 0 - Cordenadas: %s -> %s",gcode[i].ejes,results);
+            req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+        });//close
+      });//write
+    });// open
   };
-*/
 
-  console.log("I: 0 - Cordenadas: %s",gcode[0].ejes);
-  req.io.broadcast('lineaGCode', {nro:0,ejes:gcode[0].ejes,code:gcode[0].code,pasos:getPasos(0)});
-  sp.write(getPasos(0)+"\n",function(err, results) {});
-
-  var i = 0;
-  sp.on('data', function(data){
-    console.log('\t Arduino envia "%s"',data);
-    i++;
-    if(i < gcode.length){
-      console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
-      req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
-      sp.write(getPasos(i)+"\n",function(err, results) {if(err){console.log('err ' + err);}});
-    }else{
-      console.log("termine :D")
-      req.io.broadcast('lineaGCode', {nro:i,ejes:'',code:"Terminad :D",pasos:''});
-    }
-  });
-
-
+  res.json(true);
 }else{
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Selecione el arduino",pasos:''});
+  res.json(false);
 }
 });
 
@@ -104,16 +98,14 @@ app.post('/cargar', function (req, res) {
   var data = fs.readFileSync(tmp_path);
   var fileContent = data.toString();
   var history = gc(fileContent);
-
   gcode = [];
   async.mapSeries(history, function(doc,done){
     gcode.push({ejes:doc.x,code:doc.code});
     done();
   },function(){
-    req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado.",pasos:''});
+    req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length,pasos:''});
     res.json({lineas:gcode.length});
   });
-
 });
 
 
@@ -122,6 +114,12 @@ app.get('/chart', function(req, res){  res.render('chart.jade', {titulo: "Arduin
 
 app.post('/moverOrigen', function (req, res) {
   sp.write("o\n");
-  sp.on('data', function(data) {});
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:req.body.comando,pasos:''});
 });
+
+
+
+
+
+
+

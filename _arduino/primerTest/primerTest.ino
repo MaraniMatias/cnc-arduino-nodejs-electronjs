@@ -80,7 +80,8 @@ if(comenzar){
   if(xyzp[0]!=0){m++;}
   if(xyzp[1]!=0){m++;}
   if(xyzp[2]!=0){m++;}
-  tiempo = tiempoInicial/m ;
+  //tiempo = tiempoInicial/m ;
+  tiempo = tiempoInicial ;
   
   if(0<xyzp[0]){
     xyzp[0]--;moverX(0);estado();
@@ -104,9 +105,7 @@ if(comenzar){
   }  
   
   if(0==xyzp[0] && 0==xyzp[1] && 0==xyzp[2]){
-    Serial.print("A");
-    Serial.print("fin");
-    Serial.print("B");
+    Serial.println("true");
     digitalWrite(pinEstado,LOW);
     comenzar=false;
     m=0;
