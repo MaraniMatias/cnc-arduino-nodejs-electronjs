@@ -11,4 +11,7 @@ coverage
 build/Release
 
 # node_modules
+node_modules/serialport
+node_modules/express.io
+node_modules/jades
 typings
