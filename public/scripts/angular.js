@@ -1,3 +1,6 @@
+/* global $ */
+/* global app */
+/* global io */
 app.controller('main',['addMessage','pUSB','$http','$scope','upload',
 function(addMessage,pUSB,$http,$scope,upload){
   $scope.SelecArduino="Selec Arduino";$scope.btnClass="disabled";
@@ -118,7 +121,8 @@ function(addMessage,pUSB,$http,$scope,upload){
   });
   $scope.$emit('updateUSB');
 
-  $scope.parar = function(){btnDisabled(false,false)
+  $scope.parar = function(){
+    btnDisabled(false,false);
     //upload.parar();
     $('#codeEjecutado').text(" 0");
     $('#progress').text(" 0%");
@@ -142,7 +146,6 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   io.emit('connection');
   io.on('lineaGCode', function (data) {
-
     var n = $("#tablagcode tr").size();
     if(n > 14){$("#tablagcode tr")[n-14].remove();}
 
@@ -157,6 +160,7 @@ function(addMessage,pUSB,$http,$scope,upload){
         .append($('<td>').text(data.pasos[1]))
         .append($('<td>').text(data.pasos[2]))
       );
+
     if(data.nro){
       var prgrss = progreso(data.nro).toFixed(2);
       $('#progress').text(" "+prgrss+"%");
@@ -173,6 +177,7 @@ function(addMessage,pUSB,$http,$scope,upload){
     $scope.alerts.splice(index, 1);
   };
 }])
+
 .factory('addMessage', ['alerts',function(alerts) {
   return function(msg,header,type) {
     switch(type){
@@ -203,7 +208,7 @@ function(addMessage,pUSB,$http,$scope,upload){
       if(!res){
         addMessage("algo salio mal :(","Error",4);
       }else{
-        $scope.btnClass="disabled";
+        //$scope.btnClass="disabled";
       }
       deferred.resolve(res);
     })

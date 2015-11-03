@@ -72,26 +72,29 @@ app.get('/comenzar', function(req, res){
     return x;
   }
 if(sp!=='' && gcode.length>0){
-  var i=0;
+var i=0;
   sp.open(function(err){
     sp.on('data',function(d){
       i++;
       if(i<gcode.length){
         sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
-          //console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
+          console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
           req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
         });//write
       }else{
         sp.close(function(err){
-          //console.log("Terminado.");
+          console.log("Terminado.");
           req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:'Terminado.',pasos:''});
         });//close
       }
     });
     sp.drain(function(){});
     sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
-      //console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
-      req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+      //sp.close(function(err){
+      //  i++;
+        console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
+        req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+      //});//close
     });//write
   });//open
 /*
