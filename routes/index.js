@@ -1,10 +1,11 @@
+/* global Buffer */
 var app = module.parent.exports.app,
-  async    = require("async"),
+  async = require("async"),
   gc = require("interpret-gcode"),
   fs = require('fs'),
   serialPort = require("serialport"),
   sp = '', gcode=[],
-  motor = {pasos:200,avance:0.025},
+  motor = {pasos:200,avance:0.5},//0.025
   SerialPort = serialPort.SerialPort;
 
 app.io.route('connection', function(req) {});
@@ -27,7 +28,6 @@ app.get('/', function(req, res){
 app.post('/conect', function (req, res) {
   console.log("Post -> /conect");
   if(req.body.comUSB!=''){
-    comPort=req.body.comUSB;
     sp = new SerialPort(req.body.comUSB,{
       parser: serialPort.parsers.readline("\n"),
       dataBits: 8, baudrate:9600, parity: 'none',
@@ -50,9 +50,9 @@ app.get('/comando/:code', function (req, res) {
         sp.close(function(err) {
           res.json(data);
         });//close
-      });
+      });//data
     });//write
-  });// open
+  });//open
 
 });
 
@@ -72,19 +72,42 @@ app.get('/comenzar', function(req, res){
     return x;
   }
 if(sp!=='' && gcode.length>0){
-
-  for (var i = 1; i < gcode.length; i++) {//gcode.length
-    sp.open(function(err) {
-      sp.drain(function(){});
-      sp.write(new Buffer(getPasos(i)+'\n'),function(err,results) {
-        sp.close(function(err) {
-            console.log("I: 0 - Cordenadas: %s -> %s",gcode[i].ejes,results);
-            req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+  var i=0;
+  sp.open(function(err){
+    sp.on('data',function(d){
+      i++;
+      if(i<gcode.length){
+        sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
+          //console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
+          req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+        });//write
+      }else{
+        sp.close(function(err){
+          //console.log("Terminado.");
+          req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:'Terminado.',pasos:''});
         });//close
-      });//write
-    });// open
-  };
+      }
+    });
+    sp.drain(function(){});
+    sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
+      //console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
+      req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+    });//write
+  });//open
+/*
+  sp.open(function(err){
+    sp.drain(function(){});
+    sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
+      sp.close(function(err){
+        i++;
+        console.log("I: %s - Cordenadas: %s -> %s",i,gcode[i].ejes,results);
+        req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+      });//close
+    });//write
+  });//open
+*/
 
+  //gcode.forEach(function(element,i) { //gcode.length}, this);
   res.json(true);
 }else{
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Selecione el arduino",pasos:''});
