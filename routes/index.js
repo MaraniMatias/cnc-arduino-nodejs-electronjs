@@ -1,13 +1,12 @@
-/* global Buffer */
+/// <reference path="../tsd.d.ts" />
 var app = module.parent.exports.app,
-  async = require("async"),
-  gc = require("interpret-gcode"),
+  gc = require("mmgcode"),
   fs = require('fs'),
   serialPort = require("serialport"),
   sp = '', gcode=[],
   motor = {pasos:200,avance:0.5},//0.025
   SerialPort = serialPort.SerialPort;
-
+  
 app.io.route('connection', function(req) {});
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
@@ -26,7 +25,7 @@ app.get('/', function(req, res){
 });
 
 app.post('/conect', function (req, res) {
-  console.log("Post -> /conect");
+  console.log("POST -> /conect");
   if(req.body.comUSB!=''){
     sp = new SerialPort(req.body.comUSB,{
       parser: serialPort.parsers.readline("\n"),
@@ -40,7 +39,7 @@ app.post('/conect', function (req, res) {
 });
 
 app.get('/comando/:code', function (req, res) {
-  console.log("Post -> /comando, %s",req.params.code);
+  console.log("GET -> /comando, %s",req.params.code);
   sp.open(function(err) {
     sp.drain(function(){});
     sp.write(new Buffer(req.params.code+'\n'),function(err) {
@@ -90,27 +89,11 @@ var i=0;
     });
     sp.drain(function(){});
     sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
-      //sp.close(function(err){
-      //  i++;
         console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
         req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
-      //});//close
     });//write
   });//open
-/*
-  sp.open(function(err){
-    sp.drain(function(){});
-    sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
-      sp.close(function(err){
-        i++;
-        console.log("I: %s - Cordenadas: %s -> %s",i,gcode[i].ejes,results);
-        req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
-      });//close
-    });//write
-  });//open
-*/
 
-  //gcode.forEach(function(element,i) { //gcode.length}, this);
   res.json(true);
 }else{
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Selecione el arduino",pasos:''});
@@ -123,18 +106,10 @@ app.post('/cargar', function (req, res) {
   var tmp_path = req.files.file.path;
   var data = fs.readFileSync(tmp_path);
   var fileContent = data.toString();
-  var history = gc(fileContent);
-  gcode = [];
-  async.mapSeries(history, function(doc,done){
-    gcode.push({ejes:doc.x,code:doc.code});
-    done();
-  },function(){
-    req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length,pasos:''});
-    res.json({lineas:gcode.length});
-  });
+  gcode = gc(fileContent);
+  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length,pasos:''});
+  res.json({lineas:gcode.length});
 });
-
-
 
 app.get('/chart', function(req, res){  res.render('chart.jade', {titulo: "Arduino"});});
 
@@ -142,10 +117,3 @@ app.post('/moverOrigen', function (req, res) {
   sp.write("o\n");
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:req.body.comando,pasos:''});
 });
-
-
-
-
-
-
-

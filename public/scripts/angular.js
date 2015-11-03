@@ -1,6 +1,8 @@
 /* global $ */
 /* global app */
 /* global io */
+/// <reference path="../../tsd.d.ts" />
+var app = angular.module('todoApp', []).value('pUSB','').value('alerts', []);
 app.controller('main',['addMessage','pUSB','$http','$scope','upload',
 function(addMessage,pUSB,$http,$scope,upload){
   $scope.SelecArduino="Selec Arduino";$scope.btnClass="disabled";
