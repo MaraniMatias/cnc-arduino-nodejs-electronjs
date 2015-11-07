@@ -1,10 +1,13 @@
-/// <reference path="../tsd.d.ts" />
+// z 1200 -> 0.40 mm
+// xy 600 -> 7.80 mm
+// xy 2000 -> 23.34 mm
 var app = module.parent.exports.app,
   gc = require("mmgcode"),
   fs = require('fs'),
   serialPort = require("serialport"),
   sp = '', gcode=[],
-  motor = {pasos:200,avance:0.5},//0.025
+  motroXY = {pasos:2000,avance:23.34},
+  motorZ = {pasos:1200,avance:0.40},
   SerialPort = serialPort.SerialPort;
   
 app.io.route('connection', function(req) {});
@@ -55,7 +58,7 @@ app.get('/comando/:code', function (req, res) {
 
 });
 
-app.get('/comenzar', function(req, res){
+app.get('/comenzar/:lineaInicual', function(req, res){
   console.log("GET -> /comenzar")
   function getPasos(l){
     if(l!==0){
@@ -65,13 +68,13 @@ app.get('/comenzar', function(req, res){
     }
     var x=[0,0,0],b = gcode[l].ejes;
     //console.log("B: %s - A: %s = ",b,a);
-    x[0] = Math.round((b[0]-a[0])*motor.pasos / motor.avance);
-    x[1] = Math.round((b[1]-a[1])*motor.pasos / motor.avance);
-    x[2] = Math.round((b[2]-a[2])*motor.pasos / motor.avance);
+    x[0] = Math.round((b[0]-a[0])*motroXY.pasos / motroXY.avance);
+    x[1] = Math.round((b[1]-a[1])*motroXY.pasos / motroXY.avance);
+    x[2] = Math.round((b[2]-a[2])*motorZ.pasos / motorZ.avance);
     return x;
   }
 if(sp!=='' && gcode.length>0){
-var i=0;
+var i= req.paramslineaInicual!=undefined?req.paramslineaInicual:0;
   sp.open(function(err){
     sp.on('data',function(d){
       i++;
@@ -96,7 +99,7 @@ var i=0;
 
   res.json(true);
 }else{
-  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Selecione el arduino",pasos:''});
+  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Selecione el arduino.",pasos:''});
   res.json(false);
 }
 });

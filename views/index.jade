@@ -58,7 +58,11 @@ block content
                         i.trash.icon
                       span.ui.button.btn-file(ng-class='btnupdate') Archivo
                         input(type='file' uploader-model='file'  onchange="angular.element(this).scope().setFile(this)")
-
+                  .row.field
+                    .column.center.aligned
+                      .ui.checkbox
+                        input.hidden(tabindex="0" type="checkbox" ng-model='lineainicial')
+                        label Linea inicial.
                 .ui.one.column.grid
                     table.ui.very.basic.table
                       thead
@@ -78,8 +82,7 @@ block content
                 .ui.one.column.grid
                   .ui.raised
                     .ui.green.ribbon.label Control manual
-                    span (200 pasos -> 2.5mm)
-
+                    span ( 100 pasos -> ~1,167 mm para ejes X Y )
                 .ui.one.column.grid.center.aligned
                   .row
                     .column
@@ -106,11 +109,11 @@ block content
                         .column
                           button.ui.red.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"X","")') X+
                         .column
+                          button.ui.blue.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Y","")') Y+
+                        .column
                           button.ui.red.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"X","-")') -X
                         .column
                           button.ui.blue.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Y","-")') -Y
-                        .column
-                          button.ui.blue.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Y","")') Y+
                   .row
                     .ui.three.column.grid.center.aligned
                       .row

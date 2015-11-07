@@ -11,7 +11,6 @@ var pub = __dirname + '/public';
 require('./routes');
 
 // setup middleware
-
 app.use(app.router);
 app.use(express.static(pub));
 app.use(express.errorHandler());

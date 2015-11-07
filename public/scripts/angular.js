@@ -1,7 +1,6 @@
 /* global $ */
 /* global app */
 /* global io */
-/// <reference path="../../tsd.d.ts" />
 var app = angular.module('todoApp', []).value('pUSB','').value('alerts', []);
 app.controller('main',['addMessage','pUSB','$http','$scope','upload',
 function(addMessage,pUSB,$http,$scope,upload){
@@ -149,7 +148,7 @@ function(addMessage,pUSB,$http,$scope,upload){
   io.emit('connection');
   io.on('lineaGCode', function (data) {
     var n = $("#tablagcode tr").size();
-    if(n > 14){$("#tablagcode tr")[n-14].remove();}
+    if(n > 14){$("#tablagcode tr")[n-15].remove();}
 
     $('#tablagcode').append(
       $('<tr>')
@@ -205,7 +204,7 @@ function(addMessage,pUSB,$http,$scope,upload){
 .service('upload', ["$http", "$q","addMessage", function ($http, $q,addMessage){
   this.comenzar = function(){
     var deferred = $q.defer();
-    return $http.get("/comenzar")
+    return $http.get("/comenzar/"+$RootScopeProvider.lineainicial)
     .success(function(res){
       if(!res){
         addMessage("algo salio mal :(","Error",4);
