@@ -1,12 +1,9 @@
-// z 1200 -> 0.40 mm
-// xy 600 -> 7.80 mm
-// xy 2000 -> 23.34 mm
 var app = module.parent.exports.app,
   gc = require("mmgcode"),
   fs = require('fs'),
   serialPort = require("serialport"),
   sp = '', gcode=[],
-  motroXY = {pasos:2000,avance:23.34},
+  motroXY = {pasos:1000,avance:23.45},
   motorZ = {pasos:1200,avance:0.40},
   SerialPort = serialPort.SerialPort;
   
@@ -58,7 +55,7 @@ app.get('/comando/:code', function (req, res) {
 
 });
 
-app.get('/comenzar/:lineaInicual', function(req, res){
+app.get('/comenzar', function(req, res){
   console.log("GET -> /comenzar")
   function getPasos(l){
     if(l!==0){
@@ -74,7 +71,8 @@ app.get('/comenzar/:lineaInicual', function(req, res){
     return x;
   }
 if(sp!=='' && gcode.length>0){
-var i= req.paramslineaInicual!=undefined?req.paramslineaInicual:0;
+//var i= req.paramslineaInicual!=undefined?req.paramslineaInicual:0;
+var i=0;  
   sp.open(function(err){
     sp.on('data',function(d){
       i++;

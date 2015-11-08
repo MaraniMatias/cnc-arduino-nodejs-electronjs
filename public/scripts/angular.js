@@ -204,7 +204,7 @@ function(addMessage,pUSB,$http,$scope,upload){
 .service('upload', ["$http", "$q","addMessage", function ($http, $q,addMessage){
   this.comenzar = function(){
     var deferred = $q.defer();
-    return $http.get("/comenzar/"+$RootScopeProvider.lineainicial)
+    return $http.get("/comenzar")
     .success(function(res){
       if(!res){
         addMessage("algo salio mal :(","Error",4);

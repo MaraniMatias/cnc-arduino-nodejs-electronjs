@@ -6,6 +6,7 @@ void moverX(int sent){
   switch (sent) {
     case 1:
       pasoX(xp);
+      xyzp[0]++;
       if(xp<3){
         xp++;
       }else{
@@ -14,6 +15,7 @@ void moverX(int sent){
     break;
     case 0:
       pasoX(xp);
+      xyzp[0]--;
       if(xp>0){
         xp--;
       }else{
@@ -26,6 +28,7 @@ void moverY(int sent){
   switch (sent) {
     case 0:
       pasoY(yp);
+      xyzp[1]--;
       if(yp<3){
         yp++;
       }else{
@@ -34,6 +37,7 @@ void moverY(int sent){
     break;
     case 1:
       pasoY(yp);
+      xyzp[1]++;
       if(yp>0){
         yp--;
       }else{
@@ -46,6 +50,7 @@ void moverZ(int sent){
   switch (sent) {
     case 1:
       pasoZ(zp);
+      xyzp[2]++;
       if(zp<3){
         zp++;
       }else{
@@ -54,6 +59,7 @@ void moverZ(int sent){
     break;
     case 0:
       pasoZ(zp);
+      xyzp[2]--;
       if(zp>0){
         zp--;
       }else{
@@ -64,10 +70,7 @@ void moverZ(int sent){
 }
 void pasoX(int i){
   if(tiempo!=0){
-    int j=0;
-    if(i!=3){
-      j=i+1;
-    }else{j=0;}
+    int j=0;if(i!=3){j=i+1;}else{j=0;}
     digitalWrite(pinX[i],HIGH);
     digitalWrite(pinX[j],HIGH);
     delay(tiempo);
@@ -80,10 +83,7 @@ void pasoX(int i){
 }
 void pasoY(int i){
   if(tiempo!=0){
-    int j = 0;
-    if(i!=3){
-      j=i+1;
-    }else{j=0;}
+    int j = 0;if(i!=3){j=i+1;}else{j=0;}
     digitalWrite(pinY[i],HIGH);
     digitalWrite(pinY[j],HIGH);
     delay(tiempo);
@@ -109,7 +109,6 @@ void pasoZ(int i){
 }
 void llevaraCerro(){
   if(x==true||y==true||z==true){
-    tiempo = tiempoInicial/2;
     bx = digitalRead(btnX);
     by = digitalRead(btnY);
     bz = digitalRead(btnZ);
