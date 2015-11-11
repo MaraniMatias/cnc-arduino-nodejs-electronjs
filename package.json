@@ -4,10 +4,10 @@
   "description": "cnc realizado con nodejs express.io serialport arduino",
   "main": "index.js",
   "dependencies": {
-    //"interpret-gcode": "^0.0.1",
+    "express.io": "^1.1.13",
     "jade": "^1.11.0",
-    "serialport": "^2.0.2",
-    "express.io": "^1.1.13"
+    "serialport": "^2.0.4"
+
   },
   "devDependencies": {},
   "scripts": {
