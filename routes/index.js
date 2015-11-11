@@ -1,12 +1,12 @@
 var app = module.parent.exports.app,
-  gc = require("mmgcode"),
+  gc = require("./gcode"),
   fs = require('fs'),
   serialPort = require("serialport"),
   sp = '', gcode=[],
   motroXY = {pasos:1000,avance:23.45},
   motorZ = {pasos:1200,avance:0.40},
   SerialPort = serialPort.SerialPort;
-  
+
 app.io.route('connection', function(req) {});
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
@@ -72,7 +72,7 @@ app.get('/comenzar', function(req, res){
   }
 if(sp!=='' && gcode.length>0){
 //var i= req.paramslineaInicual!=undefined?req.paramslineaInicual:0;
-var i=0;  
+var i=0;
   sp.open(function(err){
     sp.on('data',function(d){
       i++;

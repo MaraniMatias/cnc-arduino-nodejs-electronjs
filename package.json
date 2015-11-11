@@ -6,8 +6,7 @@
   "dependencies": {
     "express.io": "^1.1.13",
     "jade": "^1.11.0",
-    "serialport": "^2.0.4"
-
+    "serialport": "^2.0.2"
   },
   "devDependencies": {},
   "scripts": {

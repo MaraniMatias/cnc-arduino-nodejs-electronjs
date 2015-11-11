@@ -18,6 +18,6 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 app.listen(3000);
-console.log('localhost:3000');
+console.log('http://localhost:3000');
 
 module.exports = app;
