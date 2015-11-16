@@ -2,7 +2,7 @@
   "name": "cnc-nodejs",
   "version": "0.0.1",
   "description": "cnc realizado con nodejs express.io serialport arduino",
-  "main": "index.js",
+  "main": "node index.js",
   "dependencies": {
     "express.io": "^1.1.13",
     "jade": "^1.11.0",
@@ -13,5 +13,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Marani Matias Ezequiel",
-  "license": "ISC"
+  "license": "MIT"
 }
