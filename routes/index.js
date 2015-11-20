@@ -108,7 +108,6 @@ app.post('/cargar', function (req, res) {
   var data = fs.readFileSync(tmp_path);
   var fileContent = data.toString();
   gcode = gc(fileContent);
-  console.log(gcode);
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length,pasos:''});
   res.json({lineas:gcode.length});
 });

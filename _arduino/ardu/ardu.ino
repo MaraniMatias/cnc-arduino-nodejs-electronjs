@@ -46,7 +46,7 @@ void setup() {
   //---Motor:END
 }
 
-void loop() {  // [2784,-1202]
+void loop() {
 
 while(Serial.available()){
   int inChar = Serial.read();
@@ -78,23 +78,27 @@ while(Serial.available()){
       // si son distintos realizo calculos de retardo
       if(auxX!=auxY){
         if(auxX<auxY){
-          retardox  = floor(auxY / auxX);       
-          retardo2x = floor(auxY / auxY - auxX*floor(auxY / auxX));
+          // x menor a y
+          retardox  = floor(auxY / auxX);
+          retardo2y = floor(auxY / (auxY - auxX*floor(auxY / auxX)));
+          retardoy  = 0;
+          retardo2x = 0;
+        }else{
+          // x mayor a y
+          retardoy  = floor(auxX / auxY);
+          retardo2x = floor(auxX / (auxX - auxY*floor(auxX / auxY)));
+          retardox  = 0;
+          retardo2y = 0;
           if(debug){
+            Serial.print("rx ");
             Serial.println(retardox);
+            Serial.print("r2x ");
+            Serial.println(retardo2x);
+            Serial.print("ry ");
+            Serial.println(retardoy);
+            Serial.print("r2y ");
             Serial.println(retardo2y);
           }
-          retardoy  = 0;
-          retardo2y = 0;
-        }else{
-          retardoy  = floor(auxX / auxY);
-          retardo2y = floor(auxX / auxY - auxY*floor(auxX / auxY));
-          if(debug){
-            Serial.println(retardoy);
-            Serial.println(retardo2x);
-          }
-          retardox  = 0;
-          retardo2x = 0;
         }
       }
       
