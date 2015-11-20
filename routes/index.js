@@ -3,8 +3,8 @@ var app = module.parent.exports.app,
   fs = require('fs'),
   serialPort = require("serialport"),
   sp = '', gcode=[],
-  motroXY = {pasos:1000,avance:23.45},
-  motorZ = {pasos:1200,avance:0.40},
+  motroXY = {pasos:2000,avance:46.51},
+  motorZ = {pasos:2000,avance:5.23},
   SerialPort = serialPort.SerialPort;
 
 app.io.route('connection', function(req) {});
@@ -21,7 +21,7 @@ app.get('/portslist', function(req, res){
 
 /* GET home page. */
 app.get('/', function(req, res){
-  res.render('index.jade', {titulo: "CNC Mar"});
+  res.render('index.jade', {titulo: "CNC Mar",motroXY:motroXY});
 });
 
 app.post('/conect', function (req, res) {

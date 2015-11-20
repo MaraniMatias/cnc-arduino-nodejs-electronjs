@@ -44,50 +44,49 @@ void setup() {
   //---Motor:END
 }
 
-void loop() {   // [2784,-1202]
-  while(Serial.available()){
-    int inChar = Serial.read();
-      if(inChar!=','){
-        
-        //if (inChar == 'o' ) {x=true;y=true;z=true;}
-        
-        if(inChar=='-'){
-          inString += "-";
-        }
-        if (isDigit(inChar)){
-          inString += (char)inChar;
-          xyzp[i]=inString.toInt();
-        }
-      }else{
-        i++;
-        inString="";
-      }
-      if (inChar == '\n' || inChar == ';' ) {
-        i=0;
-        inString = "";
-        if(x==false||y==false||z==false){
-          double auxX=0,auxY=0;
-          auxX=xyzp[0];
-          auxY=xyzp[1];
-          if(auxX<0){auxX = auxX*-1;}
-          if(auxY<0){auxY = auxY*-1;}
-          if(auxX<auxY){
-            ratardox=floor(auxY / auxX);
-            ratard2x = floor(auxY/auxY - auxX*floor(auxY / auxX));
-            ratardoy=0;
-          }else{
-            ratard2y = floor(auxX/auxX - auxY*floor(auxX / auxY));
-            ratardoy= floor(auxX / auxY);
-            ratardox=0;
-          }
-          rx=ratardox;
-          ry=ratardoy; 
-          r2x=ratard2x;
-          r2y=ratard2y;         
-          comenzar=true;
-        }
-      }
+void loop() {  // [2784,-1202]
+
+while(Serial.available()){
+  int inChar = Serial.read();
+  if(inChar!=','){
+    //if (inChar == 'o' ) {x=true;y=true;z=true;}
+    if(inChar=='-'){
+      inString += "-";
+    }
+    if (isDigit(inChar)){
+      inString += (char)inChar;
+      xyzp[i]=inString.toInt();
+    }
+  }else{
+    i++;
+    inString="";
   }
+  if (inChar == '\n' || inChar == ';' ) {
+    i=0;
+    inString = "";
+    if(x==false||y==false||z==false){
+      double auxX=0,auxY=0;
+      auxX = xyzp[0];
+      auxY = xyzp[1];
+      if(auxX<0){auxX = auxX*-1;}
+      if(auxY<0){auxY = auxY*-1;}
+      if(auxX<auxY){
+        ratardox = floor(auxY / auxX);
+        ratard2x = floor(auxY/auxY - auxX*floor(auxY / auxX));
+        ratardoy = 0;
+      }else{
+        ratard2y = floor(auxX/auxX - auxY*floor(auxX / auxY));
+        ratardoy = floor(auxX / auxY);
+        ratardox = 0;
+      }
+      rx=ratardox;
+      ry=ratardoy; 
+      r2x=ratard2x;
+      r2y=ratard2y;         
+      comenzar=true;
+    }
+  }
+}
 
 llevaraCerro();
 
@@ -153,8 +152,9 @@ if(comenzar){
     digitalWrite(pinEstado,LOW);
     comenzar=false;
   }
+}else{
+  analogWrite(13,5);
 }
-
 }// loop
 
 
