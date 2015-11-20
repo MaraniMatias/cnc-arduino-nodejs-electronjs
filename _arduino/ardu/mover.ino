@@ -3,8 +3,10 @@
 // --23
 // 0--3
 void moverX(int sent){
-  Serial.print("x ");
-  Serial.println(xyzp[0]);
+  if(debug){
+    Serial.print("x ");
+    Serial.println(xyzp[0]);
+  }
   switch (sent) {
     case 1:
       pasoX(xp);
@@ -27,8 +29,10 @@ void moverX(int sent){
   }
 }
 void moverY(int sent){
-  Serial.print("y ");
-  Serial.println(xyzp[1]);
+  if(debug){
+    Serial.print("y ");
+    Serial.println(xyzp[1]);
+  }
   switch (sent) {
     case 0:
       pasoY(yp);

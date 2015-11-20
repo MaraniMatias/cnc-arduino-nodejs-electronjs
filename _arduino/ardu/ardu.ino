@@ -1,5 +1,6 @@
 #include <math.h>
 // seting:START
+const bool debug = false; // debug
 const int pinEstado = 13; // ledEstado
 const int pinX[] = {0,1,2,3}; // pin de motores
 const int pinY[] = {4,5,6,7}; // pin de motores
@@ -77,17 +78,21 @@ while(Serial.available()){
       // si son distintos realizo calculos de retardo
       if(auxX!=auxY){
         if(auxX<auxY){
-          retardox  = floor(auxY / auxX);
-          Serial.println(retardox);
+          retardox  = floor(auxY / auxX);       
           retardo2x = floor(auxY / auxY - auxX*floor(auxY / auxX));
-          Serial.println(retardo2y);
+          if(debug){
+            Serial.println(retardox);
+            Serial.println(retardo2y);
+          }
           retardoy  = 0;
           retardo2y = 0;
         }else{
           retardoy  = floor(auxX / auxY);
-          Serial.println(retardoy);
           retardo2y = floor(auxX / auxY - auxY*floor(auxX / auxY));
-          Serial.println(retardo2x);
+          if(debug){
+            Serial.println(retardoy);
+            Serial.println(retardo2x);
+          }
           retardox  = 0;
           retardo2x = 0;
         }

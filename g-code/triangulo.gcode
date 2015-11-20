@@ -1,6 +1,6 @@
 G21         ; Set units to mm
 G90         ; Absolute positioning
-G1 Z0 F2540      ; Move to clearance level
+G1 Z2 F2540      ; Move to clearance level
 
 ;
 ; Operation:    0
@@ -19,7 +19,7 @@ G1 Z0 F2540      ; Move to clearance level
 G1 X95.3046 Y-90.5124 F2540
 G1 Z0.0000
 ; plunge
-G1 Z-2.0000 F127
+G1 Z0.0000 F127
 ; cut
 G1 X11.7036 Y-90.5124 F1016
 G1 X53.5041 Y-18.1120
@@ -92,4 +92,4 @@ G1 X94.4715 Y-90.1695
 G1 X94.5045 Y-90.1314
 G1 X94.5335 Y-90.0902
 ; Retract
-G1 Z0.0000 F2540
+G1 Z2.0000 F2540
