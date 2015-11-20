@@ -74,15 +74,23 @@ while(Serial.available()){
       //si es negativo lo paso a positivo para la division
       if(auxX<0){auxX = auxX*-1;}
       if(auxY<0){auxY = auxY*-1;}
-      //descubir 
-      if(auxX<auxY){
-        retardox  = floor(auxY / auxX);
-        retardo2x = floor(auxY / auxY - auxX*floor(auxY / auxX));
-        retardoy  = 0;
-      }else{
-        retardoy  = floor(auxX / auxY);
-        retardo2y = floor(auxX / auxY - auxY*floor(auxX / auxY));
-        retardox  = 0;
+      // si son distintos realizo calculos de retardo
+      if(auxX!=auxY){
+        if(auxX<auxY){
+          retardox  = floor(auxY / auxX);
+          Serial.println(retardox);
+          retardo2x = floor(auxY / auxY - auxX*floor(auxY / auxX));
+          Serial.println(retardo2y);
+          retardoy  = 0;
+          retardo2y = 0;
+        }else{
+          retardoy  = floor(auxX / auxY);
+          Serial.println(retardoy);
+          retardo2y = floor(auxX / auxY - auxY*floor(auxX / auxY));
+          Serial.println(retardo2x);
+          retardox  = 0;
+          retardo2x = 0;
+        }
       }
       
       rx=retardox;
@@ -96,7 +104,7 @@ while(Serial.available()){
 
 llevaraCerro();
 
-if(comenzar){
+if(comenzar){  
   
   if(retardox==0){
     if(retardo2x>0){retardo2x--;}
@@ -105,20 +113,19 @@ if(comenzar){
     
     if(0<xyzp[0]){
       moverX(0);
-      if(retardo2x==0){
+      if(retardo2x==0&&r2x!=0){
         moverX(0);
         retardo2x=r2x;
       }
-      estado();
     }
     if(0>xyzp[0]){
       moverX(1);
-      if(retardo2x==0){
+      if(retardo2x==0&&r2x!=0){
         moverX(1);
         retardo2x=r2x;
       }
-      estado();
     }
+    estado();
   }
 
   if(retardoy==0){
@@ -128,30 +135,29 @@ if(comenzar){
     
     if(0<xyzp[1]){
       moverY(0);
-      if(retardo2y==0){
+      if(retardo2y==0&&r2y!=0){
         moverY(0);
         retardo2y=r2y;
-      }
-      estado();   
-    }  
+      }   
+    }
     if(xyzp[1]<0){
       moverY(1);
-      if(retardo2y==0){
+      if(retardo2y==0&&r2y!=0){
         moverY(1);
         retardo2y=r2y;
       }
-      estado();
-    }  
+    }
+    estado();
   }
 
   if(0<xyzp[2]){
     moverZ(0);
     estado();
-  }  
+  }
   if(xyzp[2]<0){
     moverZ(1);
     estado();
-  }  
+  }
   
   if(0==xyzp[0] && 0==xyzp[1] && 0==xyzp[2]){
     Serial.println("true");
