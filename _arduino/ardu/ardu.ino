@@ -1,9 +1,12 @@
 #include <math.h>
+// seting:START
 const int pinEstado = 13; // ledEstado
 const int pinX[] = {0,1,2,3}; // pin de motores
 const int pinY[] = {4,5,6,7}; // pin de motores
 const int pinZ[] = {8,9,10,11}; // pin de motores
-const int btnX=A5,btnY=A4,btnZ=A3;
+const int btnX=A5,btnY=A4,btnZ=A3;// finales de carrera
+float tiempo = 20; // tiempo entre pasos
+// seting:END
 
 bool bEstado = true,
 x=false,y=false,z=false; // usado para indicar estados
@@ -11,9 +14,7 @@ x=false,y=false,z=false; // usado para indicar estados
 int bx,by,bz,// variable para finales de carrera
 xyzp[] = {0,0,0}, // cantidad de pasos para cade eje
 xp=0,yp=0,zp=0,  // guardar ultimo paso usado
-ratardox=0,ratardoy=0,rx=0,ry=0,ratard2x=0,ratard2y=0,r2x=0,r2y=0;//guardar para desvio o angulos distintos a 45
-
-float tiempo = 20;
+retardox=0,retardoy=0,rx=0,ry=0,retardo2x=0,retardo2y=0,r2x=0,r2y=0;//guardar para desvio o angulos distintos a 45
  
 int i=0, inChar=0; String inString = "";
 bool comenzar = false;
@@ -62,27 +63,32 @@ while(Serial.available()){
     inString="";
   }
   if (inChar == '\n' || inChar == ';' ) {
+    // limpiar var de entrada
     i=0;
     inString = "";
+    //Analisis de pasos
     if(x==false||y==false||z==false){
       double auxX=0,auxY=0;
-      auxX = xyzp[0];
-      auxY = xyzp[1];
+      auxX = xyzp[0];// pasos de eje x
+      auxY = xyzp[1];// pasos de eje y
+      //si es negativo lo paso a positivo para la division
       if(auxX<0){auxX = auxX*-1;}
       if(auxY<0){auxY = auxY*-1;}
+      //descubir 
       if(auxX<auxY){
-        ratardox = floor(auxY / auxX);
-        ratard2x = floor(auxY/auxY - auxX*floor(auxY / auxX));
-        ratardoy = 0;
+        retardox  = floor(auxY / auxX);
+        retardo2x = floor(auxY / auxY - auxX*floor(auxY / auxX));
+        retardoy  = 0;
       }else{
-        ratard2y = floor(auxX/auxX - auxY*floor(auxX / auxY));
-        ratardoy = floor(auxX / auxY);
-        ratardox = 0;
+        retardoy  = floor(auxX / auxY);
+        retardo2y = floor(auxX / auxY - auxY*floor(auxX / auxY));
+        retardox  = 0;
       }
-      rx=ratardox;
-      ry=ratardoy; 
-      r2x=ratard2x;
-      r2y=ratard2y;         
+      
+      rx=retardox;
+      ry=retardoy; 
+      r2x=retardo2x;
+      r2y=retardo2y;         
       comenzar=true;
     }
   }
@@ -92,47 +98,47 @@ llevaraCerro();
 
 if(comenzar){
   
-  if(ratardox==0){
-    if(ratard2x>0){ratard2x--;}
-    if(ratardoy>0){ratardoy--;}
-    ratardox=rx;
+  if(retardox==0){
+    if(retardo2x>0){retardo2x--;}
+    if(retardoy>0){retardoy--;}
+    retardox=rx;
     
     if(0<xyzp[0]){
       moverX(0);
-      if(ratard2x==0){
+      if(retardo2x==0){
         moverX(0);
-        ratard2x=r2x;
+        retardo2x=r2x;
       }
       estado();
     }
     if(0>xyzp[0]){
       moverX(1);
-      if(ratard2x==0){
+      if(retardo2x==0){
         moverX(1);
-        ratard2x=r2x;
+        retardo2x=r2x;
       }
       estado();
     }
   }
 
-  if(ratardoy==0){
-    if(ratard2y>0){ratard2y--;}
-    if(ratardox>0){ratardox--;}
-    ratardoy=ry;
+  if(retardoy==0){
+    if(retardo2y>0){retardo2y--;}
+    if(retardox>0){retardox--;}
+    retardoy=ry;
     
     if(0<xyzp[1]){
       moverY(0);
-      if(ratard2y==0){
+      if(retardo2y==0){
         moverY(0);
-        ratard2y=r2y;
+        retardo2y=r2y;
       }
       estado();   
     }  
     if(xyzp[1]<0){
       moverY(1);
-      if(ratard2y==0){
+      if(retardo2y==0){
         moverY(1);
-        ratard2y=r2y;
+        retardo2y=r2y;
       }
       estado();
     }  
