@@ -11,12 +11,19 @@ app.io.route('connection', function(req) {});
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
   serialPort.list(function (err, ports){
-    if(ports.length > 0){console.log(ports.slice(-1)[0].comName);}
-    if(ports==undefined){
-      res.json([{manufacturer:"Sin Arduino",comName:''}]);
+    if(ports!=undefined && ports.length > 0){
+      sp = new SerialPort(ports.slice(-1)[0].comName,{
+        parser: serialPort.parsers.readline("\n"),
+        dataBits: 8, baudrate:9600, parity: 'none',
+        stopBits: 1, flowControl: false
+      },false);// para que no abra la conecion al crear
+      console.log("Puerto Selecionado %s",ports.slice(-1)[0].comName);
+      //req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Arduino conectado por puerto "+ports.slice(-1)[0].comName,pasos:''});
+      res.json({'ports':ports,'portSele':ports.slice(-1)[0]});
     }else{
-      res.json(ports);
+      res.json({'ports':[{manufacturer:"Sin Arduino",comName:''}],'portSele':undefined});
     }
+    
   });
 });
 

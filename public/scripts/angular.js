@@ -21,6 +21,7 @@ function(addMessage,pUSB,$http,$scope,upload){
       $scope.btnplay   = (v||b)?'disabled':'';
       $scope.btnpause  = !b?'disabled':'';
       $scope.btnstop   = !b?'disabled':'';
+      $scope.btnClass  = !b?'disabled':'';
       $scope.btntrash  = (v||b)?'disabled':'';
       $scope.btnupdate = !v?'disabled':'';
     }
@@ -117,7 +118,17 @@ function(addMessage,pUSB,$http,$scope,upload){
   }
   $scope.$on('updateUSB',function(){
     $http.get('/portslist').success(function (data) {
-      if(data){$scope.port=data;}else{$scope.port=[];}
+      if(data){
+        $scope.port=data.ports;
+        if(data.portSele){
+          $scope.pUSB = data.portSele.comName;
+          $scope.SelecArduino = data.portSele.manufacturer;
+          $scope.btnClass="";
+          addMessage("Arduino conectado por puerto "+data.portSele.comName,"Arduino Detectado.",1);
+        }
+      }else{
+        $scope.port=[];
+      }
     });
   });
   $scope.$emit('updateUSB');
@@ -153,9 +164,9 @@ function(addMessage,pUSB,$http,$scope,upload){
     $('#tablagcode').append(
       $('<tr>')
         .append($('<td class="center aligned collapsing">').text(data.nro))
-        .append($('<td class="center aligned ">').text(data.ejes[0]))
-        .append($('<td class="center aligned ">').text(data.ejes[1]))
-        .append($('<td class="center aligned ">').text(data.ejes[2]))
+        .append($('<td class="center aligned ">').text( data.ejes[0] ))
+        .append($('<td class="center aligned ">').text( data.ejes[1] ))
+        .append($('<td class="center aligned ">').text( data.ejes[2] ))
         .append($('<td>').text(data.code))
         .append($('<td>').text(data.pasos[0]))
         .append($('<td>').text(data.pasos[1]))

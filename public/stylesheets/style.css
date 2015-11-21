@@ -32,6 +32,9 @@ input[readonly] {
   display: block;
   max-width: 94% !important;
 }
+.ui.menu{
+  border-radius:0;
+}
 /*
 #rData{
   float:left;
