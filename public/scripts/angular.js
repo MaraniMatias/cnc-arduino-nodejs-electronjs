@@ -164,9 +164,9 @@ function(addMessage,pUSB,$http,$scope,upload){
     $('#tablagcode').append(
       $('<tr>')
         .append($('<td class="center aligned collapsing">').text(data.nro))
-        .append($('<td class="center aligned ">').text( data.ejes[0] ))
-        .append($('<td class="center aligned ">').text( data.ejes[1] ))
-        .append($('<td class="center aligned ">').text( data.ejes[2] ))
+        .append($('<td class="center aligned ">').text( data.ejes[0]?Math.round(data.ejes[0]*100)/100:'' ))
+        .append($('<td class="center aligned ">').text( data.ejes[1]?Math.round(data.ejes[1]*100)/100:'' ))
+        .append($('<td class="center aligned ">').text( data.ejes[2]?Math.round(data.ejes[2]*100)/100:'' )) 
         .append($('<td>').text(data.code))
         .append($('<td>').text(data.pasos[0]))
         .append($('<td>').text(data.pasos[1]))

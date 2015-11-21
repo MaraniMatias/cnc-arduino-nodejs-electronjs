@@ -1,6 +1,6 @@
 G21         ; Set units to mm
 G90         ; Absolute positioning
-G1 Z1.9999999999999998 F2540      ; Move to clearance level
+G1 Z1.99999999 F2540      ; Move to clearance level
 
 ;
 ; Operation:    0
