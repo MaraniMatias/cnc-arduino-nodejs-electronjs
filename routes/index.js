@@ -11,6 +11,7 @@ app.io.route('connection', function(req) {});
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
   serialPort.list(function (err, ports){
+    if(ports.length > 0){console.log(ports.slice(-1)[0].comName);}
     if(ports==undefined){
       res.json([{manufacturer:"Sin Arduino",comName:''}]);
     }else{
