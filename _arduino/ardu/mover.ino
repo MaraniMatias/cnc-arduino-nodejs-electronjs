@@ -115,18 +115,4 @@ void pasoZ(int i){
     digitalWrite(pinZ[i],LOW);
   }
 }
-void llevaraCerro(){
-  if(x==true||y==true||z==true){
-    bx = digitalRead(btnX);
-    by = digitalRead(btnY);
-    bz = digitalRead(btnZ);
 
-    if(bx == HIGH){x=false;}
-    if(by == HIGH){y=false;}
-    if(bz == HIGH){z=false;}
-
-    if(x){moverX(1);}
-    if(y){moverY(1);}
-    if(z){moverZ(1);}
-  }
-}

@@ -48,7 +48,8 @@ function(addMessage,pUSB,$http,$scope,upload){
   };
 
   $scope.moverManual=function(nume,eje,sentido){
-    var str = undefined;$scope.btnClass="disabled";
+    var str = undefined;
+    $scope.btnClass="disabled";
     switch (eje) {
       case "X": str= "["+sentido+nume+",0,0]"; break;
       case "Y": str = "[0,"+sentido+nume+",0]"; break;
@@ -57,14 +58,22 @@ function(addMessage,pUSB,$http,$scope,upload){
     }
 
     if($scope.pUSB!==''&&str!==undefined){
-      $http.get('/comando/'+str)
+      //$http.get('/comando/'+str)
+      $http({ url: "/comando",method: "POST",
+        data: {
+          code : str,
+          tipo : varpasosmm
+        }
+      })
       .success(function(data, status, headers, config) {
-        if(data){ $scope.btnClass="";
-          //$("#tablagcode tr:last-child").addClass('positive');
+        if(data){
+          $scope.btnClass="";
+          
         }
       })
       .error(function(data, status, headers, config) {
           addMessage(data.error.message,"Error",4);
+          $scope.btnClass="";
       });
     }else{
       addMessage("Por favor selecione el arduino","Error",4);
@@ -76,7 +85,15 @@ function(addMessage,pUSB,$http,$scope,upload){
       $scope.btnClass="disabled";
       if(comando!==undefined && comando!="" ){
         $scope.comando='';
-        $http.get('/comando/'+comando)
+        //$http.get('/comando/'+comando)
+        
+        $http({ url: "/comando",method: "POST",
+          data: {
+            code : comando,
+            tipo : undefined
+          }
+        })
+        
         .success(function(data, status, headers, config) {
           if(data){ $scope.btnClass="";}
         })
@@ -90,7 +107,8 @@ function(addMessage,pUSB,$http,$scope,upload){
       addMessage("Por favor selecione el arduino.","Error",4);
     }
   }
-  /*$scope.moverOrigen=function(){
+  
+  $scope.moverOrigen=function(){
     if($scope.pUSB!=''){
       $http({ url: "/moverOrigen",method: "POST",data: {}
       }).error(function(data, status, headers, config) {
@@ -99,7 +117,7 @@ function(addMessage,pUSB,$http,$scope,upload){
     }else{
       addMessage("Por favor selecione el arduino","Error",4);
     }
-  }*/
+  }
   $scope.setUSB=function(port){
     $scope.pUSB = port.comName;
     $scope.SelecArduino = port.manufacturer;
@@ -164,9 +182,9 @@ function(addMessage,pUSB,$http,$scope,upload){
     $('#tablagcode').append(
       $('<tr>')
         .append($('<td class="center aligned collapsing">').text(data.nro))
-        .append($('<td class="center aligned ">').text( data.ejes[0]?Math.round(data.ejes[0]*100)/100:'' ))
-        .append($('<td class="center aligned ">').text( data.ejes[1]?Math.round(data.ejes[1]*100)/100:'' ))
-        .append($('<td class="center aligned ">').text( data.ejes[2]?Math.round(data.ejes[2]*100)/100:'' )) 
+        .append($('<td class="center aligned ">').text( data.ejes[0]!=='' ? Math.round(data.ejes[0]*100) / 100 : '' ))
+        .append($('<td class="center aligned ">').text( data.ejes[1]!=='' ? Math.round(data.ejes[1]*100) / 100 : '' ))
+        .append($('<td class="center aligned ">').text( data.ejes[2]!=='' ? Math.round(data.ejes[2]*100) / 100 : '' )) 
         .append($('<td>').text(data.code))
         .append($('<td>').text(data.pasos[0]))
         .append($('<td>').text(data.pasos[1]))
