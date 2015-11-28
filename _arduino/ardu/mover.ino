@@ -3,6 +3,7 @@
 // --23
 // 0--3
 void moverX(int sent){
+  estado();
   if(debug){
     Serial.print("x ");
     Serial.println(xyzp[0]);
@@ -29,8 +30,9 @@ void moverX(int sent){
   }
 }
 void moverY(int sent){
+  estado();
   if(debug){
-    Serial.print("y ");
+    Serial.print(" y ");
     Serial.println(xyzp[1]);
   }
   switch (sent) {
@@ -55,6 +57,7 @@ void moverY(int sent){
   }
 }
 void moverZ(int sent){
+  estado();
   switch (sent) {
     case 1:
       pasoZ(zp);
@@ -115,4 +118,3 @@ void pasoZ(int i){
     digitalWrite(pinZ[i],LOW);
   }
 }
-

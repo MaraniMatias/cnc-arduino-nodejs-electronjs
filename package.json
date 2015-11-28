@@ -1,5 +1,5 @@
 {
-  "name": "cnc-nodejs",
+  "name": "router-cnc-nodejs-arduino",
   "version": "0.0.1",
   "description": "cnc realizado con nodejs express.io serialport arduino",
   "main": "node index.js",

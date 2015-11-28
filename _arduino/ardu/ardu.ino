@@ -1,16 +1,16 @@
 #include <math.h>
 // seting:START
-const bool debug = true; // debug
+const bool debug = false; // debug
 const int pinEstado = 13; // ledEstado
 const int pinX[] = {0,1,2,3}; // pin de motores
 const int pinY[] = {4,5,6,7}; // pin de motores
 const int pinZ[] = {8,9,10,11}; // pin de motores
 const int btnX=A5,btnY=A4,btnZ=A3;// finales de carrera
-float tiempo = 20; // tiempo entre pasos
+float tiempo = 25; // tiempo entre paso
 // seting:END
 
-bool bEstado = true,
-x=false,y=false,z=false; // usado para indicar estados
+bool bEstado = true,     // para indicar estados
+x=false,y=false,z=false; // para indicar cuando esta en 0,0,0
 
 int bx,by,bz,// variable para finales de carrera
 xyzp[] = {0,0,0}, // cantidad de pasos para cade eje
@@ -52,7 +52,7 @@ while(Serial.available()){
   int inChar = Serial.read();
   if(inChar!=','){
     //if (inChar == 'o' ) {x=true;y=true;z=true;}
-    //if (inChar == 'f' ) {pararpausa();}
+    //if (inChar == 'p' ) {pararpausa();}
     if(inChar=='-'){
       inString += "-";
     }
@@ -65,7 +65,7 @@ while(Serial.available()){
     inString="";
   }
   if (inChar == '\n' || inChar == ';' ) {
-    // limpiar var de entrada
+    // limpiar variables de entrada
     i=0;
     inString = "";
     //Analisis de pasos
@@ -79,55 +79,32 @@ while(Serial.available()){
       if(auxY<0){auxY = auxY*-1;}
       // si son distintos realizo calculos de retardo
       if(auxX!=auxY){
-        if(auxX<auxY){
-          // mayor Y
-          retardox  = floor(auxY / auxX); //
-
-          int rta = auxY - auxX*floor(auxY / auxX);
-          //if(rta>0){
-            retardo2y = floor(auxY / rta);
-          //}else{retardo2y = 0;}
-
+        if(auxX<auxY){ // mayor Y
+          retardox  = round(auxY / auxX); //
+          int rta = auxY - auxX*round(auxY / auxX);
+          retardo2y = floor(auxX / rta);
+          rta = rta>0? rta : rta*-1;
           retardoy  = 0;
           retardo2x = 0;
-        }else{
-          // mayor X
-          retardoy  = floor(auxX / auxY);// 3
-
-          int rta = auxX - auxY*floor(auxX / auxY);// -164
-          retardo2x = floor(auxX / rta);// 34
-          //if(retardo2x<0){
-          //retardo2x=retardo2x*-1;
-          //}
-
+        }else{ // mayor X
+          retardoy  = round(auxX / auxY);// 3
+          int rta = auxX - auxY*round(auxX / auxY);// 5608 - 5772 = -164
+          rta = rta>0? rta : rta*-1;
+          retardo2x = floor(auxY / rta);// 11
           retardox  = 0;
           retardo2y = 0;
-        
-          if(debug){
-            Serial.print("auxX ");
-            Serial.println(auxX);
-            Serial.print("auxY ");
-            Serial.println(auxY);
-            Serial.print("floor(auxX / auxY) 3 - ");
-            Serial.println(floor(auxX / auxY) );
-            Serial.print("auxX - auxY*floor(auxX / auxY) 164 - ");
-            Serial.println(auxX - auxY*floor(auxX / auxY) );
-            Serial.print("floor(auxX / rta) 34 - ");
-            Serial.println(floor(auxX / rta));
-          }
-          
         }
-      }
-      if(debug){
-        Serial.print("rx ");
-        Serial.println(retardox);
-        Serial.print("r2x ");
-        Serial.println(retardo2x);
-        Serial.print("ry ");
-        Serial.println(retardoy);
-        Serial.print("r2y ");
-        Serial.println(retardo2y);
-      }
+      }//auxX!=auxY
+
+  if(debug){
+    Serial.print("auxX: ");Serial.println(auxX);
+    Serial.print("auxY: ");Serial.println(auxY);
+    Serial.print("rx ");Serial.println(retardox);
+    Serial.print("r2x ");Serial.println(retardo2x);
+    Serial.print("ry ");Serial.println(retardoy);
+    Serial.print("r2y ");Serial.println(retardo2y);
+  }
+
       rx=retardox;
       ry=retardoy;
       r2x=retardo2x;
@@ -135,9 +112,9 @@ while(Serial.available()){
       comenzar=true;
     }
   }
-}
+}// leer entrada
 
-llevaraCerro();
+//llevaraCerro();
 
 if(comenzar){
 
@@ -145,11 +122,18 @@ if(comenzar){
     if(retardo2x>0){retardo2x--;}
     if(retardoy>0){retardoy--;}
     retardox=rx;
-    
+
     if(0<xyzp[0]){
       moverX(0);
       if(retardo2x==0 && r2x!=0){
         moverX(0);
+        // innsertar Y
+        /*if(0<xyzp[1]){
+          moverY(0);
+        }
+        if(xyzp[1]<0){
+          moverY(1);
+        }*/
         retardo2x=r2x;
       }
     }
@@ -157,11 +141,17 @@ if(comenzar){
       moverX(1);
       if(retardo2x==0 && r2x!=0){
         moverX(1);
+        // innsertar Y
+        /*if(0<xyzp[1]){
+          moverY(0);
+        }
+        if(xyzp[1]<0){
+          moverY(1);
+        }*/
         retardo2x=r2x;
       }
     }
-    
-    estado();
+
   }
 
   if(retardoy==0){
@@ -173,6 +163,13 @@ if(comenzar){
       moverY(0);
       if(retardo2y==0 && r2y!=0){
         moverY(0);
+        // innsertar X
+        /*if(0<xyzp[0]){
+          moverX(0);
+        }
+        if(xyzp[0]<0){
+          moverX(1);
+        }*/
         retardo2y=r2y;
       }
     }
@@ -180,20 +177,24 @@ if(comenzar){
       moverY(1);
       if(retardo2y==0 && r2y!=0){
         moverY(1);
+        // innsertar X
+        /*if(0<xyzp[0]){
+          moverX(0);
+        }
+        if(xyzp[0]<0){
+          moverX(1);
+        }*/
         retardo2y=r2y;
       }
     }
-    
-    estado();
+
   }
 
   if(0<xyzp[2]){
     moverZ(0);
-    estado();
   }
   if(xyzp[2]<0){
     moverZ(1);
-    estado();
   }
 
   if(0==xyzp[0] && 0==xyzp[1] && 0==xyzp[2]){
@@ -202,9 +203,11 @@ if(comenzar){
     comenzar=false;
   }
 }else{
-  analogWrite(13,5);
+  analogWrite(13,10);
 }
 }// loop
+
+
 
 
 

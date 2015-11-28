@@ -50,31 +50,30 @@ app.post('/conect', function (req, res) {
 app.post('/comando', function (req, res) {
   //console.log("GET -> /comando, %s",req.params.code);
   console.log("GET -> /comando, tipo: %s, %s",req.body.tipo,req.body.code);
-  var tipo = req.body.tipo;
-  var ejes=[];
-  var pasos=[];
   //req.body.tipo // si es undefined comando directo
-  if(tipo=='pasos'){
-    ejes = [ // para mostrar en mm cuanto avansa
-      req.body.code[0]*motorXY.avance / motorXY.pasos,
-      req.body.code[1]*motorXY.avance / motorXY.pasos,
-      req.body.code[2]*motorZ.avance / motorZ.pasos
-    ];
-    pasos = req.body.code;
-    start(ejes,req.body.code,pasos);
-  }else if(tipo=='mm'){
-    ejes = req.body.code;
-    pasos = [ // para mostrar cuantos pasos son eso mm
-      req.body.code[0]*motorXY.pasos/motorXY.avance,
-      req.body.code[0]*motorXY.pasos/motorXY.avance,
-      req.body.code[0]*motorZ.pasos/motorZ.avance      
+  if(req.body.tipo=='pasos'){
+    var code = req.body.code.replace('[','').replace(']','').split(',');
+    var ejes = [ // para mostrar en mm cuanto avansa
+     code[0] * motorXY.avance / motorXY.pasos,
+     code[1] * motorXY.avance / motorXY.pasos,
+     code[2] * motorZ.avance / motorZ.pasos
+    ];        
+    start( ejes ,req.body.code,code);
+  }else if(req.body.tipo=='mm'){
+    var code = req.body.code.replace('[','').replace(']','').split(',');
+    var pasos = [ // para mostrar cuantos pasos son eso mm
+      Math.round(code[0] *(motorXY.pasos/motorXY.avance)),
+      Math.round(code[1] *(motorXY.pasos/motorXY.avance)),
+      Math.round(code[2] *(motorZ.pasos/motorZ.avance))
       ]
-    start(ejes,req.body.code,pasos);
+    var pasosString='['+pasos[0]+','+pasos[1]+','+pasos[2]+']'
+    start(code,pasosString,pasos);
   }
-  if(tipo==undefined){ 
+  if(req.body.tipo==undefined){ 
     start('',req.body.code,'');
   }
   function start(ejes,code,pasos){
+    console.log(ejes);
     sp.open(function(err) {
       sp.drain(function(){});
       sp.write(new Buffer(code+'\n'),function(err) {
