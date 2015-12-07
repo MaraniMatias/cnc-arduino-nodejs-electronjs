@@ -73,7 +73,6 @@ app.post('/comando', function (req, res) {
     start('',req.body.code,'');
   }
   function start(ejes,code,pasos){
-    console.log(ejes);
     sp.open(function(err) {
       sp.drain(function(){});
       sp.write(new Buffer(code+'\n'),function(err) {
