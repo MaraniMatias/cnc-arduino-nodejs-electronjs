@@ -15,7 +15,8 @@ x=false,y=false,z=false; // para indicar cuando esta en 0,0,0
 int bx,by,bz,// variable para finales de carrera
 xyzp[] = {0,0,0}, // cantidad de pasos para cade eje
 xp=0,yp=0,zp=0,  // guardar ultimo paso usado
-retardox=0,retardoy=0,rx=0,ry=0,retardo2x=0,retardo2y=0,r2x=0,r2y=0;//guardar para desvio o angulos distintos a 45
+retardox=0,retardoy=0,rx=0,ry=0,
+retardo2x=0,retardo2y=0,r2x=0,r2y=0; //guardar para desvio o angulos distintos a 45
 
 int i=0, inChar=0; String inString = "";
 bool comenzar = false;
