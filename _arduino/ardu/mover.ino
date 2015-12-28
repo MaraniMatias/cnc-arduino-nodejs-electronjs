@@ -118,3 +118,4 @@ void pasoZ(int i){
     digitalWrite(pinZ[i],LOW);
   }
 }
+
