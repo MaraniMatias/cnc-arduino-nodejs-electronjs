@@ -42,10 +42,6 @@ void llevaraCerro(){
 }
 
 void render(){
-// [5608,1924,0]
-// [36,19,0]
-// [53,12,0]
-// [31,5,0]
   ry=0;
   rx=0;
   retardox  = 0;
@@ -56,9 +52,8 @@ void render(){
   auxX = xyzp[0];
   auxY = xyzp[1];
   if(auxX!=auxY){
-  //si es negativo lo paso a positivo para la division
-  if(auxX<0){auxX = auxX*-1;}
-  if(auxY<0){auxY = auxY*-1;}
+    if(auxX<0){auxX = auxX*-1;}
+    if(auxY<0){auxY = auxY*-1;}
   // si son distintos realizo calculos para corregir errores
   if(auxX<auxY){
   // mayor Y

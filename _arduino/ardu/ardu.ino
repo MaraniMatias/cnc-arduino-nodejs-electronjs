@@ -1,6 +1,6 @@
 #include <math.h>
 // seting:START
-const bool debug = true; // debug
+const bool debug = false; // debug
 const int pinEstado = 13; // ledEstado
 const int pinX[] = {0,1,2,3}; // pin de motores
 const int pinY[] = {4,5,6,7}; // pin de motores
@@ -66,10 +66,9 @@ while(Serial.available() && comenzar==false){
     inString="";
   }
   if (inChar == '\n' || inChar == ';' ) {
-  // limpiar variables de entrada
     i=0;
     inString = "";
-  //Analisis de pasos
+    
     if(x==false||y==false||z==false){
       render();
       comenzar=true;
