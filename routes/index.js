@@ -78,12 +78,12 @@ app.post('/comando', function (req, res) {
       sp.write(new Buffer(code+'\n'),function(err) {
         req.io.broadcast('lineaGCode', {nro:'',ejes:ejes,code:"Comando manual: "+code, pasos:pasos});
         sp.on('data',function(data){
-        //if(data){
+        if(data==0){
           console.log("arduino termino: %s",data?'terminado':'');
           sp.close(function(err) {
             res.json(data);
           });//close
-        //}else{console.log(data);}
+        }
         });//data
       });//write
     });//open
@@ -109,7 +109,8 @@ if(sp!=='' && gcode.length>0){
 //var i= req.paramslineaInicual!=undefined?req.paramslineaInicual:0;
 var i=0;
   sp.open(function(err){
-    sp.on('data',function(d){
+    sp.on('data',function(data){
+    if(data==0){
       i++;
       if(i<gcode.length){
         sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
@@ -122,6 +123,7 @@ var i=0;
           req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:'Terminado.',pasos:''});
         });//close
       }
+    }
     });
     sp.drain(function(){});
     sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){

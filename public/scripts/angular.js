@@ -196,6 +196,8 @@ function(addMessage,pUSB,$http,$scope,upload){
       $('#progress').text(" "+prgrss+"%");
       $('#bar').width(prgrss+"%");
       $('#progressbar').attr("data-percent", prgrss );
+
+      $('title').text("CNC - "+prgrss+"%");
     }
   });
 
