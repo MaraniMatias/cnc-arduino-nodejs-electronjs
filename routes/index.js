@@ -23,7 +23,7 @@ app.get('/portslist', function(req, res){
     }else{
       res.json({'ports':[{manufacturer:"Sin Arduino",comName:''}],'portSele':undefined});
     }
-    
+
   });
 });
 
@@ -57,7 +57,7 @@ app.post('/comando', function (req, res) {
      code[0] * motorXY.avance / motorXY.pasos,
      code[1] * motorXY.avance / motorXY.pasos,
      code[2] * motorZ.avance / motorZ.pasos
-    ];        
+    ];
     start( ejes ,req.body.code,code);
   }else if(req.body.tipo=='mm'){
     var code = req.body.code.replace('[','').replace(']','').split(',');
@@ -69,19 +69,21 @@ app.post('/comando', function (req, res) {
     var pasosString='['+pasos[0]+','+pasos[1]+','+pasos[2]+']'
     start(code,pasosString,pasos);
   }
-  if(req.body.tipo==undefined){ 
+  if(req.body.tipo==undefined){
     start('',req.body.code,'');
   }
   function start(ejes,code,pasos){
     sp.open(function(err) {
       sp.drain(function(){});
       sp.write(new Buffer(code+'\n'),function(err) {
-        req.io.broadcast('lineaGCode', {nro:'',ejes:ejes,code:"Comando manual: "+code, pasos:pasos});      
+        req.io.broadcast('lineaGCode', {nro:'',ejes:ejes,code:"Comando manual: "+code, pasos:pasos});
         sp.on('data',function(data){
+        //if(data){
           console.log("arduino termino: %s",data?'terminado':'');
           sp.close(function(err) {
             res.json(data);
           });//close
+        //}else{console.log(data);}
         });//data
       });//write
     });//open

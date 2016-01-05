@@ -14,7 +14,7 @@ void pararpausa(){
   Serial.print(xyzp[1]);
   Serial.print(',');
   Serial.print(xyzp[2]);
-  Serial.print(']');
+  Serial.println(']');
   xyzp[0]=0;
   xyzp[1]=0;
   xyzp[2]=0;
@@ -48,29 +48,29 @@ void render(){
   retardoy  = 0;
   agregarCadaX = 0;
   agregarCadaY = 0;
-  double auxX=0,auxY=0;
-  auxX = xyzp[0];
-  auxY = xyzp[1];
-  if(auxX!=auxY){
+  
+  double auxX=xyzp[0],auxY=xyzp[1];
+
+  if(auxX!=auxY){  // si son distintos realizo calculos para corregir errores
     if(auxX<0){auxX = auxX*-1;}
     if(auxY<0){auxY = auxY*-1;}
-  // si son distintos realizo calculos para corregir errores
-  if(auxX<auxY){
-  // mayor Y
-    retardox  = floor(auxY / auxX);
-    int rta = auxY - auxX*retardox;
-    addY = floor(auxX*retardox / rta);
-    agregarCadaY = auxY -addY;
-    rx=retardox;
-  }else{
-  // mayor X
-    retardoy  = floor(auxX / auxY);
-    int rta = auxX - auxY*retardoy;
-    addX = floor(auxY*retardoy / rta);
-    agregarCadaX = auxX - addX;
-    ry=retardoy;
-  }
+    if(auxX<auxY){
+    // mayor Y
+      retardox  = floor(auxY / auxX);
+      int rta = auxY - auxX*retardox;
+      addY = floor(auxX*retardox / rta);
+      agregarCadaY = auxY -addY;
+      rx=retardox;
+    }else{
+    // mayor X
+      retardoy  = floor(auxX / auxY);
+      int rta = auxX - auxY*retardoy;
+      addX = floor(auxY*retardoy / rta);
+      agregarCadaX = auxX - addX;
+      ry=retardoy;
+    }
   }//auxX!=auxY
+  
   if(debug){
     Serial.print("auxX: ");Serial.println(auxX);
     Serial.print("auxY: ");Serial.println(auxY);
@@ -79,4 +79,5 @@ void render(){
     Serial.print("agregarCadaX ");Serial.println(agregarCadaX);
     Serial.print("agregarCadaY ");Serial.println(agregarCadaY);
   }
+
 }

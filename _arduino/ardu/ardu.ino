@@ -19,7 +19,7 @@ retardox=0,retardoy=0,rx=0,ry=0,
 agregarCadaX=0,agregarCadaY=0,addX=0,addY=0; //guardar para desvio o angulos distintos a 45
 
 int i=0, inChar=0; String inString = "";
-bool comenzar = false;
+bool comenzar = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -48,102 +48,112 @@ void setup() {
 }
 
 void loop() {
-
-while(Serial.available() && comenzar==false){
-  int inChar = Serial.read();
-  if(inChar!=','){
-    //if (inChar == 'o' ) {x=true;y=true;z=true;}
-    //if (inChar == 'p' ) {pararpausa();}
-    if(inChar=='-'){
-      inString += "-";
-    }
-    if (isDigit(inChar)){
-      inString += (char)inChar;
-      xyzp[i]=inString.toInt();
-    }
-  }else{
-    i++;
-    inString="";
-  }
-  if (inChar == '\n' || inChar == ';' ) {
-    i=0;
-    inString = "";
     
-    if(x==false||y==false||z==false){
-      render();
-      comenzar=true;
+  while(Serial.available() ){
+    int inChar = Serial.read();
+    if(inChar!=','){
+      //if (inChar == 'o' ) {x=true;y=true;z=true; llevaraCerro();}
+      //if (inChar == 'p' ) {pararpausa();}
+      if(inChar=='-'){
+        inString += "-";
+      }
+      if (isDigit(inChar)){
+        inString += (char)inChar;
+        xyzp[i]=inString.toInt();
+      }
+    }else{
+      i++;
+      inString="";
     }
-  }
-}// leer entrada
-
-//llevaraCerro();
-
-if(comenzar){
-
-  if(retardox==0){
-    retardox=rx;
-    retardoy>0?retardoy--:0;
-
-    if(0<xyzp[0]){
-      moverX(0);
+    if (inChar == '\n' || inChar == ';' ) {
+      i=0;
+      inString = "";
+      
+      if(x==false||y==false||z==false){
+        render();
+        comenzar=1;
+      }
     }
-    if(0>xyzp[0]){
-      moverX(1);
-    }
-    //Insertar X
-    if(agregarCadaX==xyzp[0] && addX!=0){
+  }// leer entrada
+  
+  if(comenzar){
+   
+    if(retardox==0){
+      retardox=rx;
+      retardoy>0?retardoy--:0;
+  
       if(0<xyzp[0]){
         moverX(0);
-        agregarCadaX = xyzp[0] - addX;
       }
       if(0>xyzp[0]){
         moverX(1);
-        agregarCadaX = xyzp[0] + addX;
       }
-    }//Insertar X
-    
-    if(ry==0){render();}
-  }
-
-  if(retardoy==0){
-    retardoy=ry;
-    retardox>0?retardox--:0;
-    
-    if(0<xyzp[1]){
-      moverY(0);
+      
+      //Insertar X
+      if(agregarCadaX==xyzp[0] && addX!=0){
+        if(0<xyzp[0]){
+          moverX(0);
+          agregarCadaX = xyzp[0] - addX;
+        }
+        if(0>xyzp[0]){
+          moverX(1);
+          agregarCadaX = xyzp[0] + addX;
+        }
+      }//Insertar X
+      
+      if(ry==0){render();}
     }
-    if(xyzp[1]<0){
-      moverY(1);
-    }
-    //Insertar Y
-    if(agregarCadaY==xyzp[1] && addY!=0){
+  
+    if(retardoy==0){
+      retardoy=ry;
+      retardox>0?retardox--:0;
+      
       if(0<xyzp[1]){
         moverY(0);
-        agregarCadaY = xyzp[1] - addY;
       }
-      if(0>xyzp[1]){
+      if(xyzp[1]<0){
         moverY(1);
-        agregarCadaY = xyzp[1] + addY;
       }
-    }//Insertar Y
+      
+      //Insertar Y
+      if(agregarCadaY==xyzp[1] && addY!=0){
+        if(0<xyzp[1]){
+          moverY(0);
+          agregarCadaY = xyzp[1] - addY;
+        }
+        if(0>xyzp[1]){
+          moverY(1);
+          agregarCadaY = xyzp[1] + addY;
+        }
+      }//Insertar Y
+      
+      if(rx==0){render();}
+    }
+  
+    if(0<xyzp[2]){
+      moverZ(0);
+    }
+    if(xyzp[2]<0){
+      moverZ(1);
+    }  
+  
+    if(xyzp[0]==0 && xyzp[1]==0 && xyzp[2]==0){
+      comenzar=0;
+      digitalWrite(pinEstado,LOW);
+      Serial.println("true");// termine :D
+    }
+
+    if(debug){
+      Serial.print(xyzp[0]);
+      Serial.print(',');
+      Serial.print(xyzp[1]);
+      Serial.print(',');
+      Serial.println(xyzp[2]);
+    }
     
-    if(rx==0){render();}
+  }else{
+    analogWrite(13,25);
   }
-
-  if(0<xyzp[2]){
-    moverZ(0);
-  }
-  if(xyzp[2]<0){
-    moverZ(1);
-  }
-
-  if(0==xyzp[0] && 0==xyzp[1] && 0==xyzp[2]){
-    Serial.println("true");// termine :D
-    digitalWrite(pinEstado,LOW);
-    comenzar=false;
-  }
-}else{
-  analogWrite(13,100);
-}
+  
 }// loop
 
