@@ -16,11 +16,12 @@ Uso el G-code que genera jscut apartar de un SVG  con medidas en milímetro. htt
 Con el tiempo a medida que mejora mi experiencia con otros trabajos voy descubriendo errores y malas prácticas al programar, si tengo tiempo las voy a pulir.
 
 ## Demo.
-[En YouTube.](https://youtu.be/3uy0TsIahks)
 ![CNC Mar](https://github.com/MaraniMatias/router-cnc-nodejs-arduino/blob/dev/cnc-arduino-nodejs.jpg)
 
-## Circuito.
+[Ver en YouTube un video resumen :D.](https://youtu.be/3uy0TsIahks)
 
+## Circuito.
+Consiste en un circuito rectificador de CA a CC proporcionado por el trasformador , un circuito auto acoplador para cada motor el cual recibe un pulso + de un pin del Arduino el cual corresponde a una bobina del motor paso a paso.
 
 ## Licencia.
 Espero que alguien más le sirva  ([MIT](http://opensource.org/licenses/mit-license.php)).
