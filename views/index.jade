@@ -77,7 +77,7 @@ block content
                             td Hora de inicio
                             td {{horaInicio | date:'HH:mm'}}
 
-            .row
+            .row(ng-class="btnClass")
               .column.ui.segment
                 .ui.one.column.grid
                   .ui.raised
@@ -104,16 +104,6 @@ block content
                               .item(ng-click='setmmpass("pasos")') pasos
 
                   .row
-                    //.ui.four.column.grid.center.aligned
-                      .row
-                        .column
-                          button.ui.red.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"X","")') X+
-                        .column
-                          button.ui.blue.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Y","")') Y+
-                        .column
-                          button.ui.orange.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"X","-")') -X
-                        .column
-                          button.ui.teal.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Y","-")') -Y
                     .column
                       .three.ui.buttons
                         button.ui.button(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"X","")') X +
@@ -129,9 +119,6 @@ block content
                     //.ui.three.column.grid.center.aligned
                       .row
                         .column
-                          button.ui.yellow.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Z","")') Z+
-                        .column
                           button.ui.secondary.tiny.button(ng-class="btnClass" ng-click='moverOrigen()' ng-show="false") [0,0,0]
-                        .column
-                          button.ui.olive.button.tiny(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Z","-")') -Z
+
 

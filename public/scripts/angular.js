@@ -1,3 +1,4 @@
+/* global angular */
 /* global $ */
 /* global app */
 /* global io */
@@ -11,7 +12,7 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   btnDisabled(false,true)
   function btnDisabled(b,v) {
-    if(true==b && true==v){
+    if(b && v){
       $scope.btnplay   = '';
       $scope.btnpause  = 'disabled';
       $scope.btnstop   = '';
@@ -21,7 +22,7 @@ function(addMessage,pUSB,$http,$scope,upload){
       $scope.btnplay   = (v||b)?'disabled':'';
       $scope.btnpause  = !b?'disabled':'';
       $scope.btnstop   = !b?'disabled':'';
-      $scope.btnClass  = !b?'disabled':'';
+      $scope.btnClass  = b?'disabled':'';
       $scope.btntrash  = (v||b)?'disabled':'';
       $scope.btnupdate = !v?'disabled':'';
     }
@@ -81,6 +82,7 @@ function(addMessage,pUSB,$http,$scope,upload){
   }
 
   $scope.enviarDatos=function(comando){
+  if(comando != null){
     if($scope.pUSB!=''){
       $scope.btnClass="disabled";
       if(comando!==undefined && comando!="" ){
@@ -106,6 +108,7 @@ function(addMessage,pUSB,$http,$scope,upload){
     }else{
       addMessage("Por favor selecione el arduino.","Error",4);
     }
+  }
   }
 
   $scope.moverOrigen=function(){
@@ -182,9 +185,9 @@ function(addMessage,pUSB,$http,$scope,upload){
     $('#tablagcode').append(
       $('<tr>')
         .append($('<td class="center aligned collapsing">').text(data.nro))
-        .append($('<td class="center aligned ">').text( data.ejes[0]!=='' ? Math.round(data.ejes[0]*100) / 100 : '' ))
-        .append($('<td class="center aligned ">').text( data.ejes[1]!=='' ? Math.round(data.ejes[1]*100) / 100 : '' ))
-        .append($('<td class="center aligned ">').text( data.ejes[2]!=='' ? Math.round(data.ejes[2]*100) / 100 : '' ))
+        .append($('<td class="center aligned ">').text( !isNaN(data.ejes[0]) ? Math.round(data.ejes[0]*100) / 100 : '' ))
+        .append($('<td class="center aligned ">').text( !isNaN(data.ejes[1]) ? Math.round(data.ejes[1]*100) / 100 : '' ))
+        .append($('<td class="center aligned ">').text( !isNaN(data.ejes[2]) ? Math.round(data.ejes[2]*100) / 100 : '' ))
         .append($('<td>').text(data.code))
         .append($('<td>').text(data.pasos[0]))
         .append($('<td>').text(data.pasos[1]))
@@ -196,8 +199,7 @@ function(addMessage,pUSB,$http,$scope,upload){
       $('#progress').text(" "+prgrss+"%");
       $('#bar').width(prgrss+"%");
       $('#progressbar').attr("data-percent", prgrss );
-
-      $('title').text("CNC - "+prgrss+"%");
+      $('title').text("CNC "+prgrss+"%");
     }
   });
 

@@ -6,7 +6,7 @@ void estado(){
   }
   bEstado = !bEstado;
 }
-
+/*
 void pararpausa(){
   Serial.print(xyzp[0]);
   Serial.print(',');
@@ -38,7 +38,7 @@ void llevaraCerro(){
     if(z){moverZ(1);}
   }
 }
-
+*/
 void render(){
   ry=0;
   rx=0;
@@ -69,7 +69,7 @@ void render(){
     }
   }//auxX!=auxY
   
-  if(debug){
+  /*if(debug){
     Serial.print("X: ");Serial.println(xyzp[0]);
     Serial.print("Y: ");Serial.println(xyzp[1]);
     //Serial.print("auxX: ");Serial.println(auxX);
@@ -79,6 +79,6 @@ void render(){
     Serial.print("agregarCadaX ");Serial.println(agregarCadaX);
     Serial.print("agregarCadaY ");Serial.println(agregarCadaY);
     Serial.println("-----------");
-  }
+  }*/
 
 }

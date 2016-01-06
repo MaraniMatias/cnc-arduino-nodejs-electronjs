@@ -1,12 +1,12 @@
 #include <math.h>
 // seting:START
-const bool debug = false;          // debug
+//const bool debug = false;           // debug
 const int pinEstado = 13;          // ledEstado
 const int pinX[] = {2,3,1,0};      // pin de motores
 const int pinY[] = {4,5,6,7};      // pin de motores
 const int pinZ[] = {8,9,10,11};    // pin de motores
 const int btnX=A5,btnY=A4,btnZ=A3; // finales de carrera
-const float tiempo = 25;                 // tiempo entre paso
+const float tiempo = 25;            // tiempo entre paso 25
 // seting:END
 
 bool bEstado = true,     // para indicar estados
@@ -55,13 +55,9 @@ void loop() {
       retardox=rx;
       retardoy>0?retardoy--:0;
   
-      if(0<xyzp[0]){
-        moverX(0);
-      }
-      if(0>xyzp[0]){
-        moverX(1);
-      }
-      
+      if(0<xyzp[0]){ moverX(0); }
+      if(0>xyzp[0]){ moverX(1); }
+
       //Insertar X
       if(agregarCadaX==xyzp[0] && addX!=0){
         if(0<xyzp[0]){
@@ -73,7 +69,7 @@ void loop() {
           agregarCadaX = xyzp[0] + addX;
         }
       }//Insertar X
-      
+
       if(ry==0){render();}
     }
   
@@ -81,13 +77,9 @@ void loop() {
       retardoy=ry;
       retardox>0?retardox--:0;
       
-      if(0<xyzp[1]){
-        moverY(0);
-      }
-      if(xyzp[1]<0){
-        moverY(1);
-      }
-      
+      if(0<xyzp[1]){ moverY(0); }
+      if(xyzp[1]<0){ moverY(1); }
+
       //Insertar Y
       if(agregarCadaY==xyzp[1] && addY!=0){
         if(0<xyzp[1]){
@@ -99,36 +91,31 @@ void loop() {
           agregarCadaY = xyzp[1] + addY;
         }
       }//Insertar Y
-      
+
       if(rx==0){render();}
     }
   
-    if(0<xyzp[2]){
-      moverZ(0);
-    }
-    if(xyzp[2]<0){
-      moverZ(1);
-    }  
-     
-    if(xyzp[0]==0 && xyzp[1]==0 && xyzp[2]==0){
-      comenzar=false;
-      digitalWrite(pinEstado,LOW);
-      Serial.println(comenzar); // termine :D  
-    }
-    else//if(debug)
-    {
+    if(0<xyzp[2]){ moverZ(0); }
+    if(xyzp[2]<0){ moverZ(1); }
+
+    /*if(debug){
       Serial.print(xyzp[0]);
       Serial.print(',');
       Serial.print(xyzp[1]);
       Serial.print(',');
       Serial.println(xyzp[2]);
-    }
+    }*/
     
-  }else{
-    analogWrite(13,5);
-  }
+    if(xyzp[0]==0 && xyzp[1]==0 && xyzp[2]==0){
+      comenzar=false;
+      Serial.println(comenzar,DEC); // termine :D  
+      digitalWrite(pinEstado,LOW);
+    }
 
-  while(Serial.available() ){
+  }
+  //else{analogWrite(13,5);}
+
+  while(Serial.available() > 0){ 
     int inChar = Serial.read();
     if(inChar!=','){
       //if (inChar == 'o' ) {x=true;y=true;z=true; llevaraCerro();}
