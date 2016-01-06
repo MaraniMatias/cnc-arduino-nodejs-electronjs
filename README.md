@@ -16,11 +16,14 @@ Uso el G-code que genera jscut apartar de un SVG  con medidas en milímetro. htt
 Con el tiempo a medida que mejora mi experiencia con otros trabajos voy descubriendo errores y malas prácticas al programar, si tengo tiempo las voy a pulir.
 
 ## Demo.
-([youtube](https://youtu.be/3uy0TsIahks))
-
+[En YouTube.](https://youtu.be/3uy0TsIahks)
+![CNC Mar](https://github.com/MaraniMatias/router-cnc-nodejs-arduino/blob/dev/cnc-arduino-nodejs.jpg)
 
 ## Circuito.
 
 
 ## Licencia.
-Espero que alguien más le sirva  ([MIT](http://opensource.org/licenses/mit-license.php).
+Espero que alguien más le sirva  ([MIT](http://opensource.org/licenses/mit-license.php)).
+Autores:
+Marani Matias E.
+Marani Cesar J.

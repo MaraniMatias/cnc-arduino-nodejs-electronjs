@@ -9,6 +9,6 @@ coverage
 .grunt
 .lock-wscript
 build/Release
-.vscode
+/.vscode
 node_modules
 typings
