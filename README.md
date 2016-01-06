@@ -1,8 +1,7 @@
 # Proyecto Router CNC con Arduino y NodeJS.
 ### Proyecto Router CNC casero con Arduino y NodeJS, sin drivers A4988 sin usar GRBL.
 
-Este proyecto lo emprendimos con mi padre.
-Por ahora es funcional pero es la primer versión con el tiempo lo voy a mejorar y subir los circuitos que usamos.
+Este proyecto lo emprendimos con mi padre.Por ahora es funcional pero al se la primer versión con el tiempo lo voy a mejorar y subir los circuitos que usamos.
 
 Uso librerías de tercero como Serialport, Express.io, AngularJS, sockect.io, jQuery, Semantic-ui (CSS).
 El código del Arduino es de mi autoría y se puede compilar desde el IDE de Arduino. Las versiones superiores a 1.6.5 del IDE compilan bien pero Arduino  no actúa de forma deseada.
