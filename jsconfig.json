@@ -1,5 +1,4 @@
 {
-    //"interpret-gcode": "^0.0.1",
   "compilerOptions": {
   "target": "ES6",
   "module": "commonjs"
