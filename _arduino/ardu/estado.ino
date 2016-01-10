@@ -6,7 +6,7 @@ void estado(){
   }
   bEstado = !bEstado;
 }
-/*
+
 void pararpausa(){
   Serial.print(xyzp[0]);
   Serial.print(',');
@@ -46,10 +46,9 @@ void render(){
   retardoy  = 0;
   agregarCadaX = 0;
   agregarCadaY = 0;
-  
   double auxX=xyzp[0],auxY=xyzp[1];
-
-  if(auxX!=auxY){  // si son distintos realizo calculos para corregir errores
+  // si son distintos realizo calculos para corregir errores
+  if(auxX!=auxY){
     if(auxX<0){auxX = auxX*-1;}
     if(auxY<0){auxY = auxY*-1;}
     if(auxX<auxY){
@@ -69,16 +68,14 @@ void render(){
     }
   }//auxX!=auxY
   
-  /*if(debug){
+  if(debug){
     Serial.print("X: ");Serial.println(xyzp[0]);
     Serial.print("Y: ");Serial.println(xyzp[1]);
-    //Serial.print("auxX: ");Serial.println(auxX);
-    //Serial.print("auxY: ");Serial.println(auxY);
     Serial.print("rx ");Serial.println(retardox);
     Serial.print("ry ");Serial.println(retardoy);
     Serial.print("agregarCadaX ");Serial.println(agregarCadaX);
     Serial.print("agregarCadaY ");Serial.println(agregarCadaY);
     Serial.println("-----------");
-  }*/
+  }
 
 }

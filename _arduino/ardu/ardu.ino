@@ -98,13 +98,13 @@ void loop() {
     if(0<xyzp[2]){ moverZ(0); }
     if(xyzp[2]<0){ moverZ(1); }
 
-    /*if(debug){
+    if(debug){
       Serial.print(xyzp[0]);
       Serial.print(',');
       Serial.print(xyzp[1]);
       Serial.print(',');
       Serial.println(xyzp[2]);
-    }*/
+    }
     
     if(xyzp[0]==0 && xyzp[1]==0 && xyzp[2]==0){
       comenzar=false;
