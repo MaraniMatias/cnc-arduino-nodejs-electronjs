@@ -84,20 +84,17 @@ function(addMessage,pUSB,$http,$scope,upload){
   $scope.enviarDatos=function(comando){
   if(comando != null){
     if($scope.pUSB!=''){
-      $scope.btnClass="disabled";
+      $scope.btnClass="loading";
       if(comando!==undefined && comando!="" ){
         $scope.comando='';
-        //$http.get('/comando/'+comando)
-
         $http({ url: "/comando",method: "POST",
           data: {
             code : comando,
             tipo : undefined
           }
         })
-
         .success(function(data, status, headers, config) {
-          if(data){ $scope.btnClass="";}
+          if(data){ $scope.btnClass="disabled";}
         })
         .error(function(data, status, headers, config) {
           addMessage(data.error.message,"Error",4);
@@ -106,6 +103,7 @@ function(addMessage,pUSB,$http,$scope,upload){
         addMessage("Escriba comando para enviar.","Error",4);
       }
     }else{
+      $scope.btnClass="disabled";
       addMessage("Por favor selecione el arduino.","Error",4);
     }
   }
@@ -178,6 +176,13 @@ function(addMessage,pUSB,$http,$scope,upload){
   }
 
   io.emit('connection');
+  io.on('closeConex', function (data) {
+    if(data.close){
+      $('#controlManual').removeAttr("disabled");
+    }else{
+      $('#controlManual').addClass("disabled");
+    }
+  });
   io.on('lineaGCode', function (data) {
     var n = $("#tablagcode tr").size();
     if(n > 14){$("#tablagcode tr")[n-15].remove();}

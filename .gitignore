@@ -12,4 +12,7 @@ build/Release
 /.vscode
 node_modules
 typings
-public/components/semantic-ui/
+public/components/
+*.png
+*.svg
+*.tap

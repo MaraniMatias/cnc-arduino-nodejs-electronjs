@@ -3,8 +3,8 @@ var app = module.parent.exports.app,
   fs = require('fs'),
   serialPort = require("serialport"),
   sp = '', gcode=[],
-  motorXY = {pasos:2000,avance:46.51},
-  motorZ = {pasos:2000,avance:5.23},
+  motorXY = {pasos:10000,avance:115.47},// medidas en mm
+  motorZ = {pasos:2000,avance:7.00},// medidas en mm
   SerialPort = serialPort.SerialPort;
 
 app.io.route('connection', function(req) {});
@@ -81,10 +81,12 @@ app.post('/comando', function (req, res) {
         if(data==0){
           console.log("arduino termino: %s",data?'terminado':'');
           sp.close(function(err) {
-            res.json(data);
+            //res.json(data); // enviar con socek.io
+            req.io.broadcast('closeConex', {close:true});
           });//close
         }
         });//data
+          res.json('0');// este es para que no envi dos veces 
       });//write
     });//open
   }
