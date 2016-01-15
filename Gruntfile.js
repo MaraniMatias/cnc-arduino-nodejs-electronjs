@@ -83,6 +83,26 @@ module.exports = function(grunt) {
   });//build
 
   grunt.initConfig({
+    nodemon: {
+      dev: {
+            script: 'index.js',
+            options: {
+                ignore: [
+                    'node_modules/**', 
+                    'public/js/**/*',
+                    'public/scripts/**/*'],
+                callback: function (nodemon) {
+                    // opens browser on initial server start
+                    nodemon.on('config:update', function () {
+                      // Delay before server listens on port
+                      setTimeout(function() {
+                        require('open')('http://localhost:3000/');
+                      }, 2000);
+                    });
+                }
+            }
+      }
+    },
     shell: {
        instalador:{
          options: {
@@ -142,7 +162,7 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec'
         },
-        src: ['app/tests/**/*.js']
+        src: ['tests/**/*.js']
       }
     },
     docco: {
@@ -164,6 +184,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jade');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-docco');
-  grunt.registerTask('default', ['jshint','jade','mochaTest','docco','shell:electron']);
+  grunt.loadNpmTasks('grunt-nodemon');
+  grunt.registerTask('default', ['jshint','mochaTest','nodemon']);
 
 };

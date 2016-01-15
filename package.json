@@ -9,21 +9,24 @@
     "serialport": "^2.0.2"
   },
   "devDependencies": {
+    "chai": "^3.4.1",
+    "colors": "^1.1.2",
     "grunt": "^0.4.5",
     "grunt-contrib-jade": "^0.15.0",
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-docco": "^0.4.0",
     "grunt-mocha-test": "^0.12.7",
+    "grunt-nodemon": "^0.4.1",
     "grunt-shell": "^1.1.2",
-    "jade": "^1.11.0",
     "jshint-stylish": "^2.1.0",
     "load-grunt-tasks": "^3.4.0",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "open": "0.0.5"
   },
   "scripts": {
     "postinstall": "bower install",
-   "test": "mocha ./tests/test.js",
+    "test": "mocha ./tests/test.js",
     "start": "node index.js"
   },
   "author": "Marani Matias Ezequiel",

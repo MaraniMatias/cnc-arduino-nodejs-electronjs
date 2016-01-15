@@ -1,34 +1,45 @@
+/* 
+  Please use Arduino 1.6.5, in versions 1.6.6 and 1.6.7 code behaves not expected.
+  Por favor utilice Arduino 1.6.5, para un correcto funcionamiento.
+  Author: Marani Matias Ezequiel
+  Email: maranimatias@gmail.com
+*/
 #include <math.h>
+
 // seting:START
-//const bool debug = false;           // debug
-const int pinEstado = 13;          // ledEstado
-const int pinX[] = {2,3,1,0};      // pin de motores
-const int pinY[] = {4,5,6,7};      // pin de motores
-const int pinZ[] = {8,9,10,11};    // pin de motores
-const int btnX=A5,btnY=A4,btnZ=A3; // finales de carrera
-const float tiempo = 25;            // tiempo entre paso 25
+const bool debug = false;       // Debug
+const int pinLED = 13,          // LED StatusLED indicator
+          pinX[] = {2,3,1,0},   // Motor pin X
+          pinY[] = {4,5,6,7},   // Motor pin Y
+          pinZ[] = {8,9,10,11}, // Motor pin Z
+          btnX=A5,              // Limit switches
+          btnY=A4,              // Limit switches
+          btnZ=A3;              // Limit switches
+const float _time = 25;         // Time between step
 // seting:END
 
-bool bEstado = true,     // para indicar estados
-x=false,y=false,z=false; // para indicar cuando esta en 0,0,0
+bool bStatusLED = true,     // StatusLED indicator var
+x=false,y=false,z=false; // Variable indicating when in origin
 
-int bx,by,bz,     // variable para finales de carrera
-xyzp[] = {0,0,0}, // cantidad de pasos para cada eje
-xp=0,yp=0,zp=0,   // guardar ultimo paso usado
-retardox=0,retardoy=0,rx=0,ry=0,
-agregarCadaX=0,agregarCadaY=0,addX=0,addY=0; //guardar para desvio o angulos distintos a 45
+int bx,by,bz,     // Variable for limit switches, save StatusLED
+xyzp[] = {0,0,0}, // Steps to go
+xp=0,yp=0,zp=0,   // Save last step used
+
+_delayX=0,_delayY=0,rx=0,ry=0,
+addX=0,addY=0,_saveAddX=0,_saveAddY=0; // when the angles are different from 90° or 45°
 
 int i=0, inChar=0; String inString = "";
-boolean comenzar = false;
+boolean start = false;
 
 void setup() {
   Serial.begin(9600);
-  //--fianles de carrera
+  pinMode(pinLED,OUTPUT); // LED inicador
+  
+  //---limit switches:START
   pinMode(btnX,INPUT);
   pinMode(btnY,INPUT);
   pinMode(btnZ,INPUT);
-  //--
-  pinMode(pinEstado,OUTPUT);// LED inicador
+  //---limit switches:END
   //---Motor:START
   pinMode(pinX[0],OUTPUT);
   pinMode(pinX[1],OUTPUT);
@@ -49,54 +60,56 @@ void setup() {
 
 void loop() {
   
-  if(comenzar){
+  if(start){
 
-    if(retardox==0){
-      retardox=rx;
-      retardoy>0?retardoy--:0;
+    if(_delayX==0){
+      _delayX=rx;
+      _delayY>0?_delayY--:0;
   
-      if(0<xyzp[0]){ moverX(0); }
-      if(0>xyzp[0]){ moverX(1); }
+      if(0<xyzp[0]){ MoveX(0); }
+      if(0>xyzp[0]){ MoveX(1); }
 
-      //Insertar X
-      if(agregarCadaX==xyzp[0] && addX!=0){
+      //Insert X
+      if(addX==xyzp[0] && _saveAddX!=0){
         if(0<xyzp[0]){
-          moverX(0);
-          agregarCadaX = xyzp[0] - addX;
+          MoveX(0);
+          addX = xyzp[0] - _saveAddX;
         }
         if(0>xyzp[0]){
-          moverX(1);
-          agregarCadaX = xyzp[0] + addX;
+          MoveX(1);
+          addX = xyzp[0] + _saveAddX;
         }
-      }//Insertar X
+      }
+      //Insert X
 
       if(ry==0){render();}
     }
   
-    if(retardoy==0){
-      retardoy=ry;
-      retardox>0?retardox--:0;
+    if(_delayY==0){
+      _delayY=ry;
+      _delayX>0?_delayX--:0;
       
-      if(0<xyzp[1]){ moverY(0); }
-      if(xyzp[1]<0){ moverY(1); }
+      if(0<xyzp[1]){ MoveY(0); }
+      if(xyzp[1]<0){ MoveY(1); }
 
-      //Insertar Y
-      if(agregarCadaY==xyzp[1] && addY!=0){
+      //Insert Y
+      if(addY==xyzp[1] && _saveAddY!=0){
         if(0<xyzp[1]){
-          moverY(0);
-          agregarCadaY = xyzp[1] - addY;
+          MoveY(0);
+          addY = xyzp[1] - _saveAddY;
         }
         if(0>xyzp[1]){
-          moverY(1);
-          agregarCadaY = xyzp[1] + addY;
+          MoveY(1);
+          addY = xyzp[1] + _saveAddY;
         }
-      }//Insertar Y
+      }
+      //Insert Y
 
       if(rx==0){render();}
     }
   
-    if(0<xyzp[2]){ moverZ(0); }
-    if(xyzp[2]<0){ moverZ(1); }
+    if(0<xyzp[2]){ MoveZ(0); }
+    if(xyzp[2]<0){ MoveZ(1); }
 
     if(debug){
       Serial.print(xyzp[0]);
@@ -107,9 +120,9 @@ void loop() {
     }
     
     if(xyzp[0]==0 && xyzp[1]==0 && xyzp[2]==0){
-      comenzar=false;
-      Serial.println(comenzar,DEC); // termine :D  
-      digitalWrite(pinEstado,LOW);
+      start=false;
+      Serial.println(start,DEC); // termine :D  
+      digitalWrite(pinLED,LOW);
     }
 
   }
@@ -118,8 +131,11 @@ void loop() {
   while(Serial.available() > 0){ 
     int inChar = Serial.read();
     if(inChar!=','){
-      //if (inChar == 'o' ) {x=true;y=true;z=true; llevaraCerro();}
-      //if (inChar == 'p' ) {pararpausa();}
+      //if (inChar == 'o' ) {x=true;y=true;z=true; TakeOrigin();}
+      //if (inChar == 'p' ) {StopPause();}
+      //if (inChar == 's' ) {start=false;}
+      //if (inChar == 'f' ) {/*cambiar la velocidad*/}
+      
       if(inChar=='-'){
         inString += "-";
       }
@@ -136,7 +152,7 @@ void loop() {
       inString = "";
       if(x==false||y==false||z==false){
         render();
-        comenzar=true;
+        start=true;
       }
     }
   }// leer entrada
