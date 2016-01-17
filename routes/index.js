@@ -157,14 +157,14 @@ app.post('/cargar', function (req, res) {
     var line = gcode[index];
     req.io.broadcast('canvas', {x:line.ejes[0],y:line.ejes[1],end: index+1 == gcode.length });
   }
-
+  
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length,pasos:''});
   res.json({lineas:gcode.length});
 });
 
 app.get('/chart', function(req, res){
-  res.render('chart.jade', {titulo: "Arduino"});
-  req.io.broadcast('canvas', {x:50,y:12});
+//  res.render('chart.jade', {titulo: "Arduino"});
+
 });
 
 app.post('/moverOrigen', function (req, res) {
