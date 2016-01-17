@@ -152,10 +152,10 @@ app.post('/cargar', function (req, res) {
   var fileContent = data.toString();
   gcode = gc(fileContent);
   
-  req.io.broadcast('canvas', {x:0,y:0,end: false,cleaner:true });
+  req.io.broadcast('canvas', {x:0,y:0,z:0,end: false,cleaner:true });
   for (var index = 0; index < gcode.length; index++) {
     var line = gcode[index];
-    req.io.broadcast('canvas', {x:line.ejes[0],y:line.ejes[1],end: index+1 == gcode.length });
+    req.io.broadcast('canvas', {x:line.ejes[0],y:line.ejes[1],z:line.ejes[2],end: index+1 == gcode.length });
   }
   
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length,pasos:''});
