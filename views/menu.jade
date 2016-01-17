@@ -10,10 +10,10 @@ block menu
         .item(ng-repeat='usb in port' ng-click='setUSB(usb)') {{usb.manufacturer}}
     a.item(ng-click="$emit('updateUSB')")
       i.refresh.icon
-
+    a.item g-code
 
     .right.menu
       .item
-      a.item Link
+      a.item Documentacion
   block content
 

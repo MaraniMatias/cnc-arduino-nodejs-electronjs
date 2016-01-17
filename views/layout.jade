@@ -4,11 +4,11 @@ html(lang='es', ng-app="app" )
     meta(charset='UTF-8')
     meta(name='viewport', content='width=device-width')
     title !{titulo}
-    link(rel='stylesheet', href='/components/semantic-ui/dist/semantic.css')
+    link(rel='stylesheet', href='/components/semantic/dist/semantic.css')
     link(rel="stylesheet", href="/stylesheets/style.css")
 
     script(src='/components/jquery/dist/jquery.js')
-    script(src='/components/semantic-ui/dist/semantic.js')
+    script(src='/components/semantic/dist/semantic.js')
     script(src='/components/angular/angular.js')
     script(src='/socket.io/socket.io.js')
 
@@ -17,5 +17,7 @@ html(lang='es', ng-app="app" )
     script(type='text/javascript').
       $('.ui.dropdown').dropdown();
       var io = io.connect()
-
+    
     script(src='/scripts/angular.js')
+    script(src='/scripts/canvas.js') 
+    block js

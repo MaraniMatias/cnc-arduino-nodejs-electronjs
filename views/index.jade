@@ -10,7 +10,7 @@ block content
                   //i.close.icon(ng-click="closeAlert($index)")
                   .header {{alert.header}}
                   div {{alert.msg}}
-
+                  
           .ui.one.column.grid
             .row
               .column.ui.segment
@@ -35,7 +35,10 @@ block content
                           th.collapsing P y
                           th.collapsing P z
                       tbody#tablagcode
-
+            .row
+              .column.ui.segment(style="border: 15px none; padding-bottom: 14px; padding-top: 14px;")
+                canvas#myCanvas(width="600" height="600" style="border:1px solid #d3d3d3;")
+                 
       .six.wide.column
           .ui.one.column.grid
             .row

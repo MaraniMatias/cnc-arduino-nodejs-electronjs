@@ -5,10 +5,11 @@
 var app = angular.module('app', []).value('pUSB','').value('alerts', []);
 app.controller('main',['addMessage','pUSB','$http','$scope','upload',
 function(addMessage,pUSB,$http,$scope,upload){
-  $scope.SelecArduino="Selec Arduino";$scope.btnClass="disabled";
+  $scope.SelecArduino="Selec Arduino";
+  $scope.btnClass="disabled";
   $scope.inputpasosmm='200';
   var varpasosmm = 'pasos';
-  $scope.setmmpass=function(valor){varpasosmm=valor;}
+  $scope.setmmpass = function(valor){ varpasosmm=valor; };
 
   btnDisabled(false,true)
   function btnDisabled(b,v) {
@@ -34,7 +35,7 @@ function(addMessage,pUSB,$http,$scope,upload){
   function progreso(line) {
     line++;
     $('#codeEjecutado').text(" "+line);
-    return (line*100)/$('#codeTotal').text();
+    return (line*100)/parseInt($('#codeTotal').text());
   }
 
   $scope.setFile = function(element) {
@@ -50,7 +51,6 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   $scope.moverManual=function(nume,eje,sentido){
     var str = undefined;
-    $scope.btnClass="disabled";
     switch (eje) {
       case "X": str= "["+sentido+nume+",0,0]"; break;
       case "Y": str = "[0,"+sentido+nume+",0]"; break;
@@ -58,8 +58,7 @@ function(addMessage,pUSB,$http,$scope,upload){
       default:  str ="[0,0,0]" ; break;
     }
 
-    if($scope.pUSB!==''&&str!==undefined){
-      //$http.get('/comando/'+str)
+    if($scope.pUSB!=='' && str!==undefined){
       $http({ url: "/comando",method: "POST",
         data: {
           code : str,
@@ -67,10 +66,8 @@ function(addMessage,pUSB,$http,$scope,upload){
         }
       })
       .success(function(data, status, headers, config) {
-        if(data){
-          $scope.btnClass="";
-
-        }
+        //$('#controlManual button').addClass("disabled");
+        $scope.btnClass="disabled";
       })
       .error(function(data, status, headers, config) {
           addMessage(data.error.message,"Error",4);
@@ -94,7 +91,8 @@ function(addMessage,pUSB,$http,$scope,upload){
           }
         })
         .success(function(data, status, headers, config) {
-          if(data){ $scope.btnClass="disabled";}
+          //$('#controlManual button').addClass("disabled");
+          $scope.btnClass="disabled";
         })
         .error(function(data, status, headers, config) {
           addMessage(data.error.message,"Error",4);
@@ -154,16 +152,17 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   $scope.parar = function(){
     btnDisabled(false,false);
-    //upload.parar();
+    upload.parar();
     $('#codeEjecutado').text(" 0");
     $('#progress').text(" 0%");
     $('#bar').width("0%");
     $('#progressbar').attr("data-percent", 0 );
+    //$('#controlManual button').removeClass("disabled");
     $scope.btnClass="";
   }
   $scope.pausa = function(){btnDisabled(false,false);
     $scope.btnClass="";
-    //upload.parar();
+    //upload.pausa();
   }
   $scope.borrar = function(){btnDisabled(false,true);
     //upload.borrar();
@@ -171,18 +170,25 @@ function(addMessage,pUSB,$http,$scope,upload){
     $scope.codeArchivo={name:"Sin Archivo"};
   }
   $scope.comenzar = function(){$scope.horaInicio = Date.now();
+    //$('#controlManual button').addClass("disabled");
+    $scope.btnClass="disabled";
     btnDisabled(true,false); $('#tablagcode tr').remove();
     upload.comenzar();
   }
 
-  io.emit('connection');
+  //io.emit('connection');
+  
   io.on('closeConex', function (data) {
     if(data.close){
-      $('#controlManual').removeAttr("disabled");
+      //$('#controlManual button').removeClass("disabled");
+      $('#controlManual button').removeClass("disabled");
+      //$scope.btnClass="";
     }else{
-      $('#controlManual').addClass("disabled");
+      $('#controlManual button').addClass("disabled");
+      //$scope.btnClass="disabled";
     }
   });
+  
   io.on('lineaGCode', function (data) {
     var n = $("#tablagcode tr").size();
     if(n > 14){$("#tablagcode tr")[n-15].remove();}
@@ -240,6 +246,22 @@ function(addMessage,pUSB,$http,$scope,upload){
 }])
 
 .service('upload', ["$http", "$q","addMessage", function ($http, $q,addMessage){
+  /*
+  this.parar = function(){
+    return  $http({ url: "/comando",method: "POST",
+      data: {
+        code : 'p',
+        tipo : undefined
+      }
+    })
+    .success(function(data, status, headers, config) {
+      $('#controlManual button').removeClass("disabled");
+    })
+    .error(function(data, status, headers, config) {
+      addMessage(data.error.message,"Error",4);
+    });
+  }
+  */
   this.comenzar = function(){
     var deferred = $q.defer();
     return $http.get("/comenzar")

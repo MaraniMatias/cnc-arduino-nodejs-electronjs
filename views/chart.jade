@@ -1,20 +1,6 @@
-doctype html
-html(lang='es')
-  head
-    meta(charset='UTF-8')
-    meta(name='viewport', content='width=device-width')
-    title Arduino NodeJS
-    link(rel='stylesheet', href='/components/semantic-ui/dist/semantic.css')
-    link(rel="stylesheet", href="/stylesheets/style.css")
-
-    script(src='/socket.io/socket.io.js')
-    script(src='/components/jquery/dist/jquery.js')
-    script(src='/components/semantic-ui/dist/semantic.js')
-    //script(src='/components/google/chart.js')
-    script(src= '/components/three.min.js')
-    script(src='/scripts/grafico.js')
-  
-  body( onload="webGLStart();")
-    #canvas
-    
+extends ./menu
+block content
+  canvas#myCanvas(width="800" height="600" style="border:1px solid #d3d3d3;")
+block js
+  script(src='/scripts/canvas.js')   
     

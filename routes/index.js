@@ -7,7 +7,11 @@ var app = module.parent.exports.app,
   motorZ = {pasos:2000,avance:7.00},// medidas en mm
   SerialPort = serialPort.SerialPort;
 
-app.io.route('connection', function(req) {});
+app.io.route('connection', function(req) {
+//  req.io.emit('canvas', {x:200,y:320});
+//  req.io.emit('canvas', {x:230,y:120,end:true});
+});
+
 /* GET listado de puertos. */
 app.get('/portslist', function(req, res){
   serialPort.list(function (err, ports){
@@ -86,7 +90,7 @@ app.post('/comando', function (req, res) {
           });//close
         }
         });//data
-          res.json('0');// este es para que no envi dos veces 
+          res.json('0');// este es para que no esper repuesta y evitar el re envio. 
       });//write
     });//open
   }
@@ -147,11 +151,21 @@ app.post('/cargar', function (req, res) {
   var data = fs.readFileSync(tmp_path);
   var fileContent = data.toString();
   gcode = gc(fileContent);
+  
+  req.io.broadcast('canvas', {x:0,y:0,end: false,cleaner:true });
+  for (var index = 0; index < gcode.length; index++) {
+    var line = gcode[index];
+    req.io.broadcast('canvas', {x:line.ejes[0],y:line.ejes[1],end: index+1 == gcode.length });
+  }
+
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length,pasos:''});
   res.json({lineas:gcode.length});
 });
 
-app.get('/chart', function(req, res){  res.render('chart.jade', {titulo: "Arduino"});});
+app.get('/chart', function(req, res){
+  res.render('chart.jade', {titulo: "Arduino"});
+  req.io.broadcast('canvas', {x:50,y:12});
+});
 
 app.post('/moverOrigen', function (req, res) {
   sp.write("o\n");
