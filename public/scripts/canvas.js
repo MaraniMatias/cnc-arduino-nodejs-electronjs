@@ -1,35 +1,34 @@
-var c = document.getElementById("myCanvas");
-c.width  = 300;
-c.height = 300;
-var ctx = c.getContext("2d");
-ctx.width  = c.width;
-ctx.height = c.height;
-var factro = 1;
-var cx = ctx.width/2;
-var cy = ctx.height/2;
-ctx.strokeStyle = 'black';
-ctx.lineWidth = 1;
-    
-io.emit('connection');
+var x1=330/2;
+var y1=330/2;
+var SVG = $('#mySVG');
+SVG.height(330);
+SVG.width(330);
+var cx = 330/2;
+var cy = 330/2;
+
+function addLineSVG(x,y,color) { 
+  var line = document.createElementNS('http://www.w3.org/2000/svg', "line");
+    $(line)
+    .attr("stroke",color)
+    .attr("stroke-width","1")
+    .attr("x1",x1)
+    .attr("y1",y1)
+    .attr("x2",x)
+    .attr("y2",y);
+  SVG.append(line);
+  x1=x;y1=y;
+}
+
 io.on('canvas', function (data) {  
   if(data.z<=0){
-    ctx.lineTo(cx+data.x*factro,cy+data.y*factro);
+    addLineSVG(cx+data.x,cx+data.y,"black");
   }else{
-    ctx.moveTo(cx+data.x*factro,cy+data.y*factro);
+    addLineSVG(cx+data.x,cx+data.y,"red");
   }
   if(data.end){
-    ctx.stroke();
-    ctx.save();
+    //SVG.removeClass('loading');
   }
   if(data.cleaner){
-    ctx.clearRect(0, 0, ctx.width, ctx.height);
-    ctx.moveTo(cx,0);
-    ctx.lineTo(cx,ctx.height);
-    ctx.stroke();
-    ctx.moveTo(0,cy);
-    ctx.lineTo(ctx.width,cy);
-    ctx.stroke();
-    ctx.save();
-    ctx.moveTo(cx,cy);
+  
   }
 });

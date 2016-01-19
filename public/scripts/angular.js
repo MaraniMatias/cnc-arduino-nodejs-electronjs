@@ -8,6 +8,7 @@ function(addMessage,pUSB,$http,$scope,upload){
   $scope.SelecArduino="Selec Arduino";
   $scope.btnClass="disabled";
   $scope.inputpasosmm='200';
+  $scope.showManul=true;
   var varpasosmm = 'pasos';
   $scope.setmmpass = function(valor){ varpasosmm=valor; };
 
@@ -159,18 +160,22 @@ function(addMessage,pUSB,$http,$scope,upload){
     $('#progressbar').attr("data-percent", 0 );
     //$('#controlManual button').removeClass("disabled");
     $scope.btnClass="";
+    $scope.showManul=true;
   }
   $scope.pausa = function(){btnDisabled(false,false);
     $scope.btnClass="";
     //upload.pausa();
+    $scope.showManul=true;
   }
   $scope.borrar = function(){btnDisabled(false,true);
     //upload.borrar();
     $('#codeTotal').text(" 0");
     $scope.codeArchivo={name:"Sin Archivo"};
+    $scope.showManul=true;
   }
   $scope.comenzar = function(){$scope.horaInicio = Date.now();
     //$('#controlManual button').addClass("disabled");
+    $scope.showManul=false;
     $scope.btnClass="disabled";
     btnDisabled(true,false); $('#tablagcode tr').remove();
     upload.comenzar();

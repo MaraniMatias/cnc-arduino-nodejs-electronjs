@@ -2,7 +2,7 @@ extends ./menu
 block content
   .ui.container
     .ui.tow.column.stackable.grid
-      .ten.wide.column
+      .eleven.wide.column
           .ui.one.column.grid
               //.row
               .column(ng-controller="message", ng-show="alerts.length > 0")
@@ -36,7 +36,7 @@ block content
                           th.collapsing P z
                       tbody#tablagcode
                 
-      .six.wide.column
+      .five.wide.column
           .ui.one.column.grid
             .row
               .column.ui.segment
@@ -77,15 +77,16 @@ block content
                             td Hora de inicio
                             td {{horaInicio | date:'HH:mm'}}
 
-            .row#controlManual
+            .row#controlManual(ng-show="showManul")
               .column.ui.segment
                 .ui.one.column.grid
-                  .ui.raised
+                  .ui.raised.small
                     .ui.green.ribbon.label Control manual
-                    span !{motorXY.pasos}p =~ !{motorXY.avance}mm - Ejes X Y
+                    span !{motorXY.pasos}p =~ !{motorXY.avance}mm
                 .ui.one.column.grid.center.aligned
-                  .row
+                  //.row
                     .column
+                      | !{motorXY.pasos}p =~ !{motorXY.avance}mm - Ejes X Y
                   .row
                     .column
                       .ui.action.input.fluid
@@ -121,5 +122,14 @@ block content
                         .column
                           button.ui.secondary.tiny.button(ng-class="btnClass" ng-click='moverOrigen()' ng-show="false") [0,0,0]
             .row
-              .column.ui.segment(style="border: 15px none; padding-bottom: 14px; padding-top: 14px;")
-                canvas#myCanvas(style=" width: 100%; height : 100%; border:1px solid #d3d3d3;")
+              //.column.ui.segment(style="border: 15px none; padding-bottom: 14px; padding-top: 14px;")
+              .column.ui.segment(style="padding-bottom: 14px;")
+                .ui.one.column.grid
+                  .ui.raised.small
+                    .ui.blue.ribbon.label Visualización.
+                    span .loading
+                .ui.one.column.grid
+                  //svg#mySVG(width="330" height="330" style=" border:1px solid #d3d3d3;")
+                  svg#mySVG(width="330" height="330" )
+                    line( x1="165" y1="0" x2="165" y2="330" stroke="rgb(0,0,255)" stroke-width="1")
+                    line( x1="0" y1="165" x2="330" y2="165" stroke="rgb(0,0,255)" stroke-width="1")
