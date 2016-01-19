@@ -1,9 +1,10 @@
 var c = document.getElementById("myCanvas");
-c.width  = 600;
-c.height = 600;
+c.width  = 300;
+c.height = 300;
 var ctx = c.getContext("2d");
 ctx.width  = c.width;
 ctx.height = c.height;
+var factro = 1;
 var cx = ctx.width/2;
 var cy = ctx.height/2;
 ctx.strokeStyle = 'black';
@@ -12,9 +13,9 @@ ctx.lineWidth = 1;
 io.emit('connection');
 io.on('canvas', function (data) {  
   if(data.z<=0){
-    ctx.lineTo(cx+data.x*3,cy+data.y*3);
+    ctx.lineTo(cx+data.x*factro,cy+data.y*factro);
   }else{
-    ctx.moveTo(cx+data.x*3,cy+data.y*3);
+    ctx.moveTo(cx+data.x*factro,cy+data.y*factro);
   }
   if(data.end){
     ctx.stroke();
