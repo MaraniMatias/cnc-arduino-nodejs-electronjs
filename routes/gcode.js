@@ -1,14 +1,32 @@
 function G0(prevState, nextState, command, args) {
-  for(var j=0; j<args.length; j++)  {
+  for(var j=0; j<args.length; j++){
     switch(args[j].charAt(0).toLowerCase()){
       case 'x':
-        nextState.ejes[0]=parseFloat(args[j].slice(1));
+        var aux = parseFloat(args[j].slice(1));
+        if(aux>nextState.ejes[0]){
+          nextState.travel=nextState.travel + (aux-nextState.ejes[0]);
+        }else{
+          nextState.travel=nextState.travel + (nextState.ejes[0]-aux);
+        }
+        nextState.ejes[0]=aux;
         break;
       case 'y':
-        nextState.ejes[1]=parseFloat(args[j].slice(1));
+        var aux = parseFloat(args[j].slice(1));
+        if(aux>nextState.ejes[0]){
+          nextState.travel=nextState.travel + (aux-nextState.ejes[1]);
+        }else{
+          nextState.travel=nextState.travel + (nextState.ejes[1]-aux);
+        }
+        nextState.ejes[1]=aux;
         break;
       case 'z':
-        nextState.ejes[2]=parseFloat(args[j].slice(1));
+        var aux = parseFloat(args[j].slice(1));
+        if(aux>nextState.ejes[0]){
+          nextState.travel=nextState.travel + (aux-nextState.ejes[2]);
+        }else{
+          nextState.travel=nextState.travel + (nextState.ejes[2]-aux);
+        }
+        nextState.ejes[2]=aux;
         break;
       case 'f':
         nextState.f=parseFloat(args[j].slice(1));
@@ -33,8 +51,6 @@ function ignorar(prevState, nextState, command, args) {
   console.warn("Ignorar GCode: ", command);
 }
 
-
-//module.exports = {
 var interpretarGCode = {
   "G0" : G0,
   "G00": G0,
@@ -54,19 +70,20 @@ var interpretarGCode = {
   "M109": ignorar
 }
 
-function Linea(ejes, f, code) {
+function Linea(ejes, f, code,travel) {
 	this.ejes = ejes;
 	this.f = f;		
   this.code = code;
+  this.travel=travel;
 	this.implemented = true;
 }
 
 Linea.prototype.clone = function() {
-	return new Linea(this.ejes.slice(),this.f,this.code);
+	return new Linea(this.ejes.slice(),this.f,this.code,this.travel);
 }
 
 function inicializarLinea(){
-	return new Linea([0,0,0], 0, 'Linea inicial.')
+	return new Linea([0,0,0], 0, 'Linea inicial.',0)
 }
 
 function nextLinea(gcode, prevLinea){

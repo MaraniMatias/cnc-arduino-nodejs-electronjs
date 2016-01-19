@@ -90,7 +90,7 @@ app.post('/comando', function (req, res) {
           });//close
         }
         });//data
-          res.json('0');// este es para que no esper repuesta y evitar el re envio. 
+          res.json('0');// este es para que no esper repuesta y evitar el re envio.
       });//write
     });//open
   }
@@ -151,14 +151,19 @@ app.post('/cargar', function (req, res) {
   var data = fs.readFileSync(tmp_path);
   var fileContent = data.toString();
   gcode = gc(fileContent);
-  
+/*
   req.io.broadcast('canvas', {x:0,y:0,z:0,end: false,cleaner:true });
   for (var index = 0; index < gcode.length; index++) {
     var line = gcode[index];
     req.io.broadcast('canvas', {x:line.ejes[0],y:line.ejes[1],z:line.ejes[2],end: index+1 == gcode.length });
   }
-  
-  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length,pasos:''});
+*/
+  var miliseg =motorXY.pasos*40/motorXY.avance;// mm por miliseg
+  var segTotal = gcode[gcode.length-1].travel*miliseg;
+  //var start = new Date();
+  //var elapsed = start.getTime() + segTotal; // elapsed time in milliseconds
+  //var fin = new Date(elapsed);
+  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length+' Termina: (hs)'+segTotal/3600000,pasos:''});
   res.json({lineas:gcode.length});
 });
 
