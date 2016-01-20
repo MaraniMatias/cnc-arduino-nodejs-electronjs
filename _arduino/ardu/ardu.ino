@@ -15,7 +15,7 @@ const int pinLED = 13,          // LED StatusLED indicator
           btnX=A5,              // Limit switches
           btnY=A4,              // Limit switches
           btnZ=A3;              // Limit switches
-const float _time = 20;         // Time between step
+const float _time = 15;         // Time between step // 5
 // seting:END
 
 bool bStatusLED = true,     // StatusLED indicator var

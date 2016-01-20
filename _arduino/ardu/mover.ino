@@ -73,26 +73,32 @@ void MoveZ(int sent){
 }
 void StepX(int i){
   if(_time!=0){
-    int j=0;if(i!=3){j=i+1;}else{j=0;}
+    int j=0;
+    if(i!=3){ j=i+1; }else{ j=0; }
     digitalWrite(pinX[i],HIGH);
     digitalWrite(pinX[j],HIGH);
     delay(_time);
     digitalWrite(pinX[i],LOW);
     digitalWrite(pinX[j],LOW);
-    delay(_time);
+    if(xyzp[1]!=0){
+      delay(_time);
+    }
   }else{
     digitalWrite(pinX[i],LOW);
   }
 }
 void StepY(int i){
   if(_time!=0){
-    int j = 0;if(i!=3){j=i+1;}else{j=0;}
+    int j=0;
+    if(i!=3){ j=i+1; }else{ j=0; }
     digitalWrite(pinY[i],HIGH);
     digitalWrite(pinY[j],HIGH);
     delay(_time);
     digitalWrite(pinY[i],LOW);
     digitalWrite(pinY[j],LOW);
-    delay(_time);
+    if(xyzp[1]!=0){
+      delay(_time);
+    }
   }else{
     digitalWrite(pinY[i],LOW);
   }

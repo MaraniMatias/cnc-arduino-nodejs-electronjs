@@ -32,7 +32,8 @@ function(addMessage,pUSB,$http,$scope,upload){
 
   $scope.codeArchivo  = {name:'Sin Archivo'};
   $scope.horaInicio   = '--:--';
-
+  $scope.restante     = '--:--';
+  
   function progreso(line) {
     line++;
     $('#codeEjecutado').text(" "+line);
@@ -46,6 +47,9 @@ function(addMessage,pUSB,$http,$scope,upload){
       $scope.codeArchivo  = element.files[0];
         upload.uploadFile(element.files[0]).then(function(res){
           $('#codeTotal').text(" "+res.data.lineas);
+          //$('#codeTotal').text(" "+res.data.segTotal);
+          //$scope.codeTotal=res.data.lineas;
+          $scope.restante = new Date().getTime() + res.data.segTotal;
         })
     });
   };
@@ -173,7 +177,9 @@ function(addMessage,pUSB,$http,$scope,upload){
     $scope.codeArchivo={name:"Sin Archivo"};
     $scope.showManul=true;
   }
-  $scope.comenzar = function(){$scope.horaInicio = Date.now();
+  $scope.comenzar = function(){
+    $scope.horaInicio = Date.now();
+
     //$('#controlManual button').addClass("disabled");
     $scope.showManul=false;
     $scope.btnClass="disabled";

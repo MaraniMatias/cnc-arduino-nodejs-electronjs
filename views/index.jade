@@ -72,11 +72,14 @@ block content
                             td#codeEjecutado 0
                           tr
                             td Total:
-                            td#codeTotal 0
+                            td#codeTotal {{codeTotal}}
                           tr
                             td Hora de inicio
                             td {{horaInicio | date:'HH:mm'}}
-
+                          tr
+                            td Hora fin
+                            td {{restante | date:'HH:mm'}}
+                            
             .row#controlManual(ng-show="showManul")
               .column.ui.segment
                 .ui.one.column.grid

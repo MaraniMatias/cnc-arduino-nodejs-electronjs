@@ -121,12 +121,12 @@ var i=0;
       if(i<gcode.length){
         sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
           console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
-          req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i)});
+          req.io.broadcast('lineaGCode', {nro:i,ejes:gcode[i].ejes,code:gcode[i].code,pasos:getPasos(i),travel:gcode[i].travel});
         });//write
       }else{
         sp.close(function(err){
           console.log("Terminado.");
-          req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:'Terminado.',pasos:''});
+          req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:'Terminado.',pasos:'',travel:''});
         });//close
       }
     }
@@ -138,7 +138,13 @@ var i=0;
     });//write
   });//open
 
-  res.json(true);
+
+  var miliseg =motorXY.pasos * 30 / motorXY.avance;// mm por miliseg
+  var segTotal = gcode[gcode.length-1].travel*miliseg;
+  //var start = new Date();
+  //var elapsed = start.getTime() + segTotal; // elapsed time in milliseconds
+  //var fin = new Date(elapsed);
+  res.json({segTotal:segTotal});// en milisegundos
 }else{
   req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Selecione el arduino.",pasos:''});
   res.json(false);
@@ -158,13 +164,12 @@ app.post('/cargar', function (req, res) {
     req.io.broadcast('canvas', {x:line.ejes[0],y:line.ejes[1],z:line.ejes[2],end: index+1 == gcode.length });
   }
 */
-  var miliseg =motorXY.pasos*40/motorXY.avance;// mm por miliseg
-  var segTotal = gcode[gcode.length-1].travel*miliseg;
-  //var start = new Date();
-  //var elapsed = start.getTime() + segTotal; // elapsed time in milliseconds
-  //var fin = new Date(elapsed);
-  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado. lineas: "+gcode.length+' Termina: (hs)'+segTotal/3600000,pasos:''});
-  res.json({lineas:gcode.length});
+
+  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado.",pasos:''});
+  res.json({
+    segTotal : gcode[gcode.length-1].travel * motorXY.pasos * 30 / motorXY.avance,
+    lineas   : gcode.length
+    });
 });
 
 app.get('/chart', function(req, res){
