@@ -10,7 +10,7 @@ angular.module('app', [])
   file:{ 
     name:'Sin Archivo',
     line: {
-      total: 30,
+      total: 0,
       interpreted:0,
       duration:0,
       progress:0
@@ -36,7 +36,7 @@ function(cnc,addMessage,$http,$scope,upload){
   
   $scope.setFile = function(element) {
     $scope.$apply(function($scope) {
-      btnDisabled(false,false);//**************
+      //btnDisabled(false,false);//**************
       upload.uploadFile(element.files[0]).then(function(res){
         $scope.cnc.file.name = element.files[0].name;
         $scope.cnc.file.line.total = res.data.lineas;
@@ -54,7 +54,7 @@ function(cnc,addMessage,$http,$scope,upload){
           }
       }).success(function(data, status, headers, config) {
         if(data){
-          $scope.btnClass="";//************
+          //$scope.btnClass="";//************
         }
       })
       .error(function(data, status, headers, config) {
@@ -71,7 +71,7 @@ function(cnc,addMessage,$http,$scope,upload){
         $scope.port=data.ports;
         if(data.portSele){
           $scope.cnc.arduino = data.portSele;
-          $scope.btnClass="";//********
+          //$scope.btnClass="";//********
           addMessage("Arduino conectado por puerto "+data.portSele.comName,"Arduino Detectado. MOSTRAR EN TABLA",1);//*****
         }
       }else{
@@ -81,15 +81,48 @@ function(cnc,addMessage,$http,$scope,upload){
   });
   $scope.$emit('updateArduinoList');
   
+  $scope.parar = function(){
+    //btnDisabled(false,false);
+    $scope.cnc.file.line.interpreted = 0;
+    $scope.cnc.file.line.progress = 0;
+    //upload.parar();
+  }
+  
+  $scope.pausa = function(){
+    //btnDisabled(false,false);
+    
+    //upload.pausa();
+  }
+  $scope.borrar = function(){
+    //btnDisabled(false,true);
+    $scope.cnc.file.line.total = 0;
+    $scope.cnc.file.line.interpreted = 0;
+    $scope.cnc.file.line.duration = 0;
+    $scope.cnc.file.line.progress = 0;
+    $scope.cnc.file = { name:'Sin Archivo'};
+    //upload.borrar();   
+  }
+  
+  $scope.comenzar = function(){
+    $scope.cnc.time.start = new Date();
+    var elapsed = $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration;
+    $scope.cnc.time.end = new Date(elapsed);
+    
+    //btnDisabled(true,false); 
+    $('#tablagcode tr').remove();//********************
+    upload.comenzar();
+  }
+  
 //###################################
   
-  $scope.btnClass="disabled";
+  //$scope.btnClass="disabled";
   $scope.inputpasosmm='200';
-
+  
   var varpasosmm = 'pasos';
   $scope.setmmpass = function(valor){ varpasosmm=valor; };
-
-  btnDisabled(false,true)
+  
+  
+  //btnDisabled(false,true)
   function btnDisabled(b,v) {
     if(b && v){
       $scope.btnplay   = '';
@@ -152,7 +185,7 @@ function(cnc,addMessage,$http,$scope,upload){
         })
         .success(function(data, status, headers, config) {
           //$('#controlManual button').addClass("disabled");
-          $scope.btnClass="disabled";
+          //$scope.btnClass="disabled";
         })
         .error(function(data, status, headers, config) {
           addMessage(data.error.message,"Error",4);
@@ -161,7 +194,7 @@ function(cnc,addMessage,$http,$scope,upload){
         addMessage("Escriba comando para enviar.","Error",4);
       }
     }else{
-      $scope.btnClass="disabled";
+      //$scope.btnClass="disabled";
       addMessage("Por favor selecione el arduino.","Error",4);
     }
   }
@@ -178,38 +211,6 @@ function(cnc,addMessage,$http,$scope,upload){
     }
   }
 
-
-  $scope.parar = function(){
-    btnDisabled(false,false);
-    upload.parar();
-    $('#codeEjecutado').text(" 0");
-    $('#progress').text(" 0%");
-    $('#bar').width("0%");
-    $('#progressbar').attr("data-percent", 0 );
-    //$('#controlManual button').removeClass("disabled");
-    $scope.btnClass="";
-    $scope.showManul=true;
-  }
-  $scope.pausa = function(){btnDisabled(false,false);
-    $scope.btnClass="";
-    //upload.pausa();
-    $scope.showManul=true;
-  }
-  $scope.borrar = function(){btnDisabled(false,true);
-    //upload.borrar();
-    $('#codeTotal').text(" 0");
-    $scope.codeArchivo={name:"Sin Archivo"};
-    $scope.showManul=true;
-  }
-  $scope.comenzar = function(){
-    $scope.horaInicio = Date.now();
-
-    //$('#controlManual button').addClass("disabled");
-    $scope.showManul=false;
-    $scope.btnClass="disabled";
-    btnDisabled(true,false); $('#tablagcode tr').remove();
-    upload.comenzar();
-  }
 
   //io.emit('connection');
   
@@ -242,7 +243,7 @@ function(cnc,addMessage,$http,$scope,upload){
 
     if(data.nro){
       $scope.cnc.file.Progress(data.nro);
-      $('title').text("CNC "+$scope.cnc.file.Progress+"%");
+      $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
     }
   });
 

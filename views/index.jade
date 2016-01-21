@@ -48,15 +48,15 @@ block content
                 .ui.one.column.grid
                   .column.center.aligned
                     .ui.icon.buttons
-                      button.ui.button(ng-class='btnplay' ng-click='comenzar()')
+                      button.ui.button(ng-class="{'disabled': cnc.file.line.total == 0 }" ng-click='comenzar()')
                         i.play.icon
-                      button.ui.button(ng-class='btnpause' ng-click='pausa()')
+                      button.ui.button(ng-class="{'disabled': cnc.file.line.interpreted == 0 }" ng-click='pausa()')
                         i.pause.icon
-                      button.ui.button(ng-class='btnstop' ng-click='parar()')
+                      button.ui.button(ng-class="{'disabled': cnc.file.line.interpreted == 0 }" ng-click='parar()')
                         i.stop.icon
-                      button.ui.button(ng-class='btntrash' ng-click='borrar()')
+                      button.ui.button(ng-class="{'disabled': cnc.file.line.total == 0 }" ng-click='borrar()')
                         i.trash.icon
-                      span.ui.button.btn-file(ng-class='btnupdate') Archivo
+                      span.ui.button.btn-file(ng-class="{'disabled': cnc.file.line.total != 0 }") Archivo
                         input(type='file' uploader-model='file'  onchange="angular.element(this).scope().setFile(this)")
                   //.row.field
                     .column.center.aligned
