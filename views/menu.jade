@@ -4,15 +4,15 @@ block menu
     .header.item !{titulo}
     //.active.item Link
     .ui.dropdown.item(tabindex='0')
-      | {{SelecArduino}}
+      | {{cnc.arduino.manufacturer}}
       i.dropdown.icon
       .menu(tabindex='-1')
-        .item(ng-repeat='usb in port' ng-click='setUSB(usb)') {{usb.manufacturer}}
-    a.item(ng-click="$emit('updateUSB')")
+        .item(ng-repeat='usb in port' ng-click='setArduino(usb)') {{usb.manufacturer}}
+    a.item(ng-click="$emit('updateArduinoList')")
       i.refresh.icon
-    a.item g-code
-
-    .right.menu
+    //a.item g-code
+    
+    //.right.menu
       .item
       a.item Documentacion
   block content

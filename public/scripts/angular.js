@@ -1,14 +1,91 @@
 /* global angular */
 /* global $ */
-/* global app */
 /* global io */
-var app = angular.module('app', []).value('pUSB','').value('alerts', []);
-app.controller('main',['addMessage','pUSB','$http','$scope','upload',
-function(addMessage,pUSB,$http,$scope,upload){
-  $scope.SelecArduino="Selec Arduino";
+angular.module('app', [])
+.value('cnc',{
+  arduino:{
+    comName:'',
+    manufacturer:'Selec Arduino'
+  },
+  file:{ 
+    name:'Sin Archivo',
+    line: {
+      total: 30,
+      interpreted:0,
+      duration:0,
+      progress:0
+    },
+    Progress: function (line) {
+      if(line != 0){
+        line++;
+        this.line.interpreted = line;
+        this.line.progress = ((line*100)/this.line.total).toFixed(2);
+      }
+    }
+  },
+  time:{
+    start:'--:--',
+    end:'--:--'
+  }
+})
+.value('alerts', [])
+
+.controller('main',['cnc','addMessage','$http','$scope','upload',
+function(cnc,addMessage,$http,$scope,upload){
+  $scope.cnc = cnc;
+  
+  $scope.setFile = function(element) {
+    $scope.$apply(function($scope) {
+      btnDisabled(false,false);//**************
+      upload.uploadFile(element.files[0]).then(function(res){
+        $scope.cnc.file.name = element.files[0].name;
+        $scope.cnc.file.line.total = res.data.lineas;
+        $scope.cnc.file.line.duration = parseInt(res.data.segTotal);
+      })
+    });
+  };
+  
+  $scope.setArduino = function(port){
+    $scope.cnc.arduino = port;
+    if($scope.cnc.arduino.comName!=''){
+      $http({ url: "/conect",method: "POST",
+        data: {
+            comUSB : port.comName
+          }
+      }).success(function(data, status, headers, config) {
+        if(data){
+          $scope.btnClass="";//************
+        }
+      })
+      .error(function(data, status, headers, config) {
+        addMessage(data.error.message,"Error",4);
+      });
+    }else{
+      addMessage("Por favor selecione el arduino","Error",4);
+    }
+  };
+  
+  $scope.$on('updateArduinoList',function(){
+    $http.get('/portslist').success(function (data) {
+      if(data){
+        $scope.port=data.ports;
+        if(data.portSele){
+          $scope.cnc.arduino = data.portSele;
+          $scope.btnClass="";//********
+          addMessage("Arduino conectado por puerto "+data.portSele.comName,"Arduino Detectado. MOSTRAR EN TABLA",1);//*****
+        }
+      }else{
+        $scope.port=[];
+      }
+    });
+  });
+  $scope.$emit('updateArduinoList');
+  
+//###################################
+  
   $scope.btnClass="disabled";
   $scope.inputpasosmm='200';
-  $scope.showManul=true;
+
   var varpasosmm = 'pasos';
   $scope.setmmpass = function(valor){ varpasosmm=valor; };
 
@@ -30,37 +107,15 @@ function(addMessage,pUSB,$http,$scope,upload){
     }
   }
 
-  $scope.codeArchivo  = {name:'Sin Archivo'};
-  $scope.horaInicio   = '--:--';
-  $scope.restante     = '--:--';
-  
-  function progreso(line) {
-    line++;
-    $('#codeEjecutado').text(" "+line);
-    return (line*100)/parseInt($('#codeTotal').text());
-  }
 
-  $scope.setFile = function(element) {
-    $scope.$apply(function($scope) {
-      btnDisabled(false,false);
-
-      $scope.codeArchivo  = element.files[0];
-        upload.uploadFile(element.files[0]).then(function(res){
-          $('#codeTotal').text(" "+res.data.lineas);
-          //$('#codeTotal').text(" "+res.data.segTotal);
-          //$scope.codeTotal=res.data.lineas;
-          $scope.restante = new Date().getTime() + res.data.segTotal;
-        })
-    });
-  };
 
   $scope.moverManual=function(nume,eje,sentido){
     var str = undefined;
     switch (eje) {
-      case "X": str= "["+sentido+nume+",0,0]"; break;
+      case "X": str = "["+sentido+nume+",0,0]"; break;
       case "Y": str = "[0,"+sentido+nume+",0]"; break;
       case "Z": str = "[0,0,"+sentido+nume+"]"; break;
-      default:  str ="[0,0,0]" ; break;
+      default:  str = "[0,0,0]" ; break;
     }
 
     if($scope.pUSB!=='' && str!==undefined){
@@ -122,38 +177,7 @@ function(addMessage,pUSB,$http,$scope,upload){
       addMessage("Por favor selecione el arduino","Error",4);
     }
   }
-  $scope.setUSB=function(port){
-    $scope.pUSB = port.comName;
-    $scope.SelecArduino = port.manufacturer;
-    if($scope.pUSB!=''){
-      $http({ url: "/conect",method: "POST",
-        data: {comUSB : port.comName}
-      }).success(function(data, status, headers, config) {
-        if(data){$scope.btnClass="";}
-      })
-      .error(function(data, status, headers, config) {
-        addMessage(data.error.message,"Error",4);
-      });
-    }else{
-      addMessage("Por favor selecione el arduino","Error",4);
-    }
-  }
-  $scope.$on('updateUSB',function(){
-    $http.get('/portslist').success(function (data) {
-      if(data){
-        $scope.port=data.ports;
-        if(data.portSele){
-          $scope.pUSB = data.portSele.comName;
-          $scope.SelecArduino = data.portSele.manufacturer;
-          $scope.btnClass="";
-          addMessage("Arduino conectado por puerto "+data.portSele.comName,"Arduino Detectado.",1);
-        }
-      }else{
-        $scope.port=[];
-      }
-    });
-  });
-  $scope.$emit('updateUSB');
+
 
   $scope.parar = function(){
     btnDisabled(false,false);
@@ -217,11 +241,8 @@ function(addMessage,pUSB,$http,$scope,upload){
       );
 
     if(data.nro){
-      var prgrss = progreso(data.nro).toFixed(2);
-      $('#progress').text(" "+prgrss+"%");
-      $('#bar').width(prgrss+"%");
-      $('#progressbar').attr("data-percent", prgrss );
-      $('title').text("CNC "+prgrss+"%");
+      $scope.cnc.file.Progress(data.nro);
+      $('title').text("CNC "+$scope.cnc.file.Progress+"%");
     }
   });
 

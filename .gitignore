@@ -16,3 +16,4 @@ public/components/
 *.png
 *.svg
 *.tap
+*.old.*

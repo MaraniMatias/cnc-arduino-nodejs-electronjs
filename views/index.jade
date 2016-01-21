@@ -14,13 +14,13 @@ block content
           .ui.one.column.grid
             .row
               .column.ui.segment
-                .ui.top.attached.progress.indicating#progressbar(data-percent='0')
-                  .bar#bar(style='transition-duration: 300ms;')
+                .ui.top.attached.progress.indicating(data-percent='{{cnc.file.line.progress}}')
+                  .bar(style='transition-duration: 300ms; width:{{cnc.file.line.progress}}%;')
                 .ui.one.column.grid
                   .ui.raised
                     .ui.red.ribbon.label Intepretando GCode
-                    span Completado:
-                      span#progress  0%
+                    span Completado: {{cnc.file.line.progress}}
+                      span %
                 .ui.one.column.grid
                   .column
                     table.ui.very.basic.table.compact
@@ -43,7 +43,7 @@ block content
                 .ui.one.column.grid
                   .ui.raised
                     .ui.orange.ribbon.label Archivo GCode
-                    span {{codeArchivo.name}}
+                    span {{cnc.file.name}}
                     
                 .ui.one.column.grid
                   .column.center.aligned
@@ -69,27 +69,24 @@ block content
                         tbody
                           tr
                             td Ejecutado:
-                            td#codeEjecutado 0
+                            td {{cnc.file.line.interpreted}}
                           tr
                             td Total:
-                            td#codeTotal {{codeTotal}}
+                            td {{cnc.file.line.total}}
                           tr
                             td Hora de inicio
-                            td {{horaInicio | date:'HH:mm'}}
+                            td {{cnc.time.start | date:'HH:mm'}}
                           tr
                             td Hora fin
-                            td {{restante | date:'HH:mm'}}
+                            td {{cnc.time.end | date:'HH:mm'}}
                             
-            .row#controlManual(ng-show="showManul")
+            .row#controlManual
               .column.ui.segment
                 .ui.one.column.grid
                   .ui.raised.small
                     .ui.green.ribbon.label Control manual
                     span !{motorXY.pasos}p =~ !{motorXY.avance}mm
                 .ui.one.column.grid.center.aligned
-                  //.row
-                    .column
-                      | !{motorXY.pasos}p =~ !{motorXY.avance}mm - Ejes X Y
                   .row
                     .column
                       .ui.action.input.fluid
