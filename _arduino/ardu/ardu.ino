@@ -133,7 +133,6 @@ void loop() {
     if(inChar!=','){
       //if (inChar == 'o' ) {x=true;y=true;z=true; TakeOrigin();}
       //if (inChar == 'p' ) {StopPause();}
-      //if (inChar == 's' ) {start=false;}
       //if (inChar == 'f' ) {/*cambiar la velocidad*/}
       
       if(inChar=='-'){

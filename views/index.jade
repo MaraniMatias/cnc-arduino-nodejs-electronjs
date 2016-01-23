@@ -34,8 +34,16 @@ block content
                           th.collapsing P x
                           th.collapsing P y
                           th.collapsing P z
-                      tbody#tablagcode
-                
+                      tbody
+                        tr(ng-repeat="line in tableLine")
+                          td.center.aligned.collapsing {{line.nro}}
+                          td.center.aligned {{ line.ejes[0] | number : 2}}
+                          td.center.aligned {{ line.ejes[1] | number : 2}}
+                          td.center.aligned {{ line.ejes[2] | number : 2}}
+                          td {{line.code}}
+                          td {{line.steps[0]}}
+                          td {{line.steps[1]}}
+                          td {{line.steps[2]}}         
       .five.wide.column
           .ui.one.column.grid
             .row
@@ -48,15 +56,15 @@ block content
                 .ui.one.column.grid
                   .column.center.aligned
                     .ui.icon.buttons
-                      button.ui.button(ng-class="{'disabled': cnc.file.line.total == 0 }" ng-click='comenzar()')
-                        i.play.icon
-                      button.ui.button(ng-class="{'disabled': cnc.file.line.interpreted == 0 }" ng-click='pausa()')
+                      button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 }]" ng-click='comenzar()')
+                        i.play.icon.green
+                      button.ui.button(ng-class="{'disabled':  !cnc.working }" ng-click='pausa()')
                         i.pause.icon
-                      button.ui.button(ng-class="{'disabled': cnc.file.line.interpreted == 0 }" ng-click='parar()')
-                        i.stop.icon
-                      button.ui.button(ng-class="{'disabled': cnc.file.line.total == 0 }" ng-click='borrar()')
+                      button.ui.button(ng-class="{'disabled':  !cnc.working }" ng-click='parar()')
+                        i.stop.icon.red
+                      //button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 }]" ng-click='borrar()')
                         i.trash.icon
-                      span.ui.button.btn-file(ng-class="{'disabled': cnc.file.line.total != 0 }") Archivo
+                      span.ui.button.btn-file(ng-class="[{'disabled': cnc.working }]") Archivo
                         input(type='file' uploader-model='file'  onchange="angular.element(this).scope().setFile(this)")
                   //.row.field
                     .column.center.aligned
@@ -69,8 +77,8 @@ block content
                         tbody
                           tr
                             td Ejecutado:
-                            td {{cnc.file.line.interpreted}}
-                          tr
+                            td {{cnc.file.line.interpreted}} de {{cnc.file.line.total}}
+                          //tr
                             td Total:
                             td {{cnc.file.line.total}}
                           tr
@@ -91,7 +99,7 @@ block content
                     .column
                       .ui.action.input.fluid
                         input(placeholder='Enviar comando.',ng-model='comando', type='text')
-                        button.ui.primary.button(ng-class="btnClass" type="submit",ng-click='enviarDatos(comando)') Enviar
+                        button.ui.primary.button(ng-class="{'disabled':  cnc.working }" type="submit",ng-click='enviarDatos(comando)') Enviar
                   .row
                     .column
                       .ui.right.action.left.icon.input.fluid
@@ -107,16 +115,16 @@ block content
                   .row
                     .column
                       .three.ui.buttons
-                        button.ui.button(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"X","")') X +
-                        button.ui.button(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Y","")') Y +
-                        button.ui.button(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Z","")') Z +
+                        button.ui.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"X","")') X +
+                        button.ui.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Y","")') Y +
+                        button.ui.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Z","")') Z +
                         
                   .row
                     .column
                       .three.ui.buttons
-                        button.ui.secondary.button(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"X","-")') X -
-                        button.ui.secondary.button(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Y","-")') Y -
-                        button.ui.secondary.button(ng-class="btnClass" ng-click='moverManual(inputpasosmm,"Z","-")') Z -
+                        button.ui.secondary.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"X","-")') X -
+                        button.ui.secondary.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Y","-")') Y -
+                        button.ui.secondary.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Z","-")') Z -
                     //.ui.three.column.grid.center.aligned
                       .row
                         .column

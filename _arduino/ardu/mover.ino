@@ -80,7 +80,7 @@ void StepX(int i){
     delay(_time);
     digitalWrite(pinX[i],LOW);
     digitalWrite(pinX[j],LOW);
-    if(xyzp[1]!=0){
+    if(xyzp[2]==0){
       delay(_time);
     }
   }else{
@@ -96,7 +96,7 @@ void StepY(int i){
     delay(_time);
     digitalWrite(pinY[i],LOW);
     digitalWrite(pinY[j],LOW);
-    if(xyzp[1]!=0){
+    if(xyzp[1]==0){
       delay(_time);
     }
   }else{

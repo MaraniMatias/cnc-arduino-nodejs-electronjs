@@ -1,32 +1,30 @@
 function G0(prevState, nextState, command, args) {
+  var travel = prevState.travel;
   for(var j=0; j<args.length; j++){
     switch(args[j].charAt(0).toLowerCase()){
       case 'x':
-        var aux = parseFloat(args[j].slice(1));
-        if(aux>nextState.ejes[0]){
-          nextState.travel=nextState.travel + (aux-nextState.ejes[0]);
+        nextState.ejes[0] = parseFloat(args[j].slice(1));
+        if(nextState.ejes[0] > prevState.ejes[0]){
+          travel = travel +  nextState.ejes[0]-prevState.ejes[0];
         }else{
-          nextState.travel=nextState.travel + (nextState.ejes[0]-aux);
+          travel = travel +  prevState.ejes[0]-nextState.ejes[0];
         }
-        nextState.ejes[0]=aux;
         break;
       case 'y':
-        var aux = parseFloat(args[j].slice(1));
-        if(aux>nextState.ejes[0]){
-          nextState.travel=nextState.travel + (aux-nextState.ejes[1]);
+        nextState.ejes[1] = parseFloat(args[j].slice(1));
+        if(nextState.ejes[1] > prevState.ejes[1]){
+          travel = travel +  nextState.ejes[1]-prevState.ejes[1];
         }else{
-          nextState.travel=nextState.travel + (nextState.ejes[1]-aux);
+          travel = travel +  prevState.ejes[1]-nextState.ejes[1];
         }
-        nextState.ejes[1]=aux;
         break;
       case 'z':
-        var aux = parseFloat(args[j].slice(1));
-        if(aux>nextState.ejes[0]){
-          nextState.travel=nextState.travel + (aux-nextState.ejes[2]);
+        nextState.ejes[2] = parseFloat(args[j].slice(1));
+        if(nextState.ejes[2] > prevState.ejes[2]){
+          travel = travel +  nextState.ejes[2]-prevState.ejes[2];
         }else{
-          nextState.travel=nextState.travel + (nextState.ejes[2]-aux);
+          travel = travel +  prevState.ejes[2]-nextState.ejes[2];
         }
-        nextState.ejes[2]=aux;
         break;
       case 'f':
         nextState.f=parseFloat(args[j].slice(1));
@@ -36,6 +34,7 @@ function G0(prevState, nextState, command, args) {
         break;    
     }
   }
+  nextState.travel = travel;
 }
 
 function G92(prevState, nextState, command, args){
