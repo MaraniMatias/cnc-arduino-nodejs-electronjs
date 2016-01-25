@@ -189,8 +189,3 @@ app.get('/chart', function(req, res){
 //  res.render('chart.jade', {titulo: "Arduino"});
 
 });
-
-app.post('/moverOrigen', function (req, res) {
-  sp.write("o\n");
-  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:req.body.comando,steps:''});
-});

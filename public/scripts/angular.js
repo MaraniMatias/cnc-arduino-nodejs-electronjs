@@ -87,7 +87,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
     $scope.cnc.file.line.interpreted = 0;
     $scope.cnc.file.line.progress = 0;
     $scope.cnc.file.travel = 0;
-    upload.comando('[0,0,0]');
+    upload.comando('[0,0,0]',undefined);
   }
   
   $scope.pausa = function(){   
@@ -116,13 +116,9 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
     $scope.cnc.working = data.close? true:false;
   }); 
   
-//###################################
-  
-  $scope.inputpasosmm='200';
-  
   var varpasosmm = 'pasos';
   $scope.setmmpass = function(valor){ varpasosmm=valor; };
-  
+  $scope.inputpasosmm = '200';
   $scope.moverManual=function(nume,eje,sentido){
     var str = undefined;
     switch (eje) {
@@ -131,66 +127,19 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
       case "Z": str = "[0,0,"+sentido+nume+"]"; break;
       default:  str = "[0,0,0]" ; break;
     }
-
-    if($scope.arduino.comName!=='' && str!==undefined){
-      $http({ url: "/comando",method: "POST",
-        data: {
-          code : str,
-          tipo : varpasosmm
-        }
-      })
-      .success(function(data, status, headers, config) {
-        $scope.cnc.working = true;
-      })
-      .error(function(data, status, headers, config) {
-          addMessage(data.error.message,"Error",4);
-          $scope.cnc.working = false;
-      });
-    }else{
-      addMessage("Por favor selecione el arduino","Error",4);
-    }
+    upload.comando(str,varpasosmm);
   }
 
   $scope.enviarDatos=function(comando){
-    if(comando != null){
-      if($scope.arduino.comName!=''){
-        if(comando!==undefined && comando!="" ){
-          $scope.comando='';
-          $http({ url: "/comando",method: "POST",
-            data: {
-              code : comando,
-              tipo : undefined
-            }
-          })
-          .success(function(data, status, headers, config) {
-            $scope.cnc.working = true;
-          })
-          .error(function(data, status, headers, config) {
-            addMessage(data.error.message,"Error",4);
-          });
-        }else{
-          addMessage("Escriba comando para enviar.","Error",4);
-        }
-      }else{
-        $scope.cnc.working = true;
-        addMessage("Por favor selecione el arduino.","Error",4);
-      }
-    }
+    upload.comando(comando,undefined);
   }
 
   $scope.moverOrigen=function(){
-    if($scope.arduino.comName!=''){
-      $http({ url: "/moverOrigen",method: "POST",data: {}
-      }).error(function(data, status, headers, config) {
-        addMessage(data.error.message,"Error",4);
-      });
-    }else{
-      addMessage("Por favor selecione el arduino","Error",4);
-    }
+    upload.comando('o',undefined);
   }
 
 }])
-
+// ############################################################## //
 .controller("message",['alerts','$scope',function(alerts,$scope){
   $scope.alerts=alerts;
   $scope.closeAlert = function(index) {
@@ -207,23 +156,22 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
     }
   };
 }])
-.service('upload', ['cnc',"$http", "$q","addMessage", function (cnc,$http, $q,addMessage){
-
-  this.comando = function(cmd){
-    //if(cmd != null){
+.service('upload', ['cnc',"$http", "$q","addMessage", function (cnc,$http, $q,addMessage){ 
+  this.comando = function(cmd,type){
+    if(cmd != null && cnc.arduino.comName!='' && !cnc.working){
     return  $http({ url: "/comando",method: "POST",
       data: {
         code : cmd,
-        tipo : undefined
+        tipo : type
       }
     })
     .success(function(data, status, headers, config) {
-      $('#controlManual button').removeClass("disabled");
+      if(data){cnc.working = true;}      
     })
     .error(function(data, status, headers, config) {
       addMessage(data.error.message,"Error",4);
     });
-    //}
+    }
   }
   
   this.comenzar = function(){
