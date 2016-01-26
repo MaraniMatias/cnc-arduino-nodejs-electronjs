@@ -4,10 +4,10 @@
 angular.module('app', [])
 .value('cnc',{
   working:false,
-  arduino:{
+  /*arduino:{
     comName:'',
     manufacturer:'Selec Arduino'
-  },
+  },*/
   file:{ 
     name:'Sin Archivo',
     line: {
@@ -35,6 +35,7 @@ angular.module('app', [])
 function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
   $scope.cnc = cnc;
   $scope.tableLine = tableLine;
+  socket.emit('connection');
   
   $scope.setFile = function(element) {
     $scope.$apply(function($scope) {
@@ -46,51 +47,21 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
       })
     });
   };
-  
-  $scope.setArduino = function(port){
-    $scope.cnc.arduino = port;
-    if($scope.cnc.arduino.comName!=''){
-      $http.post("/conect",{comUSB : port.comName })
-           .success(function(data, status, headers, config) {
-             if(data){$scope.cnc.working = true;}
-           })
-           .error(function(data, status, headers, config) {
-             addMessage(data.error.message,4);
-           });
-    }else{
-      addMessage("Por favor selecione el arduino",4);
-    }
-  };
-  
-  $scope.$on('updateArduinoList',function(){
-    $http.get('/portslist').success(function (data) {
-      if(data){
-        $scope.port=data.ports;
-        if(data.portSele){
-          $scope.cnc.arduino = data.portSele;
-          $scope.cnc.working = false;
-          addMessage("Arduino conectado por puerto "+data.portSele.comName);
-        }
-      }else{
-        $scope.port=[];
-      }
-    });
-  });
-  $scope.$emit('updateArduinoList');
-  
+
   $scope.parar = function(){
+    upload.comando('[0,0,0]',undefined);
     $scope.cnc.file.line.interpreted = 0;
     $scope.cnc.file.line.progress = 0;
     $scope.cnc.file.travel = 0;
-    upload.comando('[0,0,0]',undefined);
   }
   
   $scope.pausa = function(){   
     //upload.pausa();
+    upload.comando('0,0,0',undefined);
   }
   
   $scope.comenzar = function(){
-    tableLine = [];
+    $scope.tableLine = [];
     $scope.cnc.time.start = new Date();
     var elapsed = $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration;
     $scope.cnc.time.end = new Date(elapsed);
@@ -98,10 +69,10 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
   }
   
   socket.on('lineaGCode', function (data) {
-    if(tableLine.length > 14){ 
-      tableLine.shift 
+    if($scope.tableLine.length > 14){ 
+      $scope.tableLine.shift 
     }
-    tableLine.push(data);
+    $scope.tableLine.push(data);
     if(data.nro && data.travel){
       $scope.cnc.file.Progress(data.nro,data.travel);
       $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
@@ -146,7 +117,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
 }])
 .service('upload', ['cnc',"$http", "$q","addMessage", function (cnc,$http, $q,addMessage){ 
   this.comando = function(cmd,type){
-    if(cmd != null && cnc.arduino.comName!='' && !cnc.working){
+    if(cmd != null /*&& cnc.arduino.comName!=''*/ && !cnc.working){
     return  $http({ url: "/comando",method: "POST",
       data: {
         code : cmd,
