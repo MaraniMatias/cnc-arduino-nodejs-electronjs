@@ -1,141 +1,122 @@
-extends ./menu
+//extends ./menu
+extends ./layout
 block content
-  .ui.container
-    .ui.tow.column.stackable.grid
-      .eleven.wide.column
-          .ui.one.column.grid
-              //.row
-              .column(ng-controller="message", ng-show="alerts.length > 0")
-                .ui.message(ng-click="closeAlert($index)" ng-repeat="alert in alerts" class="{{alert.type}}")
-                  //i.close.icon(ng-click="closeAlert($index)")
-                  .header {{alert.header}}
-                  div {{alert.msg}}
-                  
-          .ui.one.column.grid
-            .row
-              .column.ui.segment
-                .ui.top.attached.progress.indicating(data-percent='{{cnc.file.line.progress}}')
-                  .bar(style='transition-duration: 300ms; width:{{cnc.file.line.progress}}%;')
-                .ui.one.column.grid
-                  .ui.raised
-                    .ui.red.ribbon.label Intepretando GCode
-                    span Completado: {{cnc.file.line.progress}}
-                      span %
-                .ui.one.column.grid
-                  .column
-                    table.ui.very.basic.table.compact
-                      thead
-                        tr
-                          th.collapsing linea
-                          th.collapsing X
-                          th.collapsing Y
-                          th.collapsing Z
-                          th G-Code
-                          th.collapsing P x
-                          th.collapsing P y
-                          th.collapsing P z
-                      tbody
-                        tr(ng-repeat="line in tableLine")
-                          td.center.aligned.collapsing {{line.nro}}
-                          td.center.aligned {{ line.ejes[0] | number : 2}}
-                          td.center.aligned {{ line.ejes[1] | number : 2}}
-                          td.center.aligned {{ line.ejes[2] | number : 2}}
-                          td {{line.code}}
-                          td {{line.steps[0]}}
-                          td {{line.steps[1]}}
-                          td {{line.steps[2]}}         
-      .five.wide.column
-          .ui.one.column.grid
-            .row
-              .column.ui.segment
-                .ui.one.column.grid
-                  .ui.raised
-                    .ui.orange.ribbon.label Archivo GCode
-                    span {{cnc.file.name}}
-                    
-                .ui.one.column.grid
-                  .column.center.aligned
-                    .ui.icon.buttons
-                      button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 }]" ng-click='comenzar()')
-                        i.play.icon.green
-                      button.ui.button(ng-class="{'disabled':  !cnc.working }" ng-click='pausa()')
-                        i.pause.icon
-                      button.ui.button(ng-class="{'disabled':  !cnc.working }" ng-click='parar()')
-                        i.stop.icon.red
-                      //button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 }]" ng-click='borrar()')
-                        i.trash.icon
-                      span.ui.button.btn-file(ng-class="[{'disabled': cnc.working }]") Archivo
-                        input(type='file' uploader-model='file'  onchange="angular.element(this).scope().setFile(this)")
-                  //.row.field
-                    .column.center.aligned
-                      .ui.checkbox
-                        input.hidden(tabindex="0" type="checkbox" ng-model='lineainicial')
-                        label Linea inicial.
-                .ui.one.column.grid
-                    table.ui.very.basic.table
-                      thead
-                        tbody
-                          tr
-                            td Ejecutado:
-                            td {{cnc.file.line.interpreted}} de {{cnc.file.line.total}}
-                          //tr
-                            td Total:
-                            td {{cnc.file.line.total}}
-                          tr
-                            td Hora de inicio
-                            td {{cnc.time.start | date:'HH:mm'}}
-                          tr
-                            td Hora fin
-                            td {{cnc.time.end | date:'HH:mm'}}
-                            
-            .row#controlManual
-              .column.ui.segment
-                .ui.one.column.grid
-                  .ui.raised.small
-                    .ui.green.ribbon.label Control manual
-                    span !{motorXY.pasos}p =~ !{motorXY.avance}mm
-                .ui.one.column.grid.center.aligned
-                  .row
-                    .column
-                      .ui.action.input.fluid
-                        input(placeholder='Enviar comando.',ng-model='comando', type='text')
-                        button.ui.primary.button(ng-class="{'disabled':  cnc.working }" type="submit",ng-click='enviarDatos(comando)') Enviar
-                  .row
-                    .column
-                      .ui.right.action.left.icon.input.fluid
-                          //i.search.icon
-                          input(ng-model='inputpasosmm' type='text')
-                          .ui.basic.floating.dropdown.button
-                            .text pasos
-                            i.dropdown.icon
-                            .menu
-                              .item(ng-click='setmmpass("mm")') mm
-                              .item(ng-click='setmmpass("pasos")') pasos
-
-                  .row
-                    .column
-                      .three.ui.buttons
-                        button.ui.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"X","")') X +
-                        button.ui.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Y","")') Y +
-                        button.ui.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Z","")') Z +
+  .ui.two.column.stackable.grid(style='margin: 5px;')
+    .eleven.wide.column                 
+        .ui.one.column.grid
+          .row
+            .column.ui.segment
+              .ui.top.attached.progress.indicating(data-percent='{{cnc.file.line.progress}}')
+                .bar(style='transition-duration: 1000ms; width:{{cnc.file.line.progress}}%;')
+              .ui.one.column.grid
+                .ui.raised
+                  .ui.red.ribbon.label Intepretando GCode
+                  span Completado: {{cnc.file.line.progress}}
+                    span %
+              .ui.one.column.grid
+                .column
+                  table.ui.very.basic.table.compact
+                    thead
+                      tr
+                        th.collapsing linea
+                        th.collapsing X
+                        th.collapsing Y
+                        th.collapsing Z
+                        th G-Code
+                        th.collapsing P x
+                        th.collapsing P y
+                        th.collapsing P z
+                    tbody
+                      tr(ng-repeat="line in tableLine" ng-class="line.type")
+                        td.center.aligned.collapsing {{line.nro}}
+                        td.center.aligned {{ line.ejes[0] | number : 2}}
+                        td.center.aligned {{ line.ejes[1] | number : 2}}
+                        td.center.aligned {{ line.ejes[2] | number : 2}}
+                        td {{line.code}}
+                        td {{line.steps[0]}}
+                        td {{line.steps[1]}}
+                        td {{line.steps[2]}}         
+    .five.wide.column
+      .ui.one.column.grid
+        .row
+          .column.ui.segment
+            .ui.one.column.grid
+              .ui.raised
+                .ui.orange.ribbon.label Archivo GCode
+                span {{cnc.file.name}}
+            .ui.one.column.grid
+              .column.center.aligned
+                .ui.icon.buttons
+                  button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 }]" ng-click='comenzar()')
+                    i.play.icon.green
+                  button.ui.button(ng-class="{'disabled':  !cnc.working }" ng-click='pausa()')
+                    i.pause.icon
+                  button.ui.button(ng-class="{'disabled':  !cnc.working }" ng-click='parar()')
+                    i.stop.icon.red
+                  span.ui.button.btn-file(ng-class="[{'disabled': cnc.working }]") Archivo
+                    input(type='file' uploader-model='file'  onchange="angular.element(this).scope().setFile(this)")
+            .ui.one.column.grid
+                table.ui.very.basic.table
+                  thead
+                    tbody
+                      tr
+                        td Ejecutado:
+                        td {{cnc.file.line.interpreted}} de {{cnc.file.line.total}}
+                      //tr
+                        td Total:
+                        td {{cnc.file.line.total}}
+                      tr
+                        td Hora de inicio
+                        td {{cnc.time.start | date:'HH:mm'}}
+                      tr
+                        td Hora fin
+                        td {{cnc.time.end | date:'HH:mm'}}
                         
+        .row#controlManual
+          .column.ui.segment
+            .ui.one.column.grid
+              .ui.raised.small
+                .ui.green.ribbon.label Control manual
+                span !{motorXY.steps}p =~ !{motorXY.advance}mm
+            .ui.one.column.grid.center.aligned
+              .row
+                .column
+                  .ui.action.input.fluid
+                    input(placeholder='Enviar comando.' ng-model='comando' type='text' ng-value='')
+                    button.ui.primary.button(ng-class="[{'disabled':  cnc.working },{'disabled' : comando.length==0}]" type="submit",ng-click='enviarDatos(comando)') Enviar
+              .row
+                .column
+                  .ui.right.action.left.icon.input.fluid
+                    input(ng-model='inputpasosmm' type='text')
+                    .ui.basic.floating.dropdown.button
+                      .text pasos
+                      i.dropdown.icon
+                      .menu
+                        .item(ng-click='setmmpass("mm")') mm
+                        .item(ng-click='setmmpass("steps")') pasos
+              .row
+                .column
+                  .three.ui.buttons
+                    button.ui.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"X","")') X +
+                    button.ui.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Y","")') Y +
+                    button.ui.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Z","")') Z +
+              .row
+                .column
+                  .three.ui.buttons
+                    button.ui.secondary.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"X","-")') X -
+                    button.ui.secondary.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Y","-")') Y -
+                    button.ui.secondary.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Z","-")') Z -
+                //.ui.three.column.grid.center.aligned
                   .row
                     .column
-                      .three.ui.buttons
-                        button.ui.secondary.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"X","-")') X -
-                        button.ui.secondary.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Y","-")') Y -
-                        button.ui.secondary.button(ng-class="{'disabled':  cnc.working }" ng-click='moverManual(inputpasosmm,"Z","-")') Z -
-                    //.ui.three.column.grid.center.aligned
-                      .row
-                        .column
-                          button.ui.secondary.tiny.button(ng-class="btnClass" ng-click='moverOrigen()' ng-show="false") [0,0,0]
+                      button.ui.secondary.tiny.button(ng-class="btnClass" ng-click='moverOrigen()' ng-show="false") [0,0,0]
 //            .row
-              //.column.ui.segment(style="border: 15px none; padding-bottom: 14px; padding-top: 14px;")
-              .column.ui.segment(style="padding-bottom: 20px;")
-                .ui.one.column.grid
-                  .ui.raised.small
-                    .ui.blue.ribbon.label Visualización.
-                    span .loading
-                .ui.one.column.grid
-                  //svg#mySVG(width="330" height="330" style=" border:1px solid #d3d3d3;")
-                  svg#mySVG(width="330" height="330" )
+          //.column.ui.segment(style="border: 15px none; padding-bottom: 14px; padding-top: 14px;")
+          .column.ui.segment(style="padding-bottom: 20px;")
+            .ui.one.column.grid
+              .ui.raised.small
+                .ui.blue.ribbon.label Visualización.
+                span .loading
+            .ui.one.column.grid
+              //svg#mySVG(width="330" height="330" style=" border:1px solid #d3d3d3;")
+              svg#mySVG(width="330" height="330" )

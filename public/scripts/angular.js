@@ -29,12 +29,12 @@ angular.module('app', [])
     end:'--:--'
   }
 })
-.value('alerts', [])
+.value('tableLine', [])
 
-.controller('main',['socket','cnc','addMessage','$http','$scope','upload','$compile',
-function(socket,cnc,addMessage,$http,$scope,upload,$compile){
+.controller('main',['socket','cnc','addMessage','$http','$scope','upload','tableLine',
+function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
   $scope.cnc = cnc;
-  $scope.tableLine = [];
+  $scope.tableLine = tableLine;
   
   $scope.setFile = function(element) {
     $scope.$apply(function($scope) {
@@ -50,20 +50,15 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
   $scope.setArduino = function(port){
     $scope.cnc.arduino = port;
     if($scope.cnc.arduino.comName!=''){
-      $http({ url: "/conect",method: "POST",
-        data: {
-            comUSB : port.comName
-          }
-      }).success(function(data, status, headers, config) {
-        if(data){
-          $scope.cnc.working = true;
-        }
-      })
-      .error(function(data, status, headers, config) {
-        addMessage(data.error.message,"Error",4);
-      });
+      $http.post("/conect",{comUSB : port.comName })
+           .success(function(data, status, headers, config) {
+             if(data){$scope.cnc.working = true;}
+           })
+           .error(function(data, status, headers, config) {
+             addMessage(data.error.message,4);
+           });
     }else{
-      addMessage("Por favor selecione el arduino","Error",4);
+      addMessage("Por favor selecione el arduino",4);
     }
   };
   
@@ -74,7 +69,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
         if(data.portSele){
           $scope.cnc.arduino = data.portSele;
           $scope.cnc.working = false;
-          addMessage("Arduino conectado por puerto "+data.portSele.comName,"Arduino Detectado. MOSTRAR EN TABLA",1);//*****
+          addMessage("Arduino conectado por puerto "+data.portSele.comName);
         }
       }else{
         $scope.port=[];
@@ -95,7 +90,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
   }
   
   $scope.comenzar = function(){
-    $scope.tableLine = [];
+    tableLine = [];
     $scope.cnc.time.start = new Date();
     var elapsed = $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration;
     $scope.cnc.time.end = new Date(elapsed);
@@ -103,10 +98,10 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
   }
   
   socket.on('lineaGCode', function (data) {
-    if($scope.tableLine.length > 14){ 
-      $scope.tableLine.shift 
+    if(tableLine.length > 14){ 
+      tableLine.shift 
     }
-    $scope.tableLine.push(data);
+    tableLine.push(data);
     if(data.nro && data.travel){
       $scope.cnc.file.Progress(data.nro,data.travel);
       $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
@@ -116,7 +111,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
     $scope.cnc.working = data.close? true:false;
   }); 
   
-  var varpasosmm = 'pasos';
+  var varpasosmm = 'steps';
   $scope.setmmpass = function(valor){ varpasosmm=valor; };
   $scope.inputpasosmm = '200';
   $scope.moverManual=function(nume,eje,sentido){
@@ -138,13 +133,6 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
     upload.comando('o',undefined);
   }
 
-}])
-// ############################################################## //
-.controller("message",['alerts','$scope',function(alerts,$scope){
-  $scope.alerts=alerts;
-  $scope.closeAlert = function(index) {
-    $scope.alerts.splice(index, 1);
-  };
 }])
 .directive('uploaderModel', ["$parse", function ($parse) {
   return {
@@ -169,7 +157,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
       if(data){cnc.working = true;}      
     })
     .error(function(data, status, headers, config) {
-      addMessage(data.error.message,"Error",4);
+      addMessage(data.error.message,4);
     });
     }
   }
@@ -179,7 +167,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
     return $http.get("/comenzar")
     .success(function(res){
       if(!res){
-        addMessage("algo salio mal :(","Error",4);
+        addMessage("algo salio mal :(",4);
       }else{
         cnc.working = true;
         cnc.file.line.interpreted = 0;
@@ -189,7 +177,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
     .error(function(msg, code){
       deferred.reject(msg);
     })
-    addMessage( deferred.promise,"Error",4);
+    addMessage(deferred.promise,4);
   }
   this.uploadFile = function(file){
     var deferred = $q.defer();
@@ -207,17 +195,20 @@ function(socket,cnc,addMessage,$http,$scope,upload,$compile){
     .error(function(msg, code){
       deferred.reject(msg);
     })
-    addMessage( deferred.promise,"Error",4);
+    addMessage(deferred.promise,4);
   }
 }])
-.factory('addMessage', ['alerts',function(alerts) {
-  return function(msg,header,type) {
+.factory('addMessage', ['tableLine',function(tableLine) {
+  return function(msg,type) {
     switch(type){
-      case 1: type='info';break;case 2: type='success';break;
-      case 3: type='warning';break;case 4: type='negative';break;
-      case 5: type='black';break;default:type='';
+      case 1: type='positive'; break;
+      case 2: type='active'; break;
+      case 3: type='warning';break;
+      case 4: type='negative';break;
+      case 5: type='disabled';break;
+      default:type='';
     }
-    alerts.push({type:type,header:header, msg:msg});
+    tableLine.push({nro:'',ejes:[],type:type,code:msg,steps:[]});
   };
 }])
 .factory('socket', function ($rootScope) {

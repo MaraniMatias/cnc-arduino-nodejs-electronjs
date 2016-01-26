@@ -6,12 +6,12 @@ var app = module.parent.exports.app,
   motorXY = {
     time:24,
     steps:10000,
-    avance:115.47,
+    advance:115.47,
     getMiliSeg : function(){
-      return   this.steps * this.time / this.avance ;
+      return   this.steps * this.time / this.advance ;
     }
   },// medidas en mm
-  motorZ = {steps:2000,avance:7.00},// medidas en mm
+  motorZ = {steps:2000,advance:7.00},// medidas en mm
   SerialPort = serialPort.SerialPort;
 
 app.io.route('connection', function(req) {
@@ -20,6 +20,7 @@ app.io.route('connection', function(req) {
 });
 
 /* GET listado de puertos. */
+
 app.get('/portslist', function(req, res){
   serialPort.list(function (err, ports){
     if(ports!=undefined && ports.length > 0){
@@ -29,14 +30,13 @@ app.get('/portslist', function(req, res){
         stopBits: 1, flowControl: false
       },false);// para que no abra la conecion al crear
       console.log("Puerto Selecionado %s",ports.slice(-1)[0].comName);
-      //req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Arduino conectado por puerto "+ports.slice(-1)[0].comName,steps:''});
       res.json({'ports':ports,'portSele':ports.slice(-1)[0]});
     }else{
       res.json({'ports':[{manufacturer:"Sin Arduino",comName:''}],'portSele':undefined});
     }
-
   });
 });
+
 
 /* GET home page. */
 app.get('/', function(req, res){
@@ -57,7 +57,6 @@ app.post('/conect', function (req, res) {
    }
 });
 
-//app.get('/comando/:code', function (req, res) {
 app.post('/comando', function (req, res) {
   //console.log("GET -> /comando, %s",req.params.code);
   console.log("GET -> /comando, tipo: %s, %s",req.body.tipo,req.body.code);
@@ -65,17 +64,17 @@ app.post('/comando', function (req, res) {
   if(req.body.tipo=='steps'){
     var code = req.body.code.replace('[','').replace(']','').split(',');
     var ejes = [ // para mostrar en mm cuanto avansa
-     code[0] * motorXY.avance / motorXY.steps,
-     code[1] * motorXY.avance / motorXY.steps,
-     code[2] * motorZ.avance / motorZ.steps
+     code[0] * motorXY.advance / motorXY.steps,
+     code[1] * motorXY.advance / motorXY.steps,
+     code[2] * motorZ.advance / motorZ.steps
     ];
     start( ejes ,req.body.code,code);
   }else if(req.body.tipo=='mm'){
     var code = req.body.code.replace('[','').replace(']','').split(',');
     var steps = [ // para mostrar cuantos steps son eso mm
-      Math.round(code[0] *(motorXY.steps/motorXY.avance)),
-      Math.round(code[1] *(motorXY.steps/motorXY.avance)),
-      Math.round(code[2] *(motorZ.steps/motorZ.avance))
+      Math.round(code[0] *(motorXY.steps/motorXY.advance)),
+      Math.round(code[1] *(motorXY.steps/motorXY.advance)),
+      Math.round(code[2] *(motorZ.steps/motorZ.advance))
       ]
     var pasosString='['+steps[0]+','+steps[1]+','+steps[2]+']'
     start(code,pasosString,steps);
@@ -89,13 +88,13 @@ app.post('/comando', function (req, res) {
       sp.write(new Buffer(code+'\n'),function(err) {
         req.io.broadcast('lineaGCode', {nro:'',ejes:ejes,code:"Comando manual: "+code, steps:steps});
         sp.on('data',function(data){
-        if(data==0){
-          console.log("arduino termino: %s",data?'terminado':'');
-          sp.close(function(err) {
-            //res.json(data); // enviar con socek.io
-            req.io.broadcast('closeConex', {close:true});
-          });//close
-        }
+          if(data==0){
+            sp.close(function(err) {
+              console.log("arduino termino: %s",data);
+              //req.io.broadcast('closeConex', {close:true});
+              req.io.broadcast('closeConex', {nro:'',type:'',ejes:'',code:'Terminado.',steps:'',travel:''});
+            });//close
+          }
         });//data
           res.json('0');// este es para que no esper repuesta y evitar el re envio.
       });//write
@@ -113,9 +112,9 @@ app.get('/comenzar', function(req, res){
     }
     var x=[0,0,0],b = gcode[l].ejes;
     //console.log("B: %s - A: %s = ",b,a);
-    x[0] = Math.round((b[0]-a[0])*motorXY.steps / motorXY.avance);
-    x[1] = Math.round((b[1]-a[1])*motorXY.steps / motorXY.avance);
-    x[2] = Math.round((b[2]-a[2])*motorZ.steps / motorZ.avance);
+    x[0] = Math.round((b[0]-a[0])*motorXY.steps / motorXY.advance);
+    x[1] = Math.round((b[1]-a[1])*motorXY.steps / motorXY.advance);
+    x[2] = Math.round((b[2]-a[2])*motorZ.steps / motorZ.advance);
     return x;
   }
 if(sp!=='' && gcode.length>0){
@@ -139,7 +138,7 @@ var i=0;
       }else{
         sp.close(function(err){
           console.log("Terminado.");
-          req.io.broadcast('closeConex', {nro:'',ejes:'',code:'Terminado.',steps:'',travel:''});
+          req.io.broadcast('closeConex', {nro:'',type:'',ejes:'',code:'Terminado.',steps:'',travel:''});
         });//close
       }
     }
@@ -158,7 +157,7 @@ var i=0;
   });//open
   res.json({segTotal:gcode[gcode.length-1].travel*motorXY.getMiliSeg()});// en milisegundos
 }else{
-  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Selecione el arduino.",steps:''});
+  req.io.broadcast('lineaGCode', {nro:'',type:'negative',ejes:'',code:"Selecione el arduino.",steps:''});
   res.json(false);
 }
 });
@@ -177,7 +176,7 @@ app.post('/cargar', function (req, res) {
   }
 */
 
-  req.io.broadcast('lineaGCode', {nro:'',ejes:'',code:"Archivo cargado.",steps:''});
+  req.io.broadcast('lineaGCode', {nro:'',type:'',ejes:'',code:"Archivo cargado.",steps:''});
   res.json({
     segTotal : gcode[gcode.length-1].travel * motorXY.getMiliSeg(),
     lineas   : gcode.length,
