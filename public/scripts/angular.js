@@ -4,10 +4,6 @@
 angular.module('app', [])
 .value('cnc',{
   working:false,
-  /*arduino:{
-    comName:'',
-    manufacturer:'Selec Arduino'
-  },*/
   file:{ 
     name:'Sin Archivo',
     line: {
@@ -20,7 +16,6 @@ angular.module('app', [])
     Progress: function (nro,trvl) {
       nro++;
       this.line.interpreted = nro;
-      //this.line.progress = ((nro*100)/this.line.total).toFixed(2);
       this.line.progress = ((trvl*100)/this.travel).toFixed(2);
     }
   },
@@ -56,8 +51,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
   }
   
   $scope.pausa = function(){   
-    //upload.pausa();
-    upload.comando('0,0,0',undefined);
+    upload.comando('p',undefined);
   }
   
   $scope.comenzar = function(){
@@ -79,7 +73,8 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     }
   });
   socket.on('closeConex', function (data) {
-    $scope.cnc.working = data.close? true:false;
+    $scope.tableLine.push(data);
+    $scope.cnc.working = false;
   }); 
   
   var varpasosmm = 'steps';
@@ -117,7 +112,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
 }])
 .service('upload', ['cnc',"$http", "$q","addMessage", function (cnc,$http, $q,addMessage){ 
   this.comando = function(cmd,type){
-    if(cmd != null /*&& cnc.arduino.comName!=''*/ && !cnc.working){
+    if(cmd != null){
     return  $http({ url: "/comando",method: "POST",
       data: {
         code : cmd,

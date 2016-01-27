@@ -1,19 +1,19 @@
-extends ./layout
-block menu
-  .ui.inverted.menu
-    .header.item !{titulo}
-    //.active.item Link
-    .ui.dropdown.item(tabindex='0')
-      | {{cnc.arduino.manufacturer}}
-      i.dropdown.icon
-      .menu(tabindex='-1')
-        .item(ng-repeat='usb in port' ng-click='setArduino(usb)') {{usb.manufacturer}}
-    a.item(ng-click="$emit('updateArduinoList')")
-      i.refresh.icon
-    //a.item g-code
-    
-    //.right.menu
-      .item
-      a.item Documentacion
-  block content
-
+//
+  extends ./layout
+  block menu
+    .ui.inverted.menu
+      .header.item !{titulo}
+      //.active.item Link
+      .ui.dropdown.item(tabindex='0')
+        | {{cnc.arduino.manufacturer}}
+        i.dropdown.icon
+        .menu(tabindex='-1')
+          .item(ng-repeat='usb in port' ng-click='setArduino(usb)') {{usb.manufacturer}}
+      a.item(ng-click="$emit('updateArduinoList')")
+        i.refresh.icon
+      //a.item g-code
+      
+      //.right.menu
+        .item
+        a.item Documentacion
+    block content

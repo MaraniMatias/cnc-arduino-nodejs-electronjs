@@ -8,11 +8,7 @@ void StatusLED(){
 }
 
 void StopPause(){
-  Serial.print(xyzp[0]);
-  Serial.print(',');
-  Serial.print(xyzp[1]);
-  Serial.print(',');
-  Serial.println(xyzp[2]);
+  sendData();
   xyzp[0]=0;
   xyzp[1]=0;
   xyzp[2]=0;
@@ -22,7 +18,13 @@ void StopPause(){
   _saveAddY=0;
   start=false;
 }
-
+void sendData(){
+  Serial.print(xyzp[0]);
+  Serial.print(',');
+  Serial.print(xyzp[1]);
+  Serial.print(',');
+  Serial.println(xyzp[2]);
+}
 void TakeOrigin(){
   if(x==true||y==true||z==true){
     bx = digitalRead(btnX);

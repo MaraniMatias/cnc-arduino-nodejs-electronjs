@@ -112,16 +112,12 @@ void loop() {
     if(xyzp[2]<0){ MoveZ(1); }
 
     if(debug){
-      Serial.print(xyzp[0]);
-      Serial.print(',');
-      Serial.print(xyzp[1]);
-      Serial.print(',');
-      Serial.println(xyzp[2]);
+      sendData();
     }
     
     if(xyzp[0]==0 && xyzp[1]==0 && xyzp[2]==0){
       start=false;
-      Serial.println(start,DEC); // termine :D  
+      sendData();
       digitalWrite(pinLED,LOW);
     }
 
@@ -132,7 +128,7 @@ void loop() {
     int inChar = Serial.read();
     if(inChar!=','){
       //if (inChar == 'o' ) {x=true;y=true;z=true; TakeOrigin();}
-      //if (inChar == 'p' ) {StopPause();}
+      if (inChar == 'p' ) {StopPause();}
       //if (inChar == 'f' ) {/*cambiar la velocidad*/}
       
       if(inChar=='-'){

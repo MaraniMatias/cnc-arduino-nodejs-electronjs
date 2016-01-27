@@ -21,13 +21,17 @@ describe ('Arduino Test', function() {
       serialPort.list(function(err, ports) {
         var data = new Buffer('[0,0,0]\n');
 
-        var port = new serialPort.SerialPort(ports.slice(-1)[0].comName, null, false);
+        var port = new serialPort.SerialPort(ports.slice(-1)[0].comName,{
+                    parser: serialPort.parsers.readline("\r\n"),
+                    dataBits: 8, baudrate:9600, parity: 'none',
+                    stopBits: 1, flowControl: false
+                  },false);
         port.on('error', function(err) {
           chai.assert.fail(util.inspect(err));
         });
-
-        port.on('data', function(d) {
-          chai.assert.equal(0, d, 'incorrect data received');
+      
+        port.on('data', function(d) {   
+          chai.assert.equal("0,0,0", d.toString(), 'incorrect data received');
           port.close(function(err) {
             chai.assert.isUndefined(err, util.inspect(err));
             done();
