@@ -3,7 +3,7 @@
 
 Este proyecto lo emprendimos con mi padre.Por ahora es funcional pero al ser la primer versión con el tiempo lo voy a mejorar y subir los circuitos que usamos.
 
-Uso librerías de tercero como Serialport, Express.io, AngularJS, sockect.io, jQuery, Semantic-ui (CSS).
+Uso librerías de tercero como Serialport, Electron, AngularJS, sockect.io, jQuery, Semantic-ui (CSS).
 El código del Arduino es de mi autoría y se puede compilar desde el IDE de Arduino. Las versiones superiores a 1.6.5 del IDE compilan bien pero Arduino  no actúa de forma deseada.
 
 La parte electrónica y la mecánica realizada por mi padre, el diseño mecánico va hacer mejorado.

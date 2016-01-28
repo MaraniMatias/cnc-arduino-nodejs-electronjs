@@ -1,7 +1,3 @@
-tilde lineas terminada de forma manual
 json de configuracion
   + para calibrar paso por mm
-  + para indicar si es mal el sentido ¿?
-indicar respuesta con res.json que recibio la orden y con socke.io que termino arduino
-calcular tiempo desde gcode-interpete
-
+  + para indicar si esta mal el sentido ¿?
