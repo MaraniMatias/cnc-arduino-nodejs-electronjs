@@ -1,29 +1,33 @@
-void estado(){
-  if(bEstado){
-    digitalWrite(pinEstado,HIGH);
+void StatusLED(){
+  if(bStatusLED){
+    digitalWrite(pinLED,HIGH);
   }else{
-    digitalWrite(pinEstado,LOW);
+    digitalWrite(pinLED,LOW);
   }
-  bEstado = !bEstado;
+  bStatusLED = !bStatusLED;
 }
 
-void pararpausa(){
-  Serial.print(xyzp[0]);
-  Serial.print(',');
-  Serial.print(xyzp[1]);
-  Serial.print(',');
-  Serial.println(xyzp[2]);
+void StopPause(){
+  sendData();
   xyzp[0]=0;
   xyzp[1]=0;
   xyzp[2]=0;
   rx=0;
   ry=0;
-  addX=0;
-  addY=0;
-  comenzar=false;
+  _saveAddX=0;
+  _saveAddY=0;
+  start=false;
 }
 
-void llevaraCerro(){
+void sendData(){
+  Serial.print(xyzp[0]);
+  Serial.print(',');
+  Serial.print(xyzp[1]);
+  Serial.print(',');
+  Serial.println(xyzp[2]);
+}
+
+void TakeOrigin(){
   if(x==true||y==true||z==true){
     bx = digitalRead(btnX);
     by = digitalRead(btnY);
@@ -33,49 +37,49 @@ void llevaraCerro(){
     if(by == HIGH){y=false;}
     if(bz == HIGH){z=false;}
 
-    if(x){moverX(1);}
-    if(y){moverY(1);}
-    if(z){moverZ(1);}
+    if(x){MoveX(1);}
+    if(y){MoveY(1);}
+    if(z){MoveZ(1);}
   }
 }
 
 void render(){
   ry=0;
   rx=0;
-  retardox  = 0;
-  retardoy  = 0;
-  agregarCadaX = 0;
-  agregarCadaY = 0;
+  _delayX  = 0;
+  _delayY  = 0;
+  addX = 0;
+  addY = 0;
   double auxX=xyzp[0],auxY=xyzp[1];
-  
+
   // si son distintos realizo calculos para corregir errores
   if(auxX!=auxY){
     if(auxX<0){auxX = auxX*-1;}
     if(auxY<0){auxY = auxY*-1;}
     if(auxX<auxY){
     // mayor Y
-      retardox  = floor(auxY / auxX);
-      int rta = auxY - auxX*retardox;
-      addY = floor(auxX*retardox / rta);
-      agregarCadaY = auxY -addY;
-      rx=retardox;
+      _delayX  = floor(auxY / auxX);
+      int rta = auxY - auxX*_delayX;
+      _saveAddY = floor(auxX*_delayX / rta);
+      addY = auxY -_saveAddY;
+      rx=_delayX;
     }else{
     // mayor X
-      retardoy  = floor(auxX / auxY);
-      int rta = auxX - auxY*retardoy;
-      addX = floor(auxY*retardoy / rta);
-      agregarCadaX = auxX - addX;
-      ry=retardoy;
+      _delayY  = floor(auxX / auxY);
+      int rta = auxX - auxY*_delayY;
+      _saveAddX = floor(auxY*_delayY / rta);
+      addX = auxX - _saveAddX;
+      ry=_delayY;
     }
   }//auxX!=auxY
   
   if(debug){
     Serial.print("X: ");Serial.println(xyzp[0]);
     Serial.print("Y: ");Serial.println(xyzp[1]);
-    Serial.print("rx ");Serial.println(retardox);
-    Serial.print("ry ");Serial.println(retardoy);
-    Serial.print("agregarCadaX ");Serial.println(agregarCadaX);
-    Serial.print("agregarCadaY ");Serial.println(agregarCadaY);
+    Serial.print("rx ");Serial.println(_delayX);
+    Serial.print("ry ");Serial.println(_delayY);
+    Serial.print("addX ");Serial.println(addX);
+    Serial.print("addY ");Serial.println(addY);
     Serial.println("-----------");
   }
 

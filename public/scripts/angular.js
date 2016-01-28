@@ -1,228 +1,133 @@
 /* global angular */
 /* global $ */
-/* global app */
 /* global io */
-var app = angular.module('app', []).value('pUSB','').value('alerts', []);
-app.controller('main',['addMessage','pUSB','$http','$scope','upload',
-function(addMessage,pUSB,$http,$scope,upload){
-  $scope.SelecArduino="Selec Arduino";$scope.btnClass="disabled";
-  $scope.inputpasosmm='200';
-  var varpasosmm = 'pasos';
-  $scope.setmmpass=function(valor){varpasosmm=valor;}
-
-  btnDisabled(false,true)
-  function btnDisabled(b,v) {
-    if(b && v){
-      $scope.btnplay   = '';
-      $scope.btnpause  = 'disabled';
-      $scope.btnstop   = '';
-      $scope.btntrash  = 'disabled';
-      $scope.btnupdate = 'disabled';
-    }else{
-      $scope.btnplay   = (v||b)?'disabled':'';
-      $scope.btnpause  = !b?'disabled':'';
-      $scope.btnstop   = !b?'disabled':'';
-      $scope.btnClass  = b?'disabled':'';
-      $scope.btntrash  = (v||b)?'disabled':'';
-      $scope.btnupdate = !v?'disabled':'';
+angular.module('app', [])
+.value('cnc',{
+  working:false,
+  pause:{
+    status: false,
+    steps: [0,0,0]
+  },
+  file:{ 
+    name:'Sin Archivo',
+    line: {
+      total : 0,
+      interpreted : 0,
+      duration : 0,
+      progress : 0
+    },
+    travel:0,
+    Progress: function (nro,trvl) {
+      nro++;
+      this.line.interpreted = nro;
+      this.line.progress = ((trvl*100)/this.travel).toFixed(2);
     }
+  },
+  time:{
+    pause:'--:--',
+    start:'--:--',
+    end:'--:--'
   }
+})
+.value('tableLine', [])
 
-  $scope.codeArchivo  = {name:'Sin Archivo'};
-  $scope.horaInicio   = '--:--';
-
-  function progreso(line) {
-    line++;
-    $('#codeEjecutado').text(" "+line);
-    return (line*100)/$('#codeTotal').text();
-  }
-
+.controller('main',['socket','cnc','addMessage','$http','$scope','upload','tableLine',
+function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
+  $scope.cnc = cnc;
+  $scope.tableLine = tableLine;
+  socket.emit('connection');
+  
   $scope.setFile = function(element) {
     $scope.$apply(function($scope) {
-      btnDisabled(false,false);
-
-      $scope.codeArchivo  = element.files[0];
-        upload.uploadFile(element.files[0]).then(function(res){
-          $('#codeTotal').text(" "+res.data.lineas);
-        })
+      upload.uploadFile(element.files[0]).then(function(res){
+        $scope.cnc.file.name = element.files[0].name;
+        $scope.cnc.file.line.total = res.data.lineas;
+        $scope.cnc.file.line.duration = parseInt(res.data.segTotal);
+        $scope.cnc.file.travel = res.data.travel;
+      })
     });
   };
 
+  $scope.parar = function(){
+    upload.comando('[0,0,0]',undefined);
+    $scope.cnc.file.line.interpreted = 0;
+    $scope.cnc.file.line.progress = 0;
+    $scope.cnc.file.travel = 0;
+    $scope.cnc.pause.steps[0]=0;
+    $scope.cnc.pause.steps[1]=0;
+    $scope.cnc.pause.steps[2]=0;
+    $scope.cnc.pause.status=false;
+  }
+  
+  $scope.pausa = function(){ 
+    $scope.cnc.time.pause = new Date();
+    upload.comando('p',undefined);
+  }
+  
+  $scope.comenzar = function(){
+    if(cnc.file.line.total !== 0){
+      if(!cnc.pause.status){
+        $scope.tableLine = [];
+      }else{
+        $scope.cnc.pause.status = false;
+        $scope.cnc.steps = [0,0,0];
+        $scope.cnc.time.pause
+        var elapsed = $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime();
+        $scope.cnc.time.end = new Date(elapsed);
+      }
+      $scope.cnc.time.start = new Date();
+      var elapsed = $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration;
+      $scope.cnc.time.end = new Date(elapsed);
+      upload.comenzar();
+    }else{
+      upload.comando('['+cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]+']','steps');
+    }
+  }
+  
+  socket.on('lineaGCode', function (data) {
+    if($scope.tableLine.length > 14){ 
+      $scope.tableLine.shift 
+    }
+    $scope.tableLine.push(data);
+    if(data.nro && data.travel){
+      $scope.cnc.file.Progress(data.nro,data.travel);
+      $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
+    }
+  });
+  socket.on('closeConex', function (data) {
+    if (data.steps!=''){
+      cnc.pause.steps[0]=data.steps[0];
+      cnc.pause.steps[1]=data.steps[1];
+      cnc.pause.steps[2]=data.steps[2];
+      cnc.pause.status=true;
+    }
+    $scope.tableLine.push(data);
+    $scope.cnc.working = false;
+  }); 
+  
+  var varpasosmm = 'steps';
+  $scope.setmmpass = function(valor){ varpasosmm=valor; };
+  $scope.inputpasosmm = '200';
   $scope.moverManual=function(nume,eje,sentido){
     var str = undefined;
-    $scope.btnClass="disabled";
     switch (eje) {
-      case "X": str= "["+sentido+nume+",0,0]"; break;
+      case "X": str = "["+sentido+nume+",0,0]"; break;
       case "Y": str = "[0,"+sentido+nume+",0]"; break;
       case "Z": str = "[0,0,"+sentido+nume+"]"; break;
-      default:  str ="[0,0,0]" ; break;
+      default:  str = "[0,0,0]" ; break;
     }
-
-    if($scope.pUSB!==''&&str!==undefined){
-      //$http.get('/comando/'+str)
-      $http({ url: "/comando",method: "POST",
-        data: {
-          code : str,
-          tipo : varpasosmm
-        }
-      })
-      .success(function(data, status, headers, config) {
-        if(data){
-          $scope.btnClass="";
-
-        }
-      })
-      .error(function(data, status, headers, config) {
-          addMessage(data.error.message,"Error",4);
-          $scope.btnClass="";
-      });
-    }else{
-      addMessage("Por favor selecione el arduino","Error",4);
-    }
+    upload.comando(str,varpasosmm);
   }
 
   $scope.enviarDatos=function(comando){
-  if(comando != null){
-    if($scope.pUSB!=''){
-      $scope.btnClass="disabled";
-      if(comando!==undefined && comando!="" ){
-        $scope.comando='';
-        //$http.get('/comando/'+comando)
-
-        $http({ url: "/comando",method: "POST",
-          data: {
-            code : comando,
-            tipo : undefined
-          }
-        })
-
-        .success(function(data, status, headers, config) {
-          if(data){ $scope.btnClass="";}
-        })
-        .error(function(data, status, headers, config) {
-          addMessage(data.error.message,"Error",4);
-        });
-      }else{
-        addMessage("Escriba comando para enviar.","Error",4);
-      }
-    }else{
-      addMessage("Por favor selecione el arduino.","Error",4);
-    }
-  }
+    upload.comando(comando,undefined);
   }
 
   $scope.moverOrigen=function(){
-    if($scope.pUSB!=''){
-      $http({ url: "/moverOrigen",method: "POST",data: {}
-      }).error(function(data, status, headers, config) {
-        addMessage(data.error.message,"Error",4);
-      });
-    }else{
-      addMessage("Por favor selecione el arduino","Error",4);
-    }
+    upload.comando('o',undefined);
   }
-  $scope.setUSB=function(port){
-    $scope.pUSB = port.comName;
-    $scope.SelecArduino = port.manufacturer;
-    if($scope.pUSB!=''){
-      $http({ url: "/conect",method: "POST",
-        data: {comUSB : port.comName}
-      }).success(function(data, status, headers, config) {
-        if(data){$scope.btnClass="";}
-      })
-      .error(function(data, status, headers, config) {
-        addMessage(data.error.message,"Error",4);
-      });
-    }else{
-      addMessage("Por favor selecione el arduino","Error",4);
-    }
-  }
-  $scope.$on('updateUSB',function(){
-    $http.get('/portslist').success(function (data) {
-      if(data){
-        $scope.port=data.ports;
-        if(data.portSele){
-          $scope.pUSB = data.portSele.comName;
-          $scope.SelecArduino = data.portSele.manufacturer;
-          $scope.btnClass="";
-          addMessage("Arduino conectado por puerto "+data.portSele.comName,"Arduino Detectado.",1);
-        }
-      }else{
-        $scope.port=[];
-      }
-    });
-  });
-  $scope.$emit('updateUSB');
-
-  $scope.parar = function(){
-    btnDisabled(false,false);
-    //upload.parar();
-    $('#codeEjecutado').text(" 0");
-    $('#progress').text(" 0%");
-    $('#bar').width("0%");
-    $('#progressbar').attr("data-percent", 0 );
-    $scope.btnClass="";
-  }
-  $scope.pausa = function(){btnDisabled(false,false);
-    $scope.btnClass="";
-    //upload.parar();
-  }
-  $scope.borrar = function(){btnDisabled(false,true);
-    //upload.borrar();
-    $('#codeTotal').text(" 0");
-    $scope.codeArchivo={name:"Sin Archivo"};
-  }
-  $scope.comenzar = function(){$scope.horaInicio = Date.now();
-    btnDisabled(true,false); $('#tablagcode tr').remove();
-    upload.comenzar();
-  }
-
-  io.emit('connection');
-  io.on('lineaGCode', function (data) {
-    var n = $("#tablagcode tr").size();
-    if(n > 14){$("#tablagcode tr")[n-15].remove();}
-
-    $('#tablagcode').append(
-      $('<tr>')
-        .append($('<td class="center aligned collapsing">').text(data.nro))
-        .append($('<td class="center aligned ">').text( !isNaN(data.ejes[0]) ? Math.round(data.ejes[0]*100) / 100 : '' ))
-        .append($('<td class="center aligned ">').text( !isNaN(data.ejes[1]) ? Math.round(data.ejes[1]*100) / 100 : '' ))
-        .append($('<td class="center aligned ">').text( !isNaN(data.ejes[2]) ? Math.round(data.ejes[2]*100) / 100 : '' ))
-        .append($('<td>').text(data.code))
-        .append($('<td>').text(data.pasos[0]))
-        .append($('<td>').text(data.pasos[1]))
-        .append($('<td>').text(data.pasos[2]))
-      );
-
-    if(data.nro){
-      var prgrss = progreso(data.nro).toFixed(2);
-      $('#progress').text(" "+prgrss+"%");
-      $('#bar').width(prgrss+"%");
-      $('#progressbar').attr("data-percent", prgrss );
-      $('title').text("CNC "+prgrss+"%");
-    }
-  });
 
 }])
-
-.controller("message",['alerts','$scope',function(alerts,$scope){
-  $scope.alerts=alerts;
-  $scope.closeAlert = function(index) {
-    $scope.alerts.splice(index, 1);
-  };
-}])
-
-.factory('addMessage', ['alerts',function(alerts) {
-  return function(msg,header,type) {
-    switch(type){
-      case 1: type='info';break;case 2: type='success';break;
-      case 3: type='warning';break;case 4: type='negative';break;
-      case 5: type='black';break;default:type='';
-    }
-    alerts.push({type:type,header:header, msg:msg});
-  };
-}])
-
 .directive('uploaderModel', ["$parse", function ($parse) {
   return {
     restrict: 'A',
@@ -233,22 +138,45 @@ function(addMessage,pUSB,$http,$scope,upload){
     }
   };
 }])
-
-.service('upload', ["$http", "$q","addMessage", function ($http, $q,addMessage){
+.service('upload', ['cnc',"$http", "$q","addMessage", function (cnc,$http, $q,addMessage){ 
+  this.comando = function(cmd,type){
+    if(cmd != null){
+    return  $http({ url: "/comando",method: "POST",
+      data: {
+        code : cmd,
+        tipo : type
+      }
+    })
+    .success(function(data, status, headers, config) {
+      if(data){cnc.working = true;}      
+    })
+    .error(function(data, status, headers, config) {
+      addMessage(data.error.message,4);
+    });
+    }
+  }
+  
   this.comenzar = function(){
     var deferred = $q.defer();
-    return $http.get("/comenzar")
+    return $http.post("/comenzar", {
+        nro   : cnc.file.line.interpreted,
+        steps : cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]
+    })
     .success(function(res){
       if(!res){
-        addMessage("algo salio mal :(","Error",4);
+        addMessage("algo salio mal :(",4);
       }else{
-        //$scope.btnClass="disabled";
+        cnc.working = true;
+        cnc.file.line.interpreted = 0;
       }
       deferred.resolve(res);
     })
-    .error(function(msg, code){deferred.reject(msg);})
-    addMessage( deferred.promise,"Error",4);
+    .error(function(msg, code){
+      deferred.reject(msg);
+    })
+    addMessage(deferred.promise,4);
   }
+  
   this.uploadFile = function(file){
     var deferred = $q.defer();
     var formData = new FormData();
@@ -259,8 +187,48 @@ function(addMessage,pUSB,$http,$scope,upload){
       },
       transformRequest: angular.identity
     })
-    .success(function(res){deferred.resolve(res);})
-    .error(function(msg, code){deferred.reject(msg);})
-    addMessage( deferred.promise,"Error",4);
+    .success(function(res){
+      deferred.resolve(res);
+    })
+    .error(function(msg, code){
+      deferred.reject(msg);
+    })
+    addMessage(deferred.promise,4);
   }
 }])
+.factory('addMessage', ['tableLine',function(tableLine) {
+  return function(msg,type) {
+    switch(type){
+      case 1: type='positive'; break;
+      case 2: type='active'; break;
+      case 3: type='warning';break;
+      case 4: type='negative';break;
+      case 5: type='disabled';break;
+      default:type='';
+    }
+    tableLine.push({nro:'',ejes:[],type:type,code:msg,steps:[]});
+  };
+}])
+.factory('socket', function ($rootScope) {
+  var socket = io.connect();
+  return {
+    on: function (eventName, callback) {
+      socket.on(eventName, function () {  
+        var args = arguments;
+        $rootScope.$apply(function () {
+          callback.apply(socket, args);
+        });
+      });
+    },
+    emit: function (eventName, data, callback) {
+      socket.emit(eventName, data, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          if (callback) {
+            callback.apply(socket, args);
+          }
+        });
+      })
+    }
+  };
+})

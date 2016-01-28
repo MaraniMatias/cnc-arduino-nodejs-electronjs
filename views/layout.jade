@@ -3,19 +3,20 @@ html(lang='es', ng-app="app" )
   head
     meta(charset='UTF-8')
     meta(name='viewport', content='width=device-width')
-    title !{titulo}
-    link(rel='stylesheet', href='/components/semantic-ui/dist/semantic.css')
+    title CNC
+    link(rel='stylesheet', href='/components/semantic/dist/semantic.css')
     link(rel="stylesheet", href="/stylesheets/style.css")
 
-    script(src='/components/jquery/jquery.js')
-    script(src='/components/semantic-ui/dist/semantic.js')
+    script(src='/components/jquery/dist/jquery.js')
+    script(src='/components/semantic/dist/semantic.js')
     script(src='/components/angular/angular.js')
     script(src='/socket.io/socket.io.js')
 
   body(ng-controller="main")
-    block menu
+    //block menu
+    block content
     script(type='text/javascript').
-      $('.ui.dropdown').dropdown();
-      var io = io.connect()
-
+      $('.ui.dropdown').dropdown();   
     script(src='/scripts/angular.js')
+    //script(src='/scripts/canvas.js') 
+    block js

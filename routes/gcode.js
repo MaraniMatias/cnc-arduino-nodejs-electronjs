@@ -1,14 +1,30 @@
 function G0(prevState, nextState, command, args) {
-  for(var j=0; j<args.length; j++)  {
+  var travel = prevState.travel;
+  for(var j=0; j<args.length; j++){
     switch(args[j].charAt(0).toLowerCase()){
       case 'x':
-        nextState.ejes[0]=parseFloat(args[j].slice(1));
+        nextState.ejes[0] = parseFloat(args[j].slice(1));
+        if(nextState.ejes[0] > prevState.ejes[0]){
+          travel = travel +  nextState.ejes[0]-prevState.ejes[0];
+        }else{
+          travel = travel +  prevState.ejes[0]-nextState.ejes[0];
+        }
         break;
       case 'y':
-        nextState.ejes[1]=parseFloat(args[j].slice(1));
+        nextState.ejes[1] = parseFloat(args[j].slice(1));
+        if(nextState.ejes[1] > prevState.ejes[1]){
+          travel = travel +  nextState.ejes[1]-prevState.ejes[1];
+        }else{
+          travel = travel +  prevState.ejes[1]-nextState.ejes[1];
+        }
         break;
       case 'z':
-        nextState.ejes[2]=parseFloat(args[j].slice(1));
+        nextState.ejes[2] = parseFloat(args[j].slice(1));
+        if(nextState.ejes[2] > prevState.ejes[2]){
+          travel = travel +  nextState.ejes[2]-prevState.ejes[2];
+        }else{
+          travel = travel +  prevState.ejes[2]-nextState.ejes[2];
+        }
         break;
       case 'f':
         nextState.f=parseFloat(args[j].slice(1));
@@ -18,6 +34,7 @@ function G0(prevState, nextState, command, args) {
         break;    
     }
   }
+  nextState.travel = travel;
 }
 
 function G92(prevState, nextState, command, args){
@@ -33,8 +50,6 @@ function ignorar(prevState, nextState, command, args) {
   console.warn("Ignorar GCode: ", command);
 }
 
-
-//module.exports = {
 var interpretarGCode = {
   "G0" : G0,
   "G00": G0,
@@ -54,19 +69,20 @@ var interpretarGCode = {
   "M109": ignorar
 }
 
-function Linea(ejes, f, code) {
+function Linea(ejes, f, code,travel) {
 	this.ejes = ejes;
 	this.f = f;		
   this.code = code;
+  this.travel=travel;
 	this.implemented = true;
 }
 
 Linea.prototype.clone = function() {
-	return new Linea(this.ejes.slice(),this.f,this.code);
+	return new Linea(this.ejes.slice(),this.f,this.code,this.travel);
 }
 
 function inicializarLinea(){
-	return new Linea([0,0,0], 0, 'Linea inicial.')
+	return new Linea([0,0,0], 0, 'Linea inicial.',0)
 }
 
 function nextLinea(gcode, prevLinea){

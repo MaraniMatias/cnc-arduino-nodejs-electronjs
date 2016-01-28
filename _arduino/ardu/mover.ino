@@ -2,11 +2,11 @@
 // -12-
 // --23
 // 0--3
-void moverX(int sent){
-  estado();
+void MoveX(int sent){
+  StatusLED();
   switch (sent) {
     case 1:
-      pasoX(xp);
+      StepX(xp);
       xyzp[0]++;
       if(xp<3){
         xp++;
@@ -15,7 +15,7 @@ void moverX(int sent){
       }
     break;
     case 0:
-      pasoX(xp);
+      StepX(xp);
       xyzp[0]--;
       if(xp>0){
         xp--;
@@ -25,11 +25,11 @@ void moverX(int sent){
     break;
   }
 }
-void moverY(int sent){
-  estado();
+void MoveY(int sent){
+  StatusLED();
   switch (sent) {
     case 0:
-      pasoY(yp);
+      StepY(yp);
       xyzp[1]--;
       if(yp<3){
         yp++;
@@ -38,7 +38,7 @@ void moverY(int sent){
       }
     break;
     case 1:
-      pasoY(yp);
+      StepY(yp);
       xyzp[1]++;
       if(yp>0){
         yp--;
@@ -48,11 +48,11 @@ void moverY(int sent){
     break;
   }
 }
-void moverZ(int sent){
-  estado();
+void MoveZ(int sent){
+  StatusLED();
   switch (sent) {
     case 1:
-      pasoZ(zp);
+      StepZ(zp);
       xyzp[2]++;
       if(zp<3){
         zp++;
@@ -61,7 +61,7 @@ void moverZ(int sent){
       }
     break;
     case 0:
-      pasoZ(zp);
+      StepZ(zp);
       xyzp[2]--;
       if(zp>0){
         zp--;
@@ -71,41 +71,47 @@ void moverZ(int sent){
     break;
   }
 }
-void pasoX(int i){
-  if(tiempo!=0){
-    int j=0;if(i!=3){j=i+1;}else{j=0;}
+void StepX(int i){
+  if(_time!=0){
+    int j=0;
+    if(i!=3){ j=i+1; }else{ j=0; }
     digitalWrite(pinX[i],HIGH);
     digitalWrite(pinX[j],HIGH);
-    delay(tiempo);
+    delay(_time);
     digitalWrite(pinX[i],LOW);
     digitalWrite(pinX[j],LOW);
-    delay(tiempo);
+    if(xyzp[1]==0){
+      delay(_time);
+    }
   }else{
     digitalWrite(pinX[i],LOW);
   }
 }
-void pasoY(int i){
-  if(tiempo!=0){
-    int j = 0;if(i!=3){j=i+1;}else{j=0;}
+void StepY(int i){
+  if(_time!=0){
+    int j=0;
+    if(i!=3){ j=i+1; }else{ j=0; }
     digitalWrite(pinY[i],HIGH);
     digitalWrite(pinY[j],HIGH);
-    delay(tiempo);
+    delay(_time);
     digitalWrite(pinY[i],LOW);
     digitalWrite(pinY[j],LOW);
-    delay(tiempo);
+    if(xyzp[0]==0){
+      delay(_time);
+    }
   }else{
     digitalWrite(pinY[i],LOW);
   }
 }
-void pasoZ(int i){
-  if(tiempo!=0){
+void StepZ(int i){
+  if(_time!=0){
     //int j = 0;if(i!=3){j=i+1;}else{j=0;}
     digitalWrite(pinZ[i],HIGH);
     //digitalWrite(pinZ[j],HIGH);
-    delay(tiempo);
+    delay(_time);
     digitalWrite(pinZ[i],LOW);
     //digitalWrite(pinZ[j],LOW);
-    delay(tiempo);
+    delay(_time);
   }else{
     digitalWrite(pinZ[i],LOW);
   }
