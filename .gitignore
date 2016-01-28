@@ -10,9 +10,10 @@ coverage
 .lock-wscript
 build/Release
 /.vscode
+app/node_modules
 node_modules
 typings
-public/components/
+app/components/
 *.png
 *.svg
 *.tap
