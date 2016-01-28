@@ -45,11 +45,7 @@ describe ('Arduino Test', function() {
         
       });
     })
-    
-    it.skip("Send 's'", function (done) {
-
-    })
-    
+        
     it.skip("Send 'o'", function (done) {
 
     })

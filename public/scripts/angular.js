@@ -24,6 +24,7 @@ angular.module('app', [])
     }
   },
   time:{
+    pause:'--:--',
     start:'--:--',
     end:'--:--'
   }
@@ -58,7 +59,8 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     $scope.cnc.pause.status=false;
   }
   
-  $scope.pausa = function(){   
+  $scope.pausa = function(){ 
+    $scope.cnc.time.pause = new Date();
     upload.comando('p',undefined);
   }
   
@@ -66,6 +68,12 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     if(cnc.file.line.total !== 0){
       if(!cnc.pause.status){
         $scope.tableLine = [];
+      }else{
+        $scope.cnc.pause.status = false;
+        $scope.cnc.steps = [0,0,0];
+        $scope.cnc.time.pause
+        var elapsed = $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime();
+        $scope.cnc.time.end = new Date(elapsed);
       }
       $scope.cnc.time.start = new Date();
       var elapsed = $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration;
