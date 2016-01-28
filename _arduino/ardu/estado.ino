@@ -18,7 +18,6 @@ void StopPause(){
   _saveAddY=0;
   start=false;
 }
-
 void sendData(){
   Serial.print(xyzp[0]);
   Serial.print(',');
@@ -26,7 +25,6 @@ void sendData(){
   Serial.print(',');
   Serial.println(xyzp[2]);
 }
-
 void TakeOrigin(){
   if(x==true||y==true||z==true){
     bx = digitalRead(btnX);
@@ -51,7 +49,6 @@ void render(){
   addX = 0;
   addY = 0;
   double auxX=xyzp[0],auxY=xyzp[1];
-
   // si son distintos realizo calculos para corregir errores
   if(auxX!=auxY){
     if(auxX<0){auxX = auxX*-1;}
