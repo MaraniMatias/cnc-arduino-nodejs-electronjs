@@ -4,6 +4,10 @@
 angular.module('app', [])
 .value('cnc',{
   working:false,
+  pause:{
+    status: false,
+    steps: [0,0,0]
+  },
   file:{ 
     name:'Sin Archivo',
     line: {
@@ -48,6 +52,10 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     $scope.cnc.file.line.interpreted = 0;
     $scope.cnc.file.line.progress = 0;
     $scope.cnc.file.travel = 0;
+    $scope.cnc.pause.steps[0]=0;
+    $scope.cnc.pause.steps[1]=0;
+    $scope.cnc.pause.steps[2]=0;
+    $scope.cnc.pause.status=false;
   }
   
   $scope.pausa = function(){   
@@ -55,11 +63,17 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
   }
   
   $scope.comenzar = function(){
-    $scope.tableLine = [];
-    $scope.cnc.time.start = new Date();
-    var elapsed = $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration;
-    $scope.cnc.time.end = new Date(elapsed);
-    upload.comenzar();
+    if(cnc.file.line.total !== 0){
+      if(!cnc.pause.status){
+        $scope.tableLine = [];
+      }
+      $scope.cnc.time.start = new Date();
+      var elapsed = $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration;
+      $scope.cnc.time.end = new Date(elapsed);
+      upload.comenzar();
+    }else{
+      upload.comando('['+cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]+']','steps');
+    }
   }
   
   socket.on('lineaGCode', function (data) {
@@ -73,6 +87,12 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     }
   });
   socket.on('closeConex', function (data) {
+    if (data.steps!=''){
+      cnc.pause.steps[0]=data.steps[0];
+      cnc.pause.steps[1]=data.steps[1];
+      cnc.pause.steps[2]=data.steps[2];
+      cnc.pause.status=true;
+    }
     $scope.tableLine.push(data);
     $scope.cnc.working = false;
   }); 
@@ -130,7 +150,10 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
   
   this.comenzar = function(){
     var deferred = $q.defer();
-    return $http.get("/comenzar")
+    return $http.post("/comenzar", {
+        nro   : cnc.file.line.interpreted,
+        steps : cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]
+    })
     .success(function(res){
       if(!res){
         addMessage("algo salio mal :(",4);
@@ -145,6 +168,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     })
     addMessage(deferred.promise,4);
   }
+  
   this.uploadFile = function(file){
     var deferred = $q.defer();
     var formData = new FormData();

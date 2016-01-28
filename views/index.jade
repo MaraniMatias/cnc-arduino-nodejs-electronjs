@@ -1,7 +1,7 @@
 //extends ./menu
 extends ./layout
 block content
-  .ui.two.column.stackable.grid(style='margin: 5px;')
+  .ui.two.column.stackable.grid(style='margin: 0px 5px;')
     .eleven.wide.column                 
         .ui.one.column.grid
           .row
@@ -47,11 +47,11 @@ block content
             .ui.one.column.grid
               .column.center.aligned
                 .ui.icon.buttons
-                  button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 }]" ng-click='comenzar()')
+                  button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 && !cnc.pause.status }]" ng-click='comenzar()')
                     i.play.icon.green
                   button.ui.button(ng-class="{'disabled':  !cnc.working }" ng-click='pausa()')
                     i.pause.icon
-                  button.ui.button(ng-class="{'disabled':  !cnc.working }" ng-click='parar()')
+                  button.ui.button(ng-class="{'disabled':  !cnc.working && !cnc.pause.status }" ng-click='parar()')
                     i.stop.icon.red
                   span.ui.button.btn-file(ng-class="[{'disabled': cnc.working }]") Archivo
                     input(type='file' uploader-model='file'  onchange="angular.element(this).scope().setFile(this)")

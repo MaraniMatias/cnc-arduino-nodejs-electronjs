@@ -2,5 +2,10 @@
   "compilerOptions": {
   "target": "ES6",
   "module": "commonjs"
-}
+  }  ,
+    "exclude": [
+       "node_modules",
+       "public/components",
+       "components"
+    ]
 }

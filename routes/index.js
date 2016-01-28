@@ -4,18 +4,22 @@ var app = module.parent.exports.app,
   serialPort = require("serialport"),
   sp = '', gcode=[],
   motorXY = {
-    time:24,steps:10000,
-    advance:115.47,
+    time:24,
+    steps:10000,
+    advance:115.47, // medidas en mm
     getMiliSeg : function(){
       return   this.steps * this.time / this.advance ;
     }
-  },// medidas en mm
-  motorZ = {steps:2000,advance:7.00},// medidas en mm
+  },
+  motorZ = {
+    steps:2000,
+    advance:7.00 // medidas en mm
+  },
   SerialPort = serialPort.SerialPort;
 
 /* GET home page. */
 app.get('/', function(req, res){
-  res.render('index.jade', {titulo: "CNC Mar",motorXY:motorXY});
+  res.render('index.jade', {motorXY:motorXY});
 });
 
 app.io.route('connection', function(req) {
@@ -37,6 +41,7 @@ app.io.route('connection', function(req) {
 
 app.post('/comando', function (req, res) {
   console.log("GET -> /comando, tipo: %s, %s",req.body.tipo,req.body.code);
+  if( sp.isOpen() ){ sp.close() }
   if(req.body.tipo=='steps'){
     var code = req.body.code.replace('[','').replace(']','').split(',');
     var ejes = [ // para mostrar en mm cuanto avansa
@@ -62,7 +67,7 @@ app.post('/comando', function (req, res) {
     sp.open(function(err) {
       sp.drain(function(){});
       sp.write(new Buffer(code+'\n'),function(err) {
-        req.io.broadcast('lineaGCode', {nro:'',ejes:ejes,code:"Comando manual: "+code, steps:steps});
+        req.io.broadcast('lineaGCode', {nro:'',type:'',ejes:ejes,code:"Comando manual: "+code, steps:steps,travel:''});
         sp.on('data',function(data){
           var d = data.toString().split(',');
           if(d[0]==0 && d[1]==0 && d[2]==0){
@@ -83,8 +88,9 @@ app.post('/comando', function (req, res) {
   }
 });//post
 
-app.get('/comenzar', function(req, res){
-  console.log("GET -> /comenzar")
+app.post('/comenzar', function (req, res) {
+  console.log("GET -> /comenzar, nro: %s , ejes: %s",req.body.nro,req.body.steps);
+  if( sp.isOpen() ){ sp.close() }
   function getPasos(l){
     if(l!==0){
       var a = gcode[l-1].ejes
@@ -92,20 +98,44 @@ app.get('/comenzar', function(req, res){
       var a = gcode[l].ejes;
     }
     var x=[0,0,0],b = gcode[l].ejes;
-    //console.log("B: %s - A: %s = ",b,a);
     x[0] = Math.round((b[0]-a[0])*motorXY.steps / motorXY.advance);
     x[1] = Math.round((b[1]-a[1])*motorXY.steps / motorXY.advance);
     x[2] = Math.round((b[2]-a[2])*motorZ.steps / motorZ.advance);
     return x;
   }
 if(sp!=='' && gcode.length>0){
-var i=0;
   sp.open(function(err){
+    if(req.body.nro == 0 ){
+      var i = 0;
+      sp.drain(function(){});    
+      sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
+        console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
+        req.io.broadcast('lineaGCode', {
+          nro:i,
+          ejes:gcode[i].ejes,
+          code:gcode[i].code,
+          steps:getPasos(i),
+          travel:gcode[i].travel
+          });
+      });//write
+    }else{
+      var i   = req.body.nro;
+      sp.write( new Buffer(req.body.steps+'\n'),function(err,results){
+      console.log("Reanudar - Cordenadas: %s",req.body.steps.split(','));
+      req.io.broadcast('lineaGCode', {
+        nro:    req.body.nro,
+        ejes:   '',
+        code:   "Reanudar "+req.body.steps ,
+        steps:  req.body.steps.split(','),
+        travel: gcode[req.body.nro].travel
+        });
+      });//write
+    }
     sp.on('data',function(data){
       var d = data.toString().split(',');
       if(d[0]==0 && d[1]==0 && d[2]==0){
         i++;
-        if(i<gcode.length){
+        if(i < gcode.length){
           sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
             console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
             req.io.broadcast('lineaGCode', {
@@ -128,25 +158,14 @@ var i=0;
           req.io.broadcast('closeConex', {nro:'',type:'',ejes:'',code:'Pausado.',steps:d,travel:''});
         });//close
       }
-    });
-    sp.drain(function(){});
-    sp.write(new Buffer(getPasos(i)+'\n'),function(err,results){
-      console.log("I: %s - Cordenadas: %s",i,gcode[i].ejes);
-      req.io.broadcast('lineaGCode', {
-        nro:i,
-        ejes:gcode[i].ejes,
-        code:gcode[i].code,
-        steps:getPasos(i),
-        travel:gcode[i].travel
-        });
-    });//write
+    });    
   });//open
   res.json({segTotal:gcode[gcode.length-1].travel*motorXY.getMiliSeg()});// en milisegundos
 }else{
   req.io.broadcast('lineaGCode', {nro:'',type:'negative',ejes:'',code:"Selecione el arduino.",steps:''});
   res.json(false);
 }
-});
+});// post
 
 app.post('/cargar', function (req, res) {
   console.log("POST -> /cargar");
