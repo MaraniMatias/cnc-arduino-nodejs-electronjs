@@ -52,7 +52,6 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     upload.comando('[0,0,0]',undefined);
     $scope.cnc.file.line.interpreted = 0;
     $scope.cnc.file.line.progress = 0;
-    $scope.cnc.file.travel = 0;
     $scope.cnc.pause.steps[0]=0;
     $scope.cnc.pause.steps[1]=0;
     $scope.cnc.pause.steps[2]=0;
