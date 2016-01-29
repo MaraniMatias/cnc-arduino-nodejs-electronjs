@@ -1,14 +1,12 @@
- // app/main.js
-
-// Module to control application life.
 var app = require('app'); 
+var os = require('os');
 
 // Module to create native browser window.
 var BrowserWindow = require('browser-window');
 var mainWindow = null;
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   if (process.platform != 'darwin') {
     app.quit();
   }
@@ -16,8 +14,7 @@ app.on('window-all-closed', function () {
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-app.on('ready', function () {
-
+app.on('ready', () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({ width: 1000, height: 620 });
 
@@ -27,7 +24,7 @@ app.on('ready', function () {
   // Open the devtools.
   // mainWindow.openDevTools();
   // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed',  () => {
 
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time

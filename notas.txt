@@ -1,3 +1,0 @@
-json de configuracion
-  + para calibrar paso por mm
-  + para indicar si esta mal el sentido ¿?

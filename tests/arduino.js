@@ -2,7 +2,7 @@
 /*global describe, it */
 var chai = require('chai');
 var util = require('util');
-var serialPort = require('serialport');
+var serialPort = require('../app/node_modules/serialport');
 
 describe ('Arduino Test', function() {
 
