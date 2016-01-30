@@ -209,6 +209,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
   };
 }])
 .factory('socket', function ($rootScope) {
+  /*
   var socket = io.connect();
   return {
     on: function (eventName, callback) {
@@ -230,4 +231,5 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
       })
     }
   };
+  */
 })

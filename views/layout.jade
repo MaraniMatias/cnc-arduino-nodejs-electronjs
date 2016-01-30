@@ -5,18 +5,17 @@ html(lang='es', ng-app="app" )
     meta(name='viewport', content='width=device-width')
     title CNC
     link(rel='stylesheet', href='../components/semantic/dist/semantic.css')
-    link(rel="stylesheet", href="../stylesheets/style.css")
+    link(rel="stylesheet", href="../css/style.css")
 
-    script(src='../components/jquery/dist/jquery.js')
-    script(src='../components/semantic/dist/semantic.js')
-    script(src='../components/angular/angular.js')
-    script(src='../socket.io/socket.io.js')
+    script(src='./../components/jquery/dist/jquery.min.js')
+    script(src='./../components/semantic/dist/semantic.js')
+    script(src='./../components/angular/angular.js')
+    //script(src='../socket.io/socket.io.js')
+    script(src="./../js/index.js")
 
   body(ng-controller="main")
     //block menu
     block content
     script(type='text/javascript').
-      $('.ui.dropdown').dropdown();   
-    script(src='../scripts/angular.js')
-    //script(src='/scripts/canvas.js') 
+      //$('.ui.dropdown').dropdown();      
     block js

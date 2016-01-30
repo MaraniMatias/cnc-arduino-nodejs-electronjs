@@ -48,7 +48,7 @@ gulp.task('jsonedit', () => {
   });
 });
 
-gulp.task('run', () => {
+gulp.task('run',['templates'], () => {
   childProcess.spawn(electron, ['./app'], { stdio: 'inherit' }); 
 });
 

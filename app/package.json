@@ -4,7 +4,7 @@
   "description": "cnc realizado con nodejs electron serialport arduino",
   "main": "main.js",
   "dependencies": {
-    "serialport": "=2.0.2"
+    "serialport": "^2.0.2"
   },
   "scripts": {
     "postinstall": "bower install",
