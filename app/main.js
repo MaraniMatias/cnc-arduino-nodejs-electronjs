@@ -15,7 +15,7 @@ app.on('window-all-closed', function () {
 });
 
 app.on('ready', function () {
-  mainWindow = new BrowserWindow({ minWidth: 1000, minHeight: 620 , title:fileConfig.app.name});
+  mainWindow = new BrowserWindow({ minWidth: 1000, minHeight: 600 , title:fileConfig.app.name});
   mainWindow.loadURL(dirBase+'index.html');
   
   // Open the devtools.

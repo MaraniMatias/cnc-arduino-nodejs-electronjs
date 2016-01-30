@@ -8,11 +8,11 @@ const
   electron      = require('electron-prebuilt'),
   electronPack  = require('electron-packager'),
   jade          = require('gulp-jade'),
-  jshint        = require('gulp-jshint'),
+  jshint        = require('gulp-jshint'),     
   docco         = require("gulp-docco"),
   zip           = require('gulp-vinyl-zip'),
   mocha         = require('gulp-mocha'),
-  filePackage   = require("./app/package.json"),
+  filePackage   = require('./app/package.json'),
   fileConfig    = require('./gulp-builder-config.json');
   
 // create the gulp task
@@ -48,7 +48,7 @@ gulp.task('jsonedit', () => {
   });
 });
 
-gulp.task('run',['templates'], () => {
+gulp.task('run',['lint','templates'], () => {
   childProcess.spawn(electron, ['./app'], { stdio: 'inherit' }); 
 });
 
@@ -56,7 +56,7 @@ gulp.task('debug', () => {
   childProcess.spawn(electron, ['--debug=5858','./app'], { stdio: 'inherit' }); 
 }); 
 
-gulp.task('jshint', () => {
+gulp.task('lint', () => {
   gulp.src(['gulp-builder-config.json','gulp-config.js','gulpfile.js','app/**/*.js', '!node_modules/**/*.js','!app/node_modules/**/*.js','!app/components/**/*.js'])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
@@ -82,7 +82,7 @@ gulp.task('test', () => {
 		});
 });
 
-gulp.task('default',['jshint','jsonedit','templates','test','docu','run'], () => {
+gulp.task('default',['lint','jsonedit','templates','test','docu','run'], () => {
 
 });
 
