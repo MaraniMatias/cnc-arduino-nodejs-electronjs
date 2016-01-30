@@ -2,6 +2,7 @@ const dirBase         =  `file://${__dirname}/html/`,
       fileConfig      =  require('./../gulp-builder-config.json'),
       electron        =  require('electron'),
       cnc             =  require('./lib/index.js'),
+      menuFile        =  require('./lib/menu.js'),
       app             =  electron.app,
       BrowserWindow   =  electron.BrowserWindow,
       ipcMain         =  electron.ipcMain,
@@ -9,6 +10,10 @@ const dirBase         =  `file://${__dirname}/html/`,
       globalShortcut  =  electron.globalShortcut; // para ctrl+
       
 var mainWindow = null;
+
+const Menu = electron.Menu;
+var menu = Menu.buildFromTemplate(menuFile.menuMain);
+Menu.setApplicationMenu(menu);
 
 app.on('window-all-closed',  () => {
   if (process.platform != 'darwin') {
@@ -19,7 +24,7 @@ app.on('window-all-closed',  () => {
 app.on('ready',  () => {
   mainWindow = new BrowserWindow({ minWidth: 1000, minHeight: 600 , title:fileConfig.app.name});
   mainWindow.loadURL(dirBase+'index.html');
-  
+
   if( cnc.arduino.port !== {} ){
     var chosen = dialog.showMessageBox(mainWindow, {
       type     : 'warning',

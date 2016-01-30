@@ -4,7 +4,7 @@ const
   ipcRenderer = electron.ipcRenderer
 ;
 
-require('./../js/menu.js');
+require('./../js/contextMenu.js');
 require('./../js/angular.js');
 
 /*

@@ -9,30 +9,14 @@ const Menu = remote.require('menu');
       
 const template = [
   {
-    label: 'Archivo',
+    label: 'Contexmenu',
     submenu: [
-      { label: 'Imprimir :D',
-        click: () => { 
-          ipcRenderer.send('imprimir');
-        }  
-      },
-      { label: 'MenuItem2', type: 'checkbox', checked: true },
       {
         label:'File',
         accelerator: 'CmdOrCtrl+F',
         click: () => { 
           ipcRenderer.send('file');
         }
-      },
-      {
-        label: 'Minimize',
-        accelerator: 'CmdOrCtrl+M',
-        role: 'minimize'
-      },
-      {
-        label: 'Close',
-        accelerator: 'CmdOrCtrl+W',
-        role: 'close'
       },
       {
         type: 'separator'
@@ -104,4 +88,4 @@ const template = [
 ];
 
 var menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
+
