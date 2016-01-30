@@ -20,3 +20,4 @@ app/components/
 *.tap
 *.old.*
 old/
+docs/

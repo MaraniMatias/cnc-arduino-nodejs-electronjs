@@ -11,17 +11,11 @@ const
   jshint        = require('gulp-jshint'),
   docco         = require("gulp-docco"),
   zip           = require('gulp-vinyl-zip'),
-  mocha         = require('gulp-mocha');
+  mocha         = require('gulp-mocha'),
+  filePackage   = require("./app/package.json"),
+  fileConfig    = require('./gulp-builder-config.json');
   
 // create the gulp task
-gulp.task('run', () => {
-  childProcess.spawn(electron, ['./app'], { stdio: 'inherit' }); 
-});
-
-gulp.task('debug', () => { 
-  childProcess.spawn(electron, ['--debug=5858','./app'], { stdio: 'inherit' }); 
-}); 
-
 gulp.task('templates', () => {
   var YOUR_LOCALS = {
     motorXY : {
@@ -30,7 +24,7 @@ gulp.task('templates', () => {
       advance:115.47
     }
   };
-  gulp.src('./views/*.jade')
+  gulp.src('./views/**/*.jade')
     .pipe(jade({
       //client: true, // js
       locals: YOUR_LOCALS
@@ -38,8 +32,32 @@ gulp.task('templates', () => {
     .pipe(gulp.dest('./app/html/'))
 });
 
+gulp.task('jsonedit', () => {
+  const filename = './gulp-builder-config.json';
+  fs.readFile(filename, (err, data) => {
+    if (err) throw err;
+    var json = JSON.parse(data.toString());
+    json.app.version = filePackage.version;
+    json.win.title   = json.app.name;
+    json.osx.title   = json.app.name;
+    json.win.version = filePackage.version;
+    fs.writeFile(filename, JSON.stringify(json), (err) => {
+      if (err) throw err;
+        console.log('It\'s saved!');
+      });
+  });
+});
+
+gulp.task('run', () => {
+  childProcess.spawn(electron, ['./app'], { stdio: 'inherit' }); 
+});
+
+gulp.task('debug', () => { 
+  childProcess.spawn(electron, ['--debug=5858','./app'], { stdio: 'inherit' }); 
+}); 
+
 gulp.task('jshint', () => {
-  gulp.src(['app/**/*.js', '!node_modules/**/*.js','!app/node_modules/**/*.js','!app/components/**/*.js'])
+  gulp.src(['gulp-builder-config.json','gulp-config.js','gulpfile.js','app/**/*.js', '!node_modules/**/*.js','!app/node_modules/**/*.js','!app/components/**/*.js'])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
 });
@@ -64,47 +82,44 @@ gulp.task('test', () => {
 		});
 });
 
-gulp.task('default',['run'], () => {
-  
+gulp.task('default',['jshint','jsonedit','templates','test','docu','run'], () => {
+
 });
 
 gulp.task('pack', () => {
 
-  fs.exists('./build/CNCino-win32-ia32', (exists) => {
+  fs.exists(`./build/${fileConfig.app.name}-win32-ia32`, (exists) => {
     if(exists){
-      console.log('\tCreando instalador de CNCino-win32-ia32.'.underline);
-      childProcess.spawn('electron-builder', ['./build/CNCino-win32-ia32','--platform=win','--out=build','--config=builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
-      .stdout.on('data', (data) => {
-        console.log(data);
-      });
+      console.log(`\tCreando instalador de ${fileConfig.app.name}-win32-ia32.`.underline);
+      childProcess.spawn('electron-builder', [`./build/${fileConfig.app.name}-win32-ia32`,'--platform=win','--out=build','--config=gulp-builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
     }
   });
   
-  fs.exists('./build/CNCino-win32-x64', (exists) => {
+  fs.exists(`./build/${fileConfig.app.name}-win32-x64`, (exists) => {
     if(exists){
-      console.log('\tCreando instalador de CNCino-win32-x64.'.underline);
-      childProcess.spawn('electron-builder', ['./build/CNCino-win32-x64','--platform=win','--out=build','--config=builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
+      console.log(`\tCreando instalador de ${fileConfig.app.name}-win32-x64.`.underline);
+      childProcess.spawn('electron-builder', [`./build/${fileConfig.app.name}-win32-x64`,'--platform=win','--out=build','--config=gulp-builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
     }
   });
   
-  fs.exists('./build/CNCino-darwin-x64', (exists) => {
+  fs.exists(`./build/${fileConfig.app.name}-darwin-x64`, (exists) => {
     if(exists){
-      console.log('\tCreando paquete de CNCino-darwin-x64.'.underline);
-      childProcess.spawn('electron-builder', ['./build/CNCino-darwin-x64','--platform=osx','--out=build','--config=builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
+      console.log(`\tCreando paquete de ${fileConfig.app.name}-darwin-x64.`.underline);
+      childProcess.spawn('electron-builder', [`./build/${fileConfig.app.name}-darwin-x64`,'--platform=osx','--out=build','--config=gulp-builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
     }
   });
     
-  fs.exists('./build/CNCino-linux-ia32', (exists) => {
+  fs.exists('./build/${fileConfig.app.name}-linux-ia32', (exists) => {
     if(exists){
-      console.log('\tCreando paquete de CNCino-linux-ia32.'.underline);
-      gulp.src('./build/CNCino-linux-ia32/**/*').pipe(zip.dest('./build/CNCino-linux-ia32.zip'));
+      console.log('\tCreando paquete de ${fileConfig.app.name}-linux-ia32.'.underline);
+      gulp.src(`./build/${fileConfig.app.name}-linux-ia32/**/*`).pipe(zip.dest(`./build/${fileConfig.app.name}-linux-ia32.zip`));
     }
   });
   
-  fs.exists('./build/CNCino-linux-x64', (exists) => {
+  fs.exists(`./build/${fileConfig.app.name}-linux-x64`, (exists) => {
     if(exists){
-      console.log('\tCreando paquete de CNCino-linux-x64.'.underline);
-      gulp.src('./build/CNCino-linux-x64/**/*').pipe(zip.dest('./build/CNCino-linux-x64.zip'));
+      console.log(`\tCreando paquete de ${fileConfig.app.name}-linux-x64.`.underline);
+      gulp.src(`./build/${fileConfig.app.name}-linux-x64/**/*`).pipe(zip.dest(`./build/${fileConfig.app.name}-linux-x64.zip`));
     }
   });
   
@@ -116,7 +131,7 @@ gulp.task('build', () => {
     arch : os.arch(),
     dir  : './app',
     icon : './app/recursos/icon',
-    name : 'CNCino',
+    name : fileConfig.app.name,
     ignore : 'bower.json',
     out : 'build',
     //version : '0.36.6', // version electron
@@ -135,7 +150,7 @@ gulp.task('build:all', () => {
     arch : 'all',
     dir  : './app',
     icon : './app/recursos/icon',
-    name : 'CNCino',
+    name : fileConfig.app.name,
     ignore : 'bower.json',
     out : 'build',
     overwrite : true
@@ -168,7 +183,7 @@ gulp.task('help', () => {
   console.log("\tCompilado de la app para sus plataforma en ./build");
 
   console.log("\ngulp pack".underline);
-  console.log("\tCrea instalador para la app en './build' usando archivo de config builder-config.json");
+  console.log("\tCrea instalador para la app en './build' usando archivo de config gulp-builder-config.json");
 
   console.log("\ngulp clean");
   console.log("\tLimpiar.","rm -rf ./build".red);
