@@ -49,10 +49,15 @@ const template = [
     label: 'Heramientas',
     submenu: [
       {
-        label: 'Calcladora',
+        label: 'Mensaje',
         accelerator: 'CmdOrCtrl+M',
         click: (item, focusedWindow) =>{
-          ipcRenderer.send('show-calc');
+          ipcRenderer.send('message',{
+            type:'none',//'warning',
+            title:'Cerrar',
+            header:'Adios',
+            msg:'Aceptar => cerrar \n Cancelar => segir.'
+            });
         }
       }
     ]

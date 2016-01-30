@@ -1,40 +1,57 @@
-const dirBase   = `file://${__dirname}/html/`,
-      fileConfig= require('./../gulp-builder-config.json'),
-      electron  = require('electron'),
-      app       = electron.app,
-      BrowserWindow  = electron.BrowserWindow,
-      ipcMain        = electron.ipcMain,
-      dialog         = electron.dialog,
-      globalShortcut = electron.globalShortcut; // para ctrl+
+const dirBase         =  `file://${__dirname}/html/`,
+      fileConfig      =  require('./../gulp-builder-config.json'),
+      electron        =  require('electron'),
+      cnc             =  require('./lib/index.js'),
+      app             =  electron.app,
+      BrowserWindow   =  electron.BrowserWindow,
+      ipcMain         =  electron.ipcMain,
+      dialog          =  electron.dialog,
+      globalShortcut  =  electron.globalShortcut; // para ctrl+
+      
 var mainWindow = null;
 
-app.on('window-all-closed', function () {
+app.on('window-all-closed',  () => {
   if (process.platform != 'darwin') {
     app.quit();
   }
 });
 
-app.on('ready', function () {
+app.on('ready',  () => {
   mainWindow = new BrowserWindow({ minWidth: 1000, minHeight: 600 , title:fileConfig.app.name});
   mainWindow.loadURL(dirBase+'index.html');
+  
+  if( cnc.arduino.port !== {} ){
+    var chosen = dialog.showMessageBox(mainWindow, {
+      type     : 'warning',
+      title    :  fileConfig.app.name,
+      cancelId :  0,
+      buttons  :   ['Aceptar','Buscar'],
+      message  :  'No encontramos arduino.',
+      detail   :  'Para trabajar necesitamos arduino conetado con el programa corespondiente.'
+    });
+    if (chosen == 1){ 
+      cnc.arduino.reSet();
+    }
+  }
   
   // Open the devtools.
   // mainWindow.openDevTools();
 
-  ipcMain.on('message', function (event, status) {
-    //var chosen = 
-    dialog.showMessageBox(mainWindow, {
+  ipcMain.on('message', (event, status) => {
+    var chosen = dialog.showMessageBox(mainWindow, {
       type: status.type,
       title: status.title,
       cancelId:0,
-      buttons: ['Aceptar'],
+      buttons: ['Aceptar','Cancel'],
       message: status.header,
       detail: status.msg
     });
-    //if (chosen == 0) mainWindow.destroy();
+    if (chosen == 0){ 
+      mainWindow.destroy();
+    }
   });
       
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed',  () => {
     mainWindow = null;
     if (process.platform != 'darwin') {
       app.quit();
@@ -48,15 +65,15 @@ app.on('ready', function () {
     }); 
   prefsWindow.loadURL(dirBase+'prefe.html');
   
-  ipcMain.on('show-prefs', function(event, status) {
+  ipcMain.on('show-prefs', (event, status) => {
     prefsWindow.show();
   });
-  ipcMain.on('hide-prefs', function(event, status) {
+  ipcMain.on('hide-prefs', (event, status) => {
     prefsWindow.hide();
   });
 
   
-  ipcMain.on('file',function(event,status) {
+  ipcMain.on('file',(event,status) => {
     const dialog = electron.dialog;
     console.log(dialog.showOpenDialog({
       filters: [
@@ -66,7 +83,7 @@ app.on('ready', function () {
       ],
       properties: [ 'openFile', 'multiSelections' ]}));//openDirectory
   });
-  var ret = globalShortcut.register('ctrl+f', function() {
+  var ret = globalShortcut.register('ctrl+f', () => {
     console.log('ctrl+f is pressed');
   });
   if (!ret) {
@@ -75,11 +92,11 @@ app.on('ready', function () {
 
 });//ready
 
-ipcMain.on('console', function(event, status) {
+ipcMain.on('console', (event, status) => {
   console.log(status);
 });
 
-ipcMain.on('imprimir', function(event, status) {
+ipcMain.on('imprimir', (event, status) => {
  const printer = require("printer");
  const  util = require('util');
 

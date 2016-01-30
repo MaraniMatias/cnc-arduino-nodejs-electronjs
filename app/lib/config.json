@@ -1,0 +1,14 @@
+{
+  motor : { 
+    xy : {
+      time:24,
+      steps:10000,
+      advance:115.47, // medidas en mm
+    },
+    z : {
+      steps:2000,
+      advance:7.00 // medidas en mm
+    }
+  }
+}
+//module.exports = config;

@@ -31,8 +31,8 @@ angular.module('app', [])
 })
 .value('tableLine', [])
 
-.controller('main',['socket','cnc','addMessage','$http','$scope','upload','tableLine',
-function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
+.controller('main',['socket','cnc','addLineMsj','$http','$scope','upload','tableLine',
+function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
   $scope.cnc = cnc;
   $scope.tableLine = tableLine;
   socket.emit('connection');
@@ -137,7 +137,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     }
   };
 }])
-.service('upload', ['cnc',"$http", "$q","addMessage", function (cnc,$http, $q,addMessage){ 
+.service('upload', ['cnc',"$http", "$q","addLineMsj", function (cnc,$http, $q,addLineMsj){ 
   this.comando = function(cmd,type){
     if(cmd != null){
     return  $http({ url: "/comando",method: "POST",
@@ -150,7 +150,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
       if(data){cnc.working = true;}      
     })
     .error(function(data, status, headers, config) {
-      addMessage(data.error.message,4);
+      addLineMsj(data.error.message,4);
     });
     }
   }
@@ -163,7 +163,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     })
     .success(function(res){
       if(!res){
-        addMessage("algo salio mal :(",4);
+        addLineMsj("algo salio mal :(",4);
       }else{
         cnc.working = true;
         cnc.file.line.interpreted = 0;
@@ -173,7 +173,7 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     .error(function(msg, code){
       deferred.reject(msg);
     })
-    addMessage(deferred.promise,4);
+    addLineMsj(deferred.promise,4);
   }
   
   this.uploadFile = function(file){
@@ -192,10 +192,10 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
     .error(function(msg, code){
       deferred.reject(msg);
     })
-    addMessage(deferred.promise,4);
+    addLineMsj(deferred.promise,4);
   }
 }])
-.factory('addMessage', ['tableLine',function(tableLine) {
+.factory('addLineMsj', ['tableLine',function(tableLine) {
   return function(msg,type) {
     switch(type){
       case 1: type='positive'; break;
@@ -234,3 +234,21 @@ function(socket,cnc,addMessage,$http,$scope,upload,tableLine){
   };
   */
 })
+.factory('addMessage', [function() {
+  return function(msg,title,header,type) {
+    switch(type){
+      case 1: type='info';break;
+      case 2: type='error';break;
+      case 3: type='warning';break;
+      case 4: type='question';break;
+      case 5: type='none';break;
+      default:type='none';
+    }
+    ipcRenderer.send('message', {
+      type:type,
+      title:title,
+      header:header,
+      msg:msg
+    });
+  };
+}]);
