@@ -91,27 +91,27 @@ gulp.task('pack', () => {
   fs.exists(`./build/${fileConfig.app.name}-win32-ia32`, (exists) => {
     if(exists){
       console.log(`\tCreando instalador de ${fileConfig.app.name}-win32-ia32.`.underline);
-      childProcess.spawn('electron-builder', [`./build/${fileConfig.app.name}-win32-ia32`,'--platform=win','--out=build','--config=gulp-builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
+      childProcess.spawn('electron-builder', [`./build/${fileConfig.app.name}-win32-ia32`,'--platform=win','--out=build/win32','--config=gulp-builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
     }
   });
   
   fs.exists(`./build/${fileConfig.app.name}-win32-x64`, (exists) => {
     if(exists){
       console.log(`\tCreando instalador de ${fileConfig.app.name}-win32-x64.`.underline);
-      childProcess.spawn('electron-builder', [`./build/${fileConfig.app.name}-win32-x64`,'--platform=win','--out=build','--config=gulp-builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
+      childProcess.spawn('electron-builder', [`./build/${fileConfig.app.name}-win32-x64`,'--platform=win','--out=build/win64','--config=gulp-builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
     }
   });
   
   fs.exists(`./build/${fileConfig.app.name}-darwin-x64`, (exists) => {
     if(exists){
       console.log(`\tCreando paquete de ${fileConfig.app.name}-darwin-x64.`.underline);
-      childProcess.spawn('electron-builder', [`./build/${fileConfig.app.name}-darwin-x64`,'--platform=osx','--out=build','--config=gulp-builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
+      childProcess.spawn('electron-builder', [`./build/${fileConfig.app.name}-darwin-x64`,'--platform=osx','--out=build/','--config=gulp-builder-config.json'], { execOptions: { maxBuffer: 1024 * 1024 * 64 } })
     }
   });
     
-  fs.exists('./build/${fileConfig.app.name}-linux-ia32', (exists) => {
+  fs.exists(`./build/${fileConfig.app.name}-linux-ia32`, (exists) => {
     if(exists){
-      console.log('\tCreando paquete de ${fileConfig.app.name}-linux-ia32.'.underline);
+      console.log(`\tCreando paquete de ${fileConfig.app.name}-linux-ia32.`.underline);
       gulp.src(`./build/${fileConfig.app.name}-linux-ia32/**/*`).pipe(zip.dest(`./build/${fileConfig.app.name}-linux-ia32.zip`));
     }
   });
