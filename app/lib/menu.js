@@ -59,13 +59,13 @@ const  menuMain = [
         click : (item, focusedWindow) => {
           ipcMain.emit('setArduino');
         }
-      }/*,
+      },
       { //1
         label: 'Detectados.',
         submenu: [
 
         ]
-      }*/
+      }
     ]
   },
   {
@@ -112,7 +112,6 @@ const  menuMain = [
 
 module.exports = {
   menuMain,
-  /*
   addArduino : (ports) => {
     ports.forEach( port => {
           console.log(port);
@@ -123,5 +122,5 @@ module.exports = {
         }
       });
     });   
-  }*/
+  }
 };

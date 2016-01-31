@@ -12,7 +12,13 @@ const dirBase         =  `file://${__dirname}/html/`,
 var mainWindow = null;
 
 const Menu = electron.Menu;
-const menu = Menu.buildFromTemplate(menuFile.menuMain);
+
+// temporal
+require('serialport').list( (err, ports) => {
+menuFile.addArduino(ports);
+});
+// temporal
+var menu = Menu.buildFromTemplate(menuFile.menuMain);
 Menu.setApplicationMenu(menu);
 
 app.on('window-all-closed',  () => {
