@@ -1,3 +1,4 @@
+/* global electron */
 /* global angular */
 /* global $ */
 /* global io */
@@ -35,11 +36,12 @@ angular.module('app', [])
 function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
   $scope.cnc = cnc;
   $scope.tableLine = tableLine;
-  socket.emit('connection');
-  
-  $scope.setFile = function(element) {
-    $scope.$apply(function($scope) {
-      upload.uploadFile(element.files[0]).then(function(res){
+  //socket.emit('connection');
+  socket.emit('setArduino');   
+  /*
+  $scope.setFile = (element) => {
+    $scope.$apply( ($scope) => {
+      upload.uploadFile(element.files[0]).then( (res) => {
         $scope.cnc.file.name = element.files[0].name;
         $scope.cnc.file.line.total = res.data.lineas;
         $scope.cnc.file.line.duration = parseInt(res.data.segTotal);
@@ -47,7 +49,11 @@ function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
       })
     });
   };
-
+  */
+  $scope.setFile = () => {
+      socket.emit('file');
+  }
+  
   $scope.parar = function(){
     upload.comando('[0,0,0]',undefined);
     $scope.cnc.file.line.interpreted = 0;
@@ -209,30 +215,27 @@ function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
   };
 }])
 .factory('socket', function ($rootScope) {
-  return { on:  (eventName, callback) => { }, emit:  (eventName, data, callback) => {}};
-  /*
-  var socket = io.connect();
+  var ipcRenderer = electron.ipcRenderer;
   return {
     on:  (eventName, callback) => {
-      socket.on(eventName, function () {  
+      ipcRenderer.on(eventName, () => {  
         var args = arguments;
-        $rootScope.$apply(function () {
-          callback.apply(socket, args);
+        $rootScope.$apply( () => {
+          callback.apply(ipcRenderer, args);
         });
       });
     },
     emit:  (eventName, data, callback) => {
-      socket.emit(eventName, data, function () {
+      ipcRenderer.send(eventName, data, () => {
         var args = arguments;
-        $rootScope.$apply(function () {
+        $rootScope.$apply( () => {
           if (callback) {
-            callback.apply(socket, args);
+            callback.apply(ipcRenderer, args);
           }
         });
       })
     }
-  };
-  */
+  }
 })
 .factory('addMessage', [function() {
   return function(msg,title,header,type) {

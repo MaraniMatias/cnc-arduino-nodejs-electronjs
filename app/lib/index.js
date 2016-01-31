@@ -1,6 +1,8 @@
 const 
-  arduino = require('./arduino.js');
-
+  arduino = require('./arduino.js'),
+  dir = ''
+  ;
+  
 module.exports = {
-  arduino 
+  arduino , dir
 };

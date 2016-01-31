@@ -1,7 +1,7 @@
 const
   electron  =  require('electron'),
   ipcMain   =  electron.ipcMain;
-const  menuMain = [
+var  menuMain = [
   { // 0
     label: 'Archivo',
     submenu: [
@@ -114,7 +114,6 @@ module.exports = {
   menuMain,
   addArduino : (ports) => {
     ports.forEach( port => {
-          console.log(port);
       menuMain[1].submenu[1].submenu.push({
         label: port.manufacturer,
         click: (item, focusedWindow) => {

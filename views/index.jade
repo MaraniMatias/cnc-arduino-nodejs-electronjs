@@ -53,8 +53,7 @@ block content
                     i.pause.icon
                   button.ui.button(ng-class="{'disabled':  !cnc.working && !cnc.pause.status }" ng-click='parar()')
                     i.stop.icon.red
-                  span.ui.button.btn-file(ng-class="[{'disabled': cnc.working }]") Archivo
-                    input(type='file' uploader-model='file'  onchange="angular.element(this).scope().setFile(this)")
+                  button.ui.button(ng-class="[{'disabled': cnc.working }]" ng-click=("setFile()") ) Archivo
             .ui.one.column.grid
                 table.ui.very.basic.table
                   thead

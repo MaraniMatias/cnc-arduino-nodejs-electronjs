@@ -1,3 +1,4 @@
+/* global Notification */
 const
   electron = require('electron'),
   remote = electron.remote,
@@ -7,7 +8,12 @@ const
 require('./../js/contextMenu.js');
 require('./../js/angular.js');
 
-ipcRenderer.send('setArduino');
+//ipcRenderer.send('setArduino');
+
+
+var myNotification = new Notification('Title', {
+  body:'Vercion de app pack.json'+ remote.app.getVersion()
+});
 
 /*
     var alertOnlineStatus = function() {
