@@ -245,10 +245,16 @@ function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
       default:type='none';
     }
     ipcRenderer.send('message', {
+      type,
+      title,
+      header,
+      msg
+      /*
       type:type,
       title:title,
       header:header,
       msg:msg
+      */
     });
   };
 }]);

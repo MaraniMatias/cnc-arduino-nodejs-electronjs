@@ -7,6 +7,8 @@ const
 require('./../js/contextMenu.js');
 require('./../js/angular.js');
 
+ipcRenderer.send('setArduino');
+
 /*
     var alertOnlineStatus = function() {
       window.alert(navigator.onLine ? 'online' : 'offline');

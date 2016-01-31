@@ -1,10 +1,25 @@
+const
+  electron  =  require('electron'),
+  ipcMain   =  electron.ipcMain;
 const  menuMain = [
-  {
+  { // 0
     label: 'Archivo',
     submenu: [
+            {
+        label: 'Mensaje',
+        accelerator: 'CmdOrCtrl+M',
+        click: (item, focusedWindow) =>{
+          ipcMain.emit('message',{
+            type:'none',//'warning',
+            title:'Cerrar',
+            header:'Adios',
+            msg:'Aceptar => cerrar \n Cancelar => segir.'
+            });
+        }
+      },
       { label: 'Imprimir :D',
         click: () => { 
-          ipcRenderer.send('imprimir');
+          ipcMain.emit('imprimir');
         }  
       },
       { label: 'MenuItem2', type: 'checkbox', checked: true },
@@ -12,7 +27,7 @@ const  menuMain = [
         label:'File',
         accelerator: 'CmdOrCtrl+F',
         click: () => { 
-          ipcRenderer.send('file');
+          ipcMain.emit('file');
         }
       },
       {
@@ -29,28 +44,28 @@ const  menuMain = [
         type: 'separator'
       },
        {
-        label: 'Preferancia ipcRenderer',
+        label: 'Preferancia ipcMain',
         click: (item, focusedWindow) => { 
-          ipcRenderer.send('show-prefs');
+          ipcMain.emit('show-prefs');
         }
       }
     ]
-  },
-  {
-    label: 'Heramientas',
+  },// 0
+  { // 1
+    label: 'Arduino',
     submenu: [
-      {
-        label: 'Mensaje',
-        accelerator: 'CmdOrCtrl+M',
-        click: (item, focusedWindow) =>{
-          ipcRenderer.send('message',{
-            type:'none',//'warning',
-            title:'Cerrar',
-            header:'Adios',
-            msg:'Aceptar => cerrar \n Cancelar => segir.'
-            });
+      { // 0
+        label: 'Auto-Conectar.',
+        click : (item, focusedWindow) => {
+          ipcMain.emit('setArduino');
         }
-      }
+      }/*,
+      { //1
+        label: 'Detectados.',
+        submenu: [
+
+        ]
+      }*/
     ]
   },
   {
@@ -96,5 +111,17 @@ const  menuMain = [
 
 
 module.exports = {
-  menuMain : menuMain
+  menuMain,
+  /*
+  addArduino : (ports) => {
+    ports.forEach( port => {
+          console.log(port);
+      menuMain[1].submenu[1].submenu.push({
+        label: port.manufacturer,
+        click: (item, focusedWindow) => {
+          ipcMain.emit('setArduino',port.comName);
+        }
+      });
+    });   
+  }*/
 };
