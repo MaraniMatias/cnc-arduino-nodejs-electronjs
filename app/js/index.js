@@ -8,13 +8,6 @@ const
 require('./../js/contextMenu.js');
 require('./../js/angular.js');
 
-//ipcRenderer.send('setArduino');
-
-
-var myNotification = new Notification('Title', {
-  body:'Vercion de app pack.json'+ remote.app.getVersion()
-});
-
 /*
     var alertOnlineStatus = function() {
       window.alert(navigator.onLine ? 'online' : 'offline');

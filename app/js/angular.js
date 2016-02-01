@@ -9,7 +9,7 @@ angular.module('app', [])
     status: false,
     steps: [0,0,0]
   },
-  file:{ 
+  file:{
     name:'Sin Archivo',
     line: {
       total : 0,
@@ -18,7 +18,7 @@ angular.module('app', [])
       progress : 0
     },
     travel:0,
-    Progress: function (nro,trvl) {
+    Progress:  (nro,trvl) => {
       nro++;
       this.line.interpreted = nro;
       this.line.progress = ((trvl*100)/this.travel).toFixed(2);
@@ -32,8 +32,8 @@ angular.module('app', [])
 })
 .value('tableLine', [])
 
-.controller('main',['socket','cnc','addLineMsj','$http','$scope','upload','tableLine',
-function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
+.controller('main',['ipc','socket','cnc','addLineMsj','$http','$scope','upload','tableLine',
+(ipc,socket,cnc,addLineMsj,$http,$scope,upload,tableLine) => {
   $scope.cnc = cnc;
   $scope.tableLine = tableLine;
   //socket.emit('connection');
@@ -51,8 +51,17 @@ function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
   };
   */
   $scope.setFile = () => {
-      socket.emit('file');
+     ipc.send('file'); 
   }
+  /*
+  ipc.on('sendFile', (event, data) => {
+    $scope.cnc.time.start = data;
+    $scope.$apply();
+  });
+  */
+  socket.on('sendFile', (event, data) => {
+    $scope.cnc.time.start = data;
+  });
   
   $scope.parar = function(){
     upload.comando('[0,0,0]',undefined);
@@ -133,16 +142,6 @@ function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
   }
 
 }])
-.directive('uploaderModel', ["$parse", function ($parse) {
-  return {
-    restrict: 'A',
-    link: function (scope, iElement, iAttrs){
-      iElement.on("change", function(e){
-        $parse(iAttrs.uploaderModel).assign(scope, iElement[0].files[0]);
-      });
-    }
-  };
-}])
 .service('upload', ['cnc',"$http", "$q","addLineMsj", function (cnc,$http, $q,addLineMsj){ 
   this.comando = function(cmd,type){
     if(cmd != null){
@@ -181,25 +180,6 @@ function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
     })
     addLineMsj(deferred.promise,4);
   }
-  
-  this.uploadFile = function(file){
-    var deferred = $q.defer();
-    var formData = new FormData();
-    formData.append("file", file);
-    return $http.post("/cargar", formData, {
-      headers: {
-        "Content-type": undefined
-      },
-      transformRequest: angular.identity
-    })
-    .success(function(res){
-      deferred.resolve(res);
-    })
-    .error(function(msg, code){
-      deferred.reject(msg);
-    })
-    addLineMsj(deferred.promise,4);
-  }
 }])
 .factory('addLineMsj', ['tableLine',function(tableLine) {
   return function(msg,type) {
@@ -218,12 +198,10 @@ function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
   var ipcRenderer = electron.ipcRenderer;
   return {
     on:  (eventName, callback) => {
-      ipcRenderer.on(eventName, () => {  
-        var args = arguments;
-        $rootScope.$apply( () => {
-          callback.apply(ipcRenderer, args);
-        });
-      });
+      ipcRenderer.on(eventName, (event, arg) => {//
+        callback(event,arg);        
+        $rootScope.$apply();
+      });// on
     },
     emit:  (eventName, data, callback) => {
       ipcRenderer.send(eventName, data, () => {
@@ -235,10 +213,10 @@ function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
         });
       })
     }
-  }
+  }// return
 })
-.factory('addMessage', [function() {
-  return function(msg,title,header,type) {
+.factory('addMessage', [() =>  {
+  return (msg,title,header,type) => {
     switch(type){
       case 1: type='info';break;
       case 2: type='error';break;
@@ -260,4 +238,30 @@ function(socket,cnc,addLineMsj,$http,$scope,upload,tableLine){
       */
     });
   };
-}]);
+}])
+.factory('ipc', function ($rootScope) {
+  return electron.ipcRenderer;
+  /*
+  var ipcRenderer = electron.ipcRenderer;
+  return {
+    on:  (eventName, callback) => {
+      ipcRenderer.on(eventName, (event, arg) => {//
+        var args = arguments;
+        $rootScope.$apply( () => {         
+          callback.apply(ipcRenderer, args);
+        });
+      });// on
+    },
+    emit:  (eventName, data, callback) => {
+      ipcRenderer.send(eventName, data, () => {
+        var args = arguments;
+        $rootScope.$apply( () => {
+          if (callback) {
+            callback.apply(ipcRenderer, args);
+          }
+        });
+      })
+    }
+  }// return
+  */
+})

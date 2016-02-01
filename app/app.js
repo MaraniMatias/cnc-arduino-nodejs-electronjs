@@ -30,9 +30,7 @@ app.on('ready',  () => {
     minHeight: 600 , 
     title:fileConfig.app.name
   })
-  //mainWindow.maximize();
-  //mainWindow.setProgressBar(0.5);
-  
+
   mainWindow.loadURL(dirBase+'index.html');
 
   ipcMain.on('setArduino', (event, arg) => {
@@ -54,22 +52,20 @@ app.on('ready',  () => {
   
 
   // Open the devtools.
-  // mainWindow.openDevTools();
+  mainWindow.openDevTools();
+  mainWindow.maximize();
+  mainWindow.setProgressBar(0.5);
 
   ipcMain.on('file',(event,arg) => {
-    console.log(dialog.showOpenDialog({
+    dialog.showOpenDialog({
       title : fileConfig.app.name,
-      filters: [
-        { name: 'Images', extensions: ['jpg', 'png', 'gif'] },
-        { name: 'Movies', extensions: ['mkv', 'avi', 'mp4'] },
-        { name: 'G-Code', extensions: ['txt', 'gcode', 'map'] },
-        { name: 'All Files', extensions: ['*'] }
-      ],
-      properties: [ 'openFile' ]}));//openDirectory multiSelections
-  } , (filename) => {
-    console.log(filename);
+      filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
+      properties: [ 'openFile' ] }
+      , (filename) => {
+        //cnc.setFile(filename)
+        event.sender.send('sendFile', cnc.setFile(filename).name );
+      });
   });
-
 
 
 
