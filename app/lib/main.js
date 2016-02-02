@@ -31,24 +31,10 @@ function setFile ( dirfile ) {
 }
 
 function Line (code) {
- return {
-    nro : '',
-    type : 'none',
-    ejes : [],
-    steps : [],
-    travel : '',
-    code
-  }
+  return { nro : '', type : 'none', ejes : [], steps : [], travel : '', code }
 }
 Line.prototype._clone = (code) => {
-  return {
-    code : Line(code),
-    nro : this.nro,
-    type : this.type,
-    ejes : this.ejes,
-    steps : this.steps,
-    travel : this.travel
-  }
+  return {  code : Line(code), nro : this.nro, type : this.type, ejes : this.ejes, steps : this.steps, travel : this.travel }
 }
 
 function sendCommand ( type , code ){
