@@ -69,7 +69,7 @@ var interpretarGCode = {
   "M109": ignorar
 }
 
-function Linea(ejes, f, code,travel) {
+function Line(ejes, f, code,travel) {
 	this.ejes = ejes;
 	this.f = f;		
   this.code = code;
@@ -77,27 +77,27 @@ function Linea(ejes, f, code,travel) {
 	this.implemented = true;
 }
 
-Linea.prototype.clone = function() {
-	return new Linea(this.ejes.slice(),this.f,this.code,this.travel);
+Line.prototype.clone = function() {
+	return new Line(this.ejes.slice(),this.f,this.code,this.travel);
 }
 
-function inicializarLinea(){
-	return new Linea([0,0,0], 0, 'Linea inicial.',0)
+function inicializarLine(){
+	return new Line([0,0,0], 0, 'Linea inicial.',0)
 }
 
-function nextLinea(gcode, prevLinea){
-	var nextLinea = prevLinea.clone();
-	nextLinea.code = gcode;
+function nextLine(gcode, prevLine){
+	var nextLine = prevLine.clone();
+	nextLine.code = gcode;
 	var tokens = gcode.split(/\s+/);
 	var command = tokens[0];
 	var args = tokens.slice(1);
 	var interp = interpretarGCode[command];
 	if(interp){
-		interp(prevLinea, nextLinea, command, args);
+		interp(prevLine, nextLine, command, args);
 	}else{
 		throw new Error("No entiendo el GCode " + command)
 	}
-	return nextLinea
+	return nextLine
 }
 
 function removeUnimplemented(history){
@@ -110,9 +110,9 @@ function removeUnimplemented(history){
 }
 
 function executeGCodes(gcodes) {
-	var history = [ inicializarLinea() ];
+	var history = [ inicializarLine() ];
 	for(var i=0; i<gcodes.length; ++i){
-		history.push(nextLinea(gcodes[i], history[i]));
+		history.push(nextLine(gcodes[i], history[i]));
 	}
 	return history;
 }

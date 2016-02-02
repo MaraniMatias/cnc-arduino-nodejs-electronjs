@@ -32,8 +32,8 @@ angular.module('app', [])
 })
 .value('tableLine', [])
 
-.controller('main',['ipc','socket','cnc','addLineMsj','$http','$scope','upload','tableLine',
-(ipc,socket,cnc,addLineMsj,$http,$scope,upload,tableLine) => {
+.controller('main',['ipc','socket','cnc','$scope','upload','tableLine',
+(ipc,socket,cnc,$scope,upload,tableLine) => {
   $scope.cnc = cnc;
   $scope.tableLine = tableLine;
   ipc.send('setArduino');   
@@ -50,6 +50,9 @@ angular.module('app', [])
     }
   };
   
+  
+  
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   $scope.parar = function(){
     upload.comando('[0,0,0]',undefined);
     $scope.cnc.file.line.interpreted = 0;
@@ -129,7 +132,7 @@ angular.module('app', [])
   }
 
 }])
-.service('upload', ['cnc',"$http", "$q","addLineMsj", function (cnc,$http, $q,addLineMsj){ 
+.service('upload', ['cnc',"$http", "$q","addLineMessage", function (cnc,$http, $q,addLineMessage){ 
   this.comando = function(cmd,type){
     if(cmd != null){
     return  $http({ url: "/comando",method: "POST",
@@ -142,7 +145,7 @@ angular.module('app', [])
       if(data){cnc.working = true;}      
     })
     .error(function(data, status, headers, config) {
-      addLineMsj(data.error.message,4);
+      addLineMessage(data.error.message,4);
     });
     }
   }
@@ -155,7 +158,7 @@ angular.module('app', [])
     })
     .success(function(res){
       if(!res){
-        addLineMsj("algo salio mal :(",4);
+        addLineMessage("algo salio mal :(",4);
       }else{
         cnc.working = true;
         cnc.file.line.interpreted = 0;
@@ -165,11 +168,11 @@ angular.module('app', [])
     .error(function(msg, code){
       deferred.reject(msg);
     })
-    addLineMsj(deferred.promise,4);
+    addLineMessage(deferred.promise,4);
   }
 }])
-.factory('addLineMsj', ['tableLine',function(tableLine) {
-  return function(msg,type) {
+.factory('addLineMessage', ['tableLine', (tableLine) => {
+  return (msg,type) => {
     switch(type){
       case 1: type='positive'; break;
       case 2: type='active'; break;
@@ -178,7 +181,7 @@ angular.module('app', [])
       case 5: type='disabled';break;
       default:type='';
     }
-    tableLine.push({nro:'',ejes:[],type:type,code:msg,steps:[]});
+    tableLine.push({nro:'',ejes:[],type,code:msg,steps:[]});
   };
 }])
 .factory('socket',  ($rootScope) => {
@@ -202,7 +205,7 @@ angular.module('app', [])
     }
   }// return
 })
-.factory('addMessage', [() =>  {
+.factory('addMessage', ['ipc',(ipc) =>  {
   return (msg,title,header,type) => {
     switch(type){
       case 1: type='info';break;
@@ -212,18 +215,7 @@ angular.module('app', [])
       case 5: type='none';break;
       default:type='none';
     }
-    ipcRenderer.send('message', {
-      type,
-      title,
-      header,
-      msg
-      /*
-      type:type,
-      title:title,
-      header:header,
-      msg:msg
-      */
-    });
+    ipc.send('message', { type,title,header,msg });
   };
 }])
 .factory('ipc',  ($rootScope) => {
