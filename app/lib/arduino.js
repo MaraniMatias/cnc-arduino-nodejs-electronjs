@@ -27,6 +27,30 @@ function reSet () {
   });
 }
 
+function sendCommand ( code ) {
+  sp.open( (err) => {
+    sp.write(new Buffer(code+'\n'), (err) => {
+      sp.drain( () => {      
+        //req.io.broadcast('lineaGCode', {nro:'',type:'',ejes:ejes,code:"Comando manual: "+code, steps:steps,travel:''});
+        sp.on('data', (data) => {
+          var d = data.toString().split(',');
+          if ( d[0]==0 && d[1]==0 && d[2]==0 ) {
+            sp.close( (err) => {
+              console.log("arduino termino: %s",data);
+              //req.io.broadcast('closeConex', {nro:'',type:'',ejes:'',code:'Terminado.',steps:'',travel:''});
+            });//close
+          } else {//Pause
+            sp.close( (err) => {
+              console.log("arduino en pausa: %s",data);
+              //req.io.broadcast('closeConex', {nro:'',type:'',ejes:'',code:'Pausado.',steps:d,travel:''});
+            });//close
+          }
+        });//data
+      });// drain
+res.json('0');// este es para que no esper repuesta y evitar el re envio.
+    });//write
+  });//open
+}
 
 // ########################################################### //
 module.exports = Arduino;

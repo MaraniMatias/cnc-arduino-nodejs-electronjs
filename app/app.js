@@ -121,15 +121,15 @@ ipcMain.on('open-file',(event,arg) => {
 });
 
 ipcMain.on('send-command', (event, arg) => {
-   var rta = CNC.setFile(
+  
+  CNC.setFile(
     dialog.showOpenDialog({
       title : fileConfig.app.name,
       filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
       properties: [ 'openFile' ] 
-      //,}(filename) => { if (filename) { event.returnValue = CNC.setFile(filename); } }
     })
   )
-     event.returnValue = rta ? rta : '';
+  
 });
     
 
