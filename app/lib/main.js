@@ -40,66 +40,66 @@ function Line (code) {
     code
   }
 }
+Line.prototype._clone = (code) => {
+  return {
+    code : Line(code),
+    nro : this.nro,
+    type : this.type,
+    ejes : this.ejes,
+    steps : this.steps,
+    travel : this.travel
+  }
+}
 
 function sendCommand ( type , code ){
   console.log(`sendCommand, type: ${type}, code: ${code}`);
   if( Arduino.port.comName !== '' ){
-  if( Arduino.port.isOpen() ){ Arduino.port.close(); }
-  
-  
+    switch (type) {
+      case 'steps':
+        var line = Line(`Comando manual ${type}: ${code}`);
+        line.steps = code.split(',');
+        line.ejes = [
+          line.steps[0] * config.motor.xy.advance / config.motor.xy.steps,
+          line.steps[1] * config.motor.xy.advance / config.motor.xy.steps,
+          line.steps[2] * config.motor.z.advance  / config.motor.z.steps
+        ];
+        realSendCommand( code , line );
+        break;
+      case 'mm':
+        var line = Line(`Comando manual ${type}: ${code}`);
+        line.ejes = code.split(',');
+        line.steps = [
+          Math.round(line.ejes[0] * (config.motor.xy.steps / config.motor.xy.advance)),
+          Math.round(line.ejes[1] * (config.motor.xy.steps / config.motor.xy.advance)),
+          Math.round(line.ejes[2] * (config.motor.z.steps  / config.motor.z.advance))
+        ];
+        realSendCommand( line.steps[0]+','+line.steps[1]+','+line.steps[2] , line );
+        break;
+      default:
+        realSendCommand( code , line );
+        break;
+    }
   } else {
-    console.log('sendCommand Arduino not selected');
+    console.error('sendCommand Arduino not selected');
+    throw new Error('Arduino no seleccionado');
   }
 }
 
-module.exports = {
-  Arduino , File , setFile, Line
-};
+function realSendCommand( code , line ){
+  req.io.broadcast('lineaGCode', line ); // emitir enviar lines procesada a app.js
+  // pasar code a arduino.js
+  Arduino.sendCommand( code , ( dataReceived ) => {
+    var d = dataReceived.split(',');
+    if(d[0]==0 && d[1]==0 && d[2]==0){
+      // arduino al terminar para aca y ese a app.js
+      req.io.broadcast('closeConex', line._clone('Terminado') );
+    }else{//Pause
+      // arduino al terminar para aca y ese a app.js
+      req.io.broadcast('closeConex', line._clone('Pausado') );
+    }
+  });
+}
 
-app.post('/comando', function (req, res) {
-  console.log("GET -> /comando, tipo: %s, %s",req.body.tipo,req.body.code);
-  if( sp.isOpen() ){ sp.close() }
-  if(req.body.tipo=='steps'){
-    var code = req.body.code.replace('[','').replace(']','').split(',');
-    var ejes = [ // para mostrar en mm cuanto avansa
-     code[0] * motorXY.advance / motorXY.steps,
-     code[1] * motorXY.advance / motorXY.steps,
-     code[2] * motorZ.advance / motorZ.steps
-    ];
-    start( ejes ,req.body.code,code);
-  }else if(req.body.tipo=='mm'){
-    var code = req.body.code.replace('[','').replace(']','').split(',');
-    var steps = [ // para mostrar cuantos steps son eso mm
-      Math.round(code[0] *(motorXY.steps/motorXY.advance)),
-      Math.round(code[1] *(motorXY.steps/motorXY.advance)),
-      Math.round(code[2] *(motorZ.steps/motorZ.advance))
-      ]
-    var pasosString=steps[0]+','+steps[1]+','+steps[2];
-    start(code,pasosString,steps);
-  }
-  if(req.body.tipo==undefined){
-    start('',req.body.code,'');
-  }
-  function start(ejes,code,steps){
-    sp.open(function(err) {
-      sp.write(new Buffer(code+'\n'),function(err) {
-        req.io.broadcast('lineaGCode', {nro:'',type:'',ejes:ejes,code:"Comando manual: "+code, steps:steps,travel:''});
-        sp.on('data',function(data){
-          var d = data.toString().split(',');
-          if(d[0]==0 && d[1]==0 && d[2]==0){
-            sp.close(function(err) {
-              console.log("arduino termino: %s",data);
-              req.io.broadcast('closeConex', {nro:'',type:'',ejes:'',code:'Terminado.',steps:'',travel:''});
-            });//close
-          }else{//Pause
-            sp.close(function(err) {
-              console.log("arduino en pausa: %s",data);
-              req.io.broadcast('closeConex', {nro:'',type:'',ejes:'',code:'Pausado.',steps:d,travel:''});
-            });//close
-          }
-        });//data
-          res.json('0');// este es para que no esper repuesta y evitar el re envio.
-      });//write
-    });//open
-  }
-});//post
+module.exports = {
+  Arduino , File , Line , setFile , sendCommand
+};

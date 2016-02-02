@@ -73,7 +73,7 @@ ipc.send('asynchronous-message', 'ping');
   
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   $scope.parar = function(){
-    upload.comando('[0,0,0]',undefined);
+    upload.comando('0,0,0',undefined);
     $scope.cnc.file.line.interpreted = 0;
     $scope.cnc.file.line.progress = 0;
     $scope.cnc.pause.steps[0]=0;
@@ -124,10 +124,10 @@ ipc.send('asynchronous-message', 'ping');
   $scope.moverManual=function(nume,eje,sentido){
     var str = undefined;
     switch (eje) {
-      case "X": str = "["+sentido+nume+",0,0]"; break;
-      case "Y": str = "[0,"+sentido+nume+",0]"; break;
-      case "Z": str = "[0,0,"+sentido+nume+"]"; break;
-      default:  str = "[0,0,0]" ; break;
+      case "X": str = sentido+nume+",0,0"; break;
+      case "Y": str = "0,"+sentido+nume+",0"; break;
+      case "Z": str = "0,0,"+sentido+nume; break;
+      default:  str = "0,0,0" ; break;
     }
     upload.comando(str,varpasosmm);
   }
