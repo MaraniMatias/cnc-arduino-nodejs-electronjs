@@ -63,7 +63,7 @@ app.on('ready',  () => {
       properties: [ 'openFile' ] }
       , (filename) => {
         //cnc.setFile(filename)
-        event.sender.send('sendFile', cnc.setFile(filename).name );
+        event.sender.send('sendFile', cnc.setFile(filename) );
       });
   });
 

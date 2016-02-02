@@ -36,31 +36,19 @@ angular.module('app', [])
 (ipc,socket,cnc,addLineMsj,$http,$scope,upload,tableLine) => {
   $scope.cnc = cnc;
   $scope.tableLine = tableLine;
-  //socket.emit('connection');
-  socket.emit('setArduino');   
-  /*
-  $scope.setFile = (element) => {
-    $scope.$apply( ($scope) => {
-      upload.uploadFile(element.files[0]).then( (res) => {
-        $scope.cnc.file.name = element.files[0].name;
-        $scope.cnc.file.line.total = res.data.lineas;
-        $scope.cnc.file.line.duration = parseInt(res.data.segTotal);
-        $scope.cnc.file.travel = res.data.travel;
-      })
-    });
-  };
-  */
+  ipc.send('setArduino');   
+  
   $scope.setFile = () => {
      ipc.send('file'); 
-  }
-  /*
+  };
+  
   ipc.on('sendFile', (event, data) => {
-    $scope.cnc.time.start = data;
-    $scope.$apply();
-  });
-  */
-  socket.on('sendFile', (event, data) => {
-    $scope.cnc.time.start = data;
+    //data.gcode
+    //dir
+    $scope.cnc.file.name = data.name;
+    $scope.cnc.file.line.total = data.lines;
+    $scope.cnc.file.line.duration = parseInt(data.segTotal);
+    $scope.cnc.file.travel = data.travel;
   });
   
   $scope.parar = function(){
@@ -194,7 +182,7 @@ angular.module('app', [])
     tableLine.push({nro:'',ejes:[],type:type,code:msg,steps:[]});
   };
 }])
-.factory('socket', function ($rootScope) {
+.factory('socket',  ($rootScope) => {
   var ipcRenderer = electron.ipcRenderer;
   return {
     on:  (eventName, callback) => {
@@ -239,29 +227,17 @@ angular.module('app', [])
     });
   };
 }])
-.factory('ipc', function ($rootScope) {
-  return electron.ipcRenderer;
-  /*
-  var ipcRenderer = electron.ipcRenderer;
+.factory('ipc',  ($rootScope) => {
+  const ipcRenderer = electron.ipcRenderer;
   return {
     on:  (eventName, callback) => {
       ipcRenderer.on(eventName, (event, arg) => {//
-        var args = arguments;
-        $rootScope.$apply( () => {         
-          callback.apply(ipcRenderer, args);
-        });
-      });// on
+        callback(event,arg);        
+        $rootScope.$apply();
+      });
     },
-    emit:  (eventName, data, callback) => {
-      ipcRenderer.send(eventName, data, () => {
-        var args = arguments;
-        $rootScope.$apply( () => {
-          if (callback) {
-            callback.apply(ipcRenderer, args);
-          }
-        });
-      })
+    send:  (eventName, data) => {
+      ipcRenderer.send(eventName, data );
     }
   }// return
-  */
 })
