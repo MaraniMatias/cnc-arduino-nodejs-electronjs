@@ -30,16 +30,23 @@ angular.module('app', [])
     end:'--:--'
   }
 })
-.value('tableLine', [])
+.value('lineTable', [])
 
-.controller('main',['ipc','socket','cnc','$scope','upload','tableLine',
-(ipc,socket,cnc,$scope,upload,tableLine) => {
+.controller('main',['ipc','socket','cnc','$scope','upload','lineTable',
+(ipc,socket,cnc,$scope,upload,lineTable) => {
+
+// # Test doc. :START
+console.log(ipc.sendSync('synchronous-message', 'ping'));
+ipc.on('asynchronous-reply', (event, arg) => {console.log(arg); });
+ipc.send('asynchronous-message', 'ping');
+// # Test doc. :END
+
   $scope.cnc = cnc;
-  $scope.tableLine = tableLine;
-  ipc.send('setArduino');   
+  $scope.lineTable = lineTable;
+  ipc.send('set-arduino');   
   
   $scope.setFile = () => {
-     var file = ipc.sendSync('file'); 
+     var file = ipc.sendSync('open-file'); 
     //data.gcode
     //dir
     if ( file ){
@@ -50,7 +57,19 @@ angular.module('app', [])
     }
   };
   
-  
+
+
+  ipc.on('addLineTable',  (event,data) => {
+    console.log(data); //////////////////
+    if($scope.lineTable.length > 14){ 
+      $scope.lineTable.shift 
+    }
+    $scope.lineTable.push(data);
+    if(data.nro && data.travel){
+      $scope.cnc.file.Progress(data.nro,data.travel);
+      $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
+    }
+  });
   
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   $scope.parar = function(){
@@ -71,7 +90,7 @@ angular.module('app', [])
   $scope.comenzar = function(){
     if(cnc.file.line.total !== 0){
       if(!cnc.pause.status){
-        $scope.tableLine = [];
+        $scope.lineTable = [];
       }else{
         $scope.cnc.pause.status = false;
         $scope.cnc.steps = [0,0,0];
@@ -88,16 +107,6 @@ angular.module('app', [])
     }
   }
   
-  socket.on('lineaGCode', function (data) {
-    if($scope.tableLine.length > 14){ 
-      $scope.tableLine.shift 
-    }
-    $scope.tableLine.push(data);
-    if(data.nro && data.travel){
-      $scope.cnc.file.Progress(data.nro,data.travel);
-      $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
-    }
-  });
   socket.on('closeConex', function (data) {
     if (data.steps!=''){
       cnc.pause.steps[0]=data.steps[0];
@@ -105,7 +114,7 @@ angular.module('app', [])
       cnc.pause.steps[2]=data.steps[2];
       cnc.pause.status=true;
     }
-    $scope.tableLine.push(data);
+    $scope.lineTable.push(data);
     $scope.cnc.working = false;
   }); 
   
@@ -132,21 +141,15 @@ angular.module('app', [])
   }
 
 }])
-.service('upload', ['cnc',"$http", "$q","addLineMessage", function (cnc,$http, $q,addLineMessage){ 
-  this.comando = function(cmd,type){
-    if(cmd != null){
-    return  $http({ url: "/comando",method: "POST",
-      data: {
-        code : cmd,
-        tipo : type
+.service('upload', ['ipc','cnc',"$http", "$q", (ipc,cnc,$http, $q) => { 
+  this.comando = (code,type) => {
+    if(code != null){
+      if(ipc.sendSync('send-command',{ code , type}) ){
+        cnc.working = true;
+        cnc.file.line.interpreted = 0;
+      }else{
+        // mensaje de error
       }
-    })
-    .success(function(data, status, headers, config) {
-      if(data){cnc.working = true;}      
-    })
-    .error(function(data, status, headers, config) {
-      addLineMessage(data.error.message,4);
-    });
     }
   }
   
@@ -158,7 +161,7 @@ angular.module('app', [])
     })
     .success(function(res){
       if(!res){
-        addLineMessage("algo salio mal :(",4);
+        //addLineMessage("algo salio mal :(",4);
       }else{
         cnc.working = true;
         cnc.file.line.interpreted = 0;
@@ -168,10 +171,11 @@ angular.module('app', [])
     .error(function(msg, code){
       deferred.reject(msg);
     })
-    addLineMessage(deferred.promise,4);
+    //addLineMessage(deferred.promise,4);
   }
 }])
-.factory('addLineMessage', ['tableLine', (tableLine) => {
+/*
+.factory('addLineMessage', ['lineTable', (lineTable) => {
   return (msg,type) => {
     switch(type){
       case 1: type='positive'; break;
@@ -181,9 +185,9 @@ angular.module('app', [])
       case 5: type='disabled';break;
       default:type='';
     }
-    tableLine.push({nro:'',ejes:[],type,code:msg,steps:[]});
+    lineTable.push({nro:'',ejes:[],type,code:msg,steps:[]});
   };
-}])
+}])*/
 .factory('socket',  ($rootScope) => {
   var ipcRenderer = electron.ipcRenderer;
   return {
@@ -204,7 +208,7 @@ angular.module('app', [])
       })
     }
   }// return
-})
+})/*
 .factory('addMessage', ['ipc',(ipc) =>  {
   return (msg,title,header,type) => {
     switch(type){
@@ -217,12 +221,12 @@ angular.module('app', [])
     }
     ipc.send('message', { type,title,header,msg });
   };
-}])
+}])*/
 .factory('ipc',  ($rootScope) => {
   const ipcRenderer = electron.ipcRenderer;
   return {
     on:  (eventName, callback) => {
-      ipcRenderer.on(eventName, (event, arg) => {//
+      ipcRenderer.on(eventName, (event, arg) => {
         callback(event,arg);        
         $rootScope.$apply();
       });
