@@ -51,6 +51,15 @@ angular.module('app', [])
     $scope.cnc.file.travel = data.travel;
   });
   
+  
+console.log(ipc.sendSync('synchronous-message', 'ping')); // prints "pong"
+ipc.on('asynchronous-reply', (event, arg) => {
+  console.log(arg); // prints "pong"
+});
+ipc.send('asynchronous-message', 'ping');
+  
+  
+  
   $scope.parar = function(){
     upload.comando('[0,0,0]',undefined);
     $scope.cnc.file.line.interpreted = 0;
@@ -238,6 +247,9 @@ angular.module('app', [])
     },
     send:  (eventName, data) => {
       ipcRenderer.send(eventName, data );
+    },
+    sendSync: (eventName, data) => {
+      return ipcRenderer.sendSync (eventName, data );
     }
   }// return
 })
