@@ -39,26 +39,16 @@ angular.module('app', [])
   ipc.send('setArduino');   
   
   $scope.setFile = () => {
-     ipc.send('file'); 
-  };
-  
-  ipc.on('sendFile', (event, data) => {
+     var file = ipc.sendSync('file'); 
     //data.gcode
     //dir
-    $scope.cnc.file.name = data.name;
-    $scope.cnc.file.line.total = data.lines;
-    $scope.cnc.file.line.duration = parseInt(data.segTotal);
-    $scope.cnc.file.travel = data.travel;
-  });
-  
-  
-console.log(ipc.sendSync('synchronous-message', 'ping')); // prints "pong"
-ipc.on('asynchronous-reply', (event, arg) => {
-  console.log(arg); // prints "pong"
-});
-ipc.send('asynchronous-message', 'ping');
-  
-  
+    if ( file ){
+      $scope.cnc.file.name = file.name;
+      $scope.cnc.file.line.total = file.lines;
+      $scope.cnc.file.line.duration = parseInt(file.segTotal);
+      $scope.cnc.file.travel = file.travel;
+    }
+  };
   
   $scope.parar = function(){
     upload.comando('[0,0,0]',undefined);

@@ -56,17 +56,6 @@ app.on('ready',  () => {
   mainWindow.maximize();
   mainWindow.setProgressBar(0.5);
 
-  ipcMain.on('file',(event,arg) => {
-    dialog.showOpenDialog({
-      title : fileConfig.app.name,
-      filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
-      properties: [ 'openFile' ] }
-      , (filename) => {
-        //cnc.setFile(filename)
-        event.sender.send('sendFile', cnc.setFile(filename) );
-      });
-  });
-
 
 
 // #############################################3
@@ -119,13 +108,15 @@ ipcMain.on('console', (event, arg) => {
   console.log(arg);
 });
 
-
-ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log(arg);  // prints "ping"
-  event.sender.send('asynchronous-reply', 'pong');
-});
-
-ipcMain.on('synchronous-message', (event, arg) => {
-  console.log(arg);  // prints "ping"
-  event.returnValue = 'pong';
+ipcMain.on('file',(event,arg) => {
+  dialog.showOpenDialog({
+    title : fileConfig.app.name,
+    filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
+    properties: [ 'openFile' ] }
+    , (filename) => {
+      if (filename) {
+        event.returnValue = cnc.setFile(filename);
+        //event.sender.send('sendFile', cnc.setFile(filename) );
+      }
+    });
 });
