@@ -62,7 +62,7 @@ ipc.send('asynchronous-message', 'ping');
   ipc.on('addLineTable',  (event,data) => {
     console.log(data); //////////////////
     if($scope.lineTable.length > 14){ 
-      $scope.lineTable.shift 
+      $scope.lineTable.shift();
     }
     $scope.lineTable.push(data);
     if(data.nro && data.travel){
@@ -88,19 +88,22 @@ ipc.send('asynchronous-message', 'ping');
   }
   
   $scope.comenzar = function(){
+
     if(cnc.file.line.total !== 0){
       if(!cnc.pause.status){
         $scope.lineTable = [];
       }else{
         $scope.cnc.pause.status = false;
         $scope.cnc.steps = [0,0,0];
-        $scope.cnc.time.pause
-        var elapsed = $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime();
-        $scope.cnc.time.end = new Date(elapsed);
+        $scope.cnc.time.pause = '--.--'
+        $scope.cnc.time.end = new Date(
+          $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
+        );
       }
       $scope.cnc.time.start = new Date();
-      var elapsed = $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration;
-      $scope.cnc.time.end = new Date(elapsed);
+      $scope.cnc.time.end = new Date(
+        $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration
+      );
       upload.comenzar();
     }else{
       upload.comando('['+cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]+']','steps');
@@ -108,7 +111,7 @@ ipc.send('asynchronous-message', 'ping');
   }
   
   socket.on('closeConex', function (data) {
-    if (data.steps!=''){
+    if (data.steps!==''){
       cnc.pause.steps[0]=data.steps[0];
       cnc.pause.steps[1]=data.steps[1];
       cnc.pause.steps[2]=data.steps[2];
@@ -122,7 +125,7 @@ ipc.send('asynchronous-message', 'ping');
   $scope.setmmpass = function(valor){ varpasosmm=valor; };
   $scope.inputpasosmm = '200';
   $scope.moverManual=function(nume,eje,sentido){
-    var str = undefined;
+    var str;
     switch (eje) {
       case "X": str = sentido+nume+",0,0"; break;
       case "Y": str = "0,"+sentido+nume+",0"; break;
@@ -143,7 +146,7 @@ ipc.send('asynchronous-message', 'ping');
 }])
 .service('upload', ['ipc','cnc',"$http", "$q", (ipc,cnc,$http, $q) => { 
   this.comando = (code,type) => {
-    if(code != null){
+    if(code !== null){
       if(ipc.sendSync('send-command',{ code , type}) ){
         cnc.working = true;
         cnc.file.line.interpreted = 0;

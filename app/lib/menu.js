@@ -76,33 +76,33 @@ var  menuMain = [
         accelerator: 'CmdOrCtrl+R',
         click: (item, focusedWindow) => {
           if (focusedWindow)
-            focusedWindow.reload();
+{            focusedWindow.reload();}
         }
       },
       {
         label: 'Toggle Full Screen',
         accelerator: (() => {
           if (process.platform == 'darwin')
-            return 'Ctrl+Command+F';
+{            return 'Ctrl+Command+F';}
           else
-            return 'F11';
+{            return 'F11';}
         })(),
         click: (item, focusedWindow) =>{
           if (focusedWindow)
-            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+{            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());}
         }
       },
       {
         label: 'Toggle Developer Tools',
         accelerator: (() => {
           if (process.platform == 'darwin')
-            return 'Alt+Command+I';
+{            return 'Alt+Command+I';}
           else
-            return 'Ctrl+Shift+I';
+{            return 'Ctrl+Shift+I';}
         })(),
         click: (item, focusedWindow) => {
           if (focusedWindow)
-            focusedWindow.toggleDevTools();
+{            focusedWindow.toggleDevTools();}
         }
       },
     ]

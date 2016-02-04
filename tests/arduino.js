@@ -16,7 +16,7 @@ describe ('Arduino Test', function() {
         
         done();
       });
-    })
+    });
     it('Send [0,0,0]', function (done) {
       serialPort.list(function(err, ports) {
         var data = new Buffer('[0,0,0]\n');
@@ -44,19 +44,19 @@ describe ('Arduino Test', function() {
         });
         
       });
-    })
+    });
         
     it.skip("Send 'o'", function (done) {
 
-    })
+    });
     
     it.skip("Send 'f'", function (done) {
 
-    })
+    });
     
     it.skip('Pause and Restart', function (done) {
 
-    })
+    });
 
-  })
-})
+  });
+});

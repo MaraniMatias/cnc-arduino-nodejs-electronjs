@@ -1,5 +1,5 @@
 const dirBase         =  `file://${__dirname}/html/`,
-      fileConfig      =  require('./../gulp-builder-config.json'),
+      fileConfig      =  require('./../task-builder-config.json'),
       CNC             =  require('./lib/main.js'),
       menuFile        =  require('./lib/menu.js'),
       electron        =  require('electron'),
@@ -11,7 +11,7 @@ const dirBase         =  `file://${__dirname}/html/`,
       globalShortcut  =  electron.globalShortcut // para ctrl+
 ;
 app.on('window-all-closed',  () => {
-  if (process.platform != 'darwin') {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });

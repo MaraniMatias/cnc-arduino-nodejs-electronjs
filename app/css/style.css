@@ -35,26 +35,9 @@ input[readonly] {
 .ui.menu{
   border-radius:0;
 }
-/*
-#rData{
-  float:left;
-  margin-left:100px;
-  margin-right:auto;
-  width:470px;
+
+@media only screen{
+  .ui.table:not(.unstackable) tbody, .ui.table:not(.unstackable) tr, .ui.table:not(.unstackable) tr > th, .ui.table:not(.unstackable) tr > td {
+    display: grid !important;
+  }
 }
-#sData{
-  float: left;
-  margin-left:100px;
-  margin-right:auto;
-  width:470px;
-}
-h2{
-  text-align:center;
-}
-#myCanvas {
-  border: 2px dashed grey;
-}
-#btnHolder, #sliderTxt{
-  text-align:center;
-}
-*/

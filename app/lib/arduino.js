@@ -18,11 +18,11 @@ function reSet () {
         flowControl: false
       },false);// This does not initiate the connection.
       console.log('Puerto Selecionado %s',ports.slice(-1)[0].manufacturer);
-      return true
+      return true ;
     }else{
       Arduino.port = { comName : '' , manufacturer : ''};
       console.log('No Arduino.');
-      return false
+      return false ;
     }
   });
 }

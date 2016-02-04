@@ -1,5 +1,6 @@
-/* global remote */
 /* global ipcRenderer */
+/* global remote */
+/* global window */
 const Menu = remote.require('menu');
       
       window.addEventListener('contextmenu',  (e) => {
@@ -54,33 +55,37 @@ const template = [
         accelerator: 'CmdOrCtrl+R',
         click: (item, focusedWindow) => {
           if (focusedWindow)
-            focusedWindow.reload();
+           { focusedWindow.reload();}
         }
       },
       {
         label: 'Toggle Full Screen',
         accelerator: (() => {
           if (process.platform == 'darwin')
-            return 'Ctrl+Command+F';
+           { return 'Ctrl+Command+F';}
           else
-            return 'F11';
+            {return 'F11';}
         })(),
         click: (item, focusedWindow) =>{
-          if (focusedWindow)
+          if (focusedWindow) {
             focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+          }
         }
       },
       {
         label: 'Toggle Developer Tools',
         accelerator: (() => {
-          if (process.platform == 'darwin')
-            return 'Alt+Command+I';
-          else
+          if (process.platform == 'darwin') {
+             return 'Alt+Command+I';
+          }
+          else{
             return 'Ctrl+Shift+I';
+          }
         })(),
         click: (item, focusedWindow) => {
-          if (focusedWindow)
-            focusedWindow.toggleDevTools();
+          if (focusedWindow){
+             focusedWindow.toggleDevTools();
+          }
         }
       },
     ]

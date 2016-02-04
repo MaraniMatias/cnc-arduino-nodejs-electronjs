@@ -19,7 +19,7 @@ var File = {
 }
 
 function setFile ( dirfile ) {
-  if (!dirfile) return {};
+  if (!dirfile){ return {};}
   File.dir = dirfile[0];
   File.gcode = gc(fs.readFileSync(dirfile[0]).toString());
   File.name = dirfile[0].split('/')[dirfile[0].split('/').length-1];
@@ -40,9 +40,10 @@ Line.prototype._clone = (code) => {
 function sendCommand ( type , code ){
   console.log(`sendCommand, type: ${type}, code: ${code}`);
   if( Arduino.port.comName !== '' ){
+    var line;
     switch (type) {
       case 'steps':
-        var line = Line(`Comando manual ${type}: ${code}`);
+        line = Line(`Comando manual ${type}: ${code}`);
         line.steps = code.split(',');
         line.ejes = [
           line.steps[0] * config.motor.xy.advance / config.motor.xy.steps,
@@ -52,7 +53,7 @@ function sendCommand ( type , code ){
         realSendCommand( code , line );
         break;
       case 'mm':
-        var line = Line(`Comando manual ${type}: ${code}`);
+        line = Line(`Comando manual ${type}: ${code}`);
         line.ejes = code.split(',');
         line.steps = [
           Math.round(line.ejes[0] * (config.motor.xy.steps / config.motor.xy.advance)),
@@ -72,16 +73,16 @@ function sendCommand ( type , code ){
 }
 
 function realSendCommand( code , line ){
-  req.io.broadcast('lineaGCode', line ); // emitir enviar lines procesada a app.js
+  //req.io.broadcast('lineaGCode', line ); // emitir enviar lines procesada a app.js
   // pasar code a arduino.js
   Arduino.sendCommand( code , ( dataReceived ) => {
     var d = dataReceived.split(',');
-    if(d[0]==0 && d[1]==0 && d[2]==0){
+    if(d[0]===0 && d[1]===0 && d[2]===0){
       // arduino al terminar para aca y ese a app.js
-      req.io.broadcast('closeConex', line._clone('Terminado') );
+      //req.io.broadcast('closeConex', line._clone('Terminado') );
     }else{//Pause
       // arduino al terminar para aca y ese a app.js
-      req.io.broadcast('closeConex', line._clone('Pausado') );
+      //req.io.broadcast('closeConex', line._clone('Pausado') );
     }
   });
 }
