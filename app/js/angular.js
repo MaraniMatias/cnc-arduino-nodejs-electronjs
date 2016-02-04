@@ -45,6 +45,7 @@ ipc.send('asynchronous-message', 'ping');
   $scope.lineTable = lineTable;
   ipc.send('set-arduino');   
   
+  
   $scope.setFile = () => {
      var file = ipc.sendSync('open-file'); 
     //data.gcode

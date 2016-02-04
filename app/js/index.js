@@ -2,11 +2,12 @@ const
   electron = require('electron'),
   remote = electron.remote,
   ipcRenderer = electron.ipcRenderer
-;
+  ;
+  require('./../js/contextMenu.js');
+  require('./../js/angular.js');
+  
 
-require('./../js/contextMenu.js');
-require('./../js/angular.js');
-
+  
 /*
     var alertOnlineStatus = function() {
       window.alert(navigator.onLine ? 'online' : 'offline');

@@ -35,9 +35,10 @@ input[readonly] {
 .ui.menu{
   border-radius:0;
 }
-
-@media only screen{
-  .ui.table:not(.unstackable) tbody, .ui.table:not(.unstackable) tr, .ui.table:not(.unstackable) tr > th, .ui.table:not(.unstackable) tr > td {
-    display: grid !important;
-  }
+.ui.table:not(.unstackable) tbody,
+.ui.table:not(.unstackable) tr,
+.ui.table:not(.unstackable) tr > th,
+.ui.table:not(.unstackable) tr > td {
+  width: auto !important;
+  display: grid !important;
 }

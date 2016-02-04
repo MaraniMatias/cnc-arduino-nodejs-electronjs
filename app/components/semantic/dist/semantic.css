@@ -22471,11 +22471,11 @@ Floated Menu / Item
   }
 
   .ui.table:not(.unstackable) thead {
-    display: grid;
+    display: block;
   }
 
   .ui.table:not(.unstackable) tfoot {
-    display: grid;
+    display: block;
   }
 
   .ui.table:not(.unstackable) tr {
