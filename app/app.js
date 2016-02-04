@@ -122,14 +122,10 @@ ipcMain.on('open-file',(event,arg) => {
 
 ipcMain.on('send-command', (event, arg) => {
   
-  CNC.setFile(
-    dialog.showOpenDialog({
-      title : fileConfig.app.name,
-      filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
-      properties: [ 'openFile' ] 
-    })
-  )
+  CNC.Arduino.sendCommand()
   
+  
+  event.sender.send('asynchronous-reply', 'pong');
 });
     
 

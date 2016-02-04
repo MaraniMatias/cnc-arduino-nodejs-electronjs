@@ -50,6 +50,7 @@ ipc.send('asynchronous-message', 'ping');
     //data.gcode
     //dir
     if ( file ){
+      console.log(file);
       $scope.cnc.file.name = file.name;
       $scope.cnc.file.line.total = file.lines;
       $scope.cnc.file.line.duration = parseInt(file.segTotal);

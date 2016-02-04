@@ -35,7 +35,7 @@ function sendCommand ( code , cb ) {
         Arduino.port.on('data', (data) => {
           Arduino.port.close( (err) => {
             console.log(`Arduino end: ${data}`);
-            cb(data.toString());
+            cb(data.toString()); // callback()
           });//close
         });//data
       });// drain
