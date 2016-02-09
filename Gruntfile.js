@@ -27,13 +27,11 @@ module.exports = (grunt) => {
 
       //grunt.log.subhead("Opcional packager-> complia para hacer ejecutable.");
       //grunt.log.writeln("sudo npm install -g electron-packager");
-      grunt.log.subhead("Optional builder -> create installer for Windows, OSX.");
-      grunt.log.writeln("sudo npm install -g electron-builder");
+      //grunt.log.subhead("Optional builder -> create installer for Windows, OSX.");
+      //grunt.log.writeln("sudo npm install -g electron-builder");
       
       grunt.log.subhead(`${this.name} Use grunt task:arg1:arg2:argN`);
       
-      grunt.log.subhead("grunt npm");
-      grunt.log.error("Global installed.");
       
       grunt.log.subhead("grunt");
       grunt.log.writeln("Runs 'test' 'compiled java' 'creates documentation' 'runs the application'");
@@ -116,7 +114,7 @@ module.exports = (grunt) => {
           return `electron-builder ./build/${fileConfig.app.name}-${platform}-${arch} --platform=${platform} --out=build/ins/${arch} --config=${dirConfig}`
         }
       },
-      electron: {command: 'electron app'}
+      electron: {command: './node_modules/.bin/electron app'}
     },
     jshint: {
       all: ['Gruntfile.js','./app/lib/**/*.js','./app/js/**/*.js', 'tests/**/*.js'],
@@ -226,7 +224,7 @@ module.exports = (grunt) => {
   grunt.loadNpmTasks('grunt-electron-debian-installer');
   
   grunt.registerTask('default', ['jshint','jade',
-  //'mochaTest',
+  'mochaTest',
   'docco-plus',
   'shell:electron'
   ]);

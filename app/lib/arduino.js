@@ -3,7 +3,8 @@ const
 ;
 var Arduino = {
   port : { comName : '' , manufacturer : ''},
-  reSet , sendCommand
+  reSet ,
+  sendCommand
 };
 
 function reSet () {
@@ -27,15 +28,16 @@ function reSet () {
   });
 }
 
-function sendCommand ( code , cb ) {
-  if( Arduino.port.isOpen() ){ Arduino.port.close(); }
+function sendCommand ( code ) {
+  if( Arduino.port.isOpen() ){ 
+    Arduino.port.close(); 
+  }
   Arduino.port.open( (err) => {
     Arduino.port.write(new Buffer(code+'\n'), (err) => {
-      Arduino.port.drain( () => {      
+      Arduino.port.drain( () => {
         Arduino.port.on('data', (data) => {
           Arduino.port.close( (err) => {
-            console.log(`Arduino end: ${data}`);
-            cb(data.toString()); // callback()
+            return data;
           });//close
         });//data
       });// drain

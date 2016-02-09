@@ -1,5 +1,5 @@
 const dirBase         =  `file://${__dirname}/html/`,
-      fileConfig      =  require('./../task-builder-config.json'),
+      fileConfig      =  require('./package.json'),
       CNC             =  require('./lib/main.js'),
       menuFile        =  require('./lib/menu.js'),
       electron        =  require('electron'),
@@ -8,8 +8,10 @@ const dirBase         =  `file://${__dirname}/html/`,
       ipcMain         =  electron.ipcMain,
       dialog          =  electron.dialog,
       Menu            =  electron.Menu,
+      Tray            =  electron.Tray,
       globalShortcut  =  electron.globalShortcut // para ctrl+
 ;
+
 app.on('window-all-closed',  () => {
   if (process.platform !== 'darwin') {
     app.quit();
@@ -25,12 +27,23 @@ Menu.setApplicationMenu(menu);
 
 app.on('ready',  () => {
   mainWindow = new BrowserWindow({
-    center: true,
-    minWidth: 1000, 
-    minHeight: 600 , 
-    title:fileConfig.app.name
+    disableAutoHideCursor  :  false, // Default false
+    autoHideMenuBar  :  false, // Default false
+    useContentSize   :  true,
+    skipTaskbar      :  false, // Default false
+    alwaysOnTop      :  false, // Default false
+    fullscreen       :  false, // Default false
+    frame            :  true, // Default true
+    type             :  'normal' , // Default normal . On Linux, desktop, dock, toolbar, splash, notification.  On OS X, desktop, textured
+    //webPreferences 
+    icon       : './recursos/icon.png',
+    center     :  true,
+    minWidth   :  1000, 
+    minHeight  :  600,
+    title      :  fileConfig.name
   });
   mainWindow.loadURL(dirBase+'index.html');
+
   mainWindow.on('closed',  () => {
     mainWindow = null;
     if (process.platform != 'darwin') {
@@ -39,8 +52,8 @@ app.on('ready',  () => {
   });
 
   // Open the devtools.
-  mainWindow.openDevTools();
-  mainWindow.maximize();
+  //mainWindow.openDevTools();
+  //mainWindow.maximize();
   mainWindow.setProgressBar(0.7);
 
 
@@ -78,41 +91,20 @@ app.on('ready',  () => {
     console.log('ctrl+f is pressed');
   });
   if (!ret) {
-    console.log('registration failed');
+    console.log('registration failed: globalShortcut.register -> ctrl+f');
   }
   
 // ##### old : END
 });//ready
 
-ipcMain.on('set-arduino', (event, arg) => {
-  if( !CNC.Arduino.reSet() ){
-    var chosen = dialog.showMessageBox(mainWindow, {
-      type     : 'warning',
-      title    :  fileConfig.app.name,
-      cancelId :  1,
-      buttons  :   ['Buscar','Aceptar'],
-      message  :  'No encontramos Arduino.',
-      detail   :  'Para trabajar necesitamos Arduino conetado con el programa corespondiente.'
-    });
-    if (chosen == 0) {
-      ipcMain.emit('set-arduino');
-    }else{
-      event.sender.send("addLineTable",  CNC.Line('Sin Arduino.'));
-    }
-  }else{
-    event.sender.send("addLineTable",  CNC.Line("Arduino: "+ CNC.Arduino.manufacturer +" Puerto: "+ CNC.Arduino.comName ));
-  }
-  
-});
-
-ipcMain.on('console', (event, arg) => {
-  console.log(arg);
+ipcMain.on('arduino', (event, arg) => {
+  event.returnValue = { type:CNC.Arduino.comName===''? 'error':'' , code:CNC.Arduino.comName===''? 'No encontramos ardiono.':'Arduino detectado: '+CNC.Arduino.manufacturer};
 });
 
 ipcMain.on('open-file',(event,arg) => {
   event.returnValue = CNC.setFile(
     dialog.showOpenDialog({
-      title : fileConfig.app.name,
+      title : fileConfig.name,
       filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
       properties: [ 'openFile' ] 
       //,}(filename) => { if (filename) { event.returnValue = CNC.setFile(filename); } }
@@ -121,20 +113,36 @@ ipcMain.on('open-file',(event,arg) => {
 });
 
 ipcMain.on('send-command', (event, arg) => {
-  
-  CNC.Arduino.sendCommand()
-  
-  
-  event.sender.send('asynchronous-reply', 'pong');
+  CNC.sendCommand( arg.code, arg.type , (data) =>{
+    var dataReceived = data.split(',');
+    if(dataReceived[0]==='0' && dataReceived[1]==='0' && dataReceived[2]==='0'){
+      console.log(__filename,'\n->',dataReceived,'-> Emit -->> Terminado <<--');
+      //req.io.broadcast('closeConex', line._clone('Terminado') );
+      //event.sender.send('closeConex',Line);
+    }else{//Pause
+      console.log(dataReceived,'Emit -->> Pausado <<--');
+      //req.io.broadcast('closeConex', line._clone('Pausado') );
+      //event.sender.send('closeConex',Line);
+    }
+  });
 });
-    
+
 
 // # Test doc. :START
-ipcMain.on('asynchronous-message', (event, arg) => { console.log(arg); 
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg); 
   event.sender.send('asynchronous-reply', 'pong');
 });
-
-ipcMain.on('synchronous-message', (event, arg) => { console.log(arg);
+ipcMain.on('synchronous-message', (event, arg) => {
+  console.log(arg);
   event.returnValue = 'pong';
 });
 // # Test doc. :END
+
+
+/*
+Event: ‘suspend’
+Event: ‘resume’
+Event: ‘on-ac’
+Event: ‘on-battery’
+*/

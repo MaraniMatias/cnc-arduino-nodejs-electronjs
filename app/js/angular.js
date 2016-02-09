@@ -43,8 +43,9 @@ ipc.send('asynchronous-message', 'ping');
 
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
-  ipc.send('set-arduino');   
   
+  var ardu = ipc.sendSync('arduino','');
+  if(ardu.type!==''){$scope.lineTable.push(ardu);}
   
   $scope.setFile = () => {
      var file = ipc.sendSync('open-file'); 
@@ -137,19 +138,18 @@ ipc.send('asynchronous-message', 'ping');
     upload.comando(str,varpasosmm);
   }
 
-  $scope.enviarDatos=function(comando){
-    upload.comando(comando,undefined);
+  $scope.enviarDatos = (comando) => {
+    ipc.send('send-command',{ code:comando ,type: undefined})
+    //upload.comando(comando,undefined);
   }
-
-  $scope.moverOrigen=function(){
+  $scope.moverOrigen = () => {
     upload.comando('o',undefined);
   }
-
 }])
 .service('upload', ['ipc','cnc',"$http", "$q", (ipc,cnc,$http, $q) => { 
   this.comando = (code,type) => {
     if(code !== null){
-      if(ipc.sendSync('send-command',{ code , type}) ){
+      if( ipc.sendSync('send-command',{ code , type}) ){
         cnc.working = true;
         cnc.file.line.interpreted = 0;
       }else{

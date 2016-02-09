@@ -27,7 +27,7 @@ block content
                         th.collapsing P y
                         th.collapsing P z
                     tbody
-                      tr(ng-repeat="line in tableLine" ng-class="line.type")
+                      tr(ng-repeat="line in lineTable" ng-class="line.type")
                         td.center.aligned.collapsing {{line.nro}}
                         td.center.aligned {{ line.ejes[0] | number : 2}}
                         td.center.aligned {{ line.ejes[1] | number : 2}}

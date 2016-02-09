@@ -1,9 +1,16 @@
 const 
   fs = require('fs'),
   gc = require("./gcode"),
-  Arduino = require('./arduino.js'),
-  config  = require('./config.json')
+  serialPort = require('serialport'),
+  config  = require('./config.json'),
+  EventEmitter = require('events'),
+  util = require('util')
 ;
+
+var Arduino = {
+  port : { comName : '' , manufacturer : ''},
+  reSet
+};
 
 function getMiliSeg ()  {
   return config.motor.xy.steps * config.motor.xy.time / config.motor.xy.advance ;
@@ -16,10 +23,15 @@ var File = {
   lines   : 0 ,
   travel    : 0 ,
   segTotal  : 0
-}
+};
+var arduino = {
+  comName : Arduino.port.comName,
+  manufacturer : Arduino.port.manufacturer,
+  reSet : Arduino.reSet
+};
 
 function setFile ( dirfile ) {
-  if (!dirfile){ return {};}
+  if (!dirfile){ return {}; }
   File.dir = dirfile[0];
   File.gcode = gc(fs.readFileSync(dirfile[0]).toString());
   File.name = dirfile[0].split('/')[dirfile[0].split('/').length-1];
@@ -33,12 +45,9 @@ function setFile ( dirfile ) {
 function Line (code) {
   return { nro : '', type : 'none', ejes : [], steps : [], travel : '', code }
 }
-Line.prototype._clone = (code) => {
-  return {  code : Line(code), nro : this.nro, type : this.type, ejes : this.ejes, steps : this.steps, travel : this.travel }
-}
 
-function sendCommand ( type , code ){
-  console.log(`sendCommand, type: ${type}, code: ${code}`);
+function sendCommand ( code , type ,cb ){
+  //console.log(`${__filename}\n sendCommand, type: ${type}, code: ${code}`);
   if( Arduino.port.comName !== '' ){
     var line;
     switch (type) {
@@ -63,7 +72,7 @@ function sendCommand ( type , code ){
         realSendCommand( line.steps[0]+','+line.steps[1]+','+line.steps[2] , line );
         break;
       default:
-        realSendCommand( code , line );
+        realSendCommand( code , line , cb );
         break;
     }
   } else {
@@ -72,21 +81,65 @@ function sendCommand ( type , code ){
   }
 }
 
-function realSendCommand( code , line ){
-  //req.io.broadcast('lineaGCode', line ); // emitir enviar lines procesada a app.js
-  // pasar code a arduino.js
-  Arduino.sendCommand( code , ( dataReceived ) => {
-    var d = dataReceived.split(',');
-    if(d[0]===0 && d[1]===0 && d[2]===0){
-      // arduino al terminar para aca y ese a app.js
-      //req.io.broadcast('closeConex', line._clone('Terminado') );
-    }else{//Pause
-      // arduino al terminar para aca y ese a app.js
-      //req.io.broadcast('closeConex', line._clone('Pausado') );
+function realSendCommand( code , line , callback ){
+  if( Arduino.port.isOpen() ){ 
+    Arduino.port.close(); 
+  }
+  Arduino.port.open( (err) => {
+    Arduino.port.write(new Buffer(code+'\n'), (err) => {
+      //req.io.broadcast('lineaGCode', line ); // emitir enviar lines procesada a app.js
+      Arduino.port.drain( () => {
+        Arduino.port.on('data', (data) => {
+          Arduino.port.close( (err) => {
+            if (typeof (callback) === 'function') {
+              callback(data.toString());
+            }
+          });//close
+        });//data
+      });// drain
+    });//write
+  });//open
+}
+
+
+function reSet () {
+  serialPort.list( (err, ports) => {
+    if(ports && ports.length > 0){
+      Arduino.port = new serialPort.SerialPort(ports.slice(-1)[0].comName,{
+        parser: serialPort.parsers.readline('\r\n'),
+        dataBits: 8, 
+        baudrate:9600,
+        parity: 'none',
+        stopBits: 1,
+        flowControl: false
+      },false);// This does not initiate the connection.
+      console.log('Puerto Selecionado %s',ports.slice(-1)[0].manufacturer);
+    }else{
+      Arduino.port = { comName : '' , manufacturer : ''};
+      console.log('No Arduino.');
     }
   });
 }
 
+Arduino.reSet();
 module.exports = {
-  Arduino , File , Line , setFile , sendCommand
+  Arduino : arduino , File , Line , setFile , sendCommand
 };
+
+
+
+
+/*
+function MyEmitter() {
+  EventEmitter.call(this);
+}
+util.inherits(MyEmitter, EventEmitter);
+const myEmitter = new MyEmitter();
+
+myEmitter.on('Terminado', function() {
+  console.log('Terminado');
+});
+myEmitter.on('Pausado', function() {
+  console.log('Pausado');
+});
+*/

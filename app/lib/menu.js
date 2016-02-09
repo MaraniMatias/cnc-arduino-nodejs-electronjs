@@ -57,7 +57,7 @@ var  menuMain = [
       { // 0
         label: 'Auto-Conectar.',
         click : (item, focusedWindow) => {
-          ipcMain.emit('setArduino');
+          ipcMain.emit('arduino');
         }
       },
       { //1
