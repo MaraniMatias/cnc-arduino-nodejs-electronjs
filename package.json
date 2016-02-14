@@ -7,12 +7,15 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "colors": "^1.1.2",
+    "electron-builder": "^2.7.1",
+    "electron-packager": "^5.2.1",
+    "electron-prebuilt": "^0.36.7",
     "grunt": "^0.4.5",
     "grunt-contrib-jade": "^0.15.0",
     "grunt-contrib-jshint": "^0.12.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-docco-plus": "^1.0.0",
-    "grunt-electron-packager-builder": "0.0.1",
+    "grunt-electron-packager-builder": "0.0.4",
     "grunt-mocha-test": "^0.12.7",
     "grunt-zip": "^0.17.1",
     "jade": "^1.11.0",
@@ -23,7 +26,6 @@
     "zombie": "^4.2.1"
   },
   "scripts": {
-    "postinstall": "cd app && npm install",
     "start": "cd app && electron .",
     "test": "mocha ./tests/**/*.js",
     "clean": "rm -rf ./build",
