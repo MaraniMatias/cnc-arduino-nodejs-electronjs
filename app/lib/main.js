@@ -77,7 +77,7 @@ function sendCommand ( code , type ,cb ){
     }
   } else {
     console.error('sendCommand Arduino not selected');
-    throw new Error('Arduino no seleccionado');
+    //throw new Error('Arduino no seleccionado');
   }
 }
 

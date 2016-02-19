@@ -119,13 +119,13 @@ ipcMain.on('send-command', (event, arg) => {
   CNC.sendCommand( arg.code, arg.type , (data) =>{
     var dataReceived = data.split(',');
     if(dataReceived[0]==='0' && dataReceived[1]==='0' && dataReceived[2]==='0'){
-      console.log(__filename,'\n->',dataReceived,'-> Emit -->> Terminado <<--');
+      console.log('-> File: ',__filename,'\n->',dataReceived,'-> Emit -->> Terminado <<--');
       //req.io.broadcast('closeConex', line._clone('Terminado') );
-      //event.sender.send('closeConex',Line);
+      event.sender.send('asynchronous-reply',{code:'Terminado'});
     }else{//Pause
-      console.log(dataReceived,'Emit -->> Pausado <<--');
+      console.log('-> File: ',dataReceived,'Emit -->> Pausado <<--');
       //req.io.broadcast('closeConex', line._clone('Pausado') );
-      //event.sender.send('closeConex',Line);
+      //event.sender.send('closeConex',{steps:dataReceived,code:'Terminado'});
     }
   });
 });
