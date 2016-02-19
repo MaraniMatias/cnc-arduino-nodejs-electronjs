@@ -57,7 +57,7 @@ app.on('ready',  () => {
   mainWindow.setProgressBar(0.7);
 
 
-// ## old : START
+// ##### old : START
   ipcMain.on('message', (event, arg) => {
     var chosen = dialog.showMessageBox(mainWindow, {
       type: arg.type,
@@ -76,7 +76,7 @@ app.on('ready',  () => {
     width: 400, height: 400,
     resizable:false, show:false,
     skipTaskbar:true , title:'Preferencias.'
-    }); 
+  }); 
   prefsWindow.loadURL(dirBase+'prefe.html');
   
   ipcMain.on('show-prefs', (event, arg) => {
@@ -97,8 +97,11 @@ app.on('ready',  () => {
 // ##### old : END
 });//ready
 
+
 ipcMain.on('arduino', (event, arg) => {
-  event.returnValue = { type:CNC.Arduino.comName===''? 'error':'' , code:CNC.Arduino.comName===''? 'No encontramos ardiono.':'Arduino detectado: '+CNC.Arduino.manufacturer};
+  CNC.Arduino.reSet().then(function (ardu) {
+    event.sender.send('arduino-res',{ type:ardu===''? 'error':'' , code:ardu===''? 'No encontramos ardiono.':'Arduino detectado: '+ardu});
+  })
 });
 
 ipcMain.on('open-file',(event,arg) => {
@@ -130,12 +133,12 @@ ipcMain.on('send-command', (event, arg) => {
 
 // # Test doc. :START
 ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log(arg); 
-  event.sender.send('asynchronous-reply', 'pong');
+  console.log('-> 1',arg); 
+  event.sender.send('asynchronous-reply', 'pong 1');
 });
 ipcMain.on('synchronous-message', (event, arg) => {
-  console.log(arg);
-  event.returnValue = 'pong';
+  console.log('-> 2',arg);
+  event.returnValue = 'pong 2';
 });
 // # Test doc. :END
 

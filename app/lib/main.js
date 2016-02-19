@@ -103,25 +103,29 @@ function realSendCommand( code , line , callback ){
 
 
 function reSet () {
-  serialPort.list( (err, ports) => {
-    if(ports && ports.length > 0){
-      Arduino.port = new serialPort.SerialPort(ports.slice(-1)[0].comName,{
-        parser: serialPort.parsers.readline('\r\n'),
-        dataBits: 8, 
-        baudrate:9600,
-        parity: 'none',
-        stopBits: 1,
-        flowControl: false
-      },false);// This does not initiate the connection.
-      console.log('Puerto Selecionado %s',ports.slice(-1)[0].manufacturer);
-    }else{
-      Arduino.port = { comName : '' , manufacturer : ''};
-      console.log('No Arduino.');
-    }
-  });
+  return new Promise(function (resolve, reject){
+    serialPort.list( (err, ports) => {
+      if(ports && ports.length > 0){
+        Arduino.port = new serialPort.SerialPort(ports.slice(-1)[0].comName,{
+          parser: serialPort.parsers.readline('\r\n'),
+          dataBits: 8, 
+          baudrate:9600,
+          parity: 'none',
+          stopBits: 1,
+          flowControl: false
+        },false);// This does not initiate the connection.
+        console.info('Puerto Selecionado %s',ports.slice(-1)[0].manufacturer);
+        resolve(ports.slice(-1)[0].manufacturer);
+      }else{
+        Arduino.port = { comName : '' , manufacturer : ''};
+        console.warn('No Arduino.');
+        resolve('');
+      }
+    });
+  })// promise
 }
 
-Arduino.reSet();
+//Arduino.reSet();
 module.exports = {
   Arduino : arduino , File , Line , setFile , sendCommand
 };

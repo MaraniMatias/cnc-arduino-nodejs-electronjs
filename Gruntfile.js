@@ -61,38 +61,14 @@ module.exports = (grunt) => {
         buildPath   :  './build', // default ./build
         out       :  './build/instaler'  // default ./dist
       },
-      /*all  : {
+      winall  : {
         options  :  {
-          platform  :  'all', 
-          arch  :  'all'      
-        }
-      },*/
-      win32:{
-        options: {
-          platform: 'win',
-          arch : 'ia32'
-          //appPath   :  './CNC-ino-win32-ia32' // path  buildPath/appPath
+          platform  :  'win'
         }
       },
-      win64:{
-        options: {
-          platform: 'win',
-          arch : 'x64'
-          //appPath   :  './CNC-ino-win32-x64' // path  buildPath/appPath
-        }
-      },
-      linux64:{
-        options: {
-          platform : 'linux',
-          arch : 'x64'
-          //appPath  :  './CNC-ino-linux-ia32'
-        }
-      },
-      linux32:{
-        options: {
-          platform : 'linux',
-          arch : 'ia32'
-          //appPath  :  './CNC-ino-linux-x64'
+      linuxall  : {
+        options  :  {
+          platform  :  'linux'
         }
       },
       osx:{ // Only with mac os machine.

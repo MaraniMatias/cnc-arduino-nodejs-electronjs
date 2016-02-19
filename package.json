@@ -15,7 +15,7 @@
     "grunt-contrib-jshint": "^0.12.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-docco-plus": "^1.0.0",
-    "grunt-electron-packager-builder": "0.0.4",
+    "grunt-electron-packager-builder": "0.0.5",
     "grunt-mocha-test": "^0.12.7",
     "grunt-zip": "^0.17.1",
     "jade": "^1.11.0",

@@ -44,8 +44,12 @@ ipc.send('asynchronous-message', 'ping');
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
   
-  var ardu = ipc.sendSync('arduino','');
-  if(ardu.type!==''){$scope.lineTable.push(ardu);}
+  ipc.send('arduino');
+  ipc.on('arduino-res', (event, ardu) => {
+    if(ardu.type!==''){$scope.lineTable.push(ardu);}
+  });
+  //var ardu = ipc.sendSync('arduino','');
+  //if(ardu.type!==''){$scope.lineTable.push(ardu);}
   
   $scope.setFile = () => {
      var file = ipc.sendSync('open-file'); 
