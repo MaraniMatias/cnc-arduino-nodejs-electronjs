@@ -4,9 +4,6 @@ const
   ipcRenderer = electron.ipcRenderer
   ;
   require('./../js/contextMenu.js');
-  require('./../js/angular.js');
-  
-
   
 /*
     var alertOnlineStatus = function() {

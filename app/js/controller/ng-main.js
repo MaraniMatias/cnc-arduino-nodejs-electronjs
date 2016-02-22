@@ -1,24 +1,26 @@
-angular.controller('main',['ipc','socket','cnc','$scope','upload','lineTable',
-(ipc,socket,cnc,$scope,upload,lineTable) => {
+/* global angular */
+angular.controller('main',
+['ipc','cnc','$scope','upload','lineTable','config','Line',
+(ipc,cnc,$scope,upload,lineTable,config,Line) => {
 
 // # Test doc. :START
 console.log(ipc.sendSync('synchronous-message', 'ping'));
-ipc.on('asynchronous-reply', (event, arg) => {
-  console.log(arg);
-});
+ipc.on('asynchronous-reply', (event, arg) => {console.log(arg);});
 ipc.send('asynchronous-message', 'ping');
 // # Test doc. :END
-
+  
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
   
   ipc.send('arduino');
   ipc.on('arduino-res', (event, ardu) => {
-    if(ardu.type!==''){$scope.lineTable.push(ardu);}
+    if(ardu.type!==''){
+      $scope.lineTable.push(ardu);
+    }
   });
   
   $scope.setFile = () => {
-     var file = ipc.sendSync('open-file'); 
+    var file = ipc.sendSync('open-file'); 
     //data.gcode
     //dir
     if ( file ){
@@ -30,31 +32,62 @@ ipc.send('asynchronous-message', 'ping');
     }
   };
   
-  ipc.on('addLineTable',  (event,data) => {
-    console.log(data); //////////////////
-    if($scope.lineTable.length > 14){ 
-      $scope.lineTable.shift();
+  $scope.enviarDatos = (command) => {
+    ipc.sendSync('send-command',{ code:command })
+    cnc.working = true;
+    Line.add('Comando manual: '+command);
+    //upload.comando(command);
+  }
+  $scope.moverOrigen = () => {
+    ipc.sendSync('send-command',{ code:'o' })
+    cnc.working = true;
+    Line.add('Comando mover al origen.');
+    //upload.comando('o');
+  }  
+  var varpasosmm = 'steps';
+  $scope.setmmpass = (valor) => { varpasosmm=valor; };
+  $scope.inputpasosmm = '200';
+  
+  $scope.moverManual= (nume,eje,sentido) => {
+    var command;
+    switch (eje) {
+      case "X": command = sentido+nume+",0,0"     ; break;
+      case "Y": command = "0,"+sentido+nume+",0"  ; break;
+      case "Z": command = "0,0,"+sentido+nume     ; break;
+      default:  command = "0,0,0"                 ; break;
     }
-    $scope.lineTable.push(data);
+    // (command , varpasosmm ) 
+    
+    upload.comando(command);
+  }
+  
+  
+  
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    
+  /*ipc.on('addLineTable',  (event,data) => {
+    console.log(data); //////////////////
+    // add line
     if(data.nro && data.travel){
       $scope.cnc.file.Progress(data.nro,data.travel);
       $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
     }
-  });
+  });*/
   
   
-  $scope.enviarDatos = (comando) => {
-    // armar linea enviar
-    ipc.sendSync('send-command',{ code:comando ,type: undefined})
-    cnc.working = true;
-
-    // addLine
-
-    //upload.comando(comando,undefined);
-  }
+  ipc.on('closeConex', (data) => {
+    console.log(data);
+    if (data.steps){
+      cnc.pause.steps[0]=data.steps[0];
+      cnc.pause.steps[1]=data.steps[1];
+      cnc.pause.steps[2]=data.steps[2];
+      cnc.pause.status=true;
+    }
+    $scope.lineTable.push(data);
+    $scope.cnc.working = false;
+  }); 
   
-  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  $scope.parar = function(){
+  $scope.parar = () => {
     upload.comando('0,0,0',undefined);
     $scope.cnc.file.line.interpreted = 0;
     $scope.cnc.file.line.progress = 0;
@@ -69,7 +102,7 @@ ipc.send('asynchronous-message', 'ping');
     upload.comando('p',undefined);
   }
   
-  $scope.comenzar = function(){
+  $scope.comenzar = function() {
 
     if(cnc.file.line.total !== 0){
       if(!cnc.pause.status){
@@ -92,34 +125,4 @@ ipc.send('asynchronous-message', 'ping');
     }
   }
   
-  socket.on('closeConex', function (data) {
-    console.log(data);
-    if (data.steps){
-      cnc.pause.steps[0]=data.steps[0];
-      cnc.pause.steps[1]=data.steps[1];
-      cnc.pause.steps[2]=data.steps[2];
-      cnc.pause.status=true;
-    }
-    $scope.lineTable.push(data);
-    $scope.cnc.working = false;
-  }); 
-  
-  var varpasosmm = 'steps';
-  $scope.setmmpass = function(valor){ varpasosmm=valor; };
-  $scope.inputpasosmm = '200';
-  $scope.moverManual=function(nume,eje,sentido){
-    var str;
-    switch (eje) {
-      case "X": str = sentido+nume+",0,0"; break;
-      case "Y": str = "0,"+sentido+nume+",0"; break;
-      case "Z": str = "0,0,"+sentido+nume; break;
-      default:  str = "0,0,0" ; break;
-    }
-    upload.comando(str,varpasosmm);
-  }
-
-
-  $scope.moverOrigen = () => {
-    upload.comando('o',undefined);
-  }
 }]);

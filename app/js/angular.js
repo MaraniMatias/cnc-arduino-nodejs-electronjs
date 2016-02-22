@@ -2,7 +2,8 @@
 /* global angular */
 /* global $ */
 /* global io */
-angular.value('cnc',{
+angular
+.value('cnc',{
   working:false,
   pause:{
     status: false,
@@ -30,8 +31,17 @@ angular.value('cnc',{
   }
 })
 .value('lineTable', [])
-.module('app', [])
+.value('config', {
+   "motor": {
+    "xy": {
+      "time": 24,
+      "steps": 10000,
+      "advance": 115.47
+    },
+    "z": {
+      "steps": 2000,
+      "advance": 7.00
+    }
+  }
+})
 ;
-require('./controller/*.js');
-require('./factory/*.js');
-require('./service/*.js');

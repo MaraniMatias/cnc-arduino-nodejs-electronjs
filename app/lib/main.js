@@ -42,65 +42,33 @@ function setFile ( dirfile ) {
   //cb(File) ;
 }
 
-function Line (code) {
+/*function Line (code) {
   return { nro : '', type : 'none', ejes : [], steps : [], travel : '', code }
-}
+}*/
 
-function sendCommand ( code , type ,cb ){
+function sendCommand ( code , callback ){
   //console.log(`${__filename}\n sendCommand, type: ${type}, code: ${code}`);
   if( Arduino.port.comName !== '' ){
-    var line;
-    switch (type) {
-      case 'steps':
-        line = Line(`Comando manual ${type}: ${code}`);
-        line.steps = code.split(',');
-        line.ejes = [
-          line.steps[0] * config.motor.xy.advance / config.motor.xy.steps,
-          line.steps[1] * config.motor.xy.advance / config.motor.xy.steps,
-          line.steps[2] * config.motor.z.advance  / config.motor.z.steps
-        ];
-        realSendCommand( code , line );
-        break;
-      case 'mm':
-        line = Line(`Comando manual ${type}: ${code}`);
-        line.ejes = code.split(',');
-        line.steps = [
-          Math.round(line.ejes[0] * (config.motor.xy.steps / config.motor.xy.advance)),
-          Math.round(line.ejes[1] * (config.motor.xy.steps / config.motor.xy.advance)),
-          Math.round(line.ejes[2] * (config.motor.z.steps  / config.motor.z.advance))
-        ];
-        realSendCommand( line.steps[0]+','+line.steps[1]+','+line.steps[2] , line );
-        break;
-      default:
-        realSendCommand( code , line , cb );
-        break;
-    }
+    if( Arduino.port.isOpen() )    Arduino.port.close(); 
+    Arduino.port.open( (err) => {
+      Arduino.port.write(new Buffer(code+'\n'), (err) => {
+        //req.io.broadcast('lineaGCode', line ); // emitir enviar lines procesada a app.js
+        Arduino.port.drain( () => {
+          Arduino.port.on('data', (data) => {
+            Arduino.port.close( (err) => {
+              if (typeof (callback) === 'function') {
+                callback(data.toString().split(','));
+              }
+            });//close
+          });//data
+        });// drain
+      });//write
+    });//open
   } else {
     console.error('sendCommand Arduino not selected');
     //throw new Error('Arduino no seleccionado');
   }
 }
-
-function realSendCommand( code , line , callback ){
-  if( Arduino.port.isOpen() ){ 
-    Arduino.port.close(); 
-  }
-  Arduino.port.open( (err) => {
-    Arduino.port.write(new Buffer(code+'\n'), (err) => {
-      //req.io.broadcast('lineaGCode', line ); // emitir enviar lines procesada a app.js
-      Arduino.port.drain( () => {
-        Arduino.port.on('data', (data) => {
-          Arduino.port.close( (err) => {
-            if (typeof (callback) === 'function') {
-              callback(data.toString());
-            }
-          });//close
-        });//data
-      });// drain
-    });//write
-  });//open
-}
-
 
 function reSet () {
   return new Promise(function (resolve, reject){
@@ -127,7 +95,7 @@ function reSet () {
 
 //Arduino.reSet();
 module.exports = {
-  Arduino : arduino , File , Line , setFile , sendCommand
+  Arduino : arduino , File  , setFile , sendCommand
 };
 
 

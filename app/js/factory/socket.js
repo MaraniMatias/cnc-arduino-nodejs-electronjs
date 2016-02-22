@@ -1,3 +1,4 @@
+/*
 angular.factory('socket',  ($rootScope) => {
   var ipcRenderer = electron.ipcRenderer;
   return {
@@ -18,4 +19,5 @@ angular.factory('socket',  ($rootScope) => {
       })
     }
   }// return
-});
+})
+;*/
