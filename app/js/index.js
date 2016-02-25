@@ -4,8 +4,8 @@ const
   ipcRenderer = electron.ipcRenderer
   ;
   require('./../js/contextMenu.js');
-  
-/*
+
+    /*
     var alertOnlineStatus = function() {
       window.alert(navigator.onLine ? 'online' : 'offline');
     };

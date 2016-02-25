@@ -1,23 +1,12 @@
 angular.factory('Line', ['lineTable','config', (lineTable,config) => {
   return{
-    addMsj:  (msg,type) => {
+    add : (line) => {
       if(lineTable.length > 14){ 
         lineTable.shift();
       }
-      switch(type){
-        case 1: type='positive'; break;
-        case 2: type='active'; break;
-        case 3: type='warning';break;
-        case 4: type='negative';break;
-        case 5: type='disabled';break;
-        default:type='';
-      }
-      lineTable.push({nro:'',ejes:[],type,code:msg,steps:[]});
+      lineTable.push(line);
     },
-    add : (code,ejes,steps,nro,type,travel) => {
-      if(lineTable.length > 14){ 
-        lineTable.shift();
-      }
+    new : (code,ejes,steps,travel,nro,type) => {
       switch(type){
         case 1: type='positive'; break;
         case 2: type='active'; break;
@@ -26,23 +15,13 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
         case 5: type='disabled';break;
         default:type='';
       }
-      lineTable.push({
+      return {
         travel : travel === undefined? '' : travel,
         steps  : steps  === undefined? [] : steps,
         type   ,
         ejes   : ejes   === undefined? [] : ejes,
         nro    : nro    === undefined? '' : nro,
         code
-      });
-    },
-    new : (code,ejes,steps,travel,nro,type) => {
-      return {
-      travel : travel === undefined? '' : travel,
-      steps  : steps  === undefined? [] : steps,
-      type   : type   === undefined? '' : type,
-      ejes   : ejes   === undefined? [] : ejes,
-      nro    : nro    === undefined? '' : nro,
-      code
       }
     },
     codeType : (c , t) => {
@@ -51,7 +30,7 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
         travel:'',
         nro:'',
         type : 'none',
-        code : `Comando manual ${t}: ${c}`,
+        code : `Comando manual: ${c}`,
         steps : c.split(','),
         ejes : [
           c.split(',')[0] * config.motor.xy.advance / config.motor.xy.steps,
@@ -64,7 +43,7 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
         travel:'',
         nro:'',
         type : 'none',
-        code : `Comando manual ${t}: ${c}`,
+        code : `Comando manual: ${c} ${t}`,
         ejes : c.split(','),
         steps : [
           Math.round(c.split(',')[0] * (config.motor.xy.steps / config.motor.xy.advance)),
@@ -80,6 +59,22 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
         type : 'none'
         }
       }
+    },
+    
+    addMsj:  (msg,type) => {
+      if(lineTable.length > 14){ 
+      lineTable.shift();
+      }
+      switch(type){
+        case 1: type='positive'; break;
+        case 2: type='active'; break;
+        case 3: type='warning';break;
+        case 4: type='negative';break;
+        case 5: type='disabled';break;
+        default:type='';
+      }
+      lineTable.push({nro:'',ejes:[],type,code:msg,steps:[]});
     }
+    
   }// return
 }]);

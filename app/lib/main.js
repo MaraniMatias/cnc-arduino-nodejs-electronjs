@@ -42,10 +42,6 @@ function setFile ( dirfile ) {
   //cb(File) ;
 }
 
-/*function Line (code) {
-  return { nro : '', type : 'none', ejes : [], steps : [], travel : '', code }
-}*/
-
 function sendCommand ( code , callback ){
   //console.log(`${__filename}\n sendCommand, type: ${type}, code: ${code}`);
   if( Arduino.port.comName !== '' ){
@@ -65,7 +61,9 @@ function sendCommand ( code , callback ){
       });//write
     });//open
   } else {
-    console.error('sendCommand Arduino not selected');
+    if (typeof (callback) === 'function') {
+      callback('sendCommand Arduino not selected');
+    }
     //throw new Error('Arduino no seleccionado');
   }
 }

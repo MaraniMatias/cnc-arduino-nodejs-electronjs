@@ -33,17 +33,22 @@ ipc.send('asynchronous-message', 'ping');
   };
   
   $scope.enviarDatos = (command) => {
-    ipc.sendSync('send-command',{ code:command })
+    ipc.sendSync('send-command',command)
     cnc.working = true;
-    Line.add('Comando manual: '+command);
+    Line.add( Line.new('Comando manual: '+command) );
     //upload.comando(command);
   }
   $scope.moverOrigen = () => {
-    ipc.sendSync('send-command',{ code:'o' })
+    ipc.send('send-command','o')
     cnc.working = true;
-    Line.add('Comando mover al origen.');
+    Line.add( Line.new('Comando mover al origen.'));
     //upload.comando('o');
   }  
+  $scope.pausa = () => { 
+    $scope.cnc.time.pause = new Date();
+    ipc.send('send-command','p')
+    //upload.comando('p');
+  }
   var varpasosmm = 'steps';
   $scope.setmmpass = (valor) => { varpasosmm=valor; };
   $scope.inputpasosmm = '200';
@@ -56,9 +61,12 @@ ipc.send('asynchronous-message', 'ping');
       case "Z": command = "0,0,"+sentido+nume     ; break;
       default:  command = "0,0,0"                 ; break;
     }
-    // (command , varpasosmm ) 
+    var l =  Line.codeType(command , varpasosmm) ;
     
-    upload.comando(command);
+    ipc.send('send-command',l.steps.toString());
+    //cnc.working = true;
+    Line.add(l);
+    //upload.comando(l.steps.toString());
   }
   
   
@@ -95,11 +103,6 @@ ipc.send('asynchronous-message', 'ping');
     $scope.cnc.pause.steps[1]=0;
     $scope.cnc.pause.steps[2]=0;
     $scope.cnc.pause.status=false;
-  }
-  
-  $scope.pausa = function(){ 
-    $scope.cnc.time.pause = new Date();
-    upload.comando('p',undefined);
   }
   
   $scope.comenzar = function() {

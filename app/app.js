@@ -116,10 +116,12 @@ ipcMain.on('open-file',(event,arg) => {
 });
 
 ipcMain.on('send-command', (event, arg) => {
-  CNC.sendCommand( arg.code , (dataReceived) => { //var dataReceived = data.split(',');
+  CNC.sendCommand( arg , (dataReceived) => {
+    console.log(dataReceived);
+    //var dataReceived = data.split(',');
+    event.sender.send('asynchronous-reply',dataReceived);
     if(dataReceived[0]==='0' && dataReceived[1]==='0' && dataReceived[2]==='0'){
       console.log('-> File: ',__filename,'\n->',dataReceived,'-> Emit -->> Terminado <<--');
-      event.sender.send('asynchronous-reply',{code:'Terminado'});
     }else{//Pause
       console.log('-> File: ',dataReceived,'Emit -->> Pausado <<--');
       //event.sender.send('closeConex',{steps:dataReceived,code:'Terminado'});
