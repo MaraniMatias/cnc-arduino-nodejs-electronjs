@@ -62,7 +62,7 @@ function sendCommand ( code , callback ){
     });//open
   } else {
     if (typeof (callback) === 'function') {
-      callback('sendCommand Arduino not selected');
+      callback('Arduino not selected');
     }
     //throw new Error('Arduino no seleccionado');
   }

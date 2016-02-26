@@ -64,12 +64,30 @@ ipc.send('asynchronous-message', 'ping');
     var l =  Line.codeType(command , varpasosmm) ;
     
     ipc.send('send-command',l.steps.toString());
-    //cnc.working = true;
+    cnc.working = true;
     Line.add(l);
     //upload.comando(l.steps.toString());
   }
   
-  
+  ipc.on('close-conex', (event,data) => {
+    console.log(data);
+    /*if(data[0]==='0' && data[1]==='0' && data[2]==='0'){
+      console.log(data.toString(),'-> Emit -->> Terminado <<--');
+      Line.add( Line.new('Terminado: '+data) );
+    }else {//Pause
+      console.log(data.toString(),'Emit -->> Pausado <<--');
+      Line.add( Line.new('Pausado: '+data) );
+      cnc.pause.steps[0]=data[0];
+      cnc.pause.steps[1]=data[1];
+      cnc.pause.steps[2]=data[2];
+      cnc.pause.status=true;
+    }*/
+    
+      console.log(data,'Emit -->> indefinido <<--');
+      Line.add( Line.new('Respuesta: '+data) );
+    
+    $scope.cnc.working = false;
+  }); 
   
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     
@@ -81,19 +99,6 @@ ipc.send('asynchronous-message', 'ping');
       $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
     }
   });*/
-  
-  
-  ipc.on('closeConex', (data) => {
-    console.log(data);
-    if (data.steps){
-      cnc.pause.steps[0]=data.steps[0];
-      cnc.pause.steps[1]=data.steps[1];
-      cnc.pause.steps[2]=data.steps[2];
-      cnc.pause.status=true;
-    }
-    $scope.lineTable.push(data);
-    $scope.cnc.working = false;
-  }); 
   
   $scope.parar = () => {
     upload.comando('0,0,0',undefined);
