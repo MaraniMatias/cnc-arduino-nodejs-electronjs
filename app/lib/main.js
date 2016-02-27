@@ -53,7 +53,7 @@ function sendCommand ( code , callback ){
           Arduino.port.on('data', (data) => {
             Arduino.port.close( (err) => {
               if (typeof (callback) === 'function') {
-                callback(data.toString().split(','));
+                callback({type:'none',data:data.toString().split(',')});
               }
             });//close
           });//data
@@ -62,7 +62,7 @@ function sendCommand ( code , callback ){
     });//open
   } else {
     if (typeof (callback) === 'function') {
-      callback('Arduino not selected');
+      callback({type:'error',data:'Arduino not selected'});
     }
     //throw new Error('Arduino no seleccionado');
   }

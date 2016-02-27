@@ -4,6 +4,7 @@
 /* global io */
 angular
 .value('cnc',{
+  arduino:false,
   working:false,
   pause:{
     status: false,

@@ -16,6 +16,9 @@ ipc.send('asynchronous-message', 'ping');
   ipc.on('arduino-res', (event, ardu) => {
     if(ardu.type!==''){
       $scope.lineTable.push(ardu);
+      cnc.arduino=false;
+    }else{
+      cnc.arduino=true;
     }
   });
   
@@ -33,18 +36,21 @@ ipc.send('asynchronous-message', 'ping');
   };
   
   $scope.enviarDatos = (command) => {
+    // comprimir y chequear arduin
     ipc.sendSync('send-command',command)
     cnc.working = true;
     Line.add( Line.new('Comando manual: '+command) );
     //upload.comando(command);
   }
   $scope.moverOrigen = () => {
+    // comprimir y chequear arduin
     ipc.send('send-command','o')
     cnc.working = true;
     Line.add( Line.new('Comando mover al origen.'));
     //upload.comando('o');
   }  
   $scope.pausa = () => { 
+    // comprimir y chequear arduin
     $scope.cnc.time.pause = new Date();
     ipc.send('send-command','p')
     //upload.comando('p');
@@ -63,29 +69,30 @@ ipc.send('asynchronous-message', 'ping');
     }
     var l =  Line.codeType(command , varpasosmm) ;
     
+    // comprimir y chequear arduin
     ipc.send('send-command',l.steps.toString());
     cnc.working = true;
     Line.add(l);
     //upload.comando(l.steps.toString());
   }
   
-  ipc.on('close-conex', (event,data) => {
-    console.log(data);
-    /*if(data[0]==='0' && data[1]==='0' && data[2]==='0'){
-      console.log(data.toString(),'-> Emit -->> Terminado <<--');
-      Line.add( Line.new('Terminado: '+data) );
-    }else {//Pause
-      console.log(data.toString(),'Emit -->> Pausado <<--');
-      Line.add( Line.new('Pausado: '+data) );
-      cnc.pause.steps[0]=data[0];
-      cnc.pause.steps[1]=data[1];
-      cnc.pause.steps[2]=data[2];
+  ipc.on('close-conex', (event,obj) => {
+    if(obj.type == 'none' && obj.data[0]==='0' && obj.data[1]==='0' && obj.data[2]==='0'){
+      console.log(obj.data.toString(),'-> Emit -->> Terminado <<--');
+      Line.add( Line.new('Terminado: '+obj.data) );
+    }else if(obj.type != 'none'){//Pause
+      console.log(obj.data,'Emit -->> indefinido <<--');
+      var l = Line.new('Respuesta: '+obj.data);
+      l.type = obj.type;
+      Line.add( l );
+    }else{
+      console.log(obj.data.toString(),'Emit -->> Pausado <<--');
+      Line.add( Line.new('Pausado: '+obj.data) );
+      cnc.pause.steps[0]=obj.data[0];
+      cnc.pause.steps[1]=obj.data[1];
+      cnc.pause.steps[2]=obj.data[2];
       cnc.pause.status=true;
-    }*/
-    
-      console.log(data,'Emit -->> indefinido <<--');
-      Line.add( Line.new('Respuesta: '+data) );
-    
+    }
     $scope.cnc.working = false;
   }); 
   

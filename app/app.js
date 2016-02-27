@@ -118,11 +118,6 @@ ipcMain.on('open-file',(event,arg) => {
 ipcMain.on('send-command', (event, arg) => {
   CNC.sendCommand( arg , (dataReceived) => {
     event.sender.send('close-conex',dataReceived);
-    /*if(dataReceived[0]==='0' && dataReceived[1]==='0' && dataReceived[2]==='0'){
-      console.log('-> File: ',__filename,'\n->',dataReceived,'-> Emit -->> Terminado <<--');
-    }else{//Pause
-      console.log('-> File: ',dataReceived,'Emit -->> Pausado <<--');
-    }*/
   });
 });
 
