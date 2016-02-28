@@ -1,6 +1,6 @@
 const
   electron  =  require('electron'),
-  ipcMain   =  electron.ipcMain;
+  ipcMain   =  electron.ipcRenderer;
 var  menuMain = [
   { // 0
     label: 'Archivo',
@@ -51,13 +51,13 @@ var  menuMain = [
       }
     ]
   },// 0
-  { // 1
+  /*{ // 1
     label: 'Arduino',
     submenu: [
       { // 0
         label: 'Auto-Conectar.',
         click : (item, focusedWindow) => {
-          ipcMain.emit('arduino');
+          ipcMain.send('arduino');
         }
       },
       { //1
@@ -67,7 +67,7 @@ var  menuMain = [
         ]
       }
     ]
-  },
+  },*/
   {
     label: 'View',
     submenu: [

@@ -19,7 +19,7 @@ app.on('window-all-closed',  () => {
 });
 
 // deveria listar Arduinos conectados      
-menuFile.addArduino([{manufacturer:'manufacturer1',comName:'comName1'},{manufacturer:'manufacturer2',comName:'comName2'}]);
+//menuFile.addArduino([{manufacturer:'manufacturer1',comName:'comName1'},{manufacturer:'manufacturer2',comName:'comName2'}]);
 
 var mainWindow = null;
 var menu = Menu.buildFromTemplate(menuFile.menuMain);
@@ -97,7 +97,11 @@ app.on('ready',  () => {
 // ##### old : END
 });//ready
 
-
+/*ipcMain.on('arduino', (event, arg) => {
+  CNC.Arduino.reSet().then(function (ardu) {
+    event.sender.send('arduino-res',{ type:ardu===''? 'error':'' , code:ardu===''? 'No encontramos ardiono.':'Arduino detectado: '+ardu});
+  })
+});*/
 ipcMain.on('arduino', (event, arg) => {
   CNC.Arduino.reSet().then(function (ardu) {
     event.sender.send('arduino-res',{ type:ardu===''? 'error':'' , code:ardu===''? 'No encontramos ardiono.':'Arduino detectado: '+ardu});

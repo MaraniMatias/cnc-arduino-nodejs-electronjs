@@ -2,14 +2,15 @@
 /* global remote */
 /* global window */
 const Menu = remote.require('menu');
-      
+const ipcRenderer  =  require('electron').ipcRenderer;
+ 
       window.addEventListener('contextmenu',  (e) => {
         e.preventDefault();
         menu.popup(remote.getCurrentWindow());
       }, false);
       
 const template = [
-  {
+  /*{
     label: 'Contexmenu',
     submenu: [
       {
@@ -29,7 +30,17 @@ const template = [
         }
       }
     ]
-  },
+  }, */
+  { // 1
+    label: 'Arduino',
+    submenu: [
+      { // 0
+        label: 'Auto-Conectar.',
+        click : (item, focusedWindow) => {
+          ipcRenderer.send('arduino');
+        }
+      }]
+  }/*,
   {
     label: 'Heramientas',
     submenu: [
@@ -89,7 +100,7 @@ const template = [
         }
       },
     ]
-  }
+  }*/
 ];
 
 var menu = Menu.buildFromTemplate(template);

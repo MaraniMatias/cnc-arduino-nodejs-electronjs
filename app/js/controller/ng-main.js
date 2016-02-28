@@ -15,11 +15,13 @@ ipc.send('asynchronous-message', 'ping');
   ipc.send('arduino');
   ipc.on('arduino-res', (event, ardu) => {
     if(ardu.type!==''){
-      $scope.lineTable.push(ardu);
-      cnc.arduino=false;
-    }else{
       cnc.arduino=true;
+    }else{
+      cnc.arduino=false;
     }
+    var l = Line.new(ardu.code);
+    l.type = ardu.type;
+    Line.add( l );
   });
   
   $scope.setFile = () => {
