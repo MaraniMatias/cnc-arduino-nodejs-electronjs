@@ -1,7 +1,7 @@
 /* global angular */
 angular.controller('main',
-['ipc','cnc','$scope','upload','lineTable','config','Line',
-(ipc,cnc,$scope,upload,lineTable,config,Line) => {
+['ipc','cnc','$scope','lineTable','config','Line',
+(ipc,cnc,$scope,lineTable,config,Line) => {
 
 // # Test doc. :START
 console.log(ipc.sendSync('synchronous-message', 'ping'));
@@ -14,11 +14,8 @@ ipc.send('asynchronous-message', 'ping');
   
   ipc.send('arduino');
   ipc.on('arduino-res', (event, ardu) => {
-    if(ardu.type!==''){
-      cnc.arduino=true;
-    }else{
-      cnc.arduino=false;
-    }
+    if(ardu.type!=='') cnc.arduino=false;
+    else cnc.arduino=true;
     var l = Line.new(ardu.code);
     l.type = ardu.type;
     Line.add( l );
@@ -37,45 +34,45 @@ ipc.send('asynchronous-message', 'ping');
     }
   };
   
-  $scope.enviarDatos = (command) => {
-    // comprimir y chequear arduin
-    ipc.sendSync('send-command',command)
-    cnc.working = true;
-    Line.add( Line.new('Comando manual: '+command) );
-    //upload.comando(command);
+  $scope.enviarDatos = (cmd) => {
+    //cnc.working = true;
+    if(ipc.sendArd(cmd)) Line.add( Line.new('Comando manual: '+cmd) );
   }
   $scope.moverOrigen = () => {
-    // comprimir y chequear arduin
-    ipc.send('send-command','o')
-    cnc.working = true;
-    Line.add( Line.new('Comando mover al origen.'));
-    //upload.comando('o');
-  }  
-  $scope.pausa = () => { 
-    // comprimir y chequear arduin
-    $scope.cnc.time.pause = new Date();
-    ipc.send('send-command','p')
-    //upload.comando('p');
+    //cnc.working = true;
+    if(ipc.sendArd('o') )  Line.add( Line.new('Comando mover al origen.'));
   }
+  $scope.pausa = () => { 
+    $scope.cnc.time.pause = new Date();
+    if(ipc.sendArd('p')) Line.add( Line.new('Orden de parar'));
+  }
+  $scope.parar = () => {
+    if(ipc.sendArd('0,0,0')){
+      //Line.add( Line.new('Orden de parar'));
+      $scope.cnc.file.line.interpreted = 0;
+      $scope.cnc.file.line.progress = 0;
+      $scope.cnc.pause.steps[0]=0;
+      $scope.cnc.pause.steps[1]=0;
+      $scope.cnc.pause.steps[2]=0;
+      $scope.cnc.pause.status=false;
+    }
+  }
+  
+  
   var varpasosmm = 'steps';
   $scope.setmmpass = (valor) => { varpasosmm=valor; };
   $scope.inputpasosmm = '200';
   
-  $scope.moverManual= (nume,eje,sentido) => {
-    var command;
+  $scope.moverManual = (nume,eje,sentido) => {
+    var cmd;
     switch (eje) {
-      case "X": command = sentido+nume+",0,0"     ; break;
-      case "Y": command = "0,"+sentido+nume+",0"  ; break;
-      case "Z": command = "0,0,"+sentido+nume     ; break;
-      default:  command = "0,0,0"                 ; break;
+      case "X": cmd = sentido+nume+",0,0"     ; break;
+      case "Y": cmd = "0,"+sentido+nume+",0"  ; break;
+      case "Z": cmd = "0,0,"+sentido+nume     ; break;
+      default:  cmd = "0,0,0"                 ; break;
     }
-    var l =  Line.codeType(command , varpasosmm) ;
-    
-    // comprimir y chequear arduin
-    ipc.send('send-command',l.steps.toString());
-    cnc.working = true;
-    Line.add(l);
-    //upload.comando(l.steps.toString());
+    var l =  Line.codeType(cmd , varpasosmm) ;
+    if(ipc.sendArd(l.steps.toString())) Line.add(l);
   }
   
   ipc.on('close-conex', (event,obj) => {
@@ -108,17 +105,7 @@ ipc.send('asynchronous-message', 'ping');
       $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
     }
   });*/
-  
-  $scope.parar = () => {
-    upload.comando('0,0,0',undefined);
-    $scope.cnc.file.line.interpreted = 0;
-    $scope.cnc.file.line.progress = 0;
-    $scope.cnc.pause.steps[0]=0;
-    $scope.cnc.pause.steps[1]=0;
-    $scope.cnc.pause.steps[2]=0;
-    $scope.cnc.pause.status=false;
-  }
-  
+    
   $scope.comenzar = function() {
 
     if(cnc.file.line.total !== 0){
@@ -136,9 +123,9 @@ ipc.send('asynchronous-message', 'ping');
       $scope.cnc.time.end = new Date(
         $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration
       );
-      upload.comenzar();
+      ipc.comenzar();
     }else{
-      upload.comando('['+cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]+']','steps');
+      ipc.comando(cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]);
     }
   }
   
