@@ -47,15 +47,13 @@ block content
             .ui.one.column.grid
               .column.center.aligned
                 .ui.icon.buttons
-                  button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 && !cnc.pause.status }]" ng-click='comenzar()')
+                  button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 && !cnc.pause.status }]" ng-click='comenzar()')
                     i.play.icon.green
-                  button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  !cnc.working }]" ng-click='pausa()')
-                    i.pause.icon
-                  button.ui.button(ng-click='parar()')
+                  button.ui.button(ng-class="[{'disabled':  !cnc.working }]" ng-click='pausa()')
+                    i.pause.icon.black
+                  button.ui.button(ng-class="[{'disabled':  !cnc.working && !cnc.pause.status }]" ng-click='parar()')
                     i.stop.icon.red
-                  button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  !cnc.working && !cnc.pause.status }]" ng-click='parar()')
-                    i.stop.icon.red
-                  button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled': cnc.working }]" ng-click=("setFile()") ) Archivo
+                  button.ui.button(ng-class="[{'disabled': cnc.working }]" ng-click=("setFile()") ) Archivo
             .ui.one.column.grid
                 table.ui.very.basic.table
                   thead

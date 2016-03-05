@@ -72,7 +72,10 @@ ipc.send('asynchronous-message', 'ping');
       default:  cmd = "0,0,0"                 ; break;
     }
     var l =  Line.codeType(cmd , varpasosmm) ;
-    if(ipc.sendArd(l.steps.toString())) Line.add(l);
+    if(ipc.sendArd(l.steps.toString())) {
+      Line.add(l);
+      $scope.comando  =  '';
+    }
   }
   
   ipc.on('close-conex', (event,obj) => {
@@ -87,10 +90,11 @@ ipc.send('asynchronous-message', 'ping');
     }else{
       console.log(obj.data.toString(),'Emit -->> Pausado <<--');
       Line.add( Line.new('Pausado: '+obj.data) );
-      cnc.pause.steps[0]=obj.data[0];
-      cnc.pause.steps[1]=obj.data[1];
-      cnc.pause.steps[2]=obj.data[2];
-      cnc.pause.status=true;
+      cnc.pause.steps[0]  =  obj.data[0];
+      cnc.pause.steps[1]  =  obj.data[1];
+      cnc.pause.steps[2]  =  obj.data[2];
+      cnc.pause.status    =  true;
+      $scope.comando      =  cnc.pause.steps.toString();
     }
     $scope.cnc.working = false;
   }); 
