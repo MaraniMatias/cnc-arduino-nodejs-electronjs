@@ -110,7 +110,7 @@ ipc.send('asynchronous-message', 'ping');
     }
   });*/
     
-  $scope.comenzar = function() {
+  $scope.start = function() {
 
     if(cnc.file.line.total !== 0){
       if(!cnc.pause.status){
@@ -127,9 +127,9 @@ ipc.send('asynchronous-message', 'ping');
       $scope.cnc.time.end = new Date(
         $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration
       );
-      ipc.comenzar();
+      ipc.startArd({line:0});
     }else{
-      ipc.comando(cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]);
+      ipc.startArd(cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]);
     }
   }
   

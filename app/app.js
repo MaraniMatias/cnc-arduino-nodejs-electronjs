@@ -97,11 +97,6 @@ app.on('ready',  () => {
 // ##### old : END
 });//ready
 
-/*ipcMain.on('arduino', (event, arg) => {
-  CNC.Arduino.reSet().then(function (ardu) {
-    event.sender.send('arduino-res',{ type:ardu===''? 'error':'' , code:ardu===''? 'No encontramos ardiono.':'Arduino detectado: '+ardu});
-  })
-});*/
 ipcMain.on('arduino', (event, arg) => {
   CNC.Arduino.reSet().then(function (ardu) {
     event.sender.send('arduino-res',{ type:ardu===''? 'error':'' , code:ardu===''? 'No encontramos ardiono.':'Arduino detectado: '+ardu});
@@ -123,6 +118,14 @@ ipcMain.on('send-command', (event, arg) => {
   CNC.sendCommand( arg , (dataReceived) => {
     event.sender.send('close-conex',dataReceived);
   });
+});
+
+ipcMain.on('send-start', (event, arg) => {
+  CNC.start(arg.line);
+  /*CNC.sendCommand( arg , (dataReceived) => {
+    event.sender.send('close-conex',dataReceived);
+  });*/
+  
 });
 
 

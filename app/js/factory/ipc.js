@@ -1,6 +1,16 @@
 angular.factory('ipc',  ['$rootScope','cnc',($rootScope,cnc) => {
   const ipcRenderer = electron.ipcRenderer;
   return {
+    startArd : (cmd) => {
+      if(cmd !== null && cnc.arduino ){
+        ipcRenderer.send('send-start',cmd);
+        cnc.working = true;
+        cnc.file.line.interpreted = 0;
+        return true;
+      }else{
+        return false;
+      }
+    },
     sendArd : (cmd,callback) => {
       if(cmd !== null && cnc.arduino ){
         ipcRenderer.send('send-command',cmd);

@@ -33,7 +33,7 @@ function sendCommand ( code ) {
     Arduino.port.close(); 
   }
   Arduino.port.open( (err) => {
-    Arduino.port.write(new Buffer(code+'\n'), (err) => {
+    Arduino.port.write(new Buffer(code), (err) => {
       Arduino.port.drain( () => {
         Arduino.port.on('data', (data) => {
           Arduino.port.close( (err) => {

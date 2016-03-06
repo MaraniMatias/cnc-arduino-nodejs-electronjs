@@ -47,7 +47,7 @@ block content
             .ui.one.column.grid
               .column.center.aligned
                 .ui.icon.buttons
-                  button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 && !cnc.pause.status }]" ng-click='comenzar()')
+                  button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 && !cnc.pause.status }]" ng-click='start()')
                     i.play.icon.green
                   button.ui.button(ng-class="[{'disabled':  !cnc.working }]" ng-click='pausa()')
                     i.pause.icon.black

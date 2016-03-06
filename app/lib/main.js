@@ -91,12 +91,62 @@ function reSet () {
   })// promise
 }
 
-//Arduino.reSet();
+function getPasos(l){
+  var a = l!==0 ? File.gcode[l-1].ejes : File.gcode[l].ejes;
+  var x = [0,0,0];
+  var b = File.gcode[l].ejes;
+  x[0] = Math.round((b[0]-a[0]) * config.motor.xy.steps / config.motor.xy.advance);
+  x[1] = Math.round((b[1]-a[1]) * config.motor.xy.steps / config.motor.xy.advance);
+  x[2] = Math.round((b[2]-a[2]) * config.motor.z.steps / config.motor.z.advance);
+  return x;
+}
+function start (nro) { 
+  if( Arduino.port.comName !== '' ){
+    if( Arduino.port.isOpen() ){ Arduino.port.close(); }
+    if(Arduino.port.comName !== '' && File.gcode.length > 0){
+      // arduino
+      Arduino.port.open( (err) => {
+        if( nro !== null){ // validar mejor :D
+          Arduino.port.write(new Buffer(getPasos(nro)+'\n'),function(err,results){
+            Arduino.port.drain( () => {
+              console.log("I: %s - Ejes: %s",nro,File.gcode[nro].ejes);
+            })
+          })//write
+        }
+
+Arduino.port.on('data', function(data) {
+var d = data.toString().split(',');
+if(d[0]==0 && d[1]==0 && d[2]==0){
+  nro++;
+  if(nro < File.gcode.length){
+    Arduino.port.write(new Buffer(getPasos(nro)+'\n'),function(err,results){
+      Arduino.port.drain( () => {
+        console.log("I: %s - Ejes: %s",nro,File.gcode[nro].ejes);
+      });
+    });//write
+  }else{
+    Arduino.port.close(function(err){
+      console.log("Finish.");
+    });//close
+  }
+}else{//Pause
+  Arduino.port.close(function(err) {
+    console.log("Pause: %s",data);
+  });//close
+}
+})//dta
+
+      });// open
+    }
+  }else{
+    // error no esta ardu
+  }
+
+}
+
 module.exports = {
-  Arduino : arduino , File  , setFile , sendCommand
+  Arduino : arduino , File  , setFile , sendCommand , start
 };
-
-
 
 
 /*
