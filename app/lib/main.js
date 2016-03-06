@@ -100,7 +100,7 @@ function getPasos(l){
   x[2] = Math.round((b[2]-a[2]) * config.motor.z.steps / config.motor.z.advance);
   return x;
 }
-function start (nro) { 
+function start (nro,callback) { 
   if( Arduino.port.comName !== '' ){
     if( Arduino.port.isOpen() ){ Arduino.port.close(); }
     if(Arduino.port.comName !== '' && File.gcode.length > 0){
@@ -109,19 +109,20 @@ function start (nro) {
         if( nro !== null){ // validar mejor :D
           Arduino.port.write(new Buffer(getPasos(nro)+'\n'),function(err,results){
             Arduino.port.drain( () => {
-              console.log("I: %s - Ejes: %s",nro,File.gcode[nro].ejes);
+              callback({ nro, result:'0,0,0' });
             })
           })//write
         }
 
 Arduino.port.on('data', function(data) {
-var d = data.toString().split(',');
-if(d[0]==0 && d[1]==0 && d[2]==0){
+var result = data.toString().split(',');
+if(result[0]==0 && result[1]==0 && result[2]==0){
   nro++;
   if(nro < File.gcode.length){
     Arduino.port.write(new Buffer(getPasos(nro)+'\n'),function(err,results){
       Arduino.port.drain( () => {
-        console.log("I: %s - Ejes: %s",nro,File.gcode[nro].ejes);
+        callback({ nro , result });
+        //console.log("I: %s - Ejes: %s",nro,File.gcode[nro].ejes);
       });
     });//write
   }else{

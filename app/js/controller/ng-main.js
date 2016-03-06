@@ -101,14 +101,15 @@ ipc.send('asynchronous-message', 'ping');
   
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     
-  /*ipc.on('addLineTable',  (event,data) => {
+  ipc.on('addLineTable',  (event,data) => {
+    Line.add( Line.new('Comando manual: ') );
     console.log(data); //////////////////
     // add line
-    if(data.nro && data.travel){
+    /*if(data.nro && data.travel){
       $scope.cnc.file.Progress(data.nro,data.travel);
       $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
-    }
-  });*/
+    }*/
+  });
     
   $scope.start = function() {
 
@@ -129,7 +130,10 @@ ipc.send('asynchronous-message', 'ping');
       );
       ipc.startArd({line:0});
     }else{
-      ipc.startArd(cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]);
+      ipc.startArd({
+        line:'?',
+        steps:cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]
+      });
     }
   }
   

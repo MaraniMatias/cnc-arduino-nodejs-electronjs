@@ -121,11 +121,10 @@ ipcMain.on('send-command', (event, arg) => {
 });
 
 ipcMain.on('send-start', (event, arg) => {
-  CNC.start(arg.line);
-  /*CNC.sendCommand( arg , (dataReceived) => {
-    event.sender.send('close-conex',dataReceived);
-  });*/
-  
+  CNC.start(arg.line, (data) => {
+    console.log("I: %s - Ejes: %s - Result: %s",data.nro, CNC.File.gcode[data.nro].ejes , data.result);
+    //event.sender.send('addLineTable',dataReceived);
+  });
 });
 
 
