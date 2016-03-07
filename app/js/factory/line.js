@@ -1,4 +1,19 @@
 angular.factory('Line', ['lineTable','config', (lineTable,config) => {
+  function toSteps(c){
+    return [
+      c[0] * config.motor.xy.advance / config.motor.xy.steps,
+      c[1] * config.motor.xy.advance / config.motor.xy.steps,
+      c[2] * config.motor.z.advance  / config.motor.z.steps
+    ]
+  }
+  function toEjes(c){
+    return [
+      Math.round(c[0] * (config.motor.xy.steps / config.motor.xy.advance)),
+      Math.round(c[1] * (config.motor.xy.steps / config.motor.xy.advance)),
+      Math.round(c[2] * (config.motor.z.steps  / config.motor.z.advance))
+    ]
+  }
+  
   return{
     add : (line) => {
       if(lineTable.length > 14){ 
@@ -17,9 +32,9 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
       }
       return {
         travel : travel === undefined? '' : travel,
-        steps  : steps  === undefined? [] : steps,
+        steps  : steps  === undefined? toSteps(ejes) : steps,
         type   ,
-        ejes   : ejes   === undefined? [] : ejes,
+        ejes   : ejes   === undefined? toEjes(steps) : ejes,
         nro    : nro    === undefined? '' : nro,
         code
       }
@@ -32,11 +47,7 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
         type : 'none',
         code : `Comando manual: ${c}`,
         steps : c.split(','),
-        ejes : [
-          c.split(',')[0] * config.motor.xy.advance / config.motor.xy.steps,
-          c.split(',')[1] * config.motor.xy.advance / config.motor.xy.steps,
-          c.split(',')[2] * config.motor.z.advance  / config.motor.z.steps
-          ]
+        ejes : toEjes(c.split(','))
         }
       }else if(t === 'mm'){
         return {
@@ -45,11 +56,7 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
         type : 'none',
         code : `Comando manual: ${c} ${t}`,
         ejes : c.split(','),
-        steps : [
-          Math.round(c.split(',')[0] * (config.motor.xy.steps / config.motor.xy.advance)),
-          Math.round(c.split(',')[1] * (config.motor.xy.steps / config.motor.xy.advance)),
-          Math.round(c.split(',')[2] * (config.motor.z.steps  / config.motor.z.advance))
-        ]
+        steps : toSteps(c.split(','))
       }
       }else{
         return {

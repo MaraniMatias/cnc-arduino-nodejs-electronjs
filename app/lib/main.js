@@ -107,31 +107,30 @@ function start (nro,callback) {
       // arduino
       Arduino.port.open( (err) => {
         if( nro !== null){ // validar mejor :D
-          Arduino.port.write(new Buffer(getPasos(nro)+'\n'),function(err,results){
+          Arduino.port.write(new Buffer(getPasos(nro)+'\n'), (err,results) => {
             Arduino.port.drain( () => {
               callback({ nro, result:'0,0,0' });
             })
           })//write
         }
 
-Arduino.port.on('data', function(data) {
+Arduino.port.on('data', (data) => {
 var result = data.toString().split(',');
 if(result[0]==0 && result[1]==0 && result[2]==0){
   nro++;
   if(nro < File.gcode.length){
-    Arduino.port.write(new Buffer(getPasos(nro)+'\n'),function(err,results){
-      Arduino.port.drain( () => {
-        callback({ nro , result });
-        //console.log("I: %s - Ejes: %s",nro,File.gcode[nro].ejes);
-      });
+    Arduino.port.write(new Buffer(getPasos(nro)+'\n'), (err,results) => {
+      Arduino.port.drain( () => { callback({ nro , result }); });
     });//write
   }else{
-    Arduino.port.close(function(err){
+    Arduino.port.close( (err) => {
+      //callback({ nro , result });
       console.log("Finish.");
     });//close
   }
 }else{//Pause
-  Arduino.port.close(function(err) {
+  Arduino.port.close( (err) => {
+    //callback({ nro , result });
     console.log("Pause: %s",data);
   });//close
 }

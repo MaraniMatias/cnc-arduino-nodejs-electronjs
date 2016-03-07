@@ -11,6 +11,7 @@ angular
     steps: [0,0,0]
   },
   file:{
+    //gcode : [],
     name:'Sin Archivo',
     line: {
       total : 0,

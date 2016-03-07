@@ -23,10 +23,10 @@ ipc.send('asynchronous-message', 'ping');
   
   $scope.setFile = () => {
     var file = ipc.sendSync('open-file'); 
-    //data.gcode
     //dir
     if ( file ){
       console.log(file);
+      //$scope.cnc.file.gcode = file.gcode;
       $scope.cnc.file.name = file.name;
       $scope.cnc.file.line.total = file.lines;
       $scope.cnc.file.line.duration = parseInt(file.segTotal);
@@ -99,11 +99,9 @@ ipc.send('asynchronous-message', 'ping');
     $scope.cnc.working = false;
   }); 
   
-  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    
   ipc.on('addLineTable',  (event,data) => {
-    Line.add( Line.new('Comando manual: ') );
-    console.log(data); //////////////////
+    //var gcode = $scope.cnc.file.gcode;        
+    Line.add( Line.new(data.line.code,data.line.ejes,undefined,data.line.travel,data.nro));
     // add line
     /*if(data.nro && data.travel){
       $scope.cnc.file.Progress(data.nro,data.travel);
@@ -112,7 +110,6 @@ ipc.send('asynchronous-message', 'ping');
   });
     
   $scope.start = function() {
-
     if(cnc.file.line.total !== 0){
       if(!cnc.pause.status){
         $scope.lineTable = [];

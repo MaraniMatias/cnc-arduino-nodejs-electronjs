@@ -112,6 +112,12 @@ ipcMain.on('open-file',(event,arg) => {
       //,}(filename) => { if (filename) { event.returnValue = CNC.setFile(filename); } }
     })
   )
+/*
+  setInterval( () => {
+  var nro = 3;
+  event.sender.send('addLineTable', { nro : nro ,  line : CNC.File.gcode[nro]});
+  }, 1000);
+*/
 });
 
 ipcMain.on('send-command', (event, arg) => {
@@ -123,7 +129,8 @@ ipcMain.on('send-command', (event, arg) => {
 ipcMain.on('send-start', (event, arg) => {
   CNC.start(arg.line, (data) => {
     console.log("I: %s - Ejes: %s - Result: %s",data.nro, CNC.File.gcode[data.nro].ejes , data.result);
-    //event.sender.send('addLineTable',dataReceived);
+    event.sender.send('addLineTable', { nro : data.nro ,  line : CNC.File.gcode[data.nro]});
+    //event.sender.send('addLineTable', { nro : data.nro ,  travel : CNC.File.gcode[data.nro].travel});
   });
 });
 
