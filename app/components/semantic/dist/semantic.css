@@ -22463,7 +22463,7 @@ Floated Menu / Item
   .ui.table:not(.unstackable) tr > th,
   .ui.table:not(.unstackable) tr > td {
     width: auto !important;
-    display: grid !important;
+    display: block !important;
   }
 
   .ui.table:not(.unstackable) {

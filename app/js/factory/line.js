@@ -32,9 +32,9 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
       }
       return {
         travel : travel === undefined? '' : travel,
-        steps  : steps  === undefined? toSteps(ejes) : steps,
+        steps  : steps  === undefined && ejes !== undefined ? toSteps(ejes) : steps,
         type   ,
-        ejes   : ejes   === undefined? toEjes(steps) : ejes,
+        ejes   : ejes   === undefined && steps !== undefined? toEjes(steps) : ejes,
         nro    : nro    === undefined? '' : nro,
         code
       }

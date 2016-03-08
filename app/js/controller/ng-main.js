@@ -9,6 +9,8 @@ ipc.on('asynchronous-reply', (event, arg) => {console.log(arg);});
 ipc.send('asynchronous-message', 'ping');
 // # Test doc. :END
   
+  Line.add( Line.new('G01 X23 Y53 Z93 F2333',[32,24,12] ,[32,24,12] ,234 ,4 ) );
+    
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
   
@@ -59,8 +61,8 @@ ipc.send('asynchronous-message', 'ping');
   }
   
   
-  var varpasosmm = 'steps';
-  $scope.setmmpass = (valor) => { varpasosmm=valor; };
+  var stepsmm = 'steps';
+  $scope.setmmpass = (valor) => { stepsmm=valor; };
   $scope.inputpasosmm = '200';
   
   $scope.moverManual = (nume,eje,sentido) => {
@@ -71,7 +73,7 @@ ipc.send('asynchronous-message', 'ping');
       case "Z": cmd = "0,0,"+sentido+nume     ; break;
       default:  cmd = "0,0,0"                 ; break;
     }
-    var l =  Line.codeType(cmd , varpasosmm) ;
+    var l =  Line.codeType(cmd , stepsmm) ;
     if(ipc.sendArd(l.steps.toString())) {
       Line.add(l);
       $scope.comando  =  '';
@@ -88,11 +90,12 @@ ipc.send('asynchronous-message', 'ping');
       l.type = obj.type;
       Line.add( l );
     }else{
-      console.log(obj.data.toString(),'Emit -->> Pausado <<--');
-      Line.add( Line.new('Pausado: '+obj.data) );
-      cnc.pause.steps[0]  =  obj.data[0];
-      cnc.pause.steps[1]  =  obj.data[1];
-      cnc.pause.steps[2]  =  obj.data[2];
+      console.log(obj.data.line,obj.data.steps.toString(),'Emit -->> Pausado <<--');
+      Line.add( Line.new('Pausado: '+obj.data.steps) );
+      cnc.pause.line      =  obj.data.line ;
+      cnc.pause.steps[0]  =  obj.data.steps[0];
+      cnc.pause.steps[1]  =  obj.data.steps[1];
+      cnc.pause.steps[2]  =  obj.data.steps[2];
       cnc.pause.status    =  true;
       $scope.comando      =  cnc.pause.steps.toString();
     }
@@ -102,14 +105,13 @@ ipc.send('asynchronous-message', 'ping');
   ipc.on('addLineTable',  (event,data) => {
     //var gcode = $scope.cnc.file.gcode;        
     Line.add( Line.new(data.line.code,data.line.ejes,undefined,data.line.travel,data.nro));
-    // add line
-    /*if(data.nro && data.travel){
-      $scope.cnc.file.Progress(data.nro,data.travel);
-      $('title').text("CNC "+$scope.cnc.file.line.progress+"%");
-    }*/
+    if(data.nro && data.line.travel){
+      $scope.cnc.file.Progress(data.nro,data.line.travel);
+      $('title').text($scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
+    }
   });
     
-  $scope.start = function() {
+  $scope.start = () => {
     if(cnc.file.line.total !== 0){
       if(!cnc.pause.status){
         $scope.lineTable = [];

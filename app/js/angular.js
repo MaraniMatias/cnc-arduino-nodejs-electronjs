@@ -7,6 +7,7 @@ angular
   arduino:false,
   working:false,
   pause:{
+    line: 0,
     status: false,
     steps: [0,0,0]
   },
@@ -46,4 +47,17 @@ angular
     }
   }
 })
-;
+.directive('popupTable', function () {
+  return {
+    link: function (scope, element, attrs) {
+      if(scope.line.steps !== undefined ){
+        element.popup({ 
+          title     : 'Pasos',
+          position : 'top center',
+          variation : 'inverted'
+          
+        });
+      }
+    }
+  }
+});
