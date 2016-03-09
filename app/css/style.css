@@ -3,6 +3,8 @@ body {
   background-color: #F5F5F5;
   font: 16px 'arial';
 }
+
+/*
 .btn-file {
   position: relative;
   overflow: hidden;
@@ -41,4 +43,4 @@ input[readonly] {
 .ui.table:not(.unstackable) tr > td {
   width: auto !important;
   display: grid !important;
-}
+}*/

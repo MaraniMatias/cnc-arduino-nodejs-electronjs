@@ -2,177 +2,99 @@
 extends ./layout
 block content
   .ui.two.column.stackable.grid(style='margin: 0px 5px;')
-    .eghit.wide.column
-        .ui.one.column.grid
-          .row
-            .column.ui.segment
-              .ui.top.attached.progress.indicating(data-percent='{{cnc.file.line.progress}}')
-                .bar(style='transition-duration: 1000ms; width:{{cnc.file.line.progress}}%;')
-              .ui.one.column.grid
-                .ui.raised
-                  .ui.red.ribbon.label Intepretando GCode
-                  span Completado: {{cnc.file.line.progress}}
-                    span %
-              .ui.one.column.grid
-                .column
-                  table.ui.very.basic.table.compact.selectable
-                    thead
-                      tr
-                        th.center.aligned.collapsing linea
-                        th G-Code
-                        th.center.aligned.collapsing X
-                        th.center.aligned.collapsing Y
-                        th.center.aligned.collapsing Z
-                        //th.collapsing P x
-                        //th.collapsing P y
-                        //th.collapsing P z
-                    tbody
-                      tr( ng-repeat="line in lineTable" ng-class="line.type")
-                        td.center.aligned.collapsing {{line.nro}}
-                        td {{line.code}}
-                        td( popup-table data-content="{{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
-                        td( popup-table data-content="{{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
-                        td( popup-table data-content="{{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
-                        //td {{line.steps[0]}}
-                        //td {{line.steps[1]}}
-                        //td {{line.steps[2]}}
-        //.ui.one.column.grid
-          .row
-            .column.ui.segment
-              .ui.one.column.grid
-                .ui.raised
-                  .ui.black.ribbon.label Vista GCode
-              .ui.one.column.grid
-                #mygraph.column
-                  div(style='position: relative; overflow: hidden; width: 330px; height: 330px; cursor: auto;')
-                    canvas(height='33', width='33', style='position: relative; width: 100%; height: 100%;')
-                      div(style='color: red; font-weight: bold; padding: 10px;')
-                        | Error: your browser does not support HTML canvas
-                    div(style='position: absolute; bottom: 0px; left: 0px; width: 330px;')
-    .eghit.wide.column
-      .ui.one.column.grid
-        .row
-          .column.ui.segment
-            .ui.one.column.grid
-              .ui.raised
-                .ui.orange.ribbon.label Archivo GCode
-                span {{cnc.file.name}}
-            .ui.one.column.grid
-              .column.center.aligned
-                .ui.icon.buttons
-                  button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 && !cnc.pause.status }]" ng-click='start()')
-                    i.play.icon.green
-                  button.ui.button(ng-class="[{'disabled':  !cnc.working }]" ng-click='pausa()')
-                    i.pause.icon.black
-                  button.ui.button(ng-class="[{'disabled':  !cnc.working && !cnc.pause.status }]" ng-click='parar()')
-                    i.stop.icon.red
-                  button.ui.button(ng-class="[{'disabled': cnc.working }]" ng-click=("setFile()")  ) Archivo
-            .ui.one.column.grid
-                table.ui.very.basic.table
-                  thead
-                    tbody
-                      tr
-                        td Ejecutado:
-                        td {{cnc.file.line.interpreted}} de {{cnc.file.line.total}}
-                      //tr
-                        td Total:
-                        td {{cnc.file.line.total}}
-                      tr
-                        td Hora de inicio
-                        td {{cnc.time.start | date:'HH:mm'}}
-                      tr
-                        td Hora fin
-                        td {{cnc.time.end | date:'HH:mm'}}
-                        
-        
-        //.row#controlManual
-          .column.ui.segment
-            .ui.one.column.grid
-              .ui.raised.small
-                .ui.green.ribbon.label Control manual
-                span {{motor.xy.steps}}p =~ {{motor.xy.advance}}mm
-            .ui.one.column.grid.center.aligned
-              .row
-                .column
-                  .ui.action.input.fluid.small
-                    input(placeholder='Enviar comando.' ng-model='comando' type='text' ng-value='')
-                    button.ui.primary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working },{'disabled' : comando.length==0}]" type="submit",ng-click='enviarDatos(comando)') Enviar
-              .row
-                .column
-                  .ui.right.action.left.icon.input.fluid.small
-                    input(ng-model='inputpasosmm' type='text')
-                    .ui.basic.floating.dropdown.button
-                      .text pasos
-                      i.dropdown.icon
-                      .menu
-                        .item(ng-click='setmmpass("mm")') mm
-                        .item(ng-click='setmmpass("steps")') pasos
-                //.column//ver esta mal
-                  button.ui.secondary.tiny.button(ng-class="btnClass" ng-click='moverOrigen()' ng-show="false") [0,0,0]
-              .row
-                .column
-                  .three.ui.buttons.samll
-                    button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"X","")') X +
-                    button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Y","")') Y +
-                    button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Z","")') Z +
-              .row
-                .column
-                  .three.ui.buttons.small
-                    button.ui.secondary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"X","-")') X -
-                    button.ui.secondary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Y","-")') Y -
-                    button.ui.secondary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Z","-")') Z -
-        
-        //.row
-          .column.ui.segment
-            .ui.one.column.grid
-              .ui.raised.small
-                .ui.black.ribbon.label Vista GCode
-            #mygraph.ui.one.column.grid.center.aligned
-              div(style='position: relative; overflow: hidden; width: 330px; height: 330px; cursor: auto;')
-                canvas(height='330', width='330', style='position: relative; width: 100%; height: 100%;')
-                  div(style='color: red; font-weight: bold; padding: 10px;')
-                    | Error: your browser does not support HTML canvas
-                div(style='position: absolute; bottom: 0px; left: 0px; width: 330px;')
-        .row
-          .ui.top.attached.tabular.menu
-            a.item.active(data-tab='first') Control manual
-            a.item(data-tab='second') Vista GCode
-          .ui.bottom.attached.tab.segment.active(data-tab='first') 
-             #controlManual.ui.one.column.grid.center.aligned
-                .row
-                  .column
-                    .ui.action.input.fluid.small
-                      input(placeholder='Enviar comando.' ng-model='comando' type='text' ng-value='')
-                      button.ui.primary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working },{'disabled' : comando.length==0}]" type="submit",ng-click='enviarDatos(comando)') Enviar
-                .row
-                  .column
-                    .ui.right.action.left.icon.input.fluid.small
-                      input(ng-model='inputpasosmm' type='text')
-                      .ui.basic.floating.dropdown.button
-                        .text pasos
-                        i.dropdown.icon
-                        .menu
-                          .item(ng-click='setmmpass("mm")') mm
-                          .item(ng-click='setmmpass("steps")') pasos
-                  //.column//ver esta mal
-                    button.ui.secondary.tiny.button(ng-class="btnClass" ng-click='moverOrigen()' ng-show="false") [0,0,0]
-                .row
-                  .column
-                    .three.ui.buttons.samll
-                      button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"X","")') X +
-                      button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Y","")') Y +
-                      button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Z","")') Z +
-                .row
-                  .column
-                    .three.ui.buttons.small
-                      button.ui.secondary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"X","-")') X -
-                      button.ui.secondary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Y","-")') Y -
-                      button.ui.secondary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Z","-")') Z -
-          
-          .ui.bottom.attached.tab.segment(data-tab='second')
-            #mygraph.ui.one.column.grid.center.aligned
-              div(style='position: relative; overflow: hidden; width: 330px; height: 330px; cursor: auto;')
-                canvas(height='330', width='330', style='position: relative; width: 100%; height: 100%;')
-                  div(style='color: red; font-weight: bold; padding: 10px;')
-                    | Error: your browser does not support HTML canvas
-                div(style='position: absolute; bottom: 0px; left: 0px; width: 330px;')
+    .four.wide.column
+      .ui.segment.one.column.grid
+        .column
+          .ui.raised.small
+            .ui.orange.ribbon.label Archivo GCode
+            span {{cnc.file.name}}
+        .column.center.aligned
+          .ui.icon.buttons
+            button.ui.button(ng-class="[{'disabled': cnc.working },{'disabled': cnc.file.line.total == 0 && !cnc.pause.status }]" ng-click='start()')
+              i.play.icon.green
+            button.ui.button(ng-class="[{'disabled':  !cnc.working }]" ng-click='pausa()')
+              i.pause.icon.black
+            button.ui.button(ng-class="[{'disabled':  !cnc.working && !cnc.pause.status }]" ng-click='parar()')
+              i.stop.icon.red
+            button.ui.button(ng-class="[{'disabled': cnc.working }]" ng-click=("setFile()")  ) Archivo
+        .column
+          table.ui.very.basic.table
+            thead
+              tbody
+                tr
+                  td Ejecutado:
+                  td {{cnc.file.line.interpreted}} de {{cnc.file.line.total}}
+                tr
+                  td Hora de inicio
+                  td {{cnc.time.start | date:'HH:mm'}}
+                tr
+                  td Hora fin
+                  td {{cnc.time.end | date:'HH:mm'}}
+                      
+    .four.wide.column#controlManual
+      .ui.segment.one.column.grid
+        .column
+          .ui.raised.small
+            .ui.green.ribbon.label Control manual
+            span {{motor.xy.steps}}p =~ {{motor.xy.advance}}mm
+        .column.center.aligned
+          .ui.action.input.fluid.small
+            input(placeholder='Enviar comando.' ng-model='comando' type='text' ng-value='')
+            button.ui.primary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working },{'disabled' : comando.length==0}]" type="submit",ng-click='enviarDatos(comando)') Enviar
+        .column
+          .ui.right.action.left.icon.input.fluid.small
+            input(ng-model='inputpasosmm' type='text')
+            .ui.basic.floating.dropdown.button
+              .text pasos
+              i.dropdown.icon
+              .menu
+                .item(ng-click='setmmpass("mm")') mm
+                .item(ng-click='setmmpass("steps")') pasos
+          //.column//ver esta mal
+            button.ui.secondary.tiny.button(ng-class="btnClass" ng-click='moverOrigen()' ng-show="false") [0,0,0]
+        .column
+          .three.ui.buttons.samll
+            button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"X","")') X +
+            button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Y","")') Y +
+            button.ui.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Z","")') Z +
+        .column
+          .three.ui.buttons.small
+            button.ui.secondary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"X","-")') X -
+            button.ui.secondary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Y","-")') Y -
+            button.ui.secondary.button(ng-class="[{'disabled':!cnc.arduino},{'disabled':  cnc.working }]" ng-click='moverManual(inputpasosmm,"Z","-")') Z -
+      
+    .eight.wide.column
+      .ui.segment.one.column.grid
+        .ui.top.attached.progress.indicating(data-percent='{{cnc.file.line.progress}}')
+          .bar(style='transition-duration: 1000ms; width:{{cnc.file.line.progress}}%;')
+        .column
+          .ui.raised
+            .ui.red.ribbon.label Intepretando GCode
+            span Completado: {{cnc.file.line.progress}}
+              span %
+        .column
+          table.ui.very.basic.table.compact.selectable
+            thead
+              tr
+                th.center.aligned.collapsing linea
+                th G-Code
+                th.center.aligned.collapsing X
+                th.center.aligned.collapsing Y
+                th.center.aligned.collapsing Z
+            tbody
+              tr( ng-repeat="line in lineTable" ng-class="line.type")
+                td.center.aligned.collapsing {{line.nro}}
+                td {{line.code}}
+                td( popup-table data-content="{{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
+                td( popup-table data-content="{{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
+                td( popup-table data-content="{{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
+    .column
+      .ui.segment
+        .ui.raised.small
+          .ui.black.ribbon.label Vista GCode
+        #mygraph.ui.column.center.aligned
+          div(style='position: relative; overflow: hidden; width: 330px; height: 330px; cursor: auto;')
+            canvas(height='330', width='330', style='position: relative; width: 100%; height: 100%;')
+              div(style='color: red; font-weight: bold; padding: 10px;')
+                | Error: your browser does not support HTML canvas
+            div(style='position: absolute; bottom: 0px; left: 0px; width: 330px;')
