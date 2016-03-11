@@ -1,7 +1,8 @@
 angular.factory('notify', [ () => {
   return (message,status,pos) => {
-    status = (status===undefined)? 'info': status;
+    // status = (status===undefined)? 'info': status;
     // 'success' 'warning' 'danger' 'info'
+    timeout = (status==='danger')? 0:5000;
     switch(pos){
       case 1: pos='top-left'; break;
       case 2: pos='top-center'; break;
@@ -11,8 +12,7 @@ angular.factory('notify', [ () => {
       case 6: pos='bottom-right'; break;
       default: pos='top-center';
     }
-    //timeout : 5000
-    UIkit.notify({ message , status , pos });
+    UIkit.notify({ message , status , pos , timeout });
   };
 }])
 /*
