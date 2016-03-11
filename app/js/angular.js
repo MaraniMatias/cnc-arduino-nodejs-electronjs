@@ -13,7 +13,7 @@ angular
   },
   file:{
     //gcode : [],
-    name:'Sin Archivo',
+    name:'Sin Archivo.',
     line: {
       total : 0,
       interpreted : 0,
