@@ -9,8 +9,20 @@ ipc.on('asynchronous-reply', (event, arg) => {console.log(arg);});
 ipc.send('asynchronous-message', 'ping');
 // # Test doc. :END
   
-  line.add( line.new('G01 X23 Y53 Z93 F2333',[32,24,12] ,[32,24,12] ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',[200,0,0] ,undefined ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',[-200,0,0] ,undefined ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',[0,200,0] ,undefined ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',[0,-200,0] ,undefined ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',[0,0,200] ,undefined ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',[0,0,-200] ,undefined ,234 ,4 ) );
     
+  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[200,0,0]  ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[-200,0,0] ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,200,0]  ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,-200,0] ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,0,200]  ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,0,-200] ,234 ,4 ) );
+  
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
   

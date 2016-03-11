@@ -47,7 +47,7 @@ angular
     }
   }
 })
-.directive('popupTable', function () {
+/*.directive('popupTable', function () {
   return {
     link: function (scope, element, attrs) {
       if(scope.line.steps !== undefined ){
@@ -59,4 +59,5 @@ angular
       }
     }
   }
-});
+})*/
+;

@@ -1,12 +1,20 @@
+/*
+xy
+  steps   10000
+  advance 115.47 
+z
+  steps   2000
+  advance 7.00
+*/
 angular.factory('Line', ['lineTable','config', (lineTable,config) => {
-  function toSteps(c){
+  function toEjes(c){
     return [
       c[0] * config.motor.xy.advance / config.motor.xy.steps,
       c[1] * config.motor.xy.advance / config.motor.xy.steps,
       c[2] * config.motor.z.advance  / config.motor.z.steps
     ]
   }
-  function toEjes(c){
+  function toSteps(c){
     return [
       Math.round(c[0] * (config.motor.xy.steps / config.motor.xy.advance)),
       Math.round(c[1] * (config.motor.xy.steps / config.motor.xy.advance)),
