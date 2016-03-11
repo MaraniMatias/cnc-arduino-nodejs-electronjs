@@ -1,7 +1,84 @@
-//extends ./menu
 extends ./layout
 block content
-  .ui.two.column.stackable.grid(style='margin: 0px 5px;')
+  .uk-grid.uk-grid-small
+    .uk-width-large-3-10.uk-width-small-1-1
+      //.uk-accordion(data-uk-accordion)
+        h3.uk-accordion-title gg
+        .uk-accordion-content hh
+        h3.uk-accordion-title hh
+        .uk-accordion-content yy
+        h3.uk-accordion-title yyy
+        .uk-accordion-content rr
+      .uk-grid
+        .uk-width-large-1-1.uk-width-small-1-2
+            .uk-panel.uk-panel-box
+              p.uk-text-bold Archivo GCode - {{cnc.file.name}}
+              .uk-grid
+                .uk-width-1-1
+                  .uk-button-group
+                    button.uk-button(ng-disabled="cnc.working || cnc.file.line.total == 0 && !cnc.pause.status" ng-click='start()')
+                      i.uk-icon-play
+                    button.uk-button(ng-disabled="!cnc.working" ng-click='pausa()')
+                      i.uk-icon-pause
+                    button.uk-button(ng-disabled="!cnc.working && !cnc.pause.status" ng-click='parar()')
+                      i.uk-icon-stop
+                    button.uk-button(ng-disabled="cnc.working" ng-click=("setFile()")  ) Archivo
+                .uk-width-1-1.uk-margin
+                  .uk-width-1-1
+                    .uk-grid
+                      .uk-width-2-10(data-uk-tooltip title="Hora de inicio: {{cnc.time.start | date:'HH:mm'}}")  {{cnc.time.start | date:'HH:mm'}}
+                      .uk-width-6-10
+                        .uk-progress.uk-progress-striped.uk-active
+                          .uk-progress-bar( style="transition-duration: 1000ms; width:{{cnc.file.line.progress}}%;'" ) {{cnc.file.line.progress}}%
+                      .uk-width-2-10(data-uk-tooltip title="Hora de fin: {{cnc.time.end | date:'HH:mm'}}") {{cnc.time.end | date:'HH:mm'}}
+                  .uk-width-1-1.uk-text-center.uk-margin(data-uk-tooltip title="Ejecutado.") {{cnc.file.line.interpreted}} de {{cnc.file.line.total}}
+                    
+        .uk-width-large-1-1.uk-width-small-1-2
+          .uk-panel.uk-panel-box
+              p.uk-text-bold Control manual
+              form.uk-form
+                .uk-grid
+                  .uk-width-1-1
+                    input.uk-width-7-10(placeholder='Enviar comando.' ng-model='comando' type='text' ng-value='')
+                    button.uk-width-3-10.uk-button.uk-button-primary(ng-disabled="!cnc.arduino || cnc.working || comando.length==0" type="submit",ng-click='enviarDatos(comando)') Enviar
+                  .uk-width-1-1.uk-margin
+                      input.uk-width-5-10( ng-model='inputStepsmm' type='text')
+                      .uk-button-group.uk-width-5-10(data-uk-button-checkbox)
+                        button.uk-button.uk-width-1-1( ng-click='setStepsmm()') {{btnStepsmm}}
+                  .uk-width-1-1
+                    .uk-button-group.uk-width-1-3
+                      button.uk-button.uk-button-primary(ng-disabled=" !cnc.arduino || nc.working" ng-click='moverManual(inputStepsmm,"X","")') X +
+                      button.uk-button(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")') X -
+                    .uk-button-group.uk-width-1-3
+                      button.uk-button.uk-button-success(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")') Y +
+                      button.uk-button(ng-disabled=" !cnc.arduino || cnc.working" ng-click='moverManual(inputStepsmm,"Y","-")') Y -
+                    .uk-button-group.uk-width-1-3
+                      button.uk-button.uk-button-danger(ng-disabled=" !cnc.arduino || cnc.working" ng-click='moverManual(inputStepsmm,"Z","")') Z +
+                      button.uk-button(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")') Z -
+                        
+        .uk-width-large-1-1.uk-width-small-1-1
+              //.uk-panel.uk-panel-box
+              .uk-overflow-container
+                table.uk-table.uk-table-hover.uk-table-striped.uk-table-condensed
+                  thead
+                    tr
+                      th linea
+                      //th G-Code
+                      th X
+                      th Y
+                      th Z
+                  tbody
+                    tr(data-uk-tooltip title="{{line.code}}" ng-repeat="line in lineTable" ng-class="line.type" )
+                      td {{line.nro}}
+                      //td {{line.code}}
+                      td(data-uk-tooltip title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
+                      td(data-uk-tooltip title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
+                      td(data-uk-tooltip title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
+                    
+    #mygraph.uk-width-large-7-10.uk-hidden-small(style='position: relative; overflow: hidden; cursor: auto;')
+      canvas(style='position: relative; width: 100%; height: 100%;')
+//
+  .ui.two.column.stackable.grid
     .four.wide.column
       .ui.segment.one.column.grid
         .column
@@ -30,8 +107,7 @@ block content
                 tr
                   td Hora fin
                   td {{cnc.time.end | date:'HH:mm'}}
-                      
-    .four.wide.column#controlManual
+    .four.wide.column(#controlManual)
       .ui.segment.one.column.grid
         .column
           .ui.raised.small
@@ -73,7 +149,7 @@ block content
             span Completado: {{cnc.file.line.progress}}
               span %
         .column
-          table.ui.very.basic.table.compact.selectable
+          table.uk-table
             thead
               tr
                 th.center.aligned.collapsing linea

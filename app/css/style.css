@@ -1,9 +1,10 @@
 
 body {
-  background-color: #F5F5F5;
+  /*background-color: #F5F5F5;*/
   font: 16px 'arial';
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
-
 /*
 .btn-file {
   position: relative;

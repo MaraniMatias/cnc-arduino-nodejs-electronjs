@@ -29,18 +29,23 @@ app.on('ready',  () => {
   mainWindow = new BrowserWindow({
     disableAutoHideCursor  :  false, // Default false
     autoHideMenuBar  :  false, // Default false
+    backgroundColor  :  '#F5F5F5', // Default #FFF 
     useContentSize   :  true,
     skipTaskbar      :  false, // Default false
     alwaysOnTop      :  false, // Default false
     fullscreen       :  false, // Default false
+    //darkTheme        :  true,
     frame            :  true, // Default true
     type             :  'normal' , // Default normal . On Linux, desktop, dock, toolbar, splash, notification.  On OS X, desktop, textured
     //webPreferences 
     icon       : './recursos/icon.png',
     center     :  true,
-    minWidth   :  1000, 
+    minWidth   :  960, 
     minHeight  :  600,
+    maxWidth   :  960, 
+    maxHeight  :  600,
     title      :  fileConfig.name
+    
   });
   mainWindow.loadURL(dirBase+'index.html');
 
@@ -99,7 +104,7 @@ app.on('ready',  () => {
 
 ipcMain.on('arduino', (event, arg) => {
   CNC.Arduino.reSet().then(function (ardu) {
-    event.sender.send('arduino-res',{ type:ardu===''? 'error':'' , code:ardu===''? 'No encontramos ardiono.':'Arduino detectado: '+ardu});
+    event.sender.send('arduino-res',{ type:ardu===''? 'danger':'success' , code:ardu===''? 'No encontramos ardiono.':'Arduino detectado: '+ardu});
   })
 });
 

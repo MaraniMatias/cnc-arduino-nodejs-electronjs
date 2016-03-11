@@ -1,7 +1,7 @@
 /* global angular */
 angular.controller('main',
-['ipc','cnc','$scope','lineTable','config','Line',
-(ipc,cnc,$scope,lineTable,config,Line) => {
+['notify','ipc','cnc','$scope','lineTable','config','Line',
+(notify,ipc,cnc,$scope,lineTable,config,line) => {
 
 // # Test doc. :START
 console.log(ipc.sendSync('synchronous-message', 'ping'));
@@ -9,7 +9,7 @@ ipc.on('asynchronous-reply', (event, arg) => {console.log(arg);});
 ipc.send('asynchronous-message', 'ping');
 // # Test doc. :END
   
-  Line.add( Line.new('G01 X23 Y53 Z93 F2333',[32,24,12] ,[32,24,12] ,234 ,4 ) );
+  line.add( line.new('G01 X23 Y53 Z93 F2333',[32,24,12] ,[32,24,12] ,234 ,4 ) );
     
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
@@ -18,9 +18,8 @@ ipc.send('asynchronous-message', 'ping');
   ipc.on('arduino-res', (event, ardu) => {
     if(ardu.type!=='') cnc.arduino=false;
     else cnc.arduino=true;
-    var l = Line.new(ardu.code);
-    l.type = ardu.type;
-    Line.add( l );
+    notify( ardu.code, ardu.type );
+    //var l = line.new(ardu.code); l.type = ardu.type; line.add( l );
   });
   
   $scope.setFile = () => {
@@ -33,24 +32,25 @@ ipc.send('asynchronous-message', 'ping');
       $scope.cnc.file.line.total = file.lines;
       $scope.cnc.file.line.duration = parseInt(file.segTotal);
       $scope.cnc.file.travel = file.travel;
+      notify( file.name );
     }
   };
   
   $scope.enviarDatos = (cmd) => {
     //cnc.working = true;
-    if(ipc.sendArd(cmd)) Line.add( Line.new('Comando manual: '+cmd) );
+    if(ipc.sendArd(cmd)) line.add( line.new('Comando manual: '+cmd) );
   }
   $scope.moverOrigen = () => {
     //cnc.working = true;
-    if(ipc.sendArd('o') )  Line.add( Line.new('Comando mover al origen.'));
+    if(ipc.sendArd('o') )  line.add( line.new('Comando mover al origen.'));
   }
   $scope.pausa = () => { 
     $scope.cnc.time.pause = new Date();
-    if(ipc.sendArd('p')) Line.add( Line.new('Orden de parar'));
+    if(ipc.sendArd('p')) line.add( line.new('Orden de parar'));
   }
   $scope.parar = () => {
     if(ipc.sendArd('0,0,0')){
-      //Line.add( Line.new('Orden de parar'));
+      //line.add( line.new('Orden de parar'));
       $scope.cnc.file.line.interpreted = 0;
       $scope.cnc.file.line.progress = 0;
       $scope.cnc.pause.steps[0]=0;
@@ -59,11 +59,15 @@ ipc.send('asynchronous-message', 'ping');
       $scope.cnc.pause.status=false;
     }
   }
-  
-  
+
   var stepsmm = 'steps';
-  $scope.setmmpass = (valor) => { stepsmm=valor; };
-  $scope.inputpasosmm = '200';
+  $scope.btnStepsmm = 'Pasos';
+  //$scope.setStepsmm = (valor) => { stepsmm=valor; };
+  $scope.setStepsmm = () => {
+    stepsmm = (stepsmm==='steps')? 'mm' :'steps' ;
+    $scope.btnStepsmm = (stepsmm==='steps')? 'Pasos' :'mm' ;
+  };
+  $scope.inputStepsmm = '200';
   
   $scope.moverManual = (nume,eje,sentido) => {
     var cmd;
@@ -73,9 +77,9 @@ ipc.send('asynchronous-message', 'ping');
       case "Z": cmd = "0,0,"+sentido+nume     ; break;
       default:  cmd = "0,0,0"                 ; break;
     }
-    var l =  Line.codeType(cmd , stepsmm) ;
+    var l =  line.codeType(cmd , stepsmm) ;
     if(ipc.sendArd(l.steps.toString())) {
-      Line.add(l);
+      line.add(l);
       $scope.comando  =  '';
     }
   }
@@ -83,15 +87,17 @@ ipc.send('asynchronous-message', 'ping');
   ipc.on('close-conex', (event,obj) => {
     if(obj.type == 'none' && obj.data[0]==='0' && obj.data[1]==='0' && obj.data[2]==='0'){
       console.log(obj.data.toString(),'-> Emit -->> Terminado <<--');
-      Line.add( Line.new('Terminado: '+obj.data) );
-    }else if(obj.type != 'none'){//Pause
+      //line.add( line.new('Terminado: '+obj.data) );
+      notify( 'Terminado: '+obj.data );  
+  }else if(obj.type != 'none'){//Pause
       console.log(obj.data,'Emit -->> indefinido <<--');
-      var l = Line.new('Respuesta: '+obj.data);
-      l.type = obj.type;
-      Line.add( l );
+      //var l = line.new('Respuesta: '+obj.data);
+      //l.type = obj.type;
+      //line.add( l );
+      notify( 'Respuesta: '+obj.data );  
     }else{
       console.log(obj.data.line,obj.data.steps.toString(),'Emit -->> Pausado <<--');
-      Line.add( Line.new('Pausado: '+obj.data.steps) );
+      line.add( line.new('Pausado: '+obj.data.steps) );
       cnc.pause.line      =  obj.data.line ;
       cnc.pause.steps[0]  =  obj.data.steps[0];
       cnc.pause.steps[1]  =  obj.data.steps[1];
@@ -102,9 +108,9 @@ ipc.send('asynchronous-message', 'ping');
     $scope.cnc.working = false;
   }); 
   
-  ipc.on('addLineTable',  (event,data) => {
+  ipc.on('addlineTable',  (event,data) => {
     //var gcode = $scope.cnc.file.gcode;        
-    Line.add( Line.new(data.line.code,data.line.ejes,undefined,data.line.travel,data.nro));
+    line.add( line.new(data.line.code,data.line.ejes,undefined,data.line.travel,data.nro));
     if(data.nro && data.line.travel){
       $scope.cnc.file.Progress(data.nro,data.line.travel);
       $('title').text($scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
@@ -118,7 +124,7 @@ ipc.send('asynchronous-message', 'ping');
       }else{
         $scope.cnc.pause.status = false;
         $scope.cnc.steps = [0,0,0];
-        $scope.cnc.time.pause = '--.--'
+        $scope.cnc.time.pause = '--:--'
         $scope.cnc.time.end = new Date(
           $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
         );

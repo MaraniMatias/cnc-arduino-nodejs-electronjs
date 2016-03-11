@@ -55,7 +55,6 @@ angular
           title     : 'Pasos',
           position : 'top center',
           variation : 'inverted'
-          
         });
       }
     }
