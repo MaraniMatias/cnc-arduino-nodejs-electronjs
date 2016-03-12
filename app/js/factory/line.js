@@ -24,7 +24,7 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
   
   return{
     add : (line) => {
-      if(lineTable.length > 14){ 
+      if(lineTable.length > 12){ 
         lineTable.shift();
       }
       lineTable.push(line);

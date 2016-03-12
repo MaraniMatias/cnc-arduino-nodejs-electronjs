@@ -4,18 +4,18 @@ block content
     .uk-width-large-3-10.uk-width-small-1-1
       .uk-grid
         .uk-width-large-1-1.uk-width-small-1-2
-          .uk-accordion(data-uk-accordion='{collapse: false}')
+          .uk-accordion(data-uk-accordion='{collapse: true}')
             p.uk-accordion-title {{cnc.file.name}}
             .uk-accordion-content
               .uk-grid
                 .uk-width-1-1
                   .uk-button-group
                     button.uk-button(ng-disabled="cnc.working || cnc.file.line.total == 0 && !cnc.pause.status" ng-click='start()')
-                      i.uk-icon-play
+                      i.uk-icon-play.uk-text-success
                     button.uk-button(ng-disabled="!cnc.working" ng-click='pausa()')
                       i.uk-icon-pause
                     button.uk-button(ng-disabled="!cnc.working && !cnc.pause.status" ng-click='parar()')
-                      i.uk-icon-stop
+                      i.uk-icon-stop.uk-text-danger
                     button.uk-button(ng-disabled="cnc.working" ng-click=("setFile()")  ) Archivo
                 .uk-width-1-1.uk-margin
                   .uk-width-1-1
@@ -25,7 +25,7 @@ block content
                         .uk-progress.uk-progress-striped.uk-active
                           .uk-progress-bar( style="transition-duration: 1000ms; width:{{cnc.file.line.progress}}%;'" )
                       .uk-width-2-10(data-uk-tooltip title="Hora de fin: {{cnc.time.end | date:'HH:mm'}}") {{cnc.time.end | date:'HH:mm'}}
-                  .uk-width-1-1.uk-text-center.uk-margin Ejecutado: {{cnc.file.line.interpreted}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
+                  .uk-width-1-1.uk-text-center.uk-margin Ejecutado: {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
             p.uk-accordion-title Control manual
             .uk-accordion-content
               form.uk-form
@@ -50,22 +50,21 @@ block content
                         button.uk-button.uk-button-danger(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
                         button.uk-button(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
         .uk-width-large-1-1.uk-width-small-1-1
-              //.uk-panel.uk-panel-box
-              //.uk-overflow-container
-                table.uk-table.uk-table-hover.uk-table-striped.uk-table-condensed
-                  thead
-                    tr
-                      th linea
-                      //th G-Code
-                      th X
-                      th Y
-                      th Z
-                  tbody
-                    tr(data-uk-tooltip title="{{line.code}}" ng-repeat="line in lineTable" ng-class="line.type" )
-                      td {{line.nro}}
-                      //td {{line.code}}
-                      td(data-uk-tooltip title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
-                      td(data-uk-tooltip title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
-                      td(data-uk-tooltip title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
+            //.uk-overflow-container
+            table.uk-table.uk-table-hover.uk-table-striped.uk-table-condensed
+              thead
+                tr
+                  th linea
+                  //th G-Code
+                  th X
+                  th Y
+                  th Z
+              tbody
+                tr(data-uk-tooltip title="{{line.code}}" ng-repeat="line in lineTable" ng-class="line.type" )
+                  td {{line.nro}}
+                  //td {{line.code}}
+                  td(data-uk-tooltip title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
+                  td(data-uk-tooltip title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
+                  td(data-uk-tooltip title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
     #mygraph.uk-width-large-7-10.uk-hidden-small(style='position: relative; overflow: hidden; cursor: auto;')
       canvas(style='position: relative; width: 100%; height: 100%;')

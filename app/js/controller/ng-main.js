@@ -5,10 +5,11 @@ angular.controller('main',
 
 // # Test doc. :START
 console.log(ipc.sendSync('synchronous-message', 'ping'));
-ipc.on('asynchronous-reply', (event, arg) => {console.log(arg);});
+ipc.on('asynchronous-reply', (event, arg) => { console.log(arg); });
 ipc.send('asynchronous-message', 'ping');
 // # Test doc. :END
   
+  /*
   line.add( line.new('G01 X23 Y53 Z93 F2333',[200,0,0] ,undefined ,234 ,4 ) );
   line.add( line.new('G01 X23 Y53 Z93 F2333',[-200,0,0] ,undefined ,234 ,4 ) );
   line.add( line.new('G01 X23 Y53 Z93 F2333',[0,200,0] ,undefined ,234 ,4 ) );
@@ -22,6 +23,7 @@ ipc.send('asynchronous-message', 'ping');
   line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,-200,0] ,234 ,4 ) );
   line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,0,200]  ,234 ,4 ) );
   line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,0,-200] ,234 ,4 ) );
+  */
   
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
@@ -122,9 +124,11 @@ ipc.send('asynchronous-message', 'ping');
     $scope.cnc.working = false;
   }); 
   
-  ipc.on('addlineTable',  (event,data) => {
-    //var gcode = $scope.cnc.file.gcode;        
-    line.add( line.new(data.line.code,data.line.ejes,undefined,data.line.travel,data.nro));
+  ipc.on('add-line', (event, data) => { 
+    //graficar gcode trabajado
+    line.add( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro, '' ));
+    
+    notify( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro, '' ).code , 'info' );
     if(data.nro && data.line.travel){
       $scope.cnc.file.Progress(data.nro,data.line.travel);
       $('title').text($scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);

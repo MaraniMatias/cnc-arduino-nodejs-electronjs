@@ -16,14 +16,14 @@ angular
     name:'Sin Archivo.',
     line: {
       total : 0,
-      interpreted : 0,
+      run : 0,
       duration : 0,
       progress : 0
     },
     travel:0,
-    Progress:  (nro,trvl) => {
+    Progress: function  (nro,trvl) {
       nro++;
-      this.line.interpreted = nro;
+      this.line.run = nro;
       this.line.progress = ((trvl*100)/this.travel).toFixed(2);
     }
   },

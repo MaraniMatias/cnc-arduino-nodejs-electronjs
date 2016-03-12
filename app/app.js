@@ -133,9 +133,8 @@ ipcMain.on('send-command', (event, arg) => {
 
 ipcMain.on('send-start', (event, arg) => {
   CNC.start(arg.line, (data) => {
-    console.log("I: %s - Ejes: %s - Result: %s",data.nro, CNC.File.gcode[data.nro].ejes , data.result);
-    event.sender.send('addLineTable', { nro : data.nro ,  line : CNC.File.gcode[data.nro]});
-    //event.sender.send('addLineTable', { nro : data.nro ,  travel : CNC.File.gcode[data.nro].travel});
+    event.sender.send('add-line', { nro : data.nro , line : CNC.File.gcode[data.nro] });
+    console.log("I: %s - Ejes: %s - Result: %s", data.nro, CNC.File.gcode[data.nro].ejes , data.result );
   });
 });
 
