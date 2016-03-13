@@ -9,20 +9,6 @@ ipc.on('asynchronous-reply', (event, arg) => { console.log(arg); });
 ipc.send('asynchronous-message', 'ping');
 // # Test doc. :END
 
-  line.add( line.new('G01 X23 Y53 Z93 F2333',[200,0,0] ,undefined ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',[-200,0,0] ,undefined ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',[0,200,0] ,undefined ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',[0,-200,0] ,undefined ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',[0,0,200] ,undefined ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',[0,0,-200] ,undefined ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[200,0,0]  ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[-200,0,0] ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,200,0]  ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,-200,0] ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,0,200]  ,234 ,4 ) );
-  line.add( line.new('G01 X23 Y53 Z93 F2333',undefined,[0,0,-200] ,234 ,4 ) );
-  
-  
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
   
@@ -81,7 +67,6 @@ ipc.send('asynchronous-message', 'ping');
     }
   };
   
-  
   $scope.moverManual = (num,eje,sentido) => {
     var cmd;
     switch (eje) {
@@ -100,13 +85,16 @@ ipc.send('asynchronous-message', 'ping');
   ipc.on('close-conex', (event,obj) => {
     if(obj.type == 'none' && obj.data[0]==='0' && obj.data[1]==='0' && obj.data[2]==='0'){
       console.log(obj.data.toString(),'-> Emit -->> Terminado <<--');
-      notify( 'Terminado: '+obj.data );  
+      notify( 'Terminado: '+obj.data );
+      $scope.progressBar = 'uk-progress-success';
   }else if(obj.type != 'none'){//Pause
       console.log(obj.data,'Emit -->> indefinido <<--');
-      notify( 'Respuesta: '+obj.data );  
+      notify( 'Respuesta: '+obj.data );
+      $scope.progressBar = 'uk-progress-success';
     }else{
       console.log(obj.data.line,obj.data.steps.toString(),'Emit -->> Pausado <<--');
       notify( 'Pausado: '+obj.data.steps );
+      $scope.progressBar = 'uk-progress-warning';
       cnc.pause.line      =  obj.data.line ;
       cnc.pause.steps[0]  =  obj.data.steps[0];
       cnc.pause.steps[1]  =  obj.data.steps[1];
@@ -121,7 +109,6 @@ ipc.send('asynchronous-message', 'ping');
     //graficar gcode trabajado
     if(lineTable.length > 12) lineTable.shift();
     $scope.lineTable.push( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
-    
     if(data.nro && data.line.travel){
       $scope.cnc.file.Progress(data.nro,data.line.travel);
       $('title').text($scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
@@ -145,6 +132,7 @@ ipc.send('asynchronous-message', 'ping');
       $scope.cnc.time.end = new Date(
         $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration
       );
+      $scope.progressBar = 'uk-active';
       ipc.startArd({line:0});
     }else{
       ipc.startArd({
@@ -155,3 +143,39 @@ ipc.send('asynchronous-message', 'ping');
   }
   
 }]);
+
+
+    var data = null;
+    var graph = null;
+    // Called when the Visualization API is loaded.
+    function drawVisualization() {
+      // Create and populate a data table.
+      data = new vis.DataSet();
+      // create some nice looking data with sin/cos
+      var steps = 500;
+      var axisMax = 314;
+      var tmax = 4 * 2 * Math.PI;
+      var axisStep = axisMax / steps;
+      for (var t = 0; t < tmax; t += tmax / steps) {
+        var r = 1;
+        var x = r * Math.sin(t);
+        var y = r * Math.cos(t);
+        var z = t / tmax;
+        data.add({x:x,y:y,z:z});
+      }
+      data.add({x:0,y:0,z:-0.5});
+      // specify options
+      var options = {
+        width:  '660px',
+        height: '600px',
+        style: 'line',
+        showPerspective: false,
+        showGrid: true,
+        keepAspectRatio: true,
+        verticalRatio: 1.0
+      };
+      // create our graph
+      var container = document.getElementById('mygraph');
+      graph = new vis.Graph3d(container, data, options);
+      graph.setCameraPosition(0.4, undefined, undefined);
+    }

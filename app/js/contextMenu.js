@@ -10,6 +10,10 @@ const ipcRenderer  =  require('electron').ipcRenderer;
       }, false);
       
 const template = [
+  {        label: 'Auto-Conectar.',
+        click : (item, focusedWindow) => {
+          ipcRenderer.send('arduino');
+        }}
   /*{
     label: 'Contexmenu',
     submenu: [
@@ -30,7 +34,7 @@ const template = [
         }
       }
     ]
-  }, */
+  },
   { // 1
     label: 'Arduino',
     submenu: [
@@ -40,7 +44,7 @@ const template = [
           ipcRenderer.send('arduino');
         }
       }]
-  }/*,
+  },
   {
     label: 'Heramientas',
     submenu: [

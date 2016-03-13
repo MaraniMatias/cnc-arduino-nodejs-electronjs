@@ -59,7 +59,7 @@ app.on('ready',  () => {
   // Open the devtools.
   //mainWindow.openDevTools();
   //mainWindow.maximize();
-  mainWindow.setProgressBar(0.7);
+  //mainWindow.setProgressBar(0.7);
 
 
 // ##### old : START
@@ -114,15 +114,8 @@ ipcMain.on('open-file',(event,arg) => {
       title : fileConfig.name,
       filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
       properties: [ 'openFile' ] 
-      //,}(filename) => { if (filename) { event.returnValue = CNC.setFile(filename); } }
     })
   )
-/*
-  setInterval( () => {
-  var nro = 3;
-  event.sender.send('addLineTable', { nro : nro ,  line : CNC.File.gcode[nro]});
-  }, 1000);
-*/
 });
 
 ipcMain.on('send-command', (event, arg) => {
@@ -133,8 +126,14 @@ ipcMain.on('send-command', (event, arg) => {
 
 ipcMain.on('send-start', (event, arg) => {
   CNC.start(arg.line, (data) => {
-    event.sender.send('add-line', { nro : data.nro , line : CNC.File.gcode[data.nro] });
-    console.log("I: %s - Ejes: %s - Result: %s", data.nro, CNC.File.gcode[data.nro].ejes , data.result );
+    if( data.nro !== false ){
+      // mainWindow.setProgressBar(0.7);
+      event.sender.send('add-line', { nro : data.nro , line : CNC.File.gcode[data.nro] });
+      console.log("I: %s - Ejes: %s - Result: %s", data.nro, CNC.File.gcode[data.nro].ejes , data.result );  
+    }else{
+      event.sender.send('close-conex',{type: 'none', data : data.result});
+      console.log("Finish.");
+    }
   });
 });
 

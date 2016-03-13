@@ -22,7 +22,7 @@ block content
                     .uk-grid
                       .uk-width-2-10(data-uk-tooltip title="Hora de inicio: {{cnc.time.start | date:'HH:mm'}}")  {{cnc.time.start | date:'HH:mm'}}
                       .uk-width-6-10
-                        .uk-progress.uk-progress-striped.uk-active
+                        .uk-progress.uk-progress-striped(ng-class='progressBar')
                           .uk-progress-bar( style="transition-duration: 1000ms; width:{{cnc.file.line.progress}}%;'" )
                       .uk-width-2-10(data-uk-tooltip title="Hora de fin: {{cnc.time.end | date:'HH:mm'}}") {{cnc.time.end | date:'HH:mm'}}
                   .uk-width-1-1.uk-text-center.uk-margin Ejecutado: {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%

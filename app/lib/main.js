@@ -124,8 +124,7 @@ function start (nro,callback) {
             });//write
           }else{
             Arduino.port.close( (err) => {
-              callback({ nro , result });
-              console.log("Finish.");
+              callback({ nro:false , result:['0','0','0'] });
             });//close
           }
         }else{//Pause
