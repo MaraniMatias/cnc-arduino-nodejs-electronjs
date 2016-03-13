@@ -6,7 +6,7 @@ z
   steps   2000
   advance 7.00
 */
-angular.factory('Line', ['lineTable','config', (lineTable,config) => {
+angular.factory('line', ['lineTable','config' ,(lineTable,config) => {
   function toEjes(c){
     return [
       c[0] * config.motor.xy.advance / config.motor.xy.steps,
@@ -22,15 +22,15 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
     ]
   }
   
-  return{
-    add : (line) => {
+  return {
+    add : function (line) {
       if(lineTable.length > 12){ 
         lineTable.shift();
       }
       lineTable.push(line);
     },
-    new : (code,ejes,steps,travel,nro,type) => {
-      switch(type){
+    new : function (code,ejes,steps,travel,nro,type) {
+      switch(type){ // in new css not working
         case 1: type='positive'; break;
         case 2: type='active'; break;
         case 3: type='warning';break;
@@ -47,7 +47,7 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
         code
       }
     },
-    codeType : (c , t) => {
+    codeType : function (c , t) {
       if(t === 'steps'){
         return {
         travel:'',
@@ -76,7 +76,7 @@ angular.factory('Line', ['lineTable','config', (lineTable,config) => {
       }
     },
     
-    addMsj:  (msg,type) => {
+    addMsj: function  (msg,type) {
       if(lineTable.length > 14){ 
       lineTable.shift();
       }
