@@ -1,7 +1,9 @@
+// https://mega.nz/#!P1ZW1D6R!y-hcJ-AEBobMdmObgWzMj6yzpNoq1q5r8TZNflYmJ8o
 /* global angular */
 angular.controller('main',
 [ 'notify','ipc','cnc','$scope','lineTable','config','line',
 ( notify,ipc,cnc,$scope,lineTable,config,line) => {
+'use strict'
 
 // # Test doc. :START
 console.log(ipc.sendSync('synchronous-message', 'ping'));
@@ -18,17 +20,22 @@ ipc.send('asynchronous-message', 'ping');
     notify( ardu.code, ardu.type );
   });
   
-  $scope.setFile = () => {
+  $scope.setFile = () => {    
     var file = ipc.sendSync('open-file'); 
     if ( file.dir ){
-      console.log(file);
-      // Cargar Views
-      // $scope.cnc.file.gcode = file.gcode;
+      //console.log(file)
       $scope.cnc.file.name = file.name;
       $scope.cnc.file.line.total = file.lines;
       $scope.cnc.file.line.duration = parseInt(file.segTotal);
       $scope.cnc.file.travel = file.travel;
       notify( file.name );
+      
+      // Cargar Views
+      var data = new vis.DataSet();
+      for (var index = 0; index < file.gcode.length; index++) {
+        data.add({ x : file.gcode[index].ejes[0], y : file.gcode[index].ejes[1], z : file.gcode[index].ejes[2] });
+      }
+      drawVisualization(data);      
     }
   };
   
@@ -142,10 +149,36 @@ ipc.send('asynchronous-message', 'ping');
     }
   }
   
+    var data = null;
+    var graph = null;
+    function drawVisualization(data) {
+      'use strict'
+      if(data === undefined){
+        data = new vis.DataSet();
+        data.add({x:0,y:0,z:0});
+      }
+      
+      // specify options
+      var options = {
+        width:  '660px',
+        height: '600px',
+        style: 'line',
+        showPerspective: false,
+        showGrid: true,
+        keepAspectRatio: true,
+        verticalRatio: 1.0
+      };
+      // create our graph
+      var container = document.getElementById('mygraph');
+      graph = new vis.Graph3d(container, data, options);
+      graph.setCameraPosition(0.4, undefined, undefined);
+    }drawVisualization();
+    
 }]);
 
 
-    var data = null;
+/*
+     var data = null;
     var graph = null;
     // Called when the Visualization API is loaded.
     function drawVisualization() {
@@ -179,3 +212,4 @@ ipc.send('asynchronous-message', 'ping');
       graph = new vis.Graph3d(container, data, options);
       graph.setCameraPosition(0.4, undefined, undefined);
     }
+*/

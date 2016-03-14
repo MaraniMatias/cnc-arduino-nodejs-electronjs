@@ -10,7 +10,7 @@ block content
               .uk-grid
                 .uk-width-1-1
                   .uk-button-group
-                    button.uk-button(ng-disabled="cnc.working || cnc.file.line.total == 0 && !cnc.pause.status" ng-click='start()')
+                    button.uk-button(ng-disabled=" !cnc.arduino || cnc.working || cnc.file.line.total == 0 && !cnc.pause.status" ng-click='start()')
                       i.uk-icon-play.uk-text-success
                     button.uk-button(ng-disabled="!cnc.working" ng-click='pausa()')
                       i.uk-icon-pause
