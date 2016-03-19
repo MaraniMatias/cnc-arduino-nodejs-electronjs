@@ -1,7 +1,7 @@
 const dirBase         =  `file://${__dirname}/html/`,
       fileConfig      =  require('./package.json'),
       CNC             =  require('./lib/main.js'),
-      menuFile        =  require('./lib/menu.js'),
+      menuFile        =  require('./lib/mainMenu.js'),
       electron        =  require('electron'),
       app             =  electron.app,
       BrowserWindow   =  electron.BrowserWindow,
@@ -18,12 +18,31 @@ app.on('window-all-closed',  () => {
   }
 });
 
-// deveria listar Arduinos conectados      
-//menuFile.addArduino([{manufacturer:'manufacturer1',comName:'comName1'},{manufacturer:'manufacturer2',comName:'comName2'}]);
-
 var mainWindow = null;
-var menu = Menu.buildFromTemplate(menuFile.menuMain);
+
+// para que no se vea el menu predeterminado al inicio
+//var menu = Menu.buildFromTemplate(menuFile.menuMain);
+var menu = Menu.buildFromTemplate(
+  [
+    { // 0
+    label: 'Archivo',
+    submenu: [ {
+        label: 'Mensaje',
+        accelerator: 'CmdOrCtrl+M',
+        click: (item, focusedWindow) =>{
+          ipcMain.emit('message',{
+            type:'none',//'warning',
+            title:'Cerrar',
+            header:'Adios',
+            msg:'Aceptar => cerrar \n Cancelar => segir.'
+            });
+        }
+      } ]
+    }
+  ]
+);
 Menu.setApplicationMenu(menu);
+
 
 app.on('ready',  () => {
   mainWindow = new BrowserWindow({
@@ -57,7 +76,7 @@ app.on('ready',  () => {
   });
 
   // Open the devtools.
-  //mainWindow.openDevTools();
+  mainWindow.openDevTools();
   //mainWindow.maximize();
   //mainWindow.setProgressBar(0.7);
 
@@ -136,19 +155,6 @@ ipcMain.on('send-start', (event, arg) => {
     }
   });
 });
-
-
-// # Test doc. :START
-ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log('-> 1',arg); 
-  event.sender.send('asynchronous-reply', 'pong 1');
-});
-ipcMain.on('synchronous-message', (event, arg) => {
-  console.log('-> 2',arg);
-  event.returnValue = 'pong 2';
-});
-// # Test doc. :END
-
 
 /*
 Event: ‘suspend’

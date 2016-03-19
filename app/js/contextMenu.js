@@ -1,20 +1,5 @@
-/* global ipcRenderer */
-/* global remote */
-/* global window */
-const Menu = remote.require('menu');
-const ipcRenderer  =  require('electron').ipcRenderer;
- 
-      window.addEventListener('contextmenu',  (e) => {
-        e.preventDefault();
-        menu.popup(remote.getCurrentWindow());
-      }, false);
-      
-const template = [
-  {        label: 'Auto-Conectar.',
-        click : (item, focusedWindow) => {
-          ipcRenderer.send('arduino');
-        }}
-  /*{
+module.exports = [
+  {
     label: 'Contexmenu',
     submenu: [
       {
@@ -104,8 +89,7 @@ const template = [
         }
       },
     ]
-  }*/
-];
-
-var menu = Menu.buildFromTemplate(template);
+  }
+]
+;
 

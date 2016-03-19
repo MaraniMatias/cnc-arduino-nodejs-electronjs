@@ -1,15 +1,10 @@
-// https://mega.nz/#!P1ZW1D6R!y-hcJ-AEBobMdmObgWzMj6yzpNoq1q5r8TZNflYmJ8o
 /* global angular */
+/* global $ */
+/* global vis */
 angular.controller('main',
 [ 'notify','ipc','cnc','$scope','lineTable','config','line',
 ( notify,ipc,cnc,$scope,lineTable,config,line) => {
 'use strict'
-
-// # Test doc. :START
-console.log(ipc.sendSync('synchronous-message', 'ping'));
-ipc.on('asynchronous-reply', (event, arg) => { console.log(arg); });
-ipc.send('asynchronous-message', 'ping');
-// # Test doc. :END
 
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
@@ -33,7 +28,7 @@ ipc.send('asynchronous-message', 'ping');
       // Cargar Views
       var data = new vis.DataSet();
       for (var index = 0; index < file.gcode.length; index++) {
-        data.add({ x : file.gcode[index].ejes[0], y : file.gcode[index].ejes[1], z : file.gcode[index].ejes[2] });
+        data.add({ id:index , x : file.gcode[index].ejes[0], y : file.gcode[index].ejes[1], z : file.gcode[index].ejes[2] });
       }
       drawVisualization(data);      
     }
@@ -51,6 +46,7 @@ ipc.send('asynchronous-message', 'ping');
   }
   $scope.parar = () => {
     if(ipc.sendArd('0,0,0')){
+      $('title').text('CNC-ino');
       notify( 'Orden de parar' , 'success' );
       $scope.cnc.file.line.interpreted = 0;
       $scope.cnc.file.line.progress = 0;
@@ -114,11 +110,11 @@ ipc.send('asynchronous-message', 'ping');
   
   ipc.on('add-line', (event, data) => { 
     //graficar gcode trabajado
-    if(lineTable.length > 12) lineTable.shift();
+    if($scope.lineTable.length > 10) $scope.lineTable.shift();
     $scope.lineTable.push( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
     if(data.nro && data.line.travel){
       $scope.cnc.file.Progress(data.nro,data.line.travel);
-      $('title').text($scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
+      $('title').text('CNC-ino - '+$scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
     }
     //notify( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro, '' ).code , 'info' );
 });
@@ -149,67 +145,26 @@ ipc.send('asynchronous-message', 'ping');
     }
   }
   
-    var data = null;
-    var graph = null;
-    function drawVisualization(data) {
-      'use strict'
-      if(data === undefined){
-        data = new vis.DataSet();
-        data.add({x:0,y:0,z:0});
-      }
-      
-      // specify options
-      var options = {
-        width:  '660px',
-        height: '600px',
-        style: 'line',
-        showPerspective: false,
-        showGrid: true,
-        keepAspectRatio: true,
-        verticalRatio: 1.0
-      };
-      // create our graph
-      var container = document.getElementById('mygraph');
-      graph = new vis.Graph3d(container, data, options);
-      graph.setCameraPosition(0.4, undefined, undefined);
-    }drawVisualization();
+  var data = null, graph = null;
+  function drawVisualization(data) {
+    if(data === undefined){
+      data = new vis.DataSet();
+      data.add({ x:0, y:0, z:0 });
+    }
+    // specify options
+    var options = {
+      width:  '660px',
+      height: '600px',
+      style: 'line',
+      showPerspective: false,
+      showGrid: true,
+      keepAspectRatio: true,
+      verticalRatio: 0.5
+    };
+    // create our graph
+    var container = document.getElementById('mygraph');
+    graph = new vis.Graph3d(container, data, options);
+    //graph.setCameraPosition(0.4, undefined, undefined);
+  }drawVisualization();
     
 }]);
-
-
-/*
-     var data = null;
-    var graph = null;
-    // Called when the Visualization API is loaded.
-    function drawVisualization() {
-      // Create and populate a data table.
-      data = new vis.DataSet();
-      // create some nice looking data with sin/cos
-      var steps = 500;
-      var axisMax = 314;
-      var tmax = 4 * 2 * Math.PI;
-      var axisStep = axisMax / steps;
-      for (var t = 0; t < tmax; t += tmax / steps) {
-        var r = 1;
-        var x = r * Math.sin(t);
-        var y = r * Math.cos(t);
-        var z = t / tmax;
-        data.add({x:x,y:y,z:z});
-      }
-      data.add({x:0,y:0,z:-0.5});
-      // specify options
-      var options = {
-        width:  '660px',
-        height: '600px',
-        style: 'line',
-        showPerspective: false,
-        showGrid: true,
-        keepAspectRatio: true,
-        verticalRatio: 1.0
-      };
-      // create our graph
-      var container = document.getElementById('mygraph');
-      graph = new vis.Graph3d(container, data, options);
-      graph.setCameraPosition(0.4, undefined, undefined);
-    }
-*/
