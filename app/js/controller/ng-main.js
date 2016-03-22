@@ -117,7 +117,7 @@ angular.controller('main',
       $('title').text('CNC-ino - '+$scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
     }
     //notify( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro, '' ).code , 'info' );
-});
+  });
     
   $scope.start = () => {
     if(cnc.file.line.total !== 0){
@@ -166,5 +166,14 @@ angular.controller('main',
     graph = new vis.Graph3d(container, data, options);
     //graph.setCameraPosition(0.4, undefined, undefined);
   }drawVisualization();
+  
+  ipc.on('show-prefs-res', (event, config) => {
+    var modal = UIkit.modal(".modal");
+    if ( modal.isActive() ) modal.hide();
+    else  modal.show();
+  });
     
 }]);
+
+
+

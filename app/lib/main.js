@@ -13,7 +13,10 @@ var Arduino = {
 };
 
 function getMiliSeg ()  {
-  return config.motor.xy.steps * config.motor.xy.time / config.motor.xy.advance ;
+  const steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
+  const time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
+  const advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
+  return steps * time / advance ;
 }
 
 var File = {
@@ -95,8 +98,8 @@ function getPasos(l){
   var a = l!==0 ? File.gcode[l-1].ejes : File.gcode[l].ejes;
   var x = [0,0,0];
   var b = File.gcode[l].ejes;
-  x[0] = Math.round((b[0]-a[0]) * config.motor.xy.steps / config.motor.xy.advance);
-  x[1] = Math.round((b[1]-a[1]) * config.motor.xy.steps / config.motor.xy.advance);
+  x[0] = Math.round((b[0]-a[0]) * config.motor.x.steps / config.motor.x.advance);
+  x[1] = Math.round((b[1]-a[1]) * config.motor.y.steps / config.motor.y.advance);
   x[2] = Math.round((b[2]-a[2]) * config.motor.z.steps / config.motor.z.advance);
   return x;
 }

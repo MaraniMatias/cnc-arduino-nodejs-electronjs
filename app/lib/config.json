@@ -1,13 +1,31 @@
 {
   "motor": {
-    "xy": {
+    "z": {
+      "sense":1,
+      "steps": 2000,
+      "advance": 7.00,  "speed":{
+        "working":2000,
+        "idle":30000
+      }
+    },
+    "y": {
+      "sense":1,
       "time": 24,
       "steps": 10000,
-      "advance": 115.47
+      "advance": 115.47,  "speed":{
+        "working":2000,
+        "idle":30000
+      }
     },
-    "z": {
-      "steps": 2000,
-      "advance": 7.00
+    "y": {
+      "sense":1,
+      "time": 24,
+      "steps": 10000,
+      "advance": 115.47,  "speed":{
+        "working":2000,
+        "idle":30000
+      }
     }
-  }
+  },
+  "scale": 1.0
 }
