@@ -147,7 +147,7 @@ function start (nro,callback) {
 }
 
 module.exports = {
-  Arduino : arduino , File  , setFile , sendCommand , start
+  Arduino : arduino , File  , setFile , config , sendCommand , start
 };
 
 
