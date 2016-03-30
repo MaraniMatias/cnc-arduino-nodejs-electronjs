@@ -80,9 +80,10 @@ block content
     .uk-modal-dialog.uk-modal-dialog-large
       button.uk-modal-close.uk-close(type='button')
       .uk-modal-header
-        p Prefereincias
-       form.uk-form.uk-panel.uk-grid
+        .uk-text-bold Prefereincias
+      form.uk-form.uk-panel.uk-grid
         .uk-width-1-3
+          .uk-panel
             .uk-panel-header
               .uk-panel-title.uk-text-bold Motor X
             .uk-form-row
@@ -116,9 +117,9 @@ block content
               p Milimetros por pasos.
                 .uk-form-controls
                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.y.advance" type="number")
-                  label mm
+                  label mm.
                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.y.steps" type="number")
-                  label pasos
+                  label pasos.
               p Velocidad mm/min.
                 .uk-form-controls
                     input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.y.speed.working" type="number")
@@ -129,25 +130,41 @@ block content
               p Sacar de mm/min y el avance {{configFile.motor.y.time}}
         .uk-width-1-3
           .uk-panel
-            .uk-panel-header
-              .uk-panel-title.uk-text-bold Motor Z
-            .uk-form-row
+             .uk-panel-header
+               .uk-panel-title.uk-text-bold Motor Z
+             .uk-form-row
                 .ui.checkbox
                   label Sentido Invertido.
                   input.hidden(type="checkbox" ng-checked="configFile.motor.z.sense")
-            .uk-form-row
-              p Milimetros por pasos.
-                .uk-form-controls
-                  input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.advance" type="number")
-                  label mm
-                  input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.steps" type="number")
-                  label pasos
-              p Velocidad mm/min.
-                .uk-form-controls
-                    input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.speed.working" type="number")
-                    label de Trabajo.
-                    input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.speed.idle" type="number")
-                    label en Vasio.
+             .uk-form-row
+               p Milimetros por pasos.
+                 .uk-form-controls
+                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.advance" type="number")
+                   label mm.
+                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.steps" type="number")
+                   label pasos.
+               p Velocidad mm/min.
+                 .uk-form-controls
+                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.speed.working" type="number")
+                   label de Trabajo.
+                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.speed.idle" type="number")
+                   label en Vasio.
+        .uk-width-1-1
+            form.uk-form.uk-form-stacked
+              .uk-form-row
+                span.uk-form-label Medidas de la mesa de trabajo.
+                .uk-form-controls.uk-form-controls-text
+                  .uk-form-controls-condensed
+                    label para X 
+                      input.uk-form-width-small.uk-form-small( ng-value="configFile.table.x" type="number")
+                      | mm.
+                  .uk-form-controls-condensed
+                    label para Y 
+                      input.uk-form-width-small.uk-form-small( ng-value="configFile.table.y" type="number")
+                      | mm.
+                  p.uk-form-controls-condensed
+                    label Escala: 
+                      input.uk-form-width-small.uk-form-small(type='number' ng-value="configFile.scale" )
       .uk-modal-footer.uk-text-right
         button.uk-button(type='button') Cancel
         button.uk-button.uk-button-primary(type='button') Save

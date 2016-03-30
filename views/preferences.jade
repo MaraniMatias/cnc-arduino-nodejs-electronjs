@@ -1,0 +1,115 @@
+extends ./layout
+block content
+  .ui.pointing.secondary.menu
+    a.item(data-tab='first') First
+    a.item(data-tab='second') Second
+    a.item.active(data-tab='third') Third
+  .ui.tab.segment(data-tab='first')
+    .ui.top.attached.tabular.menu
+      a.active.item(data-tab='first/a') 1A
+      a.item(data-tab='first/b') 1B
+      a.item(data-tab='first/c') 1C
+    .ui.bottom.attached.active.tab.segment(data-tab='first/a') 1A
+    .ui.bottom.attached.tab.segment(data-tab='first/b') 1B
+    .ui.bottom.attached.tab.segment(data-tab='first/c') 1C
+  .ui.tab.segment(data-tab='second')
+    .ui.top.attached.tabular.menu
+      a.item.active(data-tab='second/a') 2A
+      a.item(data-tab='second/b') 2B
+      a.item(data-tab='second/c') 2C
+    .ui.bottom.attached.tab.segment.active(data-tab='second/a') 2A
+    .ui.bottom.attached.tab.segment(data-tab='second/b') 2B
+    .ui.bottom.attached.tab.segment(data-tab='second/c') 2C
+  .ui.tab.segment.active(data-tab='third')
+    .ui.top.attached.tabular.menu
+      a.item.active(data-tab='third/a') 3A
+      a.item(data-tab='third/b') 3B
+      a.item(data-tab='third/c') 3C
+    .ui.bottom.attached.tab.segment.active(data-tab='third/a') 3A
+    .ui.bottom.attached.tab.segment(data-tab='third/b') 3B
+    .ui.bottom.attached.tab.segment(data-tab='third/c') 3C
+  //.uk-tab-center
+    ul.uk-tab( data-uk-tab )
+      li
+        a( href="") Motor X
+        form.uk-form.uk-grid
+          .uk-form-row
+              .ui.checkbox
+                label Sentido Invertido.
+                input.hidden(type="checkbox" ng-checked="configFile.motor.y.sense")
+          .uk-form-row
+            p Milimetros por pasos.
+              .uk-form-controls
+                input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.x.advance" type="number")
+                label mm.
+                input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.y.steps" type="number")
+                label pasos.
+            p Velocidad mm/min.
+              .uk-form-controls
+                  input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.x.speed.working" type="number")
+                  label de Trabajo.
+                  input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.x.speed.idle" type="number")
+                  label en Vasio.
+          .uk-form-row
+            p Sacar de mm/min y el avance {{configFile.motor.x.time}}
+      //li
+        a( href="") Motor Y
+        form.uk-form.uk-grid
+            .uk-form-row
+                .ui.checkbox
+                  label Sentido Invertido.
+                  input.hidden(type="checkbox" ng-checked="configFile.motor.y.sense")
+            .uk-form-row
+              p Milimetros por pasos.
+                .uk-form-controls
+                  input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.y.advance" type="number")
+                  label mm
+                  input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.y.steps" type="number")
+                  label pasos
+              p Velocidad mm/min.
+                .uk-form-controls
+                    input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.y.speed.working" type="number")
+                    label de Trabajo.
+                    input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.y.speed.idle" type="number")
+                    label en Vasio.
+            .uk-form-row
+              p Sacar de mm/min y el avance {{configFile.motor.y.time}}
+      //li
+        a( href="") Motor Z
+        form.uk-form.uk-grid
+             .uk-form-row
+                .ui.checkbox
+                  label Sentido Invertido.
+                  input.hidden(type="checkbox" ng-checked="configFile.motor.z.sense")
+             .uk-form-row
+               p Milimetros por pasos.
+                 .uk-form-controls
+                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.advance" type="number")
+                   label mm
+                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.steps" type="number")
+                   label pasos
+               p Velocidad mm/min.
+                 .uk-form-controls
+                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.speed.working" type="number")
+                   label de Trabajo.
+                   input.uk-form-width-small.uk-form-small( ng-value="configFile.motor.z.speed.idle" type="number")
+                   label en Vasio.
+      li
+        a( href="") uk-disabled
+        form.uk-form.uk-grid
+          span.uk-form-label Medidas de la mesa de trabajo.
+          .uk-form-controls.uk-form-controls-text
+            .uk-form-controls-condensed
+              label para X 
+                input.uk-form-width-small.uk-form-small( ng-value="configFile.table.x" type="number")
+                | mm.
+            .uk-form-controls-condensed
+              label para Y 
+                input.uk-form-width-small.uk-form-small( ng-value="configFile.table.y" type="number")
+                | mm.
+            p.uk-form-controls-condensed
+              label Escala: 
+                input.uk-form-width-small.uk-form-small(type='number' ng-value="configFile.scale" )
+  //.uk-text-right
+    button.uk-button(type='button') Cancel
+    button.uk-button.uk-button-primary(type='button') Save
