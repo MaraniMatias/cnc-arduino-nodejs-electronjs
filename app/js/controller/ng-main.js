@@ -167,13 +167,17 @@ angular.controller('main',
     //graph.setCameraPosition(0.4, undefined, undefined);
   }drawVisualization();
   
+  /*
   ipc.on('show-prefs-res', (event, config) => {
     var modal = UIkit.modal(".modal");
     if( modal.isActive() ){ modal.hide(); }
     else{ modal.show(); }
+    
     $scope.configFile = config;
     
+    
   });
+  */
     
 }]);
 

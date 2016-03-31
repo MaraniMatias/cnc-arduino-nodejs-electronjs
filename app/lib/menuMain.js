@@ -18,26 +18,9 @@ var menu = [
       },
       {
         label: 'Preferancia',
-        submenu: [
-          {
-            label: 'Motor X & Motor Y',
-            click: (item, focusedWindow) => { 
-              ipcRenderer.send('show-prefs');
-            }
-          },
-          {
-            label: 'Motor Z',
-            click: (item, focusedWindow) => { 
-              ipcRenderer.send('show-prefs');
-            }
-          },
-          {
-            label: 'Generales',
-            click: (item, focusedWindow) => { 
-              ipcRenderer.send('show-prefs');
-            }
-          }
-        ]
+        click: (item, focusedWindow) => { 
+          ipcRenderer.send('show-prefs');
+        }
       },
       {
         type: 'separator'

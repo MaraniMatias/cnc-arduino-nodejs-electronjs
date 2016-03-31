@@ -2,29 +2,29 @@
   "motor": {
     "z": {
       "sense":false,
-      "steps": 2000,
+      "steps": 3000,
       "advance": 7.00,  "speed":{
-        "working":2000,
-        "idle":30000
+        "working":1000,
+        "idle":1000
       }
     },
     "x": {
       "sense":true,
       "time": 24,
-      "steps": 10000,
-      "advance": 115.47, 
+      "steps": 2000,
+      "advance": 200.40, 
       "speed":{
         "working":2000,
-        "idle":30000
+        "idle":2000
       }
     },
     "y": {
       "sense":false,
       "time": 24,
-      "steps": 10000,
-      "advance": 115.47,  "speed":{
-        "working":2000,
-        "idle":30000
+      "steps": 3000,
+      "advance": 300.45,  "speed":{
+        "working":3000,
+        "idle":3000
       }
     }
   },

@@ -70,6 +70,7 @@ app.on('ready',  () => {
   });
   if (!ret)  console.log('registration failed: globalShortcut.register -> ctrl+f');
   
+  /*
   ipcMain.on('show-prefs', (event, arg) => {
     if(!prefsWindow){
       prefsWindow = new BrowserWindow({
@@ -91,12 +92,10 @@ app.on('ready',  () => {
     prefsWindow.hide();
     prefsWindow = null;
   });
-  /*
+  */
   ipcMain.on('show-prefs', (event, arg) => {
     event.sender.send('show-prefs-res',CNC.config);
   });
-  */
-  
 
 });//ready
 
