@@ -104,24 +104,24 @@ block content
           .uk-form-row.uk-grid
             .uk-width-1-2
               .ui.checkbox
-                input( checkbox type="checkbox"  ng-model="configModal.motor.y.sense")
+                input( checkbox ng-disabled="iqualx" type="checkbox"  ng-model="configModal.motor.y.sense")
                 label Sentido Invertido.
             .uk-width-1-2
               .ui.checkbox
-                input.hidden(type="checkbox" ng-model="iqualx" )
+                input(checkbox type="checkbox" ng-model="iqualx" ng-click="iqualX()")
                 label Igual que Motor X.
           .uk-form-row
             p Milimetros por pasos.
               .uk-form-controls
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.y.advance" type="number")
+                input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.advance")
                 label mm
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.y.steps" type="number")
+                input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.steps")
                 label pasos
             p Velocidad mm/min.
               .uk-form-controls
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.y.speed.working" type="number")
+                  input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.speed.working")
                   label de Trabajo.
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.y.speed.idle" type="number")
+                  input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number" ng-model="configModal.motor.y.speed.idle")
                   label en Vasio.
           .uk-form-row
             p Sacar de mm/min y el avance {{configModal.motor.y.time}}

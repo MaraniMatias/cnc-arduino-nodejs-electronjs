@@ -147,10 +147,12 @@ function start (nro,callback) {
 }
 
 function saveConfig(arg) {
+  if(arg.iqualx){ arg.file.motor.y = arg.file.motor.x;}
   if(arg.save){
     fs.writeFile(`${__dirname}/config.json`, JSON.stringify(arg.file), (err) => {
       if (err) throw err;
     });
+    // esto no devuelve el valor nuevo :S
     return { file : arg.file , message : 'Cambios guardados.'};
   }else{
     return { file : config } ;
