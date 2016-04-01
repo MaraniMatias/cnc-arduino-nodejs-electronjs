@@ -140,9 +140,6 @@ ipcMain.on('send-start', (event, arg) => {
   });
 });
 
-
-
-
 ipcMain.on('about', (event, arg) => {
   var chosen = dialog.showMessageBox( mainWindow, {
     cancelId  :  0,
@@ -153,6 +150,10 @@ ipcMain.on('about', (event, arg) => {
     detail   :  'Proyecto de Router CNC casero con ideas, mano de obra y programacion propia dentro de lo posible.\n\tMarani Cesar Juan.\n\tMarani Matias Ezequiel.'
   });
   // if (chosen == 0)  mainWindow.destroy();
+});
+
+ipcMain.on('config-send', (event, arg) => {
+  event.sender.send('config-res', CNC.saveConfig(arg) );
 });
 
 /*

@@ -10,10 +10,22 @@ angular.controller('prefs',
     var modal = UIkit.modal(".modal");
     if( modal.isActive() ){ modal.hide(); }
     else{ modal.show(); }
+    $scope.configModal = config;
+  });
+  
+  $scope.save = () =>{
+    ipc.send('config-send',{ file: $scope.configModal, save: true});
+  }
+  $scope.cancel = () =>{
+    ipc.send('config-send',{ save: false});
+  }
     
-    $scope.configFile = config;
-    
-    
+  ipc.on('config-res', (event, config) => {
+    if(config.message) notify( config.message );
+    $scope.configModal = config.file;
+    var modal = UIkit.modal(".modal");
+    if( modal.isActive() ){ modal.hide(); }
+    else{ modal.show(); }
   });
     
 }]);

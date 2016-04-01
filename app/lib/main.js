@@ -146,8 +146,19 @@ function start (nro,callback) {
 
 }
 
+function saveConfig(arg) {
+  if(arg.save){
+    fs.writeFile(`${__dirname}/config.json`, JSON.stringify(arg.file), (err) => {
+      if (err) throw err;
+    });
+    return { file : arg.file , message : 'Cambios guardados.'};
+  }else{
+    return { file : config } ;
+  }
+}
+
 module.exports = {
-  Arduino : arduino , File  , setFile , config , sendCommand , start
+  Arduino : arduino , File  , setFile , config , sendCommand , start , saveConfig
 };
 
 
@@ -165,3 +176,4 @@ myEmitter.on('Pausado', function() {
   console.log('Pausado');
 });
 */
+

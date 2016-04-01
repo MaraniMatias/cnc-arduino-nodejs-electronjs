@@ -47,6 +47,13 @@ angular
     }
   }
 })
+.directive('checkbox', function () {
+  return {
+    link: function (scope, element, attrs) {
+        element.checkbox();
+    }
+  }
+})
 /*.directive('popupTable', function () {
   return {
     link: function (scope, element, attrs) {
