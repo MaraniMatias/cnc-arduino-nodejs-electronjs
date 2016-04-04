@@ -2,9 +2,10 @@ const
   fs = require('fs'),
   gc = require("./gcode"),
   serialPort = require('serialport'),
-  config  = require('./config.json'),
+  //config  = require('./config.json'),
   EventEmitter = require('events'),
-  util = require('util')
+  util = require('util'),
+  dirConfig = `${__dirname}/config.json`;
 ;
 
 var Arduino = {
@@ -13,10 +14,13 @@ var Arduino = {
 };
 
 function getMiliSeg ()  {
-  const steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
-  const time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
-  const advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
-  return steps * time / advance ;
+  fs.readFile( dirConfig , "utf8", function (error, data) {
+    config = JSON.parse(data);
+    const steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
+    const time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
+    const advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
+    return steps * time / advance ;
+  });
 }
 
 var File = {
@@ -146,23 +150,27 @@ function start (nro,callback) {
 
 }
 
-function saveConfig(arg) {
+function saveConfig(arg , cb) {
   if(arg.iqualx){ arg.file.motor.y = arg.file.motor.x;}
   if(arg.save){
-    fs.writeFile(`${__dirname}/config.json`, JSON.stringify(arg.file), (err) => {
+    fs.writeFile( dirConfig , JSON.stringify(arg.file) , (err) => {
       if (err) throw err;
+      fs.readFile( dirConfig , "utf8", function (error, data) {
+        // copy
+        // config = JSON.parse(data);
+        cb( { file : JSON.parse(data) , message : 'Cambios guardados.'} );
+      });
     });
-    // esto no devuelve el valor nuevo :S
-    return { file : arg.file , message : 'Cambios guardados.'};
   }else{
-    return { file : config } ;
+    fs.readFile( dirConfig , "utf8", function (error, data) {
+      cb( { file : JSON.parse(data) } );
+    });
   }
 }
 
 module.exports = {
-  Arduino : arduino , File  , setFile , config , sendCommand , start , saveConfig
+  Arduino : arduino , File  , setFile , dirConfig , sendCommand , start , saveConfig
 };
-
 
 /*
 function MyEmitter() {
@@ -178,4 +186,3 @@ myEmitter.on('Pausado', function() {
   console.log('Pausado');
 });
 */
-

@@ -19,29 +19,23 @@ angular.controller('prefs',
   ipc.on('show-prefs-res', (event, config) => {
     if( modal.isActive() ){ modal.hide(); }
     else{ modal.show(); }
-    $scope.configModal = config;
-    
-    $scope.iqualx = true;
-    motory = clone(config.motor.y);
-    $scope.configModal.motor.y = config.motor.x ;
+    $scope.configModal = clone( config );
+    $scope.iqualx = config.motor.y.iqualx;
+    motory = clone( config.motor.y );
   });
   
   $scope.iqualX = () => {
     $scope.configModal.motor.y = clone( ($scope.iqualx) ? $scope.configModal.motor.x : motory );
-    
   }
   $scope.save = () => {
     ipc.send('config-send',{ file: $scope.configModal  , save: true});
   }
-  $scope.cancel = () => {
-    ipc.send('config-send',{ save: false});
-  }
+  $scope.cancel = () => { modal.hide(); }
     
   ipc.on('config-res', (event, config) => {
-    if(config.message) notify( config.message );
-    $scope.configModal = config.file;
-    if( modal.isActive() ){ modal.hide(); }
-    else{ modal.show(); }
+    $scope.configModal = clone( config.file );
+    if(config.message){ notify( config.message ); }
+    modal.hide();
   });
     
 }]);

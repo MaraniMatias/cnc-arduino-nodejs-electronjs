@@ -1,4 +1,5 @@
 const dirBase         =  `file://${__dirname}/html/`,
+      fs              =  require('fs'),
       fileConfig      =  require('./package.json'),
       CNC             =  require('./lib/main.js'),
       electron        =  require('electron'),
@@ -93,10 +94,7 @@ app.on('ready',  () => {
     prefsWindow = null;
   });
   */
-  ipcMain.on('show-prefs', (event, arg) => {
-    event.sender.send('show-prefs-res',CNC.config);
-  });
-
+  
 });//ready
 
 ipcMain.on('arduino', (event, arg) => {
@@ -152,8 +150,17 @@ ipcMain.on('about', (event, arg) => {
   // if (chosen == 0)  mainWindow.destroy();
 });
 
+ipcMain.on('show-prefs', (event, arg) => {
+  //event.sender.send('show-prefs-res',CNC.config.file);
+  fs.readFile( CNC.dirConfig , "utf8", function (error, data) {
+    event.sender.send('show-prefs-res',JSON.parse(data));
+  });
+});
 ipcMain.on('config-send', (event, arg) => {
-  event.sender.send('config-res', CNC.saveConfig(arg) );
+  //event.sender.send('config-res', CNC.saveConfig(arg) );
+  CNC.saveConfig( arg , ( data ) => {
+      event.sender.send('config-res',data );
+  });
 });
 
 /*
