@@ -1,3 +1,4 @@
+'use strict'
 const 
   fs = require('fs'),
   gc = require("./gcode"),
@@ -15,19 +16,21 @@ var Arduino = {
 
 function getMiliSeg ()  {
   fs.readFile( dirConfig , "utf8", function (error, data) {
-    config = JSON.parse(data);
-    const steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
-    const time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
-    const advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
+    let config = JSON.parse(data);
+    let steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
+    let time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
+    let advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
     return steps * time / advance ;
   });
 }
 
 var File = {
-  gcode   : [],
-  dir     : '' ,
-  name    : 'Sin Archivo',
-  lines   : 0 ,
+  workpiece : { x:300, y:400 },
+  scale     : 1,
+  gcode     : [],
+  dir       : '' ,
+  name      : 'Sin Archivo',
+  lines     : 0 ,
   travel    : 0 ,
   segTotal  : 0
 };
@@ -37,16 +40,23 @@ var arduino = {
   reSet : Arduino.reSet
 };
 
-function setFile ( dirfile ) {
-  if (!dirfile){ return {}; }
-  File.dir = dirfile[0];
-  File.gcode = gc(fs.readFileSync(dirfile[0]).toString());
-  File.name = dirfile[0].split('/')[dirfile[0].split('/').length-1];
-  File.lines = File.gcode.length;
-  File.travel = File.gcode[File.gcode.length-1].travel;
-  File.segTotal = File.gcode[File.gcode.length-1].travel * getMiliSeg();
-  return File;
-  //cb(File) ;
+function setFile ( dirfile , cb ) {
+  if (dirfile){
+    fs.readFile( dirConfig , "utf8", function (error, data) {
+      let config = JSON.parse(data);
+      File.workpiece.x = config.workpiece.x;
+      File.workpiece.y = config.workpiece.y;
+      File.scale       = config.scale;
+      File.dir      = dirfile[0];
+      File.gcode    = gc(fs.readFileSync(dirfile[0]).toString());
+      File.name     = dirfile[0].split('/')[dirfile[0].split('/').length-1];
+      File.lines    = File.gcode.length;
+      File.travel   = File.gcode[File.gcode.length-1].travel;
+      File.segTotal = File.gcode[File.gcode.length-1].travel * getMiliSeg();
+      //return File;
+      cb(File) ;
+    });
+  }
 }
 
 function sendCommand ( code , callback ){
@@ -55,7 +65,6 @@ function sendCommand ( code , callback ){
     if( Arduino.port.isOpen() )    Arduino.port.close(); 
     Arduino.port.open( (err) => {
       Arduino.port.write(new Buffer(code+'\n'), (err) => {
-        //req.io.broadcast('lineaGCode', line ); // emitir enviar lines procesada a app.js
         Arduino.port.drain( () => {
           Arduino.port.on('data', (data) => {
             Arduino.port.close( (err) => {
@@ -98,16 +107,21 @@ function reSet () {
   })// promise
 }
 
-function getPasos(l){
-  var a = l!==0 ? File.gcode[l-1].ejes : File.gcode[l].ejes;
-  var x = [0,0,0];
-  var b = File.gcode[l].ejes;
-  x[0] = Math.round((b[0]-a[0]) * config.motor.x.steps / config.motor.x.advance);
-  x[1] = Math.round((b[1]-a[1]) * config.motor.y.steps / config.motor.y.advance);
-  x[2] = Math.round((b[2]-a[2]) * config.motor.z.steps / config.motor.z.advance);
-  return x;
+function getPasos (l) {
+  // falta la escala
+  fs.readFile( dirConfig , "utf8", function (error, data) {
+    let config = JSON.parse(data);
+    let a = l!==0 ? File.gcode[l-1].ejes : File.gcode[l].ejes;
+    let x = [0,0,0];
+    let b = File.gcode[l].ejes;
+    x[0] = Math.round((b[0]-a[0]) * config.motor.x.steps / config.motor.x.advance) * (config.motor.x.sense)? -1 : 1;
+    x[1] = Math.round((b[1]-a[1]) * config.motor.y.steps / config.motor.y.advance) * (config.motor.y.sense)? -1 : 1;
+    x[2] = Math.round((b[2]-a[2]) * config.motor.z.steps / config.motor.z.advance) * (config.motor.z.sense)? -1 : 1;
+    return x;
+  });
 }
-function start (nro,callback) { 
+
+function start (nro,callback) {
   if( Arduino.port.comName !== '' ){
     if( Arduino.port.isOpen() ){ Arduino.port.close(); }
     if(Arduino.port.comName !== '' && File.gcode.length > 0){
@@ -120,9 +134,8 @@ function start (nro,callback) {
             })
           })//write
         }
-
         Arduino.port.on('data', (data) => {
-        var result = data.toString().split(',');
+        let result = data.toString().split(',');
         if(result[0]==0 && result[1]==0 && result[2]==0){
           nro++;
           if(nro < File.gcode.length){
@@ -141,13 +154,11 @@ function start (nro,callback) {
           });//close
         }
         })//data
-
       });// open
     }
   }else{
     // error no esta ardu
   }
-
 }
 
 function saveConfig(arg , cb) {
@@ -156,8 +167,6 @@ function saveConfig(arg , cb) {
     fs.writeFile( dirConfig , JSON.stringify(arg.file) , (err) => {
       if (err) throw err;
       fs.readFile( dirConfig , "utf8", function (error, data) {
-        // copy
-        // config = JSON.parse(data);
         cb( { file : JSON.parse(data) , message : 'Cambios guardados.'} );
       });
     });
@@ -171,18 +180,3 @@ function saveConfig(arg , cb) {
 module.exports = {
   Arduino : arduino , File  , setFile , dirConfig , sendCommand , start , saveConfig
 };
-
-/*
-function MyEmitter() {
-  EventEmitter.call(this);
-}
-util.inherits(MyEmitter, EventEmitter);
-const myEmitter = new MyEmitter();
-
-myEmitter.on('Terminado', function() {
-  console.log('Terminado');
-});
-myEmitter.on('Pausado', function() {
-  console.log('Pausado');
-});
-*/

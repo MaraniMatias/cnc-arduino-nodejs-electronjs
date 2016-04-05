@@ -104,12 +104,14 @@ ipcMain.on('arduino', (event, arg) => {
 });
 
 ipcMain.on('open-file',(event,arg) => {
-  event.returnValue = CNC.setFile(
+  CNC.setFile(
     dialog.showOpenDialog({
       title : fileConfig.name,
       filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
       properties: [ 'openFile' ] 
-    })
+    }), (File) => {
+      event.sender.send('open-file-res', File);
+    }
   )
 });
 

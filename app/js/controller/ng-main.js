@@ -5,7 +5,7 @@ angular.controller('main',
 [ 'notify','ipc','cnc','$scope','lineTable','config','line',
 ( notify,ipc,cnc,$scope,lineTable,config,line) => {
 'use strict'
-
+  var exceeds_x = false, exceeds_y = false;
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
   
@@ -15,8 +15,11 @@ angular.controller('main',
     notify( ardu.code, ardu.type );
   });
   
-  $scope.setFile = () => {    
-    var file = ipc.sendSync('open-file'); 
+  $scope.setFile = () => {
+    // marcar liading
+    ipc.send('open-file');
+  }
+  ipc.on('open-file-res', (event, file) => {
     if ( file.dir ){
       //console.log(file)
       $scope.cnc.file.name = file.name;
@@ -24,15 +27,18 @@ angular.controller('main',
       $scope.cnc.file.line.duration = parseInt(file.segTotal);
       $scope.cnc.file.travel = file.travel;
       notify( file.name );
-      
+            
       // Cargar Views
       var data = new vis.DataSet();
-      for (var index = 0; index < file.gcode.length; index++) {
-        data.add({ id:index , x : file.gcode[index].ejes[0], y : file.gcode[index].ejes[1], z : file.gcode[index].ejes[2] });
+      for (let index = 0; index < file.gcode.length; index++) {
+        if( !exceeds_x && file.gcode[index].ejes[0] * file.scale > file.workpiece.x){ exceeds_x = true; }
+        if( !exceeds_y && file.gcode[index].ejes[1] * file.scale > file.workpiece.y){ exceeds_y = true; }
+        data.add({ id : index , x : file.gcode[index].ejes[0], y : file.gcode[index].ejes[1], z : file.gcode[index].ejes[2] });
       }
+      
       drawVisualization(data);      
     }
-  };
+  });
   
   $scope.enviarDatos = (cmd) => {
     if(ipc.sendArd(cmd)) notify( 'Comando manual: '+cmd , 'success' );
@@ -147,6 +153,9 @@ angular.controller('main',
   
   var data = null, graph = null;
   function drawVisualization(data) {
+    if(exceeds_x) notify( 'El modelo se excede en X.', 'warning' );
+    if(exceeds_y) notify( 'El modelo se excede en Y.', 'warning' );
+    
     if(data === undefined){
       data = new vis.DataSet();
       data.add({ x:0, y:0, z:0 });
@@ -165,9 +174,34 @@ angular.controller('main',
     var container = document.getElementById('mygraph');
     graph = new vis.Graph3d(container, data, options);
     //graph.setCameraPosition(0.4, undefined, undefined);
+    // terminar loading.
   }drawVisualization();
     
 }]);
 
-
-
+/* 
+  $scope.setFile = () => {    
+    var file = ipc.sendSync('open-file'); 
+    if ( file.dir ){
+      //console.log(file)
+      $scope.cnc.file.name = file.name;
+      $scope.cnc.file.line.total = file.lines;
+      $scope.cnc.file.line.duration = parseInt(file.segTotal);
+      $scope.cnc.file.travel = file.travel;
+      notify( file.name );
+      
+      // Cargar Views
+      var data = new vis.DataSet();
+      for (let index = 0; index < file.gcode.length; index++) {
+        if(file.gcode[index].ejes[0]*File.scale > File.workpiece.x){
+          notify( `El modelo se excede en X.\nEje: ${file.gcode[index].ejes[0]} - Mesa: ${File.workpiece.x} - Escala: ${File.scale}`, 'warning' );
+        }
+        if(file.gcode[index].ejes[1]*File.scale > File.workpiece.y){
+          notify( `El modelo se excede en Y.\nEje: ${file.gcode[index].ejes[1]} - Mesa: ${File.workpiece.y} - Escala: ${File.scale}`, 'warning' );
+        }
+        data.add({ id : index , x : file.gcode[index].ejes[0], y : file.gcode[index].ejes[1], z : file.gcode[index].ejes[2] });
+      }
+      drawVisualization(data);      
+    }
+  };
+ */
