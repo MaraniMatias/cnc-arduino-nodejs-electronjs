@@ -1,6 +1,6 @@
 'use strict'
 const 
-  debug = true,
+  debug = false,
   fs = require('fs'),
   gc = require("./gcode"),
   serialPort = require('serialport'),

@@ -9,7 +9,7 @@ const dirBase         =  `file://${__dirname}/html/`,
       dialog          =  electron.dialog,
       Menu            =  electron.Menu,
       Tray            =  electron.Tray,
-      powerSaveBlocker = electron.powerSaveBlocker,
+      powerSaveBlocker = electron.powerSaveBlocker
       //globalShortcut  =  electron.globalShortcut // para ctrl+
 ;
 

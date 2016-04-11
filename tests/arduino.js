@@ -28,7 +28,6 @@ describe ('Arduino Test', function() {
                   },false);
         port.on('error', function(err) {
           chai.assert.fail(util.inspect(err));
-          console.error('sudo chmod 0777 /dev/'+port.comName);
         });
       
         port.on('data', function(d) {   
@@ -40,7 +39,8 @@ describe ('Arduino Test', function() {
         });
 
         port.open(function(err) {
-          chai.assert.isUndefined(err, util.inspect(err));
+          if(err) err.message = 'sudo chmod 0777 /dev/'+ports.slice(-1)[0].comName;
+          chai.assert.ifError(err);
           port.write(data);
         });
         
