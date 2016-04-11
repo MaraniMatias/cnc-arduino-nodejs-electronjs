@@ -4,12 +4,12 @@ const
   fs = require('fs'),
   gc = require("./gcode"),
   serialPort = require('serialport'),
-  //config  = require('./config.json'),
   EventEmitter = require('events'),
   util = require('util'),
   dirConfig = `${__dirname}/config.json`;
 ;
-
+var isStarted = false;
+var config = null;
 var Arduino = {
   port : { comName : '' , manufacturer : ''},
   reSet
@@ -17,7 +17,7 @@ var Arduino = {
 
 function getMiliSeg ()  {
   fs.readFile( dirConfig , "utf8", function (error, data) {
-    let config = JSON.parse(data);
+    config = JSON.parse(data);
     let steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
     let time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
     let advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
@@ -27,7 +27,6 @@ function getMiliSeg ()  {
 
 var File = {
   workpiece : { x:300, y:400 },
-  scale     : 1,
   gcode     : [],
   dir       : '' ,
   name      : 'Sin Archivo',
@@ -47,15 +46,13 @@ function setFile ( dirfile , cb ) {
       let config = JSON.parse(data);
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
-      File.scale       = config.scale;
       File.dir      = dirfile[0];
       File.gcode    = gc(fs.readFileSync(dirfile[0]).toString());
       File.name     = dirfile[0].split('/')[dirfile[0].split('/').length-1];
       File.lines    = File.gcode.length;
       File.travel   = File.gcode[File.gcode.length-1].travel;
       File.segTotal = File.gcode[File.gcode.length-1].travel * getMiliSeg();
-      //return File;
-      cb(File) ;
+      cb(File);
     });
   }
 }
@@ -82,7 +79,6 @@ function sendCommand ( code , callback ){
     if (typeof (callback) === 'function') {
       callback({type:'error',data:'Arduino not selected'});
     }
-    //throw new Error('Arduino no seleccionado');
   }
 }
 
@@ -98,20 +94,35 @@ function reSet () {
           stopBits: 1,
           flowControl: false
         },false);// This does not initiate the connection.
-        console.info('Puerto Selecionado %s',ports.slice(-1)[0].manufacturer);
-        resolve(ports.slice(-1)[0].manufacturer);
-      }else{
-        Arduino.port = { comName : '' , manufacturer : ''};
-        console.warn('No Arduino.');
-        resolve('');
+        Arduino.port.open( (err) => {
+          if(err){
+            resolve({
+              type : 'warning',
+              msg  : 'Arduino detectado: '+Arduino.port.manufacturer+'.\nNo puedo abrir la conexión.\nPrueba con permisos de administrador (root en linux).'
+            });
+            console.log('is err',err);
+          }else{
+            Arduino.port.close();
+            resolve({
+              type : 'success',
+              msg  : 'Arduino detectado: ' + ports.slice(-1)[0].manufacturer
+            });
+            console.info('Puerto Selecionado %s',ports.slice(-1)[0].manufacturer);
+          }
+        });
+    }else{
+      Arduino.port = { comName : '' , manufacturer : ''};
+      resolve({
+       type : 'error',
+       msg  : 'No encontramos ardiono.'
+      });
+      console.warn('No Arduino.');
       }
     });
   })// promise
 }
 
-var config = null ;
 function getPasos (l) {
-  // falta la escala
   let a = l!==0 ? File.gcode[l-1].ejes : File.gcode[l].ejes;
   let x = [0,0,0];
   let b = File.gcode[l].ejes;
@@ -127,18 +138,18 @@ function start (nro,callback) {
       resolve(JSON.parse(data));
     });
   }).then( (data) => {
-    //isStarted = true;
+    isStarted = true;
     config = data;
     if( Arduino.port.comName !== '' ){
       if( Arduino.port.isOpen() ){ Arduino.port.close(); }
       if(Arduino.port.comName !== '' && File.gcode.length > 0){
-        // arduino
         Arduino.port.open( (err) => {
           if(err){
-            console.log('Prueve con administrador');
+            callback({ nro:false , result: 'Se necesita ser Administrador.'});
+            console.log('It needs to be administrator.');
             console.log('sudo chmod 0777 /dev/'+Arduino.port.comName);
-          }
-          if( nro !== null){ // validar mejor :D
+          } else {
+          if( nro !== null ){ // validar mejor :D
             Arduino.port.write(new Buffer(getPasos(nro)+'\n'), (err,results) => {
               Arduino.port.drain( () => {
                 callback({ nro, result:'0,0,0' });
@@ -166,6 +177,7 @@ function start (nro,callback) {
             //});//close
           }
           })//data
+          }//else
         });// open
       }
     }else{

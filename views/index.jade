@@ -12,7 +12,7 @@ block content
                   .uk-button-group
                     button.uk-button(ng-disabled=" !cnc.arduino || cnc.working || cnc.file.line.total == 0 && !cnc.pause.status" ng-click='start()')
                       i.uk-icon-play.uk-text-success
-                    button.uk-button(disabled="!cnc.working"  ng-click='pausa()')
+                    button.uk-button(ng-disabled="!cnc.working"  ng-click='pausa()')
                       i.uk-icon-pause
                     button.uk-button(ng-disabled="!cnc.working && !cnc.pause.status" ng-click='parar()')
                       i.uk-icon-stop.uk-text-danger

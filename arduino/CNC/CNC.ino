@@ -19,7 +19,7 @@ const float _time = 10;         // Time between step // 5
 // seting:END
 
 bool bStatusLED = true,     // StatusLED indicator var
-x=false,y=false,z=false; // Variable indicating when in origin
+x=false,y=false,z=false;    // Variable indicating when in origin
 
 int bx,by,bz,     // Variable for limit switches, save StatusLED
 xyzp[] = {0,0,0}, // Steps to go

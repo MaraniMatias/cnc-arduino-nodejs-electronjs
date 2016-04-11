@@ -3,6 +3,7 @@ angular.factory('notify', [ () => {
     // status = (status===undefined)? 'info': status;
     // 'success' 'warning' 'danger' 'info'
     timeout = (status==='danger')? 0:5000;
+    if(status==='error') status = 'danger';
     switch(pos){
       case 1: pos='top-left'; break;
       case 2: pos='top-center'; break;

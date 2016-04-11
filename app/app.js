@@ -62,16 +62,16 @@ app.on('ready',  () => {
 
   // Open the devtools.
   //mainWindow.openDevTools();
-  mainWindow.setProgressBar(0.7);
+  //mainWindow.setProgressBar(0.7);
 
   //var ret = globalShortcut.register('ctrl+f', () => { console.log('ctrl+f is pressed'); });
   //if (!ret)  console.log('registration failed: globalShortcut.register -> ctrl+f');
 });//ready
 
 ipcMain.on('arduino', (event, arg) => {
-  CNC.Arduino.reSet().then(function (ardu) {
-    event.sender.send('arduino-res',{ type:ardu===''? 'danger':'success' , code:ardu===''? 'No encontramos ardiono.':'Arduino detectado: '+ardu});
-  })
+  CNC.Arduino.reSet().then(function (obj) {
+    event.sender.send('arduino-res',obj);
+  }) 
 });
 
 ipcMain.on('open-file',(event,arg) => {

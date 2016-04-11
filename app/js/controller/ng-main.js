@@ -10,9 +10,9 @@ angular.controller('main',
   $scope.lineTable = lineTable;
   
   ipc.send('arduino');
-  ipc.on('arduino-res', (event, ardu) => {
-    cnc.arduino = ardu.type === 'success' ;
-    notify( ardu.code, ardu.type );
+  ipc.on('arduino-res', (event, obj) => {
+    cnc.arduino = obj.type === 'success' ;
+    notify( obj.msg, obj.type );
   });
   
   $scope.setFile = () => {

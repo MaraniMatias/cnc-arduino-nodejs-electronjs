@@ -25,6 +25,7 @@ void sendData(){
   Serial.print(',');
   Serial.println(xyzp[2]);
 }
+/*
 void TakeOrigin(){
   if(x==true||y==true||z==true){
     bx = digitalRead(btnX);
@@ -40,6 +41,7 @@ void TakeOrigin(){
     if(z){MoveZ(1);}
   }
 }
+*/
 
 void render(){
   ry=0;
