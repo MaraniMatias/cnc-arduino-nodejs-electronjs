@@ -69,8 +69,9 @@ function sendCommand ( code , callback ){
         Arduino.port.drain( () => {
           Arduino.port.on('data', (data) => {
             Arduino.port.close( (err) => {
+              if(debug){ console.log('respuesta: ',data); }
               if (typeof (callback) === 'function') {
-                callback({type:'none',data:data.toString().split(',')});
+                callback({type:'none',data:data.toString().split(',')});            
               }
             });//close
           });//data
@@ -115,7 +116,6 @@ function getPasos (l) {
   let x = [0,0,0];
   let b = File.gcode[l].ejes;
   x[0] = Math.round((b[0]-a[0]) * config.motor.x.steps / config.motor.x.advance) ;//* (config.motor.x.sense)? -1 : 1;
-  x[0] = Math.round((b[0]-a[0]) * config.motor.x.steps / config.motor.x.advance) ;//* (config.motor.x.sense)? -1 : 1;
   x[1] = Math.round((b[1]-a[1]) * config.motor.y.steps / config.motor.y.advance) ;//* (config.motor.y.sense)? -1 : 1;
   x[2] = Math.round((b[2]-a[2]) * config.motor.z.steps / config.motor.z.advance) ;//* (config.motor.z.sense)? -1 : 1;
   return x;
@@ -127,6 +127,7 @@ function start (nro,callback) {
       resolve(JSON.parse(data));
     });
   }).then( (data) => {
+    //isStarted = true;
     config = data;
     if( Arduino.port.comName !== '' ){
       if( Arduino.port.isOpen() ){ Arduino.port.close(); }
@@ -138,7 +139,6 @@ function start (nro,callback) {
             console.log('sudo chmod 0777 /dev/'+Arduino.port.comName);
           }
           if( nro !== null){ // validar mejor :D
-            console.log(getPasos(nro));
             Arduino.port.write(new Buffer(getPasos(nro)+'\n'), (err,results) => {
               Arduino.port.drain( () => {
                 callback({ nro, result:'0,0,0' });
@@ -159,10 +159,11 @@ function start (nro,callback) {
               });//close
             }
           }else{//Pause
-            Arduino.port.close( (err) => {
-              //callback({ nro , result });
-              console.log("Pause: %s",data);
-            });//close
+            //console.log("Pause: %s %s",nro,result);
+            //isStarted = false;
+            //Arduino.port.close(()=>{
+              
+            //});//close
           }
           })//data
         });// open

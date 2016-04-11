@@ -176,30 +176,3 @@ angular.controller('main',
   }drawVisualization();
     
 }]);
-
-/* 
-  $scope.setFile = () => {    
-    var file = ipc.sendSync('open-file'); 
-    if ( file.dir ){
-      //console.log(file)
-      $scope.cnc.file.name = file.name;
-      $scope.cnc.file.line.total = file.lines;
-      $scope.cnc.file.line.duration = parseInt(file.segTotal);
-      $scope.cnc.file.travel = file.travel;
-      notify( file.name );
-      
-      // Cargar Views
-      var data = new vis.DataSet();
-      for (let index = 0; index < file.gcode.length; index++) {
-        if(file.gcode[index].ejes[0]*File.scale > File.workpiece.x){
-          notify( `El modelo se excede en X.\nEje: ${file.gcode[index].ejes[0]} - Mesa: ${File.workpiece.x} - Escala: ${File.scale}`, 'warning' );
-        }
-        if(file.gcode[index].ejes[1]*File.scale > File.workpiece.y){
-          notify( `El modelo se excede en Y.\nEje: ${file.gcode[index].ejes[1]} - Mesa: ${File.workpiece.y} - Escala: ${File.scale}`, 'warning' );
-        }
-        data.add({ id : index , x : file.gcode[index].ejes[0], y : file.gcode[index].ejes[1], z : file.gcode[index].ejes[2] });
-      }
-      drawVisualization(data);      
-    }
-  };
- */

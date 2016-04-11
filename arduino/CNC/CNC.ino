@@ -9,13 +9,13 @@
 // seting:START
 const bool debug = false;       // Debug
 const int pinLED = 13,          // LED StatusLED indicator
-          pinX[] = {2,3,1,0},   // Motor pin X
-          pinY[] = {4,5,6,7},   // Motor pin Y
-          pinZ[] = {8,9,10,11}, // Motor pin Z
+          pinX[] = {0,1,3,2},   // Motor pin X
+          pinY[] = {4,5,7,6},   // Motor pin Y
+          pinZ[] = {8,10,9,11}, // Motor pin Z
           btnX=A5,              // Limit switches
           btnY=A4,              // Limit switches
           btnZ=A3;              // Limit switches
-const float _time = 15;         // Time between step // 5
+const float _time = 10;         // Time between step // 5
 // seting:END
 
 bool bStatusLED = true,     // StatusLED indicator var
