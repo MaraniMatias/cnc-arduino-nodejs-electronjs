@@ -28,6 +28,7 @@ describe ('Arduino Test', function() {
                   },false);
         port.on('error', function(err) {
           chai.assert.fail(util.inspect(err));
+          console.error('sudo chmod 0777 /dev/'+port.comName);
         });
       
         port.on('data', function(d) {   

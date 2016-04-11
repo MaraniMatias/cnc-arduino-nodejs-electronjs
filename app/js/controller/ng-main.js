@@ -35,7 +35,6 @@ angular.controller('main',
         if( !exceeds_y && file.gcode[index].ejes[1] * file.scale > file.workpiece.y){ exceeds_y = true; }
         data.add({ id : index , x : file.gcode[index].ejes[0], y : file.gcode[index].ejes[1], z : file.gcode[index].ejes[2] });
       }
-      
       drawVisualization(data);      
     }
   });
@@ -115,14 +114,13 @@ angular.controller('main',
   }); 
   
   ipc.on('add-line', (event, data) => { 
-    //graficar gcode trabajado
+    //graficar trabajo. :D
     if($scope.lineTable.length > 10) $scope.lineTable.shift();
     $scope.lineTable.push( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
     if(data.nro && data.line.travel){
       $scope.cnc.file.Progress(data.nro,data.line.travel);
       $('title').text('CNC-ino - '+$scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
     }
-    //notify( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro, '' ).code , 'info' );
   });
     
   $scope.start = () => {

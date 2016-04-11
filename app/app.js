@@ -10,7 +10,7 @@ const dirBase         =  `file://${__dirname}/html/`,
       Menu            =  electron.Menu,
       Tray            =  electron.Tray,
       powerSaveBlocker = electron.powerSaveBlocker,
-      globalShortcut  =  electron.globalShortcut // para ctrl+
+      //globalShortcut  =  electron.globalShortcut // para ctrl+
 ;
 
 app.on('window-all-closed',  () => {
@@ -52,9 +52,7 @@ app.on('ready',  () => {
     title      :  fileConfig.name
   });
   mainWindow.loadURL(dirBase+'index.html');
-  mainWindow.on('page-title-updated',  () => {
-    console.log('title');
-  });
+  //mainWindow.on('page-title-updated',  () => { console.log('title'); });
   mainWindow.on('closed',  () => {
     mainWindow = null;
     if (process.platform != 'darwin') {
@@ -66,35 +64,8 @@ app.on('ready',  () => {
   //mainWindow.openDevTools();
   mainWindow.setProgressBar(0.7);
 
-  var ret = globalShortcut.register('ctrl+f', () => {
-    console.log('ctrl+f is pressed');
-  });
-  if (!ret)  console.log('registration failed: globalShortcut.register -> ctrl+f');
-  
-  /*
-  ipcMain.on('show-prefs', (event, arg) => {
-    if(!prefsWindow){
-      prefsWindow = new BrowserWindow({
-        width     :  400, 
-        height    :  400,
-        resizable :  false,
-        //show    :  false,
-        alwaysOnTop  :  true, // Default false
-        skipTaskbar  :  true,
-        title   :  'Preferencias.'
-      });
-      prefsWindow.loadURL(dirBase+'preferences.html');
-      event.sender.send('show-prefs-res',CNC.config);
-    }else{
-      ipcMain.emit('hide-prefs');
-    }
-  });
-  ipcMain.on('hide-prefs', (event, arg) => {
-    prefsWindow.hide();
-    prefsWindow = null;
-  });
-  */
-  
+  //var ret = globalShortcut.register('ctrl+f', () => { console.log('ctrl+f is pressed'); });
+  //if (!ret)  console.log('registration failed: globalShortcut.register -> ctrl+f');
 });//ready
 
 ipcMain.on('arduino', (event, arg) => {
@@ -153,13 +124,11 @@ ipcMain.on('about', (event, arg) => {
 });
 
 ipcMain.on('show-prefs', (event, arg) => {
-  //event.sender.send('show-prefs-res',CNC.config.file);
   fs.readFile( CNC.dirConfig , "utf8", function (error, data) {
     event.sender.send('show-prefs-res',JSON.parse(data));
   });
 });
 ipcMain.on('config-send', (event, arg) => {
-  //event.sender.send('config-res', CNC.saveConfig(arg) );
   CNC.saveConfig( arg , ( data ) => {
       event.sender.send('config-res',data );
   });

@@ -92,7 +92,7 @@ block content
                 input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.steps" type="number")
                 label pasos. 
             p Velocidad mm/min.
-              .uk-form-controls
+              .uk-form-controls(disabled)
                   input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.speed.working" type="number")
                   label de Trabajo.
                   input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.speed.idle" type="number")
@@ -118,7 +118,7 @@ block content
                 input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.steps")
                 label pasos. 
             p Velocidad mm/min.
-              .uk-form-controls
+              .uk-form-controls(disabled)
                   input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.speed.working")
                   label de Trabajo. 
                   input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number" ng-model="configModal.motor.y.speed.idle")
@@ -139,7 +139,7 @@ block content
                 input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.steps" type="number")
                 label pasos. 
             p Velocidad mm/min.
-              .uk-form-controls
+              .uk-form-controls(disabled)
                 input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.speed.working" type="number")
                 label de Trabajo. 
                 input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.speed.idle" type="number")

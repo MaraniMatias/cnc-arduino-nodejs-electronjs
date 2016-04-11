@@ -1,5 +1,6 @@
 'use strict'
 const 
+  debug = true,
   fs = require('fs'),
   gc = require("./gcode"),
   serialPort = require('serialport'),
@@ -60,7 +61,7 @@ function setFile ( dirfile , cb ) {
 }
 
 function sendCommand ( code , callback ){
-  //console.log(`${__filename}\n sendCommand, type: ${type}, code: ${code}`);
+  if(debug) console.log(`${__filename}\n sendCommand, code: ${code}`);
   if( Arduino.port.comName !== '' ){
     if( Arduino.port.isOpen() )    Arduino.port.close(); 
     Arduino.port.open( (err) => {
