@@ -1,5 +1,5 @@
 /* 
-  Please use Arduino 1.6.5 or 1.6.8, in versions 1.6.6 and 1.6.7 code behaves not expected.
+  Please use Arduino 1.6.5 with versions 1.6.6 and 1.6.7 code behaves not expected.
   Por favor utilice Arduino 1.6.5, para un correcto funcionamiento.
   Author: Marani Matias Ezequiel
   Email: maranimatias@gmail.com

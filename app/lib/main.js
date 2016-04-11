@@ -108,58 +108,69 @@ function reSet () {
   })// promise
 }
 
+var config = null ;
 function getPasos (l) {
   // falta la escala
-  fs.readFile( dirConfig , "utf8", function (error, data) {
-    let config = JSON.parse(data);
-    let a = l!==0 ? File.gcode[l-1].ejes : File.gcode[l].ejes;
-    let x = [0,0,0];
-    let b = File.gcode[l].ejes;
-    x[0] = Math.round((b[0]-a[0]) * config.motor.x.steps / config.motor.x.advance) * (config.motor.x.sense)? -1 : 1;
-    x[1] = Math.round((b[1]-a[1]) * config.motor.y.steps / config.motor.y.advance) * (config.motor.y.sense)? -1 : 1;
-    x[2] = Math.round((b[2]-a[2]) * config.motor.z.steps / config.motor.z.advance) * (config.motor.z.sense)? -1 : 1;
-    return x;
-  });
+  let a = l!==0 ? File.gcode[l-1].ejes : File.gcode[l].ejes;
+  let x = [0,0,0];
+  let b = File.gcode[l].ejes;
+  x[0] = Math.round((b[0]-a[0]) * config.motor.x.steps / config.motor.x.advance) ;//* (config.motor.x.sense)? -1 : 1;
+  x[0] = Math.round((b[0]-a[0]) * config.motor.x.steps / config.motor.x.advance) ;//* (config.motor.x.sense)? -1 : 1;
+  x[1] = Math.round((b[1]-a[1]) * config.motor.y.steps / config.motor.y.advance) ;//* (config.motor.y.sense)? -1 : 1;
+  x[2] = Math.round((b[2]-a[2]) * config.motor.z.steps / config.motor.z.advance) ;//* (config.motor.z.sense)? -1 : 1;
+  return x;
 }
 
 function start (nro,callback) {
-  if( Arduino.port.comName !== '' ){
-    if( Arduino.port.isOpen() ){ Arduino.port.close(); }
-    if(Arduino.port.comName !== '' && File.gcode.length > 0){
-      // arduino
-      Arduino.port.open( (err) => {
-        if( nro !== null){ // validar mejor :D
-          Arduino.port.write(new Buffer(getPasos(nro)+'\n'), (err,results) => {
-            Arduino.port.drain( () => {
-              callback({ nro, result:'0,0,0' });
-            })
-          })//write
-        }
-        Arduino.port.on('data', (data) => {
-        let result = data.toString().split(',');
-        if(result[0]==0 && result[1]==0 && result[2]==0){
-          nro++;
-          if(nro < File.gcode.length){
+  let fileRead = new Promise(function (resolve, reject){
+    fs.readFile( dirConfig , "utf8", function (error, data) {
+      resolve(JSON.parse(data));
+    });
+  }).then( (data) => {
+    config = data;
+    if( Arduino.port.comName !== '' ){
+      if( Arduino.port.isOpen() ){ Arduino.port.close(); }
+      if(Arduino.port.comName !== '' && File.gcode.length > 0){
+        // arduino
+        Arduino.port.open( (err) => {
+          if(err){
+            console.log('Prueve con administrador');
+            console.log('sudo chmod 0777 /dev/'+Arduino.port.comName);
+          }
+          if( nro !== null){ // validar mejor :D
+            console.log(getPasos(nro));
             Arduino.port.write(new Buffer(getPasos(nro)+'\n'), (err,results) => {
-              Arduino.port.drain( () => { callback({ nro , result }); });
-            });//write
-          }else{
+              Arduino.port.drain( () => {
+                callback({ nro, result:'0,0,0' });
+              })
+            })//write
+          }
+          Arduino.port.on('data', (data) => {
+          let result = data.toString().split(',');
+          if(result[0]==0 && result[1]==0 && result[2]==0){
+            nro++;
+            if(nro < File.gcode.length){
+              Arduino.port.write(new Buffer(getPasos(nro)+'\n'), (err,results) => {
+                Arduino.port.drain( () => { callback({ nro , result }); });
+              });//write
+            }else{
+              Arduino.port.close( (err) => {
+                callback({ nro:false , result:['0','0','0'] });
+              });//close
+            }
+          }else{//Pause
             Arduino.port.close( (err) => {
-              callback({ nro:false , result:['0','0','0'] });
+              //callback({ nro , result });
+              console.log("Pause: %s",data);
             });//close
           }
-        }else{//Pause
-          Arduino.port.close( (err) => {
-            //callback({ nro , result });
-            console.log("Pause: %s",data);
-          });//close
-        }
-        })//data
-      });// open
+          })//data
+        });// open
+      }
+    }else{
+      // error no esta ardu
     }
-  }else{
-    // error no esta ardu
-  }
+  });
 }
 
 function saveConfig(arg , cb) {
