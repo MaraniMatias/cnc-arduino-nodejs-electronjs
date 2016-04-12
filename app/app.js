@@ -97,7 +97,6 @@ ipcMain.on('send-start', (event, arg) => {
   //prevent-app-suspension
   var id = powerSaveBlocker.start('prevent-app-suspension');
   console.log('prevent-app-suspension',powerSaveBlocker.isStarted(id));
-  
   CNC.start(arg, (data) => {
     if( data.lineRunning !== false ){
       // mainWindow.setProgressBar(0.7);

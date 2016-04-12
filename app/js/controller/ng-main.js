@@ -46,8 +46,10 @@ angular.controller('main',
     if(ipc.sendArd('o') )  notify( 'Comando mover al origen.' , 'success' );
   }
   $scope.pausa = () => { 
+    window.alert('No se recomienda pausar la ejecucion.')
     $scope.cnc.time.pause = new Date();
     if(ipc.sendArd('p'))   notify( 'Orden de pausa' , 'warning' );
+  
   }
   $scope.parar = () => {
     if(ipc.sendArd('0,0,0')){
@@ -130,7 +132,7 @@ angular.controller('main',
       $scope.cnc.time.end = new Date(
         $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration
       );
-      ipc.startArd({follow:false});
+      ipc.startArd({follow:false, steps:[0,0,0]});
     }else{ // pausa
       $scope.cnc.pause.status = false;
       $scope.cnc.steps = [0,0,0];
@@ -138,10 +140,7 @@ angular.controller('main',
       /*$scope.cnc.time.end = new Date(
         $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
       );*/
-      ipc.startArd({
-        follow : true,
-        steps: cnc.pause.steps//[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]
-      });
+      ipc.startArd({follow : true, steps: cnc.pause.steps });
     }
     $scope.progressBar = 'uk-active';
   }
