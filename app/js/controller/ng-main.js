@@ -91,22 +91,22 @@ angular.controller('main',
   }
   
   ipc.on('close-conex', (event,obj) => {
-    if(obj.type == 'none' && obj.data[0]==='0' && obj.data[1]==='0' && obj.data[2]==='0'){
-      console.log(obj.data.toString(),'-> Emit -->> Terminado <<--');
-      notify( 'Terminado: '+obj.data );
+    if(obj.type == 'none' && obj.steps[0]==='0' && obj.steps[1]==='0' && obj.steps[2]==='0'){
+      console.log(obj.steps.toString(),'-> Emit -->> Terminado <<--');
+      notify( 'Terminado: '+obj.steps );
       $scope.progressBar = 'uk-progress-success';
-  }else if(obj.type != 'none'){//Pause
-      console.log(obj.data,'Emit -->> indefinido <<--');
-      notify( 'Respuesta: '+obj.data );
+  }else if(obj.type != 'none'){
+      console.log(obj.steps,'Emit -->> indefinido <<--');
+      notify( 'Respuesta: '+obj.nro+' - '+obj.result );
       $scope.progressBar = 'uk-progress-success';
-    }else{
-      console.log(obj.data.line,obj.data.steps.toString(),'Emit -->> Pausado <<--');
-      notify( 'Pausado: '+obj.data.steps );
+    }else{//Pause
+      console.log(obj.line,obj.steps.toString(),'Emit -->> Pausado <<--');
+      notify( 'Pausado: '+obj.steps );
       $scope.progressBar = 'uk-progress-warning';
-      cnc.pause.line      =  obj.data.line ;
-      cnc.pause.steps[0]  =  obj.data.steps[0];
-      cnc.pause.steps[1]  =  obj.data.steps[1];
-      cnc.pause.steps[2]  =  obj.data.steps[2];
+      cnc.pause.line      =  obj.line ;
+      cnc.pause.steps[0]  =  obj.steps[0];
+      cnc.pause.steps[1]  =  obj.steps[1];
+      cnc.pause.steps[2]  =  obj.steps[2];
       cnc.pause.status    =  true;
       $scope.comando      =  cnc.pause.steps.toString();
     }
@@ -124,29 +124,26 @@ angular.controller('main',
   });
     
   $scope.start = () => {
-    if(cnc.file.line.total !== 0){
-      if(!cnc.pause.status){
-        $scope.lineTable = [];
-      }else{
-        $scope.cnc.pause.status = false;
-        $scope.cnc.steps = [0,0,0];
-        $scope.cnc.time.pause = '--:--'
-        $scope.cnc.time.end = new Date(
-          $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
-        );
-      }
+    if(!cnc.pause.status){
+      $scope.lineTable = [];
       $scope.cnc.time.start = new Date();
       $scope.cnc.time.end = new Date(
         $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration
       );
-      $scope.progressBar = 'uk-active';
-      ipc.startArd({line:0});
-    }else{
+      ipc.startArd({follow:false});
+    }else{ // pausa
+      $scope.cnc.pause.status = false;
+      $scope.cnc.steps = [0,0,0];
+      $scope.cnc.time.pause = '--:--'
+      /*$scope.cnc.time.end = new Date(
+        $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
+      );*/
       ipc.startArd({
-        line:'?',
-        steps:cnc.pause.steps[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]
+        follow : true,
+        steps: cnc.pause.steps//[0]+','+cnc.pause.steps[1]+','+cnc.pause.steps[2]
       });
     }
+    $scope.progressBar = 'uk-active';
   }
   
   var data = null, graph = null;
@@ -176,3 +173,6 @@ angular.controller('main',
   }drawVisualization();
     
 }]);
+// para marcar el recorido usar dos grupos
+// uno indica lo recorido y el otro lo que falta
+// cada linea procesas  cambiarla de grupo por medio del id

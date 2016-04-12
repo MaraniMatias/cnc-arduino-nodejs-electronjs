@@ -98,14 +98,14 @@ ipcMain.on('send-start', (event, arg) => {
   var id = powerSaveBlocker.start('prevent-app-suspension');
   console.log('prevent-app-suspension',powerSaveBlocker.isStarted(id));
   
-  CNC.start(arg.line, (data) => {
-    if( data.nro !== false ){
+  CNC.start(arg, (data) => {
+    if( data.lineRunning !== false ){
       // mainWindow.setProgressBar(0.7);
-      event.sender.send('add-line', { nro : data.nro , line : CNC.File.gcode[data.nro] });
-      console.log("I: %s - Ejes: %s - Result: %s", data.nro, CNC.File.gcode[data.nro].ejes , data.result );  
+      event.sender.send('add-line', { nro : data.lineRunning , line : CNC.File.gcode[data.lineRunning] });
+      console.log("I: %s - Ejes: %s - Result: %s", data.lineRunning, CNC.File.gcode[data.lineRunning].ejes , data.steps );  
     }else{
       powerSaveBlocker.stop(id);
-      event.sender.send('close-conex',{type: 'none', data : data.result});
+      event.sender.send('close-conex',{type: 'none', steps : data.steps});
       console.log("Finish.");
     }
   });
