@@ -7,8 +7,8 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "colors": "^1.1.2",
-    "electron-builder": "^2.7.1",
-    "electron-packager": "^5.2.1",
+    "electron-builder": "^2.11.0",
+    "electron-packager": "^6.0.2",
     "electron-prebuilt": "^0.37.5",
     "grunt": "^0.4.5",
     "grunt-contrib-jade": "^0.15.0",
@@ -50,4 +50,4 @@
     "express",
     "nodejs"
   ]
-}
+  }
