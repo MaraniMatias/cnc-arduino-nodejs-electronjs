@@ -8,7 +8,7 @@ block content
             p.uk-accordion-title {{cnc.file.name}}
             .uk-accordion-content
               .uk-grid
-                .uk-width-1-1
+                .uk-width-8-10
                   .uk-button-group
                     button.uk-button(ng-disabled=" !cnc.arduino || cnc.working || cnc.file.line.total == 0 && !cnc.pause.status" ng-click='start()')
                       i.uk-icon-play.uk-text-success
@@ -17,6 +17,8 @@ block content
                     button.uk-button(ng-disabled="!cnc.working && !cnc.pause.status" ng-click='parar()')
                       i.uk-icon-stop.uk-text-danger
                     button.uk-button(ng-disabled="cnc.working" ng-click="setFile()"  ) Archivo
+                .uk-width-2-10
+                  {{cnc.file.line.progress}}%
                 .uk-width-1-1.uk-margin
                   .uk-width-1-1
                     .uk-grid
