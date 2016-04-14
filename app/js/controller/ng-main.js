@@ -49,7 +49,6 @@ angular.controller('main',
     window.alert('No se recomienda pausar la ejecucion.')
     $scope.cnc.time.pause = new Date();
     if(ipc.sendArd('p'))   notify( 'Orden de pausa' , 'warning' );
-  
   }
   $scope.parar = () => {
     if(ipc.sendArd('0,0,0')){
@@ -67,18 +66,22 @@ angular.controller('main',
   var stepsmm = 'steps';
   $scope.inputStepsmm = '200';
   $scope.btnStepsmm = 'Pasos';
+  $scope.btnStepsmmClass = 'uk-active'
   $scope.setStepsmm = () => {
     if(stepsmm === 'steps'){
       stepsmm='mm';
       $scope.btnStepsmm = 'mm';
+      $scope.btnStepsmmClass = ''
     }else{
       stepsmm='steps';
       $scope.btnStepsmm = 'Pasos';
+      $scope.btnStepsmmClass = 'uk-active'
     }
+    
   };
   
   $scope.moverManual = (num,eje,sentido) => {
-    var cmd;
+    let cmd;
     switch (eje) {
       case "X": cmd = sentido+num+",0,0"    ; break;
       case "Y": cmd = "0,"+sentido+num+",0" ; break;
