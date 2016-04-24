@@ -11,12 +11,12 @@ angular.controller('main',
   
   ipc.send('arduino');
   ipc.on('arduino-res', (event, obj) => {
+//    config = obj.config;
     cnc.arduino = obj.type === 'success' ;
     notify( obj.msg, obj.type );
   });
   
   $scope.setFile = () => {
-    // marcar liading
     ipc.send('open-file');
   }
   ipc.on('open-file-res', (event, file) => {
@@ -139,10 +139,11 @@ angular.controller('main',
     }else{ // pausa
       $scope.cnc.pause.status = false;
       $scope.cnc.steps = [0,0,0];
-      $scope.cnc.time.pause = '--:--'
+      // saber cunato tiempo estuvo parado y sumar
       /*$scope.cnc.time.end = new Date(
         $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
       );*/
+      $scope.cnc.time.pause = '--:--'
       ipc.startArd({follow : true, steps: cnc.pause.steps });
     }
     $scope.progressBar = 'uk-active';
@@ -152,7 +153,7 @@ angular.controller('main',
   function drawVisualization(data) {
     if(exceeds_x) notify( 'El modelo se excede en X.', 'warning' );
     if(exceeds_y) notify( 'El modelo se excede en Y.', 'warning' );
-    
+
     if(data === undefined){
       data = new vis.DataSet();
       data.add({ x:0, y:0, z:0 });

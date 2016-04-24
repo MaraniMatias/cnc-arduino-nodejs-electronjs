@@ -1,6 +1,6 @@
 /* 
-  Please use Arduino 1.6.5 with versions 1.6.6 and 1.6.7 code behaves not expected.
-  Por favor utilice Arduino 1.6.5, para un correcto funcionamiento.
+  Please use IDE Arduino 1.6.5 with versions 1.6.6 and 1.6.7 code behaves not expected.
+  Por favor utilice el IDE Arduino 1.6.5, para un correcto funcionamiento.
   Author: Marani Matias Ezequiel
   Email: maranimatias@gmail.com
 */
@@ -11,35 +11,23 @@ const bool debug = false;       // Debug
 const int pinLED = 13,          // LED StatusLED indicator
           pinX[] = {0,1,3,2},   // Motor pin X
           pinY[] = {4,5,7,6},   // Motor pin Y
-          pinZ[] = {8,10,9,11}, // Motor pin Z
-          btnX=A5,              // Limit switches
-          btnY=A4,              // Limit switches
-          btnZ=A3;              // Limit switches
-const float _time = 10;         // Time between step // 5
+          pinZ[] = {8,10,9,11}; // Motor pin Z
+const float _time = 14;         // Time between step //~14
 // seting:END
 
-bool bStatusLED = true,     // StatusLED indicator var
-x=false,y=false,z=false;    // Variable indicating when in origin
+bool bStatusLED = true;     // StatusLED indicator var
 
-int bx,by,bz,     // Variable for limit switches, save StatusLED
-xyzp[] = {0,0,0}, // Steps to go
-xp=0,yp=0,zp=0,   // Save last step used
-
+int xyzp[] = {0,0,0}, // Steps to go
+xp=0,yp=0,zp=0,       // Save last step used
 _delayX=0,_delayY=0,rx=0,ry=0,
-addX=0,addY=0,_saveAddX=0,_saveAddY=0; // when the angles are different from 90° or 45°
-
-int i=0, inChar=0; String inString = "";
+addX=0,addY=0,_saveAddX=0,_saveAddY=0, // when the angles are different from 90° or 45°
+i=0, inChar=0; String inString = "";
 boolean start = false;
 
 void setup() {
   Serial.begin(9600);
   pinMode(pinLED,OUTPUT); // LED inicador
-  
-  //---limit switches:START
-  pinMode(btnX,INPUT);
-  pinMode(btnY,INPUT);
-  pinMode(btnZ,INPUT);
-  //---limit switches:END
+
   //---Motor:START
   pinMode(pinX[0],OUTPUT);
   pinMode(pinX[1],OUTPUT);
@@ -59,13 +47,15 @@ void setup() {
 }
 
 void loop() {
-  
   if(start){
 
     if(_delayX==0){
-      _delayX=rx;
-      _delayY>0?_delayY--:0;
-  
+      _delayX = rx;
+      if(_delayY > 0){
+        _delayY--;
+      }else{
+        _delayY = 0;
+      }
       if(0<xyzp[0]){ MoveX(0); }
       if(0>xyzp[0]){ MoveX(1); }
 
@@ -81,14 +71,17 @@ void loop() {
         }
       }
       //Insert X
-
+      
       if(ry==0){render();}
     }
   
     if(_delayY==0){
       _delayY=ry;
-      _delayX>0?_delayX--:0;
-      
+      if(_delayX > 0){
+        _delayX--;
+      }else{
+        _delayX = 0;
+      }
       if(0<xyzp[1]){ MoveY(0); }
       if(xyzp[1]<0){ MoveY(1); }
 
@@ -104,33 +97,28 @@ void loop() {
         }
       }
       //Insert Y
-
+      
       if(rx==0){render();}
     }
   
     if(0<xyzp[2]){ MoveZ(0); }
     if(xyzp[2]<0){ MoveZ(1); }
 
-    if(debug){
-      sendData();
-    }
+    if(debug){ sendData(); }
     
     if(xyzp[0]==0 && xyzp[1]==0 && xyzp[2]==0){
-      start=false;
+      start = false;
       sendData();
       digitalWrite(pinLED,LOW);
     }
 
   }
-  //else{analogWrite(13,5);}
 
   while(Serial.available() > 0){ 
     int inChar = Serial.read();
     if(inChar!=','){
-      //if (inChar == 'o' ) {x=true;y=true;z=true; TakeOrigin();}
-      if (inChar == 'p' ) {StopPause();}
-      //if (inChar == 'f' ) {/*cambiar la velocidad*/}
-      
+      if (inChar == 'p' ) { PauseStop(); }
+
       if(inChar=='-'){
         inString += "-";
       }
@@ -145,10 +133,8 @@ void loop() {
     if (inChar == '\n' || inChar == ';' ) {
       i=0;
       inString = "";
-      if(x==false||y==false||z==false){
-        render();
-        start=true;
-      }
+      render();
+      start=true;
     }
   }// leer entrada
 

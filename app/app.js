@@ -9,8 +9,8 @@ const dirBase         =  `file://${__dirname}/html/`,
       dialog          =  electron.dialog,
       Menu            =  electron.Menu,
       Tray            =  electron.Tray,
-      powerSaveBlocker = electron.powerSaveBlocker
-      //globalShortcut  =  electron.globalShortcut // para ctrl+
+      powerSaveBlocker = electron.powerSaveBlocker,
+      globalShortcut  =  electron.globalShortcut
 ;
 
 app.on('window-all-closed',  () => {
@@ -30,7 +30,7 @@ app.on('ready',  () => {
   //var appIcon = new Tray('./recursos/icon.png');
   //appIcon.setToolTip('This is my application.');
   //appIcon.setContextMenu(contextMenu);
-
+  
   mainWindow = new BrowserWindow({
     experimentalCanvasFeatures  :  true, // Default false
     disableAutoHideCursor  :  false, // Default false
@@ -63,9 +63,56 @@ app.on('ready',  () => {
   // Open the devtools.
   //mainWindow.openDevTools();
   //mainWindow.setProgressBar(0.7);
+function globalShortcutSendComand (cmd){
+  CNC.sendCommand( cmd , (dataReceived) => {
+    console.log(dataReceived);
+  });
+}
+globalShortcut.register('q', () => {
+  globalShortcutSendComand('0,0,-20');
+  console.log('q is pressed -Z');
+});
+globalShortcut.register('a', () => { 
+  globalShortcutSendComand('20,0,0');
+  console.log('a is pressed +X');
+});
+globalShortcut.register('w', () => { 
+  globalShortcutSendComand('0,20,0');
+  console.log('w is pressed +Y');
+});
+globalShortcut.register('s', () => {
+  globalShortcutSendComand('0,-20,0');
+  console.log('s is pressed -Y');
+});
+globalShortcut.register('e', () => {
+  globalShortcutSendComand('0,0,20');
+  console.log('e is pressed +Z');
+});
+globalShortcut.register('d', () => {
+  globalShortcutSendComand('-20,0,0');
+  console.log('d is pressed -X');
+});
+globalShortcut.register('Space', () => {
+  globalShortcutSendComand('0,0,0');
+  console.log('Space is pressed');
+});
+globalShortcut.register('Up', () => {
+  globalShortcutSendComand('0,20,0');
+  console.log('^ is pressed +Y');
+});
+globalShortcut.register('Down', () => {
+  globalShortcutSendComand('0,-20,0');
+  console.log('Down is pressed -Y');
+});
+globalShortcut.register('Left', () => {
+  globalShortcutSendComand('20,0,0');
+  console.log('< is pressed +X');
+});
+globalShortcut.register('Right', () => {
+  globalShortcutSendComand('-20,0,0');
+  console.log('> is pressed -X');
+});
 
-  //var ret = globalShortcut.register('ctrl+f', () => { console.log('ctrl+f is pressed'); });
-  //if (!ret)  console.log('registration failed: globalShortcut.register -> ctrl+f');
 });//ready
 
 ipcMain.on('arduino', (event, arg) => {

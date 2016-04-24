@@ -13,7 +13,7 @@ void MoveX(int sent){
       }else{
         xp=0;
       }
-    break;
+          break;
     case 0:
       StepX(xp);
       xyzp[0]--;
@@ -22,7 +22,7 @@ void MoveX(int sent){
       }else{
         xp=3;
       }
-    break;
+          break;
   }
 }
 void MoveY(int sent){
@@ -36,7 +36,7 @@ void MoveY(int sent){
       }else{
         yp=0;
       }
-    break;
+          break;
     case 1:
       StepY(yp);
       xyzp[1]++;
@@ -45,7 +45,7 @@ void MoveY(int sent){
       }else{
         yp=3;
       }
-    break;
+          break;
   }
 }
 void MoveZ(int sent){
@@ -59,7 +59,7 @@ void MoveZ(int sent){
       }else{
         zp=0;
       }
-    break;
+          break;
     case 0:
       StepZ(zp);
       xyzp[2]--;
@@ -68,7 +68,7 @@ void MoveZ(int sent){
       }else{
         zp=3;
       }
-    break;
+          break;
   }
 }
 void StepX(int i){
@@ -105,13 +105,16 @@ void StepY(int i){
 }
 void StepZ(int i){
   if(_time!=0){
-    //int j = 0;if(i!=3){j=i+1;}else{j=0;}
+    int j=0;
+    if(i!=3){ j=i+1; }else{ j=0; }
     digitalWrite(pinZ[i],HIGH);
-    //digitalWrite(pinZ[j],HIGH);
+    digitalWrite(pinZ[j],HIGH);
     delay(_time);
     digitalWrite(pinZ[i],LOW);
-    //digitalWrite(pinZ[j],LOW);
-    delay(_time);
+    digitalWrite(pinZ[j],LOW);
+    if(xyzp[0]==0){
+      delay(_time);
+    }
   }else{
     digitalWrite(pinZ[i],LOW);
   }

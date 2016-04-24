@@ -1,13 +1,9 @@
 void StatusLED(){
-  if(bStatusLED){
-    digitalWrite(pinLED,HIGH);
-  }else{
-    digitalWrite(pinLED,LOW);
-  }
+  digitalWrite(pinLED,bStatusLED  ? 1 : 0);
   bStatusLED = !bStatusLED;
 }
 
-void StopPause(){
+void PauseStop(){
   sendData();
   xyzp[0]=0;
   xyzp[1]=0;
@@ -18,30 +14,15 @@ void StopPause(){
   _saveAddY=0;
   start=false;
 }
+
 void sendData(){
+// if debug
   Serial.print(xyzp[0]);
   Serial.print(',');
   Serial.print(xyzp[1]);
   Serial.print(',');
   Serial.println(xyzp[2]);
 }
-/*
-void TakeOrigin(){
-  if(x==true||y==true||z==true){
-    bx = digitalRead(btnX);
-    by = digitalRead(btnY);
-    bz = digitalRead(btnZ);
-
-    if(bx == HIGH){x=false;}
-    if(by == HIGH){y=false;}
-    if(bz == HIGH){z=false;}
-
-    if(x){MoveX(1);}
-    if(y){MoveY(1);}
-    if(z){MoveZ(1);}
-  }
-}
-*/
 
 void render(){
   ry=0;
@@ -60,15 +41,15 @@ void render(){
       _delayX  = floor(auxY / auxX);
       int rta = auxY - auxX*_delayX;
       _saveAddY = floor(auxX*_delayX / rta);
-      addY = auxY -_saveAddY;
-      rx=_delayX;
+      addY = auxY - _saveAddY;
+      rx = _delayX;
     }else{
     // mayor X
       _delayY  = floor(auxX / auxY);
       int rta = auxX - auxY*_delayY;
       _saveAddX = floor(auxY*_delayY / rta);
       addX = auxX - _saveAddX;
-      ry=_delayY;
+      ry = _delayY;
     }
   }//auxX!=auxY
   

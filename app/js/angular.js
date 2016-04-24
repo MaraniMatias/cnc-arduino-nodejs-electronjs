@@ -38,12 +38,12 @@ angular
    "motor": {
     "xy": {
       "time": 24,
-      "steps": 10000,
-      "advance": 115.47
+      "steps": 4000,
+      "advance": 29.37
     },
     "z": {
       "steps": 2000,
-      "advance": 7.00
+      "advance": 14
     }
   }
 })

@@ -8,20 +8,17 @@ const
   util = require('util'),
   dirConfig = `${__dirname}/config.json`;
 ;
-var lineRunning = 0 , config = null;
+var lineRunning = 0;
 var Arduino = {
   port : { comName : '' , manufacturer : ''},
   reSet
 };
 
-function getMiliSeg ()  {
-  fs.readFile( dirConfig , "utf8", function (error, data) {
-    config = JSON.parse(data);
-    let steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
-    let time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
-    let advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
-    return steps * time / advance ;
-  });
+function getMiliSeg (config)  {
+  let steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
+  let time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
+  let advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
+  return steps * time / advance ;
 }
 
 var File = {
@@ -39,10 +36,14 @@ var arduino = {
   reSet : Arduino.reSet
 };
 
+
 function setFile ( dirfile , cb ) {
   if (dirfile){
-    fs.readFile( dirConfig , "utf8", function (error, data) {
-      let config = JSON.parse(data);
+    let fileRead = new Promise(function (resolve, reject){
+      fs.readFile( dirConfig , "utf8", function (error, data) {
+        resolve(JSON.parse(data));
+      });
+    }).then( (config) => {
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
       File.dir      = dirfile[0];
@@ -50,7 +51,7 @@ function setFile ( dirfile , cb ) {
       File.name     = dirfile[0].split('/')[dirfile[0].split('/').length-1];
       File.lines    = File.gcode.length;
       File.travel   = File.gcode[File.gcode.length-1].travel;
-      File.segTotal = File.gcode[File.gcode.length-1].travel * getMiliSeg();
+      File.segTotal = File.gcode[File.gcode.length-1].travel * getMiliSeg(config);
       cb(File);
     });
   }
@@ -106,6 +107,7 @@ function reSet () {
           }else{
             Arduino.port.close();
             resolve({
+//              config : {},
               type : 'success',
               msg  : 'Arduino detectado: ' + ports.slice(-1)[0].manufacturer
             });
@@ -124,7 +126,7 @@ function reSet () {
   })// promise
 }
      
-function getSteps (l,oldSteps) {
+function getSteps (l,oldSteps,config) {
   let a = l!==0 ? File.gcode[l-1].ejes : File.gcode[l].ejes;
   let x = [0,0,0];
   let b = File.gcode[l].ejes;
@@ -140,8 +142,7 @@ function start (arg,callback) {
     fs.readFile( dirConfig , "utf8", function (error, data) {
       resolve(JSON.parse(data));
     });
-  }).then( (data) => {
-    config = data;
+  }).then( (config) => {
     if( Arduino.port.comName !== '' ){
       if( Arduino.port.isOpen() ){ Arduino.port.close(); }
       if(Arduino.port.comName !== '' && File.gcode.length > 0){
@@ -150,7 +151,7 @@ function start (arg,callback) {
             console.log('It needs to be administrator.');
             console.log('sudo chmod 0777 /dev/'+Arduino.port.comName);
           } else {
-            Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps)+'\n'), (err,results) => {
+            Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps,config)+'\n'), (err,results) => {
               Arduino.port.drain( () => {
                 callback({ lineRunning, steps:'0,0,0' });
               })
@@ -160,7 +161,7 @@ function start (arg,callback) {
               let result = data.toString().split(',');
               lineRunning++;
               if(lineRunning < File.gcode.length){
-                Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps)+'\n'), (err,results) => {
+                Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps,config)+'\n'), (err,results) => {
                   Arduino.port.drain( () => { 
                     callback({ lineRunning , steps:result });
                   });
