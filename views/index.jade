@@ -39,16 +39,16 @@ block content
                   .uk-width-1-1.uk-grid
                     .uk-width-1-3
                       .uk-button-group
-                        button.uk-button.uk-button-primary(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+
-                        button.uk-button(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")' ) X-
+                        button.uk-button.uk-button-primary(data-uk-tooltip title="A" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+
+                        button.uk-button(data-uk-tooltip title="D" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")' ) X-
                     .uk-width-1-3
                       .uk-button-group
-                        button.uk-button.uk-button-success(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' ) Y+
-                        button.uk-button(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' ) Y-
+                        button.uk-button.uk-button-success(data-uk-tooltip title="W" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' ) Y+
+                        button.uk-button(data-uk-tooltip title="S" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' ) Y-
                     .uk-width-1-3
                       .uk-button-group
-                        button.uk-button.uk-button-danger(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
-                        button.uk-button(ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
+                        button.uk-button.uk-button-danger(data-uk-tooltip title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
+                        button.uk-button(data-uk-tooltip title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
         .uk-width-large-1-1.uk-width-small-1-1
             //.uk-overflow-container
             table.uk-table.uk-table-hover.uk-table-striped.uk-table-condensed
@@ -62,7 +62,6 @@ block content
               tbody
                 tr(data-uk-tooltip title="{{line.code}}" ng-repeat="line in lineTable" ng-class="line.type" )
                   td {{line.nro}}
-                  //td {{line.code}}
                   td(data-uk-tooltip title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
                   td(data-uk-tooltip title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
                   td(data-uk-tooltip title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}

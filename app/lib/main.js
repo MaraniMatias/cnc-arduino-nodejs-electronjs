@@ -36,7 +36,6 @@ var arduino = {
   reSet : Arduino.reSet
 };
 
-
 function setFile ( dirfile , cb ) {
   if (dirfile){
     let fileRead = new Promise(function (resolve, reject){
@@ -88,14 +87,11 @@ function sendCommand ( code , callback ){
 function reSet () {
   return new Promise(function (resolve, reject){
     serialPort.list( (err, ports) => {
+      //ports.forEach( (port) => { console.log(`ComName: ${port.comName}\nPnpId: ${port.pnpId}\nManufacturer: ${port.manufacturer}`);});
       if(ports && ports.length > 0){
         Arduino.port = new serialPort.SerialPort(ports.slice(-1)[0].comName,{
-          parser: serialPort.parsers.readline('\r\n'),
-          dataBits: 8, 
-          baudrate:9600,
-          parity: 'none',
-          stopBits: 1,
-          flowControl: false
+          parser: serialPort.parsers.readline('\r\n'), dataBits: 8,
+          baudrate:9600, parity: 'none', stopBits: 1, flowControl: false
         },false);// This does not initiate the connection.
         Arduino.port.open( (err) => {
           if(err){
@@ -103,6 +99,7 @@ function reSet () {
               type : 'warning',
               msg  : 'Arduino detectado: '+Arduino.port.manufacturer+'.\nNo puedo abrir la conexión.\nPrueba con permisos de administrador (root en linux).'
             });
+            console.log(`ComName: ${Arduino.port.comName}\nPnpId: ${Arduino.port.pnpId}\nManufacturer: ${Arduino.port.manufacturer}`);
             console.log('is err',err);
           }else{
             Arduino.port.close();

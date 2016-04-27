@@ -54,16 +54,16 @@ angular
     }
   }
 })
-/*.directive('popupTable', function () {
+/*
+.directive('popupElement', function () {
   return {
     link: function (scope, element, attrs) {
-      if(scope.line.steps !== undefined ){
-        element.popup({ 
-          title     : 'Pasos',
-          position : 'top center',
-          variation : 'inverted'
-        });
-      }
+      element.popup({ 
+        title    : 'My favorite dog',
+        content  : 'My favorite dog would l',
+        position : 'top center',
+        variation : 'inverted'
+      });
     }
   }
 })*/

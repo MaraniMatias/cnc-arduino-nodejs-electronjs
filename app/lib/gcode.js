@@ -31,7 +31,6 @@ function G0(prevState, nextState, command, args) {
         break;
       default:  
         throw new Error('error que no entiendo este argumento' + '<'+args[j]+'>')
-        break;    
     }
   }
   nextState.travel = travel;
@@ -120,7 +119,7 @@ function executeGCodes(gcodes) {
 //Parsing
 function removeInLineComment(line) {
   // elimina comentario en línea a partir de una línea de código
-  return line.replace(/\s*;.*$/, '');
+  return line.replace(/\s*\(.*$|\s*;.*$/, '');
 }
 
 function parseGCode(fileContent) {
