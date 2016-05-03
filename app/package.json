@@ -1,11 +1,12 @@
 {
-  "name": "CNC-ino",
-  "desktopName": "CNC-ino",
-  "version": "0.0.1",
+  "name": "cnc-ino",
+  "desktopName": "cnc-ino",
+"productName": "cnc-ino",
+  "version": "0.0.2",
   "description": "cnc realizado con nodejs electron serialport arduino",
   "main": "app.js",
   "dependencies": {
-    "serialport": "^2.0.2"
+    "serialport": "^3.0.1"
   },
   "scripts": {
     "postinstall": "bower install",
@@ -14,8 +15,8 @@
   "author": "Marani Matias Ezequiel",
   "email": "maranimatias@gmail.com",
   "engines": {
-    "node": "~5.5.0",
-    "npm": "~3.3.12"
+    "node": "~5.11.0",
+    "npm": "~3.8.6"
   },
   "license": "MIT",
   "repository": {

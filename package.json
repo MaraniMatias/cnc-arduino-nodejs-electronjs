@@ -7,8 +7,8 @@
     "chai": "^3.4.1",
     "colors": "^1.1.2",
     "electron-builder": "^2.11.0",
-    "electron-packager": "^6.0.2",
-    "electron-prebuilt": "^0.37.5",
+    "electron-packager": "^7.0.*",
+    "electron-prebuilt": "^0.37.*",
     "electron-rebuild": "^1.1.3",
     "grunt": "^0.4.5",
     "grunt-contrib-jade": "^0.15.0",
@@ -35,7 +35,7 @@
   "author": "Marani Matias Ezequiel",
   "email": "maranimatias@gmail.com",
   "engines": {
-    "node": "~5.5.0",
+    "node": "~5.11.0",
     "npm": "~3.3.12"
   },
   "license": "MIT",
@@ -49,5 +49,10 @@
     "electron",
     "express",
     "nodejs"
-  ]
+  ],
+"build":{
+"asar":false,
+  "productName":"CNC-ino"
+}
+
 }

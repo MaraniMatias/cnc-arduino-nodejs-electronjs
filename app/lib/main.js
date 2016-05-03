@@ -36,7 +36,7 @@ var arduino = {
   reSet : Arduino.reSet
 };
 
-function setFile ( dirfile , cb ) {
+function setFile ( dirfile ,initialLine, cb ) {
   if (dirfile){
     let fileRead = new Promise(function (resolve, reject){
       fs.readFile( dirConfig , "utf8", function (error, data) {
@@ -46,7 +46,7 @@ function setFile ( dirfile , cb ) {
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
       File.dir      = dirfile[0];
-      File.gcode    = gc(fs.readFileSync(dirfile[0]).toString());
+      File.gcode    = gc(fs.readFileSync(dirfile[0]).toString(),initialLine);
       File.name     = dirfile[0].split('/')[dirfile[0].split('/').length-1];
       File.lines    = File.gcode.length;
       File.travel   = File.gcode[File.gcode.length-1].travel;
@@ -87,38 +87,44 @@ function sendCommand ( code , callback ){
 function reSet () {
   return new Promise(function (resolve, reject){
     serialPort.list( (err, ports) => {
-      //ports.forEach( (port) => { console.log(`ComName: ${port.comName}\nPnpId: ${port.pnpId}\nManufacturer: ${port.manufacturer}`);});
-      if(ports && ports.length > 0){
-        Arduino.port = new serialPort.SerialPort(ports.slice(-1)[0].comName,{
-          parser: serialPort.parsers.readline('\r\n'), dataBits: 8,
-          baudrate:9600, parity: 'none', stopBits: 1, flowControl: false
-        },false);// This does not initiate the connection.
-        Arduino.port.open( (err) => {
-          if(err){
-            resolve({
-              type : 'warning',
-              msg  : 'Arduino detectado: '+Arduino.port.manufacturer+'.\nNo puedo abrir la conexión.\nPrueba con permisos de administrador (root en linux).'
-            });
-            console.log(`ComName: ${Arduino.port.comName}\nPnpId: ${Arduino.port.pnpId}\nManufacturer: ${Arduino.port.manufacturer}`);
-            console.log('is err',err);
-          }else{
-            Arduino.port.close();
-            resolve({
-//              config : {},
-              type : 'success',
-              msg  : 'Arduino detectado: ' + ports.slice(-1)[0].manufacturer
-            });
-            console.info('Puerto Selecionado %s',ports.slice(-1)[0].manufacturer);
-          }
-        });
-    }else{
-      Arduino.port = { comName : '' , manufacturer : ''};
-      resolve({
-       type : 'error',
-       msg  : 'No encontramos ardiono.'
-      });
-      console.warn('No Arduino.');
-      }
+      var comName = undefined;
+      ports.forEach( (port) => {
+        if(port.manufacturer !== undefined){
+          console.log(`ComName: ${port.comName}\nPnpId: ${port.pnpId}\nManufacturer: ${port.manufacturer}`);
+          comName = port.comName;
+        }
+      });// for
+      if(comName !== undefined){
+          Arduino.port = new serialPort.SerialPort(comName,{// ports.slice(-1)[0].comName;
+            parser: serialPort.parsers.readline('\r\n'), dataBits: 8,
+            baudrate:9600, parity: 'none', stopBits: 1, flowControl: false
+          },false);// This does not initiate the connection.
+          
+          Arduino.port.open( (err) => {
+            if(err){
+              resolve({
+                type : 'warning',
+                msg  : 'Arduino detectado: '+Arduino.port.manufacturer+'.\nNo puedo abrir la conexión.\nPrueba con permisos de administrador (root en linux).'
+              });
+              console.log(`ComName: ${Arduino.port.comName}\nPnpId: ${Arduino.port.pnpId}\nManufacturer: ${Arduino.port.manufacturer}`);
+              console.log('is err',err);
+            }else{
+              Arduino.port.close();
+              resolve({
+//                config : {},
+                type : 'success',
+                msg  : 'Arduino detectado: ' + Arduino.port.manufacturer
+              });
+              console.info('Puerto Selecionado %s',Arduino.port.manufacturer);
+            }
+          });// open port
+
+        }else{
+          Arduino.port = { comName : '' , manufacturer : ''};
+          resolve({ type : 'error', msg  : 'No encontramos ardiono.'});
+          console.warn('No Arduino.');
+        }
+        
     });
   })// promise
 }

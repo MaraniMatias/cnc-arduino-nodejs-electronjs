@@ -63,56 +63,27 @@ app.on('ready',  () => {
   // Open the devtools.
   //mainWindow.openDevTools();
   //mainWindow.setProgressBar(0.7);
-  function globalShortcutSendComand (cmd){
-    CNC.sendCommand( cmd , (dataReceived) => {
-      console.log(dataReceived);
-    });
-  }
-  globalShortcut.register('q', () => {
-    globalShortcutSendComand('0,0,-20');
-    console.log('q is pressed -Z');
+  
+  // ver como informar ala capa superior de que termino
+  mainWindow.on('blur',()=>{
+    globalShortcut.unregisterAll();
   });
-  globalShortcut.register('e', () => {
-    globalShortcutSendComand('0,0,20');
-    console.log('e is pressed +Z');
+  mainWindow.on('focus',()=>{
+    function globalShortcutSendComand (cmd){
+      CNC.sendCommand( cmd , (dataReceived) => { console.log(dataReceived); });
+    }
+    globalShortcut.register('q', () => { globalShortcutSendComand('0,0,5'); });
+    globalShortcut.register('e', () => { globalShortcutSendComand('0,0,-5'); });
+    globalShortcut.register('d', () => { globalShortcutSendComand('-5,0,0'); });
+    globalShortcut.register('a', () => { globalShortcutSendComand('5,0,0'); });
+    globalShortcut.register('w', () => { globalShortcutSendComand('0,-5,0'); });
+    globalShortcut.register('s', () => { globalShortcutSendComand('0,5,0'); });
+    globalShortcut.register('Space', () => { globalShortcutSendComand('0,0,0'); });
+    //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
+    //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
+    //globalShortcut.register('Left', () => { globalShortcutSendComand('10,0,0'); });
+    //globalShortcut.register('Right', () => { globalShortcutSendComand('-10,0,0'); });
   });
-  globalShortcut.register('d', () => {
-    globalShortcutSendComand('-20,0,0');
-    console.log('d is pressed -X');
-  });
-  globalShortcut.register('a', () => { 
-    globalShortcutSendComand('20,0,0');
-    console.log('a is pressed +X');
-  });
-  globalShortcut.register('w', () => { 
-    globalShortcutSendComand('0,20,0');
-    console.log('w is pressed +Y');
-  });
-  globalShortcut.register('s', () => {
-    globalShortcutSendComand('0,-20,0');
-    console.log('s is pressed -Y');
-  });
-  globalShortcut.register('Space', () => {
-    globalShortcutSendComand('0,0,0');
-    console.log('Space is pressed');
-  });
-  globalShortcut.register('Up', () => {
-    globalShortcutSendComand('0,20,0');
-    console.log('^ is pressed +Y');
-  });
-  globalShortcut.register('Down', () => {
-    globalShortcutSendComand('0,-20,0');
-    console.log('Down is pressed -Y');
-  });
-  globalShortcut.register('Left', () => {
-    globalShortcutSendComand('20,0,0');
-    console.log('< is pressed +X');
-  });
-  globalShortcut.register('Right', () => {
-    globalShortcutSendComand('-20,0,0');
-    console.log('> is pressed -X');
-  });
-
 });//ready
 
 ipcMain.on('arduino', (event, arg) => {
@@ -121,13 +92,14 @@ ipcMain.on('arduino', (event, arg) => {
   }) 
 });
 
-ipcMain.on('open-file',(event,arg) => {
+ipcMain.on('open-file',(event,initialLine) => {
+  if(!initialLine){ initialLine = [0,0,0]; }
   CNC.setFile(
     dialog.showOpenDialog({
       title : fileConfig.name,
       filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
       properties: [ 'openFile' ] 
-    }), (File) => {
+    }), initialLine , (File) => {
       event.sender.send('open-file-res', File);
     }
   )

@@ -12,7 +12,7 @@ coverage
 build/Release
 build/
 #.vscode/
-app/node_modules/
+#app/node_modules/
 node_modules/
 typings/
 app/components/
@@ -24,3 +24,4 @@ old/
 docs/
 g-code/jscut_svg2gcode/
 g-code/jscut_svg2gcode/bower_components/
+build-serialport/

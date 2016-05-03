@@ -80,8 +80,8 @@ Line.prototype.clone = function() {
 	return new Line(this.ejes.slice(),this.f,this.code,this.travel);
 }
 
-function inicializarLine(){
-	return new Line([0,0,0], 0, 'Linea inicial.',0)
+function inicializarLine(initialLine){
+	return new Line(initialLine, 0, 'Linea inicial.',0)
 }
 
 function nextLine(gcode, prevLine){
@@ -108,8 +108,8 @@ function removeUnimplemented(history){
 	return history
 }
 
-function executeGCodes(gcodes) {
-	var history = [ inicializarLine() ];
+function executeGCodes(gcodes,initialLine) {
+	var history = [ inicializarLine(initialLine) ];
 	for(var i=0; i<gcodes.length; ++i){
 		history.push(nextLine(gcodes[i], history[i]));
 	}
@@ -135,7 +135,7 @@ function parseGCode(fileContent) {
 	return gcode;
 }
 
-module.exports = (content) => {
-	var codigo =  executeGCodes(parseGCode(content));
+module.exports = (content,initialLine) => {
+	var codigo =  executeGCodes(parseGCode(content),initialLine);
   return removeUnimplemented(codigo);
 }

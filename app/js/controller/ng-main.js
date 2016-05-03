@@ -8,16 +8,21 @@ angular.controller('main',
   var exceeds_x = false, exceeds_y = false;
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
+  $scope.initialLine = '0,0,0';
   
   ipc.send('arduino');
   ipc.on('arduino-res', (event, obj) => {
-//    config = obj.config;
+    config = obj.config;
     cnc.arduino = obj.type === 'success' ;
     notify( obj.msg, obj.type );
   });
   
   $scope.setFile = () => {
-    ipc.send('open-file');
+    let arrayLine = $scope.initialLine.split(',');
+    arrayLine[0] = parseInt(arrayLine[0]);
+    arrayLine[1] = parseInt(arrayLine[1]);
+    arrayLine[2] = parseInt(arrayLine[2]);
+    ipc.send('open-file', arrayLine );
   }
   ipc.on('open-file-res', (event, file) => {
     if ( file.dir ){
@@ -133,16 +138,17 @@ angular.controller('main',
       $scope.lineTable = [];
       $scope.cnc.time.start = new Date();
       $scope.cnc.time.end = new Date(
-        $scope.cnc.time.start.getTime() + $scope.cnc.file.line.duration
+        new Date().getMilliseconds() + $scope.cnc.file.line.duration
       );
       ipc.startArd({follow:false, steps:[0,0,0]});
     }else{ // pausa
       $scope.cnc.pause.status = false;
       $scope.cnc.steps = [0,0,0];
       // saber cunato tiempo estuvo parado y sumar
-      /*$scope.cnc.time.end = new Date(
-        $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
-      );*/
+      $scope.cnc.time.end = new Date(
+        $scope.cnc.time.end.getMilliseconds() + $scope.cnc.time.pause.getTime()
+      );
+      //
       $scope.cnc.time.pause = '--:--'
       ipc.startArd({follow : true, steps: cnc.pause.steps });
     }
