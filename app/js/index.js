@@ -1,8 +1,5 @@
-/* global window */
-const electron     =  require('electron');
-const remote       =  electron.remote;
-const ipcRenderer  =  electron.ipcRenderer;
-const Menu         =  remote.require('menu');
+const {remote,ipcRenderer} = require('electron');
+const {Menu, MenuItem} = remote;
 const mainMenu     =  require('./../lib/menuMain.js');
 const contextMenu  =  require('./../lib/menuContext.js');
 

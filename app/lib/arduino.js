@@ -1,3 +1,4 @@
+// const {serialPort} = require('serialPort');
 const
   serialPort = require('serialport')
 ;

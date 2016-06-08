@@ -22,10 +22,6 @@ app.on('window-all-closed',  () => {
 var mainWindow  = null;
 var prefsWindow = null;
 
-// to not display the default menu to start
-var menu = Menu.buildFromTemplate( [] );
-Menu.setApplicationMenu(menu);
-
 app.on('ready',  () => {
   //var appIcon = new Tray('./recursos/icon.png');
   //appIcon.setToolTip('This is my application.');

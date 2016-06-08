@@ -1,24 +1,27 @@
 {
   "name": "cnc-ino",
   "desktopName": "cnc-ino",
-"productName": "cnc-ino",
+  "productName": "cnc-ino",
   "version": "0.0.2",
   "description": "cnc realizado con nodejs electron serialport arduino",
   "main": "app.js",
   "dependencies": {
-    "serialport": "^3.0.1"
+    "serialport": "^3.1.*"
   },
   "scripts": {
     "postinstall": "bower install",
-    "start": "electron ."
+    "start": "../node_modules/.bin/electron ."
   },
-  "author": "Marani Matias Ezequiel",
-  "email": "maranimatias@gmail.com",
+  "author":{
+    "name": "Marani Matias Ezequiel",
+    "email": "maranimatias@gmail.com"
+  },
   "engines": {
-    "node": "~5.11.0",
-    "npm": "~3.8.6"
+    "node": "~6.2.0",
+    "npm": "~3.8.9"
   },
   "license": "MIT",
+  "private":false,
   "repository": {
     "type": "git",
     "url": "https://github.com/MaraniMatias/router-cnc-nodejs-arduino"

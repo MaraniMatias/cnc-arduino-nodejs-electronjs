@@ -4,8 +4,6 @@ const
   fs = require('fs'),
   gc = require("./gcode"),
   serialPort = require('serialport'),
-  EventEmitter = require('events'),
-  util = require('util'),
   dirConfig = `${__dirname}/config.json`;
 ;
 var lineRunning = 0;

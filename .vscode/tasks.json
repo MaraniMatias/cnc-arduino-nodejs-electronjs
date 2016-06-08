@@ -28,8 +28,8 @@
   "isShellCommand": true, 
   "args": [], 
   "tasks": [     { 
-      "taskName": "einstaller:all", 
-      "isTestCommand": true,
+      "taskName": "erun", 
+      "isTestCommand": false,
       "showOutput": "always",
       "args": []
     },

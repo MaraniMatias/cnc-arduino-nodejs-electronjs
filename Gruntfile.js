@@ -1,57 +1,25 @@
 const
-  dirConfig     = './task-builder-config.json', 
-  fs            = require('fs'),
-  os            = require('os'),
-  childProcess  = require('child_process'), 
-  filePackage   = require('./app/package.json'),
-  fileConfig    = require(dirConfig)
+  appPath = './app',
+  
+  electronPath = './node_modules/.bin/electron',
+  appPackage   = appPath+'/package.json'
 ;
 module.exports = (grunt) => {
   require('load-grunt-tasks')(grunt);
   
-  grunt.registerTask('fileConfig <- filePackage', 'List of commands.', () => {
-
+  grunt.registerTask('epack', 'Runig electron-packager.', () => {
+    try {
+      const platform = 'all', arch = 'all', overwrite = true, 
+            pck =  grunt.file.readJSON(appPackage),
+            icon = appPath+'./recursos/icon';
+            
+    } catch (error) {
+      grunt.log.error(error);
+    }
   });
   
   grunt.initConfig({
-    eplus  :  {
-      run : { 
-        options : {
-          appPath  :  './app' // default '.'
-        }
-      },
-      debug : { 
-        options : {
-          appPath  :  './app',  // default '.'
-          debug : true,  // default false
-          port  :  5858  // default 5858
-        }
-      }
-    },
-    ebuild : { // electron-packager
-      default:{
-        options: {
-          //overwrite : true,     // default true
-          //platform  : 'all',    // default all
-          //arch      : 'all',    // default all
-          //version   : '0.36.7', // default auto set
-          //name    : 'Titule Electron app', // default (options.dir+'/packeger.json').name
-          icon      : './app/recursos/icon', //according to auto detect platform extension.
-          dir       : './app',   // default ./app
-          out       : './build'  // default ./build
-        }
-      },
-      custom:{
-        options: (platform,arch) => {
-          return {
-            platform,
-            arch,
-            icon      : './app/recursos/icon'  // according to auto detect platform extension
-          }
-        }
-      }
-    },// ebuild
-    einstaller  :  { // electron-bulider 
+    /*einstaller  :  { // electron-bulider 
       options  :   {
         //platform  :  'all', // default all // win, osx, linux
         //arch      :  'all', // default all // ia32, am64, all
@@ -60,25 +28,7 @@ module.exports = (grunt) => {
         config    :   './task-builder-config.json', // default ./app/builder.json
         buildPath   :  './build', // default ./build
         out       :  './build/instaler'  // default ./dist
-      },
-      winall  : {
-        options  :  {
-          platform  :  'win'
-        }
-      },
-      linuxall  : {
-        options  :  {
-          platform  :  'linux'
-        }
-      },
-      osx:{ // Only with mac os machine.
-        options: {
-          platform: 'osx',
-          arch : 'x64'
-          //appPath   :  './CNC-ino-darwin-x64',
-        }
-      }
-    },   // einstaller
+    }}*/
     /*
     zip: {
       linuxx64: {
@@ -91,6 +41,10 @@ module.exports = (grunt) => {
       }
     },
     */
+    shell: {
+      erun : { command : `${electronPath} ${appPath}` },
+      dist: { command : 'npm run dist'}
+    },
     jshint: {
       all: ['Gruntfile.js','./app/lib/**/*.js','./app/js/**/*.js', 'tests/**/*.js'],
       options: {
@@ -142,44 +96,9 @@ module.exports = (grunt) => {
     watch: {
       files: ['<%= jshint.files %>','./views/**/*','./app/js/**/*','./app/lib/**/*'],
       tasks: ['jshint','jade']
-    }/*,
-    'electron-debian-installer': {
-      options: {
-        productName: fileConfig.app.name,
-        productDescription: 'package.json.des',
-        section: 'devel',
-        priority: 'package.json.propiedad',
-        lintianOverrides: [],
-        categories: ['Utility'],
-        rename: function (dest, src) {
-          return dest + fileConfig.app.name+'_<%= version %>-<%= revision %>_<%= arch %>.deb';
-        }
-      },
-      linuxia32: {
-        options: { arch: 'i386'},
-        src: './build/'+fileConfig.app.name+'-linux-ia32',
-        dest: './build/ins/'
-      },
-      linuxx64: {
-        options: { arch: 'amd64'},
-        src: './build/'+fileConfig.app.name+'-linux-x64',
-        dest: './build/ins/'
-      }
-    }*/
+    }
   });
-  grunt.loadNpmTasks('grunt-electron-packager-builder');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-jade');
-  grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-docco-plus');
-  //grunt.loadNpmTasks('grunt-zip');
-  //grunt.loadNpmTasks('grunt-electron-debian-installer');
-    
-  grunt.registerTask('default', ['jshint','jade',
-  'mochaTest',
-  'docco-plus',
-  'eplus:run'
-  ]);
-
+  
+  grunt.registerTask('default', ['jshint','jade','mochaTest','docco-plus','erun']);
+  grunt.registerTask('run', ['jade','shell:erun' ]);
 };
