@@ -53,7 +53,10 @@ function setFile ( dirfile ,initialLine, cb ) {
     });
   }
 }
-
+/**
+ * @param  {String} code '0,0,0' or p or any
+ * @param  {function} callback
+ */
 function sendCommand ( code , callback ){
   if(debug) console.log(`${__filename}\n sendCommand, code: ${code}`);
   if( Arduino.port.comName !== '' ){

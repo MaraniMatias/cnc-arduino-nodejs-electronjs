@@ -1,19 +1,18 @@
-var menu = [
-  { // 0
+module.exports = [
+  {
     label: 'Archivo',
     submenu: [
-      /*{
-        label:'Nuevo',
-        accelerator: 'CmdOrCtrl+N',
-        click: () => { 
-          ipcRenderer.send('file-new');
-        }
-      },*/
       {
         label:'Abrir G-Code...',
         accelerator: 'CmdOrCtrl+F',
         click: () => { 
           ipcRenderer.send('open-file');
+        }
+      },
+      {
+        label: 'Conectar Arduino',
+        click : (item, focusedWindow) => {
+          ipcRenderer.send('arduino');
         }
       },
       {
@@ -25,57 +24,15 @@ var menu = [
       {
         type: 'separator'
       },
-      /*{
-        label: 'Cerrar',
-        accelerator: 'CmdOrCtrl+Q',
-        role: 'close'
-      },*/
       {
         label: 'Salir',
-        accelerator: 'CmdOrCtrl+Q',
         role: 'close'
       }
-    ]
-  },// 0
-  { // 1
-    label: 'Arduino',
-    submenu: [
-      {
-        label: 'Auto-Conectar',
-        click : (item, focusedWindow) => {
-          ipcRenderer.send('arduino');
-        }
-      },
-      {
-        type: 'separator'
-      }/*,
-      {
-        label: 'Comenzar',
-        click : (item, focusedWindow) => {
-          ipcRenderer.send('');
-        }
-      },
-      {
-        label: 'Pausa',
-        click : (item, focusedWindow) => {
-          ipcRenderer.send('');
-        }
-      },
-      {
-        label: 'Parar',
-        click : (item, focusedWindow) => {
-          ipcRenderer.send('');
-        }
-      },
-      {
-        type: 'separator'
-      }*/
     ]
   },
   {
     label: 'Ayuda',
     submenu: [
-      //{ label: 'MenuItem2', type: 'checkbox', checked: true },
       {
         label: 'Recargar Ventana',
         accelerator: 'CmdOrCtrl+R',
@@ -118,19 +75,3 @@ var menu = [
     ]
   }
 ];
-
-module.exports = {
-  menu,
-  addArduino : (ports) => {
-    ports.forEach( port => {
-      menu[1].submenu.push({
-        label: port.manufacturer,
-        click: (item, focusedWindow) => {
-          ipcRenderer.send('setArduino',port.comName);
-        }
-      });
-    });
-  }
-};
-
-// pedir automaticamente los arduinos :D

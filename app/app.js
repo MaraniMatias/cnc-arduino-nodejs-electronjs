@@ -50,6 +50,8 @@ app.on('ready',  () => {
   mainWindow.loadURL(dirBase+'index.html');
   //mainWindow.on('page-title-updated',  () => { console.log('title'); });
   mainWindow.on('closed',  () => {
+    globalShortcut.unregisterAll();
+    CNC.sendCommand('0,0,0');
     mainWindow = null;
     if (process.platform != 'darwin') {
       app.quit();
@@ -126,7 +128,7 @@ ipcMain.on('send-start', (event, arg) => {
 });
 
 ipcMain.on('about', (event, arg) => {
-  var chosen = dialog.showMessageBox( mainWindow, {
+  let chosen = dialog.showMessageBox( mainWindow, {
     cancelId  :  0,
     type     :  'info',
     title    :  'Acerca De',

@@ -30,7 +30,10 @@ angular
   time:{
     pause:'--:--',
     start:'--:--',
-    end:'--:--'
+    end:'--:--',
+    calcEnd : function () {
+      // this = cnc
+    }
   }
 })
 .value('lineTable', [])

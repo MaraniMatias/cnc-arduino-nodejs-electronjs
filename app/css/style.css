@@ -1,7 +1,6 @@
-
 body {
   /*background-color: #F5F5F5;*/
-  font: 16px 'arial';
+  font: 16px 'Arial, Helvetica, sans-serif';
   -moz-user-select: none;
   -webkit-user-select: none;
 }
@@ -11,44 +10,3 @@ body {
 .uk-modal-header {
     padding: 10px 20px 10px 20px;
 }
-
-/*
-.btn-file {
-  position: relative;
-  overflow: hidden;
-}
-.btn-file input[type=file] {
-  position: absolute;
-  top: 0;
-  right: 0;
-  min-width: 100%;
-  min-height: 100%;
-  text-align: right;
-  filter: alpha(opacity=0);
-  opacity: 0;
-  background: red;
-  cursor: inherit;
-  display: block;
-}
-input[readonly] {
-  background-color: white !important;
-  cursor: text !important;
-}
-.ui.grid > .row {
-    padding: 0.7rem;
-}
-.ui.container {
-  width: 100%;
-  display: block;
-  max-width: 94% !important;
-}
-.ui.menu{
-  border-radius:0;
-}
-.ui.table:not(.unstackable) tbody,
-.ui.table:not(.unstackable) tr,
-.ui.table:not(.unstackable) tr > th,
-.ui.table:not(.unstackable) tr > td {
-  width: auto !important;
-  display: grid !important;
-}*/

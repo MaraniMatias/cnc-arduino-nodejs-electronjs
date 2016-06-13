@@ -130,23 +130,24 @@ angular.controller('main',
     if(data.nro && data.line.travel){
       $scope.cnc.file.Progress(data.nro,data.line.travel);
       $('title').text('CNC-ino - '+$scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
+      let time = new Date().getTime() - $scope.cnc.time.start.getTime();
+      let mileSecondsLeft =  $scope.cnc.file.line.total * time / $scope.cnc.file.line.run;
+      $scope.cnc.time.end = new Date( $scope.cnc.time.start.getTime() + mileSecondsLeft );
     }
   });
-    
+
   $scope.start = () => {
     if(!cnc.pause.status){
       $scope.lineTable = [];
       $scope.cnc.time.start = new Date();
-      $scope.cnc.time.end = new Date(
-        new Date().getMilliseconds() + $scope.cnc.file.line.duration
-      );
+      $scope.cnc.time.end = new Date( new Date().getTime() + $scope.cnc.file.line.duration );
       ipc.startArd({follow:false, steps:[0,0,0]});
     }else{ // pausa
       $scope.cnc.pause.status = false;
       $scope.cnc.steps = [0,0,0];
       // saber cunato tiempo estuvo parado y sumar
       $scope.cnc.time.end = new Date(
-        $scope.cnc.time.end.getMilliseconds() + $scope.cnc.time.pause.getTime()
+        $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
       );
       //
       $scope.cnc.time.pause = '--:--'
@@ -185,3 +186,4 @@ angular.controller('main',
 // para marcar el recorido usar dos grupos
 // uno indica lo recorido y el otro lo que falta
 // cada linea procesas  cambiarla de grupo por medio del id
+
