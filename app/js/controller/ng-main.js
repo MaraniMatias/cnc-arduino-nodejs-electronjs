@@ -2,8 +2,8 @@
 /* global $ */
 /* global vis */
 angular.controller('main',
-[ 'notify','ipc','cnc','$scope','lineTable','config','line',
-( notify,ipc,cnc,$scope,lineTable,config,line) => {
+[ 'notify','ipc','cnc','$scope','lineTable','config','line','$window',
+( notify,ipc,cnc,$scope,lineTable,config,line,$window) => {
 'use strict'
   var exceeds_x = false, exceeds_y = false;
   $scope.cnc = cnc;
@@ -167,8 +167,8 @@ angular.controller('main',
     }
     // specify options
     var options = {
-      width:  '660px',
-      height: '600px',
+      width: '100%',
+      height: '100%',
       style: 'line',
       showPerspective: false,
       showGrid: true,

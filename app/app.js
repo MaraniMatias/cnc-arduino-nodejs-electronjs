@@ -12,6 +12,9 @@ const dirBase         =  `file://${__dirname}/html/`,
       powerSaveBlocker = electron.powerSaveBlocker,
       globalShortcut  =  electron.globalShortcut
 ;
+app.setName('CNC-ino');
+// to not display the default menu to start
+Menu.setApplicationMenu(Menu.buildFromTemplate( [] ));
 
 app.on('window-all-closed',  () => {
   if (process.platform !== 'darwin') {
@@ -41,10 +44,12 @@ app.on('ready',  () => {
     //webPreferences 
     //icon       :  appIcon,
     center     :  true,
-    minWidth   :  960, 
-    minHeight  :  600,
-    maxWidth   :  960, 
-    maxHeight  :  600,
+    minWidth   :  600, 
+    minHeight  :  500,
+    //maxWidth   :  960, 
+    //maxHeight  :  600,
+    width: 800, 
+    height: 600,
     title      :  fileConfig.name
   });
   mainWindow.loadURL(dirBase+'index.html');

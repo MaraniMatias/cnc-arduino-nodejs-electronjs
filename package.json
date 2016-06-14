@@ -25,14 +25,13 @@
     "zombie": "^4.2.*"
   },
   "scripts": {
+    "rebuild" :"cd ./app/node_modules/serialport ; node-gyp rebuild --target=1.2.2 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "start": "./node_modules/.bin/electron ./app",
     "test": "mocha ./tests/**/*.js",
     "dist": "build",
-    "clean": "rm -rf ./build",
-    "clean:osx": "rm -rf ./build/osx",
-    "clean:win": "rm -rf ./build/win"
+    "runwin": "grunt runwin"
   },
-  "author":{
+  "author": {
     "name": "Marani Matias Ezequiel",
     "email": "maranimatias@gmail.com"
   },
@@ -85,9 +84,9 @@
     },
     "linux": {
       "description": "cnc realizado con nodejs electron serialport arduino.",
-      "synopsis":"Arduino + NodeJS + AngularJS + SerialPort",
+      "synopsis": "Arduino + NodeJS + AngularJS + SerialPort",
       "executable": "CNC-ino",
-      "target":"deb",
+      "target": "deb",
       "compression": "xz"
     }
   }

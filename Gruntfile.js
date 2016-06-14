@@ -1,6 +1,5 @@
 const
   appPath = './app',
-  
   electronPath = './node_modules/.bin/electron',
   appPackage   = appPath+'/package.json'
 ;
@@ -42,6 +41,7 @@ module.exports = (grunt) => {
     },
     */
     shell: {
+      erunwin : { command : 'electron .\\app' },
       erun : { command : `${electronPath} ${appPath}` },
       dist: { command : 'npm run dist'}
     },
@@ -101,4 +101,6 @@ module.exports = (grunt) => {
   
   grunt.registerTask('default', ['jshint','jade','mochaTest','docco-plus','erun']);
   grunt.registerTask('run', ['jade','shell:erun' ]);
+  grunt.registerTask('runwin', ['jade','shell:erunwin' ]);
+  
 };

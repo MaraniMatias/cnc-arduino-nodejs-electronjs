@@ -1,169 +1,203 @@
 extends ./layout
 block content
-  .uk-grid.uk-grid-small(ng-controller="main")
-    .uk-width-large-3-10.uk-width-small-1-1
-      .uk-grid
-        .uk-width-large-1-1.uk-width-small-1-2
-          .uk-accordion(data-uk-accordion='{collapse: true}')
-            .uk-accordion-title {{cnc.file.name}}
-            .uk-accordion-content
-              form.uk-form.uk-grid
-                .uk-width-7-10
-                  .uk-button-group
-                    button.uk-button(ng-disabled=" !cnc.arduino || cnc.working || cnc.file.line.total == 0 && !cnc.pause.status" ng-click='start()')
-                      i.uk-icon-play.uk-text-success
-                    button.uk-button(ng-disabled="!cnc.working"  ng-click='pausa()')
-                      i.uk-icon-pause
-                    button.uk-button(ng-disabled="!cnc.working && !cnc.pause.status" ng-click='parar()')
-                      i.uk-icon-stop.uk-text-danger
-                    button.uk-button(ng-disabled="cnc.working" ng-click="setFile()"  ) Archivo
-                .uk-width-3-10
-                  input( ng-model='initialLine' type='text' )
-                .uk-width-1-1.uk-margin
-                  .uk-width-1-1
-                    .uk-grid
-                      .uk-width-2-10(data-uk-tooltip title="Hora de inicio: {{cnc.time.start | date:'HH:mm'}}")  {{cnc.time.start | date:'HH:mm'}}
-                      .uk-width-6-10
-                        .uk-progress.uk-progress-striped(ng-class='progressBar')
-                          .uk-progress-bar( style="transition-duration: 1000ms; width:{{cnc.file.line.progress}}%;'" )
-                      .uk-width-2-10(data-uk-tooltip title="Hora de fin: {{cnc.time.end | date:'HH:mm'}}") {{cnc.time.end | date:'HH:mm'}}
-                  .uk-width-1-1.uk-text-center.uk-margin {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
-            .uk-accordion-title Control manual
-            .uk-accordion-content
-              form.uk-form
-                .uk-grid
-                  .uk-width-1-1
-                    input.uk-width-7-10(placeholder='Enviar comando.' ng-model='comando' type='text' ng-value='')
-                    button.uk-width-3-10.uk-button.uk-button-primary(ng-disabled="!cnc.arduino || cnc.working || comando.length==0" type="submit",ng-click='enviarDatos(comando)') Enviar
+  div(ng-controller="main")
+    .ui.segment.graph( style='height: 100%; position: absolute;width: 100%;')
+      #mygraph
+      .ui.left.internal.attached.rail.graph
+        .ui.segment.mini.center.aligned
+          .ui.bottom.attached.indicating.progress( ng-class='progressBar' data-percent='{{cnc.file.line.progress}}' )
+            .bar(style='transition-duration: 300ms; width: {{cnc.file.line.progress}}%;')  
+          //label.ui.top.attached.label {{cnc.file.name}}
+          .ui.one.column.grid
+            .column
+              .ui.two.column.grid
+                .column
+                  .ui.icon.buttons.mini
+                    button.ui.button(ng-disabled=" !cnc.arduino || cnc.working || cnc.file.line.total == 0 && !cnc.pause.status" ng-click='start()')
+                      i.play.icon.green
+                    button.ui.button(ng-disabled="!cnc.working"  ng-click='pausa()')
+                      i.pause.icon.blue
+                    button.ui.button(ng-disabled="!cnc.working && !cnc.pause.status" ng-click='parar()')
+                      i.stop.icon.red
+                    button.ui.button(ng-disabled="cnc.working" ng-click="setFile()"  ) Archivo
+                .column
+                  .ui.input.mini(style='width:5rem;')
+                    input( ng-model='initialLine' type='text' )
+            .ui.two.column.grid
+              .column(style="padding: 0px 0px 0px 0px;") Inicio: {{cnc.time.start | date:'HH:mm'}}
+              .column(style="padding: 0px 0px 0px 0px;") Fin: {{cnc.time.end | date:'HH:mm'}}
+            .ui.two.column.grid(style='margin-top: 5px;')
+              .column(style="padding: 0px 0px 0px 0px;") {{cnc.file.line.run}} de {{cnc.file.line.total}}
+              .column(style="padding: 0px 0px 0px 0px;") {{cnc.file.line.progress}}%
+      .ui.right.internal.attached.rail.graph
+        .ui.segment
+          .ui.equal.width.grid
+            .column
+              p ffs
+            .column
+              p ffs
+            .column
+              p ffs
+            .equal.width.row
+              .column
+                p ffs
+              .column
+                p ffs
+    #statusbar.statusbar(style="top:578px")
+      p  No Archivo
+    //.uk-grid.uk-grid-small
+      .uk-width-large-3-10.uk-width-small-1-1
+        .uk-grid
+          .uk-width-large-1-1.uk-width-small-1-2
+            .uk-accordion(data-uk-accordion='{collapse: true}')
+              .uk-accordion-title {{cnc.file.name}}
+              .uk-accordion-content
                   .uk-width-1-1.uk-margin
-                    input.uk-width-5-10( ng-model='inputStepsmm' type='text' )
-                    button.uk-width-5-10.uk-button.uk-width-1-1(ng-class='btnStepsmmClass' ng-click='setStepsmm()' ) {{btnStepsmm}}
-                  .uk-width-1-1.uk-grid
-                    .uk-width-1-3
-                      .uk-button-group
-                        button.uk-button.uk-button-primary(data-uk-tooltip title="A" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+
-                        button.uk-button(data-uk-tooltip title="D" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")' ) X-
-                    .uk-width-1-3
-                      .uk-button-group
-                        button.uk-button.uk-button-success(data-uk-tooltip title="W" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' ) Y+
-                        button.uk-button(data-uk-tooltip title="S" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' ) Y-
-                    .uk-width-1-3
-                      .uk-button-group
-                        button.uk-button.uk-button-danger(data-uk-tooltip title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
-                        button.uk-button(data-uk-tooltip title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
-        .uk-width-large-1-1.uk-width-small-1-1
-            //.uk-overflow-container
-            table.uk-table.uk-table-hover.uk-table-striped.uk-table-condensed
-              thead
-                tr
-                  th linea
-                  //th G-Code
-                  th X
-                  th Y
-                  th Z
-              tbody
-                tr(data-uk-tooltip title="{{line.code}}" ng-repeat="line in lineTable" ng-class="line.type" )
-                  td {{line.nro}}
-                  td(data-uk-tooltip title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
-                  td(data-uk-tooltip title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
-                  td(data-uk-tooltip title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
-    #mygraph.uk-width-large-7-10.uk-hidden-small(style='position: relative; overflow: hidden; cursor: auto;')
-      canvas(style='position: relative; width: 100%; height: 100%;')
-  .modal.uk-modal(ng-controller="prefs")
-    .uk-modal-dialog
-      button.uk-modal-close.uk-close(type='button')
-      //.uk-modal-header
-        .uk-text-bold Prefereincias
-      .ui.pointing.secondary.menu
-        a.item.active(data-tab='motorx') Motor X
-        a.item(data-tab='motory') Motor Y
-        a.item(data-tab='motorz') Motor Z
-        a.item(data-tab='generales') Generales
-      .ui.tab.segment.active(data-tab='motorx')
-        form.uk-form.uk-grid
-          .uk-form-row
-            .ui.checkbox
-              input(checkbox type="checkbox" ng-model="configModal.motor.x.sense")
-              label Sentido Invertido.
-          .uk-form-row
-            p Milimetros por pasos.
-              .uk-form-controls
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.advance" type="number")
-                label mm. 
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.steps" type="number")
-                label pasos. 
-            p Velocidad mm/min.
-              .uk-form-controls(disabled)
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.speed.working" type="number")
-                  label de Trabajo.
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.speed.idle" type="number")
-                  label en Vasio.
-          .uk-form-row
-            p Sacar de mm/min y el avance {{configModal.motor.x.time}}
-      .ui.tab.segment(data-tab='motory')
-        form.uk-form
-          .uk-form-row.uk-grid
-            .uk-width-1-2
+                    .uk-width-1-1
+                      .uk-grid
+                        .uk-width-2-10(data-uk-tooltip title="Hora de inicio: {{cnc.time.start | date:'HH:mm'}}")  {{cnc.time.start | date:'HH:mm'}}
+                        .uk-width-6-10
+                          .uk-progress.uk-progress-striped(ng-class='progressBar')
+                            .uk-progress-bar( style="transition-duration: 1000ms; width:{{cnc.file.line.progress}}%;'" )
+                        .uk-width-2-10(data-uk-tooltip title="Hora de fin: {{cnc.time.end | date:'HH:mm'}}") {{cnc.time.end | date:'HH:mm'}}
+                    .uk-width-1-1.uk-text-center.uk-margin {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
+              
+              .uk-accordion-title Control manual
+              .uk-accordion-content
+                form.uk-form
+                  .uk-grid
+                    .uk-width-1-1
+                      input.uk-width-7-10(placeholder='Enviar comando.' ng-model='comando' type='text' ng-value='')
+                      button.uk-width-3-10.uk-button.uk-button-primary(ng-disabled="!cnc.arduino || cnc.working || comando.length==0" type="submit",ng-click='enviarDatos(comando)') Enviar
+                    .uk-width-1-1.uk-margin
+                      input.uk-width-5-10( ng-model='inputStepsmm' type='text' )
+                      button.uk-width-5-10.uk-button.uk-width-1-1(ng-class='btnStepsmmClass' ng-click='setStepsmm()' ) {{btnStepsmm}}
+                    .uk-width-1-1.uk-grid
+                      .uk-width-1-3
+                        .uk-button-group
+                          button.uk-button.uk-button-primary(data-uk-tooltip title="A" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+
+                          button.uk-button(data-uk-tooltip title="D" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")' ) X-
+                      .uk-width-1-3
+                        .uk-button-group
+                          button.uk-button.uk-button-success(data-uk-tooltip title="W" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' ) Y+
+                          button.uk-button(data-uk-tooltip title="S" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' ) Y-
+                      .uk-width-1-3
+                        .uk-button-group
+                          button.uk-button.uk-button-danger(data-uk-tooltip title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
+                          button.uk-button(data-uk-tooltip title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
+          .uk-width-large-1-1.uk-width-small-1-1
+              //.uk-overflow-container
+              table.uk-table.uk-table-hover.uk-table-striped.uk-table-condensed
+                thead
+                  tr
+                    th linea
+                    //th G-Code
+                    th X
+                    th Y
+                    th Z
+                tbody
+                  tr(data-uk-tooltip title="{{line.code}}" ng-repeat="line in lineTable" ng-class="line.type" )
+                    td {{line.nro}}
+                    td(data-uk-tooltip title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
+                    td(data-uk-tooltip title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
+                    td(data-uk-tooltip title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
+      .uk-width-large-7-10.uk-hidden-small
+
+    .modal.uk-modal(ng-controller="prefs")
+      .uk-modal-dialog
+        button.uk-modal-close.uk-close(type='button')
+        //.uk-modal-header
+          .uk-text-bold Prefereincias
+        .ui.pointing.secondary.menu
+          a.item.active(data-tab='motorx') Motor X
+          a.item(data-tab='motory') Motor Y
+          a.item(data-tab='motorz') Motor Z
+          a.item(data-tab='generales') Generales
+        .ui.tab.segment.active(data-tab='motorx')
+          form.uk-form.uk-grid
+            .uk-form-row
               .ui.checkbox
-                input( checkbox ng-disabled="iqualx" type="checkbox"  ng-model="configModal.motor.y.sense")
+                input(checkbox type="checkbox" ng-model="configModal.motor.x.sense")
                 label Sentido Invertido.
-            .uk-width-1-2
+            .uk-form-row
+              p Milimetros por pasos.
+                .uk-form-controls
+                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.advance" type="number")
+                  label mm. 
+                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.steps" type="number")
+                  label pasos. 
+              p Velocidad mm/min.
+                .uk-form-controls(disabled)
+                    input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.speed.working" type="number")
+                    label de Trabajo.
+                    input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.speed.idle" type="number")
+                    label en Vasio.
+            .uk-form-row
+              p Sacar de mm/min y el avance {{configModal.motor.x.time}}
+        .ui.tab.segment(data-tab='motory')
+          form.uk-form
+            .uk-form-row.uk-grid
+              .uk-width-1-2
+                .ui.checkbox
+                  input( checkbox ng-disabled="iqualx" type="checkbox"  ng-model="configModal.motor.y.sense")
+                  label Sentido Invertido.
+              .uk-width-1-2
+                .ui.checkbox
+                  input(checkbox type="checkbox" ng-model="iqualx" ng-click="iqualX()")
+                  label Igual que Motor X.
+            .uk-form-row
+              p Milimetros por pasos.
+                .uk-form-controls
+                  input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.advance")
+                  label mm. 
+                  input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.steps")
+                  label pasos. 
+              p Velocidad mm/min.
+                .uk-form-controls(disabled)
+                    input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.speed.working")
+                    label de Trabajo. 
+                    input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number" ng-model="configModal.motor.y.speed.idle")
+                    label en Vasio. 
+            .uk-form-row
+              p Sacar de mm/min y el avance {{configModal.motor.y.time}}
+        .ui.tab.segment(data-tab='motorz')
+          form.uk-form.uk-grid
+            .uk-form-row
               .ui.checkbox
-                input(checkbox type="checkbox" ng-model="iqualx" ng-click="iqualX()")
-                label Igual que Motor X.
-          .uk-form-row
-            p Milimetros por pasos.
-              .uk-form-controls
-                input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.advance")
-                label mm. 
-                input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.steps")
-                label pasos. 
-            p Velocidad mm/min.
-              .uk-form-controls(disabled)
-                  input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.speed.working")
+                input(checkbox type="checkbox" ng-model="configModal.motor.z.sense")
+                label Sentido Invertido.
+            .uk-form-row
+              p Milimetros por pasos.
+                .uk-form-controls
+                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.advance" type="number")
+                  label mm. 
+                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.steps" type="number")
+                  label pasos. 
+              p Velocidad mm/min.
+                .uk-form-controls(disabled)
+                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.speed.working" type="number")
                   label de Trabajo. 
-                  input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number" ng-model="configModal.motor.y.speed.idle")
+                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.speed.idle" type="number")
                   label en Vasio. 
-          .uk-form-row
-            p Sacar de mm/min y el avance {{configModal.motor.y.time}}
-      .ui.tab.segment(data-tab='motorz')
-        form.uk-form.uk-grid
-          .uk-form-row
-            .ui.checkbox
-              input(checkbox type="checkbox" ng-model="configModal.motor.z.sense")
-              label Sentido Invertido.
-          .uk-form-row
-            p Milimetros por pasos.
-              .uk-form-controls
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.advance" type="number")
-                label mm. 
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.steps" type="number")
-                label pasos. 
-            p Velocidad mm/min.
-              .uk-form-controls(disabled)
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.speed.working" type="number")
-                label de Trabajo. 
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.speed.idle" type="number")
-                label en Vasio. 
-      .ui.tab.segment(data-tab='generales')
-        form.uk-form.uk-grid
-          span.uk-form-label Medidas de la piesa a trabar.
-          .uk-form-controls.uk-form-controls-text
-            .uk-form-controls-condensed
-              label para X 
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.workpiece.x" type="number")
-                | mm.
-            .uk-form-controls-condensed
-              label para Y 
-                input.uk-form-width-small.uk-form-small( ng-model="configModal.workpiece.y" type="number")
-                | mm.
-            p.uk-form-controls-condensed
-              label Escala: 
-                input.uk-form-width-small.uk-form-small(type='number' ng-model="configModal.scale" )
-      .uk-modal-footer.uk-text-right
-        button.uk-button( ng-click='cancel()' ) Cancelar
-        button.uk-button.uk-button-primary( ng-click='save()' ) Guardar
-        
+        .ui.tab.segment(data-tab='generales')
+          form.uk-form.uk-grid
+            span.uk-form-label Medidas de la piesa a trabar.
+            .uk-form-controls.uk-form-controls-text
+              .uk-form-controls-condensed
+                label para X 
+                  input.uk-form-width-small.uk-form-small( ng-model="configModal.workpiece.x" type="number")
+                  | mm.
+              .uk-form-controls-condensed
+                label para Y 
+                  input.uk-form-width-small.uk-form-small( ng-model="configModal.workpiece.y" type="number")
+                  | mm.
+              p.uk-form-controls-condensed
+                label Escala: 
+                  input.uk-form-width-small.uk-form-small(type='number' ng-model="configModal.scale" )
+        .uk-modal-footer.uk-text-right
+          button.uk-button( ng-click='cancel()' ) Cancelar
+          button.uk-button.uk-button-primary( ng-click='save()' ) Guardar
+
 block script
   script(type="text/javascript").
     var angular = angular.module('app',[]);
