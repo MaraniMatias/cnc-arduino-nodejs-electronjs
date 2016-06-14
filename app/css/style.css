@@ -49,6 +49,16 @@ html, body {
     background: #007acc;
     color: #fff;
     font-size: 12px;
-    padding: 1px 10px;
+    padding: 0 10px;
     left:0% ;
+    font-family: Segoe WPC,Segoe UI,SFUIText-Light,HelveticaNeue-Light,sans-serif;
+}
+.statusbar > .statusbar-item{
+    display: inline-block;
+    line-height: 22px;
+    height: 100%;
+    vertical-align: top;
+}
+.statusbar >  .statusbar-item.right{
+    float: right;
 }
