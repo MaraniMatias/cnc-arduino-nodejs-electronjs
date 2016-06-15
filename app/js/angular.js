@@ -57,17 +57,11 @@ angular
     }
   }
 })
-/*
 .directive('popupElement', function () {
   return {
     link: function (scope, element, attrs) {
-      element.popup({ 
-        title    : 'My favorite dog',
-        content  : 'My favorite dog would l',
-        position : 'top center',
-        variation : 'inverted'
-      });
+      element.popup();
     }
   }
-})*/
+})
 ;

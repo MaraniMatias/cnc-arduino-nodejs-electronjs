@@ -7,6 +7,7 @@ html, body {
     font: 16px 'sans-serif';
     -moz-user-select: none;
     -webkit-user-select: none;
+    font-family: Segoe WPC,Segoe UI,SFUIText-Light,HelveticaNeue-Light,sans-serif;
 }
 .uk-modal-footer {
     padding: 10px 20px 10px 20px;
@@ -46,19 +47,37 @@ html, body {
     z-index: 6;
     width: 100%;
     height: 22px;
-    background: #007acc;
+    background: grey;
     color: #fff;
-    font-size: 12px;
+    font-size: 14px;
     padding: 0 10px;
     left:0% ;
-    font-family: Segoe WPC,Segoe UI,SFUIText-Light,HelveticaNeue-Light,sans-serif;
 }
 .statusbar > .statusbar-item{
     display: inline-block;
     line-height: 22px;
     height: 100%;
     vertical-align: top;
+    margin: 0px 5px;
 }
 .statusbar >  .statusbar-item.right{
     float: right;
+}
+.statusbar.error {
+    background: #db2828;
+}
+.statusbar.success {
+    background: green;
+}
+.statusbar.warning {
+    background: darkorange;
+}
+.statusbar.none {
+    background: grey;
+}
+.statusbar.question {
+    background: #007acc;
+}
+.statusbar.info {
+    background: cornflowerblue;
 }

@@ -14,7 +14,7 @@ angular.controller('main',
   ipc.on('arduino-res', (event, obj) => {
     config = obj.config;
     cnc.arduino = obj.type === 'success' ;
-    notify( obj.msg, obj.type );
+    statusBar(obj.msg, obj.type);
   });
   
   $scope.setFile = () => {
@@ -31,8 +31,9 @@ angular.controller('main',
       $scope.cnc.file.line.total = file.lines;
       $scope.cnc.file.line.duration = parseInt(file.segTotal);
       $scope.cnc.file.travel = file.travel;
-      notify( file.name );
-            
+      $('title').text('CNC-ino - '+file.name);
+      statusBar(file.name, 'none');
+      
       // Cargar Views
       var data = new vis.DataSet();
       for (let index = 0; index < file.gcode.length; index++) {
@@ -45,20 +46,32 @@ angular.controller('main',
   });
   
   $scope.enviarDatos = (cmd) => {
-    if(ipc.sendArd(cmd)) notify( 'Comando manual: '+cmd , 'success' );
+    if(ipc.sendArd(cmd)){
+      statusBar( 'Comando manual: '+cmd , 'success' );
+      notify( 'Comando manual: '+cmd , 'success' );
+    }
   }
   $scope.moverOrigen = () => {
-    if(ipc.sendArd('o') )  notify( 'Comando mover al origen.' , 'success' );
+    if(ipc.sendArd('o') ){
+      statusBar( 'Comando mover al origen.' , 'success' );
+      notify( 'Comando mover al origen.' , 'success' );
+    }
   }
   $scope.pausa = () => { 
     window.alert('No se recomienda pausar la ejecucion.')
     $scope.cnc.time.pause = new Date();
-    if(ipc.sendArd('p'))   notify( 'Orden de pausa' , 'warning' );
+    if(ipc.sendArd('p')){
+      notify( 'Orden de pausa' , 'warning' );
+      statusBar( 'Orden de pausa' , 'warning' );
+    }
   }
   $scope.parar = () => {
     if(ipc.sendArd('0,0,0')){
       $('title').text('CNC-ino');
+
       notify( 'Orden de parar' , 'success' );
+      statusBar( 'Orden de parar' , 'success' );
+
       $scope.cnc.file.line.interpreted = 0;
       $scope.cnc.file.line.progress = 0;
       $scope.cnc.pause.steps[0]=0;
@@ -103,16 +116,16 @@ angular.controller('main',
   ipc.on('close-conex', (event,obj) => {
     if(obj.type == 'none' && obj.steps[0]==='0' && obj.steps[1]==='0' && obj.steps[2]==='0'){
       console.log(obj.steps.toString(),'-> Emit -->> Terminado <<--');
-      notify( 'Terminado: '+obj.steps );
-      $scope.progressBar = 'uk-progress-success';
-  }else if(obj.type != 'none'){
+      statusBar( 'Terminado: '+obj.steps,'success');
+      $scope.progressBar = 'success';
+    }else if(obj.type != 'none'){
       console.log(obj.steps,'Emit -->> indefinido <<--');
-      notify( 'Respuesta: '+obj.nro+' - '+obj.result );
-      $scope.progressBar = 'uk-progress-success';
+      statusBar( 'Respuesta: '+obj.nro+' - '+obj.result,'' );
+      $scope.progressBar = 'success';
     }else{//Pause
       console.log(obj.line,obj.steps.toString(),'Emit -->> Pausado <<--');
-      notify( 'Pausado: '+obj.steps );
-      $scope.progressBar = 'uk-progress-warning';
+      statusBar( 'Pausado en los pasos: '+obj.steps,'warning' );
+      $scope.progressBar = 'warning';
       cnc.pause.line      =  obj.line ;
       cnc.pause.steps[0]  =  obj.steps[0];
       cnc.pause.steps[1]  =  obj.steps[1];
@@ -127,6 +140,10 @@ angular.controller('main',
     //graficar trabajo. :D
     if($scope.lineTable.length > 10) $scope.lineTable.shift();
     $scope.lineTable.push( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
+    
+    // toltip para las lineas con mas detalles
+    statusBar('Trabajando con '+data.line.code,'info');
+
     if(data.nro && data.line.travel){
       $scope.cnc.file.Progress(data.nro,data.line.travel);
       $('title').text('CNC-ino - '+$scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
@@ -153,13 +170,22 @@ angular.controller('main',
       $scope.cnc.time.pause = '--:--'
       ipc.startArd({follow : true, steps: cnc.pause.steps });
     }
-    $scope.progressBar = 'uk-active';
+    $scope.progressBar = 'indicating';
   }
   
+  function statusBar(msg,type) {
+    $scope.$apply(function(){
+      $scope.statusbarLeft = msg;
+      $scope.statusbarType = type ;
+    });
+    // si es distinto de error alos 3000 cambiar a azul
+    $scope.line = line.new( 'data.line.code', [123,123,456], undefined, 34689, 45);
+  }
+
   var data = null, graph = null;
   function drawVisualization(data) {
-    if(exceeds_x) notify( 'El modelo se excede en X.', 'warning' );
-    if(exceeds_y) notify( 'El modelo se excede en Y.', 'warning' );
+    if(exceeds_x){ statusBar( 'El modelo se excede en X.', 'warning' ); }
+    if(exceeds_y){ statusBar( 'El modelo se excede en Y.', 'warning' ); }
 
     if(data === undefined){
       data = new vis.DataSet();

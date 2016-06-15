@@ -94,11 +94,14 @@ module.exports = (grunt) => {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>','./views/**/*','./app/js/**/*','./app/lib/**/*'],
-      tasks: ['jshint','jade']
+      //files: ['<%= jshint.files %>','./views/**/*','./app/js/**/*','./app/lib/**/*'],
+      files: ['<%= jshint.files %>','./views/**/*'],
+      tasks: ['jade']
+      //tasks: ['jshint','jade']
     }
   });
   
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.registerTask('default', ['jshint','jade','mochaTest','docco-plus','erun']);
   grunt.registerTask('run', ['jade','shell:erun' ]);
   grunt.registerTask('runwin', ['jade','shell:erunwin' ]);
