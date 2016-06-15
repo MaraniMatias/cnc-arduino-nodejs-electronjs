@@ -10,7 +10,7 @@ module.exports = [
         }
       },
       {
-        label: 'Conectar Arduino',
+        label: 'Buscar Arduino',
         click : (item, focusedWindow) => {
           ipcRenderer.send('arduino');
         }
