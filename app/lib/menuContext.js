@@ -16,6 +16,13 @@ module.exports = [
           ipcRenderer.send('open-file');
         }
       },
+      {type: 'separator'},
+      {
+        label: 'Ver Tabla de Lineas',
+        click: (item, focusedWindow) => { 
+          ipcRenderer.send('show-lineTable');
+        }
+      },
       {
         label: 'Preferancia',
         click: (item, focusedWindow) => { 

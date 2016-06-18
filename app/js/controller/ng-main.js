@@ -2,19 +2,21 @@
 /* global $ */
 /* global vis */
 angular.controller('main',
-[ 'notify','ipc','cnc','$scope','lineTable','config','line',
-( notify,ipc,cnc,$scope,lineTable,config,line) => {
+[ 'notify','ipc','cnc','$scope','lineTable','config','line','statusBar',
+( notify,ipc,cnc,$scope,lineTable,config,line,statusBar) => {
 'use strict'
-  var exceeds_x = false, exceeds_y = false;
+  var exceeds_x = false, exceeds_y = false; lineTable.show = false;
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
+  $scope.statusBar = statusBar;
   $scope.initialLine = '0,0,0';
   
+  ipc.on('show-lineTable',(event, obj) => { lineTable.show = !lineTable.show; });
   ipc.send('arduino');
   ipc.on('arduino-res', (event, obj) => {
     config = obj.config;
     cnc.arduino = obj.type === 'success' ;
-    statusBar(obj.msg, obj.type);
+    notify(obj.msg, obj.type);
   });
   
   $scope.setFile = () => {
@@ -32,7 +34,7 @@ angular.controller('main',
       $scope.cnc.file.line.duration = parseInt(file.segTotal);
       $scope.cnc.file.travel = file.travel;
       $('title').text('CNC-ino - '+file.name);
-      statusBar(file.name, 'none');
+      notify(file.name, 'none');
       
       // Cargar Views
       var data = new vis.DataSet();
@@ -46,31 +48,21 @@ angular.controller('main',
   });
   
   $scope.enviarDatos = (cmd) => {
-    if(ipc.sendArd(cmd)){
-      statusBar( 'Comando manual: '+cmd , 'success' );
-      notify( 'Comando manual: '+cmd , 'success' );
-    }
+    if(ipc.sendArd(cmd)){ notify( 'Comando manual: '+cmd , 'success' ); }
   }
   $scope.moverOrigen = () => {
-    if(ipc.sendArd('o') ){
-      statusBar( 'Comando mover al origen.' , 'success' );
-      notify( 'Comando mover al origen.' , 'success' );
-    }
+    if(ipc.sendArd('o') ){ notify( 'Comando mover al origen.' , 'success' ); }
   }
   $scope.pausa = () => { 
     window.alert('No se recomienda pausar la ejecucion.')
     $scope.cnc.time.pause = new Date();
-    if(ipc.sendArd('p')){
-      notify( 'Orden de pausa' , 'warning' );
-      statusBar( 'Orden de pausa' , 'warning' );
-    }
+    if(ipc.sendArd('p')){ notify( 'Orden de pausa' , 'warning' ); }
   }
   $scope.parar = () => {
     if(ipc.sendArd('0,0,0')){
       $('title').text('CNC-ino');
 
       notify( 'Orden de parar' , 'success' );
-      statusBar( 'Orden de parar' , 'success' );
 
       $scope.cnc.file.line.interpreted = 0;
       $scope.cnc.file.line.progress = 0;
@@ -116,15 +108,15 @@ angular.controller('main',
   ipc.on('close-conex', (event,obj) => {
     if(obj.type == 'none' && obj.steps[0]==='0' && obj.steps[1]==='0' && obj.steps[2]==='0'){
       console.log(obj.steps.toString(),'-> Emit -->> Terminado <<--');
-      statusBar( 'Terminado: '+obj.steps,'success');
+      notify( 'Terminado: '+obj.steps,'success');
       $scope.progressBar = 'success';
     }else if(obj.type != 'none'){
       console.log(obj.steps,'Emit -->> indefinido <<--');
-      statusBar( 'Respuesta: '+obj.nro+' - '+obj.result,'' );
+      notify( 'Respuesta: '+obj.nro+' - '+obj.result,'' );
       $scope.progressBar = 'success';
     }else{//Pause
       console.log(obj.line,obj.steps.toString(),'Emit -->> Pausado <<--');
-      statusBar( 'Pausado en los pasos: '+obj.steps,'warning' );
+      notify( 'Pausado en los pasos: '+obj.steps,'warning' );
       $scope.progressBar = 'warning';
       cnc.pause.line      =  obj.line ;
       cnc.pause.steps[0]  =  obj.steps[0];
@@ -141,13 +133,13 @@ angular.controller('main',
     if($scope.lineTable.length > 10) $scope.lineTable.shift();
     $scope.lineTable.push( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
 
-    statusBar('Trabajando con '+data.line.code,'info');
+    notify('Trabajando con '+data.line.code,'info');
 
     if(data.nro && data.line.travel){
       $scope.cnc.file.Progress(data.nro,data.line.travel);
       $('title').text('CNC-ino - '+$scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
-// enviar a app para mostrar en barra de tareas
-ipc.send('progressbar',$scope.cnc.file.line.progress/100);
+
+ipc.send('taksBar-progress',$scope.cnc.file.line.progress/100);
 
       let time = new Date().getTime() - $scope.cnc.time.start.getTime();
       let mileSecondsLeft =  $scope.cnc.file.line.total * time / $scope.cnc.file.line.run;
@@ -174,20 +166,11 @@ ipc.send('progressbar',$scope.cnc.file.line.progress/100);
     }
     $scope.progressBar = 'indicating';
   }
-  
-  function statusBar(msg,type) {
-    $scope.$apply(function(){
-      $scope.statusbarLeft = msg;
-      $scope.statusbarType = type ;
-    });
-    // si es distinto de error alos 3000 cambiar a azul
-$scope.line = line.new( 'data.line.code', [123,123,456], undefined, 34689, 45);
-  }
 
   var data = null, graph = null;
   function drawVisualization(data) {
-    if(exceeds_x){ statusBar( 'El modelo se excede en X.', 'warning' ); }
-    if(exceeds_y){ statusBar( 'El modelo se excede en Y.', 'warning' ); }
+    if(exceeds_x){ notify( 'El modelo se excede en X.', 'warning' ); }
+    if(exceeds_y){ notify( 'El modelo se excede en Y.', 'warning' ); }
 
     if(data === undefined){
       data = new vis.DataSet();

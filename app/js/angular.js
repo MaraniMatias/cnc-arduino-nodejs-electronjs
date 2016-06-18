@@ -38,9 +38,9 @@ angular
 })
 .value('lineTable', [])
 .value('statusBar', {
-  "line":{},
-  "msg":"CNC-ino.",
-  "type":"none"
+  "message":"CNC-ino.",
+  "type":"none",
+  "time":3000
 })
 .value('config', {
    "motor": {

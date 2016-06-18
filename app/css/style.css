@@ -15,12 +15,15 @@ html, body {
 .uk-modal-header {
     padding: 10px 20px 10px 20px;
 }
-#mygraph {
-    height: 100%;
-}
+
+
 .ui.segment {
     margin: 0rem 0em;
     padding: 1em 1em;
+}
+#mygraph {
+    height: 100%;
+    width: 100%;
 }
 #mygraph .ui.segment.graph {
     padding-left: 1px;

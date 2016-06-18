@@ -1,3 +1,26 @@
+angular.factory('notify', ['statusBar', (statusBar) => {
+  return (message,type) => {
+    statusBar.message = message;
+    statusBar.type = type;
+    //tatusBar.time = time?time:1000;
+  };
+}])
+/*
+angular.factory('addMessage', ['ipc',(ipc) =>  {
+  return (msg,title,header,type) => {
+    switch(type){
+      case 1: type='info';break;
+      case 2: type='error';break;
+      case 3: type='warning';break;
+      case 4: type='question';break;
+      case 5: type='none';break;
+      default:type='none';
+    }
+    ipc.send('message', { type,title,header,msg });
+  };
+}])
+*/
+/*
 angular.factory('notify', [ () => {
   return (message,status,pos) => {
     // status = (status===undefined)? 'info': status;
@@ -14,20 +37,6 @@ angular.factory('notify', [ () => {
       default: pos='top-center';
     }
     UIkit.notify({ message , status , pos , timeout });
-  };
-}])
-/*
-angular.factory('addMessage', ['ipc',(ipc) =>  {
-  return (msg,title,header,type) => {
-    switch(type){
-      case 1: type='info';break;
-      case 2: type='error';break;
-      case 3: type='warning';break;
-      case 4: type='question';break;
-      case 5: type='none';break;
-      default:type='none';
-    }
-    ipc.send('message', { type,title,header,msg });
   };
 }])
 */

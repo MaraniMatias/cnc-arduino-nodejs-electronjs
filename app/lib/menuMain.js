@@ -15,15 +15,20 @@ module.exports = [
           ipcRenderer.send('arduino');
         }
       },
+      {type: 'separator'},
+      {
+        label: 'Ver Tabla de Lineas',
+        click: (item, focusedWindow) => { 
+          ipcRenderer.send('show-lineTable');
+        }
+      },
       {
         label: 'Preferancia',
         click: (item, focusedWindow) => { 
           ipcRenderer.send('show-prefs');
         }
       },
-      {
-        type: 'separator'
-      },
+      {type: 'separator'},
       {
         label: 'Salir',
         role: 'close'

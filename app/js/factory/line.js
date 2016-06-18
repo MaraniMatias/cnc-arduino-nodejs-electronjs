@@ -21,7 +21,6 @@ angular.factory('line', ['lineTable','config' ,(lineTable,config) => {
       Math.round(c[2] * (config.motor.z.steps  / config.motor.z.advance))
     ]
   }
-  
   return {
     add : function (line) {
       if(lineTable.length > 12){ 
@@ -50,35 +49,34 @@ angular.factory('line', ['lineTable','config' ,(lineTable,config) => {
     codeType : function (c , t) {
       if(t === 'steps'){
         return {
-        travel:'',
-        nro:'',
-        type : 'none',
-        code : `Comando manual: ${c}`,
-        steps : c.split(','),
-        ejes : toEjes(c.split(','))
+          travel:'',
+          nro:'',
+          type : 'none',
+          code : `Comando manual: ${c}`,
+          steps : c.split(','),
+          ejes : toEjes(c.split(','))
         }
       }else if(t === 'mm'){
         return {
-        travel:'',
-        nro:'',
-        type : 'none',
-        code : `Comando manual: ${c} ${t}`,
-        ejes : c.split(','),
-        steps : toSteps(c.split(','))
-      }
+          travel:'',
+          nro:'',
+          type : 'none',
+          code : `Comando manual: ${c} ${t}`,
+          ejes : c.split(','),
+          steps : toSteps(c.split(','))
+        }
       }else{
         return {
-        code : `Comando manual ${t}: ${c}`,
-        travel:'',
-        nro:'',
-        type : 'none'
+          code : `Comando manual ${t}: ${c}`,
+          travel:'',
+          nro:'',
+          type : 'none'
         }
       }
     },
-    
     addMsj: function  (msg,type) {
       if(lineTable.length > 14){ 
-      lineTable.shift();
+        lineTable.shift();
       }
       switch(type){
         case 1: type='positive'; break;
@@ -89,7 +87,6 @@ angular.factory('line', ['lineTable','config' ,(lineTable,config) => {
         default:type='';
       }
       lineTable.push({nro:'',ejes:[],type,code:msg,steps:[]});
-    }
-    
+    }  
   }// return
 }]);

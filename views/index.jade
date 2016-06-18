@@ -4,6 +4,7 @@ block content
     .ui.segment.graph( style='height: 100%; position: absolute;width: 100%;')
       #mygraph
       .ui.left.internal.attached.rail.graph
+        // elejir archivo
         .ui.segment.mini.center.aligned
           .ui.one.column.grid
             .column
@@ -30,6 +31,22 @@ block content
               .ui.progress.indicating.small( ng-class='progressBar' data-percent='{{cnc.file.line.progress}}' style="margin: 0em 0em;")
                 .bar(popup-element data-content="{{cnc.file.line.run}} de {{cnc.file.line.total}}" style='transition-duration: 300ms; width: {{cnc.file.line.progress}}%;')  
                   .progress(style="color: rgba(255, 255, 255, 1);") {{cnc.file.line.progress}}%
+        // tabla
+        .ui.segment.mini.center.aligned(ng-show="lineTable.show")
+          .ui.one.column.grid
+            table.ui.table
+              thead
+                tr
+                  th linea
+                  th X
+                  th Y
+                  th Z
+              tbody
+                tr(popup-element data-title="{{line.code}}" ng-repeat="line in lineTable" ng-class="line.type" )
+                  td {{line.nro}}
+                  td(popup-element data-title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
+                  td(popup-element data-title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
+                  td(popup-element data-title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
       .ui.right.internal.attached.rail.graph
         // comando manuales
         .ui.segment.center.aligned
@@ -64,14 +81,14 @@ block content
                   button.ui.button.green(popup-element data-title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
                   button.ui.button(popup-element data-title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
     
-    #statusbar.statusbar(ng-class="statusBar" style="top:578px"  role='contentinfo')
-      .statusbar-item.left(popup-element data-title="{{statusbarLeft}}") {{statusbarLeft}}
+    #statusbar.statusbar(ng-class="statusBar.type" style="top:578px"  role='contentinfo')
+      .statusbar-item.left(ng-show="statusBar.message || lineTable.line.length <= 0" popup-element data-title="{{statusBar.message}}") {{statusBar.message}}
       
-      .statusbar-item.left(popup-element data-title="Linea: {{line.nro}}") Nro: {{line.nro}}
-      .statusbar-item.left(popup-element data-title="Code en linea: {{line.code}}") Code: {{line.code}}
-      .statusbar-item.left(popup-element data-title="X: {{ line.ejes[0] | number : 2}}" data-content="Pasos: {{line.steps[0]}}") X: {{ line.ejes[0] | number : 2}}
-      .statusbar-item.left(popup-element data-title="Y: {{ line.ejes[1] | number : 2}}" data-content="Pasos: {{line.steps[1]}}") Y: {{ line.ejes[1] | number : 2}}
-      .statusbar-item.left(popup-element data-title="Z: {{ line.ejes[2] | number : 2}}" data-content="Pasos: {{line.steps[2]}}") Z: {{ line.ejes[2] | number : 2}}
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Linea: {{lineTable.line[lineTable.line.length-1].nro}}") Nro: {{lineTable.line[lineTable.line.length-1].nro}}
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Code en linea: {{lineTable.line[lineTable.line.length-1].code}}") Code: {{lineTable.line[lineTable.line.length-1].code}}
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[0]}}") X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[1]}}") Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[2]}}") Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}
       
       .statusbar-item.right Lineas interpetadas: {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
 
@@ -177,17 +194,3 @@ block script
   script(src="./../js/factory/ipc.js" type="text/javascript")
   script(src="./../js/factory/line.js" type="text/javascript")
   script(src="./../js/factory/notify.js" type="text/javascript")
-
-//table
-  thead
-    tr
-      th linea
-      th X
-      th Y
-      th Z
-  tbody
-    tr(popup-element data-title="{{line.code}}" ng-repeat="line in lineTable" ng-class="line.type" )
-      td {{line.nro}}
-      td(popup-element data-title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
-      td(popup-element data-title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
-      td(popup-element data-title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}

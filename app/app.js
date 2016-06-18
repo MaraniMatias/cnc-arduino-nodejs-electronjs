@@ -130,9 +130,9 @@ ipcMain.on('send-start', (event, arg) => {
     }
   });
 });
-ipcMain.on('progressbar', (event, arg) => {
-  mainWindow.setProgressBar(arg);
-});
+
+ipcMain.on('taksBar-progress', (event, arg) => {mainWindow.setProgressBar(arg); });
+ipcMain.on('show-lineTable', (event, arg) => { event.sender.send('show-lineTable') });
 
 ipcMain.on('about', (event, arg) => {
   let chosen = dialog.showMessageBox( mainWindow, {
