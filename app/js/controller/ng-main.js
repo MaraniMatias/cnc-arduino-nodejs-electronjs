@@ -140,13 +140,15 @@ angular.controller('main',
     //graficar trabajo. :D
     if($scope.lineTable.length > 10) $scope.lineTable.shift();
     $scope.lineTable.push( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
-    
-    // toltip para las lineas con mas detalles
+
     statusBar('Trabajando con '+data.line.code,'info');
 
     if(data.nro && data.line.travel){
       $scope.cnc.file.Progress(data.nro,data.line.travel);
       $('title').text('CNC-ino - '+$scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
+// enviar a app para mostrar en barra de tareas
+ipc.send('progressbar',$scope.cnc.file.line.progress/100);
+
       let time = new Date().getTime() - $scope.cnc.time.start.getTime();
       let mileSecondsLeft =  $scope.cnc.file.line.total * time / $scope.cnc.file.line.run;
       $scope.cnc.time.end = new Date( $scope.cnc.time.start.getTime() + mileSecondsLeft );
@@ -179,7 +181,7 @@ angular.controller('main',
       $scope.statusbarType = type ;
     });
     // si es distinto de error alos 3000 cambiar a azul
-    $scope.line = line.new( 'data.line.code', [123,123,456], undefined, 34689, 45);
+$scope.line = line.new( 'data.line.code', [123,123,456], undefined, 34689, 45);
   }
 
   var data = null, graph = null;

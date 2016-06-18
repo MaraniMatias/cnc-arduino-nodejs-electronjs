@@ -121,7 +121,6 @@ ipcMain.on('send-start', (event, arg) => {
   console.log('prevent-app-suspension',powerSaveBlocker.isStarted(id));
   CNC.start(arg, (data) => {
     if( data.lineRunning !== false ){
-      // mainWindow.setProgressBar(0.7);
       event.sender.send('add-line', { nro : data.lineRunning , line : CNC.File.gcode[data.lineRunning] });
       console.log("I: %s - Ejes: %s - Result: %s", data.lineRunning, CNC.File.gcode[data.lineRunning].ejes , data.steps );  
     }else{
@@ -130,6 +129,9 @@ ipcMain.on('send-start', (event, arg) => {
       console.log("Finish.");
     }
   });
+});
+ipcMain.on('progressbar', (event, arg) => {
+  mainWindow.setProgressBar(arg);
 });
 
 ipcMain.on('about', (event, arg) => {

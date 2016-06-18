@@ -24,13 +24,14 @@ block content
               .ui.labeled.input.mini.action( popup-element data-content="Posición inicial de la herramienta. {{initialLine}}")
                 .ui.label  Posición de la herramienta:
                 input( style='width:4rem;' ng-model='initialLine' type='text' )
-                button.ui.icon.button.basic(ng-click="")
+                button.ui.icon.button(ng-click="")
                   i.repeat.icon.green
             .column
               .ui.progress.indicating.small( ng-class='progressBar' data-percent='{{cnc.file.line.progress}}' style="margin: 0em 0em;")
                 .bar(popup-element data-content="{{cnc.file.line.run}} de {{cnc.file.line.total}}" style='transition-duration: 300ms; width: {{cnc.file.line.progress}}%;')  
                   .progress(style="color: rgba(255, 255, 255, 1);") {{cnc.file.line.progress}}%
       .ui.right.internal.attached.rail.graph
+        // comando manuales
         .ui.segment.center.aligned
           .ui.one.column.grid
             .column(style=" padding: 6px 6px !important; margin: 0 !important; ")
@@ -63,7 +64,7 @@ block content
                   button.ui.button.green(popup-element data-title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
                   button.ui.button(popup-element data-title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
     
-    #statusbar.statusbar(ng-class="statusbarType" style="top:578px"  role='contentinfo')
+    #statusbar.statusbar(ng-class="statusBar" style="top:578px"  role='contentinfo')
       .statusbar-item.left(popup-element data-title="{{statusbarLeft}}") {{statusbarLeft}}
       
       .statusbar-item.left(popup-element data-title="Linea: {{line.nro}}") Nro: {{line.nro}}
@@ -77,8 +78,6 @@ block content
     .modal.uk-modal(ng-controller="prefs")
       .uk-modal-dialog
         button.uk-modal-close.uk-close(type='button')
-        //.uk-modal-header
-          .uk-text-bold Prefereincias
         .ui.pointing.secondary.menu
           a.item.active(data-tab='motorx') Motor X
           a.item(data-tab='motory') Motor Y
