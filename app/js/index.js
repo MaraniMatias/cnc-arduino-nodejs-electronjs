@@ -15,6 +15,7 @@ window.addEventListener('contextmenu',  (e) => {
 // no se porque cuando la pantalla es menor a 770 tiene que se distinta la posicion
 // con angular usar $scope.$apply(function(){}); para aplicar los cambios 
 window.onresize = function(event) {
+  // algo esta mal  ¿css?
   let size = window.outerHeight < 770 ? 81 : 65;
   $('#statusbar').css( 'top', window.outerHeight - size);
 };
