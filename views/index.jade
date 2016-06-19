@@ -17,15 +17,15 @@ block content
                       i.pause.icon.blue
                     button.ui.button(ng-disabled="!cnc.working && !cnc.pause.status" ng-click='parar()')
                       i.stop.icon.red
-                    button.ui.button(ng-disabled="cnc.working" ng-click="setFile()"  ) Archivo
+                    button.ui.button(ng-disabled="cnc.working" ng-click="setFile(false)"  ) Archivo
                 .column
                   label.ui.label(popup-element data-title='Hora estimadas' data-content="Inicio: {{cnc.time.start | date:'HH:mm'}} Fin: {{cnc.time.end | date:'HH:mm'}}"  data-position="right center" data-variation="large") Fin:
                     .detail {{cnc.time.end | date:'HH:mm'}}
-            .column(style="padding:0;") 
+            .column(style="padding:0;")
               .ui.labeled.input.mini.action( popup-element data-content="Posición inicial de la herramienta. {{initialLine}}")
                 .ui.label  Posición de la herramienta:
-                input( style='width:4rem;' ng-model='initialLine' type='text' )
-                button.ui.icon.button(ng-click="")
+                input(ng-disabled="cnc.working" style='width:4rem;' ng-model='initialLine' type='text' )
+                button.ui.icon.button(ng-disabled="cnc.working" ng-click="setFile(true)")
                   i.repeat.icon.green
             .column
               .ui.progress.indicating.small( ng-class='progressBar' data-percent='{{cnc.file.line.progress}}' style="margin: 0em 0em;")
@@ -64,8 +64,8 @@ block content
                   .text pasos
                   i.dropdown.icon
                   .menu
-                    .item(style="padding: 0.71428571rem 0.74rem !important;") pasos
-                    .item(style="padding: 0.71428571rem 0.7rem !important;") mm
+                    .item(style="padding: 0.71428571rem 0.74rem !important;" ng-click="setStepsmm('steps')") pasos
+                    .item(style="padding: 0.71428571rem 0.7rem !important;" ng-click="setStepsmm(''mm)") mm
             
             .ui.three.column.grid.center.aligned(style=" padding: 6px 6px !important; margin: 0 !important; ")
               .column.fluid(style="padding: 6px 6px;")
@@ -81,109 +81,16 @@ block content
                   button.ui.button.green(popup-element data-title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
                   button.ui.button(popup-element data-title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
     
-    #statusbar.statusbar(ng-class="statusBar.type" style="top:578px"  role='contentinfo')
-      .statusbar-item.left(ng-show="statusBar.message || lineTable.line.length <= 0" popup-element data-title="{{statusBar.message}}") {{statusBar.message}}
-      
-      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Linea: {{lineTable.line[lineTable.line.length-1].nro}}") Nro: {{lineTable.line[lineTable.line.length-1].nro}}
-      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Code en linea: {{lineTable.line[lineTable.line.length-1].code}}") Code: {{lineTable.line[lineTable.line.length-1].code}}
-      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[0]}}") X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}
-      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[1]}}") Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}
-      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[2]}}") Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}
-      
-      .statusbar-item.right Lineas interpetadas: {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
-
-    .modal.uk-modal(ng-controller="prefs")
-      .uk-modal-dialog
-        button.uk-modal-close.uk-close(type='button')
-        .ui.pointing.secondary.menu
-          a.item.active(data-tab='motorx') Motor X
-          a.item(data-tab='motory') Motor Y
-          a.item(data-tab='motorz') Motor Z
-          a.item(data-tab='generales') Generales
-        .ui.tab.segment.active(data-tab='motorx')
-          form.uk-form.uk-grid
-            .uk-form-row
-              .ui.checkbox
-                input(checkbox type="checkbox" ng-model="configModal.motor.x.sense")
-                label Sentido Invertido.
-            .uk-form-row
-              p Milimetros por pasos.
-                .uk-form-controls
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.advance" type="number")
-                  label mm. 
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.steps" type="number")
-                  label pasos. 
-              p Velocidad mm/min.
-                .uk-form-controls(disabled)
-                    input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.speed.working" type="number")
-                    label de Trabajo.
-                    input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.x.speed.idle" type="number")
-                    label en Vasio.
-            .uk-form-row
-              p Sacar de mm/min y el avance {{configModal.motor.x.time}}
-        .ui.tab.segment(data-tab='motory')
-          form.uk-form
-            .uk-form-row.uk-grid
-              .uk-width-1-2
-                .ui.checkbox
-                  input( checkbox ng-disabled="iqualx" type="checkbox"  ng-model="configModal.motor.y.sense")
-                  label Sentido Invertido.
-              .uk-width-1-2
-                .ui.checkbox
-                  input(checkbox type="checkbox" ng-model="iqualx" ng-click="iqualX()")
-                  label Igual que Motor X.
-            .uk-form-row
-              p Milimetros por pasos.
-                .uk-form-controls
-                  input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.advance")
-                  label mm. 
-                  input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.steps")
-                  label pasos. 
-              p Velocidad mm/min.
-                .uk-form-controls(disabled)
-                    input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number"  ng-model="configModal.motor.y.speed.working")
-                    label de Trabajo. 
-                    input.uk-form-width-small.uk-form-small(ng-disabled="iqualx" type="number" ng-model="configModal.motor.y.speed.idle")
-                    label en Vasio. 
-            .uk-form-row
-              p Sacar de mm/min y el avance {{configModal.motor.y.time}}
-        .ui.tab.segment(data-tab='motorz')
-          form.uk-form.uk-grid
-            .uk-form-row
-              .ui.checkbox
-                input(checkbox type="checkbox" ng-model="configModal.motor.z.sense")
-                label Sentido Invertido.
-            .uk-form-row
-              p Milimetros por pasos.
-                .uk-form-controls
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.advance" type="number")
-                  label mm. 
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.steps" type="number")
-                  label pasos. 
-              p Velocidad mm/min.
-                .uk-form-controls(disabled)
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.speed.working" type="number")
-                  label de Trabajo. 
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.motor.z.speed.idle" type="number")
-                  label en Vasio. 
-        .ui.tab.segment(data-tab='generales')
-          form.uk-form.uk-grid
-            span.uk-form-label Medidas de la piesa a trabar.
-            .uk-form-controls.uk-form-controls-text
-              .uk-form-controls-condensed
-                label para X 
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.workpiece.x" type="number")
-                  | mm.
-              .uk-form-controls-condensed
-                label para Y 
-                  input.uk-form-width-small.uk-form-small( ng-model="configModal.workpiece.y" type="number")
-                  | mm.
-              p.uk-form-controls-condensed
-                label Escala: 
-                  input.uk-form-width-small.uk-form-small(type='number' ng-model="configModal.scale" )
-        .uk-modal-footer.uk-text-right
-          button.uk-button( ng-click='cancel()' ) Cancelar
-          button.uk-button.uk-button-primary( ng-click='save()' ) Guardar
+  #statusbar.statusbar(ng-class="statusBar.type" style="top:578px"  role='contentinfo')
+    .statusbar-item.left(ng-show="statusBar.message || lineTable.line.length <= 0" popup-element data-title="{{statusBar.message}}") {{statusBar.message}}
+    
+    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Linea: {{lineTable.line[lineTable.line.length-1].nro}}") Nro: {{lineTable.line[lineTable.line.length-1].nro}}
+    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Code en linea: {{lineTable.line[lineTable.line.length-1].code}}") Code: {{lineTable.line[lineTable.line.length-1].code}}
+    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[0]}}") X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}
+    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[1]}}") Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}
+    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[2]}}") Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}
+    
+    .statusbar-item.right Lineas interpetadas: {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
 
 block script
   script(type="text/javascript").

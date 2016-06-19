@@ -19,12 +19,13 @@ angular.controller('main',
     notify(obj.msg, obj.type);
   });
   
-  $scope.setFile = () => {
-    let arrayLine = $scope.initialLine.split(',');
-    arrayLine[0] = parseInt(arrayLine[0]);
-    arrayLine[1] = parseInt(arrayLine[1]);
-    arrayLine[2] = parseInt(arrayLine[2]);
-    ipc.send('open-file', arrayLine );
+  $scope.setFile = (reSetFile) => {
+    let initialLine = $scope.initialLine.split(',');
+    initialLine[0] = parseInt(initialLine[0]);
+    initialLine[1] = parseInt(initialLine[1]);
+    initialLine[2] = parseInt(initialLine[2]);
+    if(reSetFile){ ipc.send('open-file', { initialLine  , fileDir: cnc.file.name }); }
+    else{ ipc.send('open-file', { initialLine  , fileDir:undefined }); }
   }
   ipc.on('open-file-res', (event, file) => {
     if ( file.dir ){

@@ -95,17 +95,18 @@ ipcMain.on('arduino', (event, arg) => {
   }) 
 });
 
-ipcMain.on('open-file',(event,initialLine) => {
-  if(!initialLine){ initialLine = [0,0,0]; }
-  CNC.setFile(
-    dialog.showOpenDialog({
-      title : fileConfig.name,
-      filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
-      properties: [ 'openFile' ] 
-    }), initialLine , (File) => {
-      event.sender.send('open-file-res', File);
-    }
-  )
+ipcMain.on('open-file',(event,data) => {
+  if(!data.initialLine){ data.initialLine = [0,0,0]; }
+  if(data.fileDir){
+    CNC.setFile(data.fileDir ,data.initialLine , (File) => { event.sender.send('open-file-res', File); })
+  }else{
+    CNC.setFile(
+      dialog.showOpenDialog({
+        title : fileConfig.name,
+        filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
+        properties: [ 'openFile' ] 
+      }), data.initialLine , (File) => { event.sender.send('open-file-res', File); })
+  }
 });
 
 ipcMain.on('send-command', (event, arg) => {
