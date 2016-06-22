@@ -15,10 +15,16 @@ angular.controller('prefs',
   }
   var motory = {};
   var modal = UIkit.modal(".modal");
+  var $modal = $('.ui.modal');
   
   ipc.on('show-prefs-res', (event, config) => {
-    if( modal.isActive() ){ modal.hide(); }
-    else{ modal.show(); }
+    if( modal.isActive() ){ 
+      $modal.modal('hide'); 
+      modal.hide();
+    }else{ 
+      modal.show();
+      modal.modal('show');  
+    }
     $scope.configModal = clone( config );
     $scope.iqualx = config.motor.y.iqualx;
     motory = clone( config.motor.y );
