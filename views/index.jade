@@ -1,7 +1,20 @@
 extends ./main.jade
 block contentPrefs
   // modal / preferencias
-  .modal.uk-modal(ng-controller="prefs")
+  .ui.modal.small(ng-controller="prefs")
+    .header Header
+      .content
+
+        .ui.equal.width.grid
+          .column Generales
+          .column Motor X & Motor Y
+          .column Motor Z
+          //.equal.width.row
+            .column
+            .column
+        
+            
+  //.modal.uk-modal(ng-controller="prefs")
     .uk-modal-dialog
         button.uk-modal-close.uk-close(type='button')
         .ui.pointing.secondary.menu

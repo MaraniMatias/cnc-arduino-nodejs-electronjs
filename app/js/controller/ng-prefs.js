@@ -14,17 +14,12 @@ angular.controller('prefs',
     return temp;
   }
   var motory = {};
-  var modal = UIkit.modal(".modal");
-  var $modal = $('.ui.modal');
+  var modal = { $: $('.ui.modal').modal({closable  : false}),show:false };
   
   ipc.on('show-prefs-res', (event, config) => {
-    if( modal.isActive() ){ 
-      $modal.modal('hide'); 
-      modal.hide();
-    }else{ 
-      modal.show();
-      modal.modal('show');  
-    }
+    if( modal.show ){  modal.$.modal('hide');  }
+    else{  modal.$.modal('show');  }
+    modal.show=!modal.show;
     $scope.configModal = clone( config );
     $scope.iqualx = config.motor.y.iqualx;
     motory = clone( config.motor.y );
