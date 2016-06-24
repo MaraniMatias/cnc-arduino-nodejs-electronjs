@@ -84,3 +84,8 @@ html, body {
 .statusbar.info {
     background: cornflowerblue;
 }
+
+.ui.modal > .header.small {
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
