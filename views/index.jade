@@ -1,19 +1,19 @@
 extends ./main.jade
 block contentPrefs
   // modal / preferencias
-  .ui.modal.large(ng-controller="prefs")
-    .header.small Header
+  .ui.first.modal.small(ng-controller="prefs")
+    //.header.small Header
     .content
-      .ui.equal.width.grid
-        .column.ui.segment
-          .ui.top.left.attached.label Generales
+      .ui.grid
+        .five.wide.column
+          h4.ui.dividing.header Generales.
           .ui.form.small
             .two.fields
               .field
                 label Escala: 
                 input(type='number' ng-model="configModal.scale" )
             .field
-              label Pasos al mover manualmente: 
+              label Movimiento manual (Pasos):
               input(type='number' ng-model="configModal.manalSteps" )
             .two.fields
               .field
@@ -22,88 +22,53 @@ block contentPrefs
               .field
                 label Y (mm).
                 input( ng-model="configModal.workpiece.y" type="number").
-        .column.ui.segment
-          .ui.top.left.attached.label Motor X & Motor Y
+        .eleven.wide.column
           .ui.form.small
-            .field
-              .ui.toggle.checkbox
-                input(checkbox type="checkbox" ng-model="configModal.motor.x.sense")
-                label Sentido Invertido.
-            h4.ui.dividing.header Milimetros por pasos.
-            .two.fields
+            .ui.top.attached.tabular.menu.three.item
+              a.active.item(data-tab='motorX') Motor X
+              a.item(data-tab='motorY') Motor Y
+              a.item(data-tab='motorZ') Motor Z
+            .ui.bottom.attached.active.tab.segment(data-tab='motorX')
+              h4.ui.dividing.header Milimetros por pasos.
+              .two.fields
+                .field
+                  label mm.
+                  input( ng-model="configModal.motor.x.advance" type="number")
+                .field
+                  label Pasos.
+                  input( ng-model="configModal.motor.x.steps" type="number")
               .field
-                label mm.
-                input( ng-model="configModal.motor.x.advance" type="number")
+                .ui.toggle.checkbox
+                  input(checkbox type="checkbox" ng-model="configModal.motor.x.sense")
+                  label Sentido Invertido.
+              //label Sacar de mm/min y el avance {{configModal.motor.x.time}}
+            .ui.bottom.attached.tab.segment(data-tab='motorY')
+              h4.ui.dividing.header Milimetros por pasos.
+              .two.fields
+                .field
+                  label mm.
+                  input( ng-model="configModal.motor.y.advance" type="number")
+                .field
+                  label Pasos.
+                  input( ng-model="configModal.motor.y.steps" type="number")
               .field
-                label Pasos.
-                input( ng-model="configModal.motor.x.steps" type="number")
-            h4.ui.dividing.header Velocidad mm/min.
-            .two.fields(disabled)
+                .ui.toggle.checkbox
+                  input(checkbox type="checkbox" ng-model="configModal.motor.y.sense")
+                  label Sentido Invertido.
+              //label Sacar de mm/min y el avance {{configModal.motor.y.time}}
+            .ui.bottom.attached.tab.segment(data-tab='motorZ')
+              h4.ui.dividing.header Milimetros por pasos.
+              .two.fields
+                .field
+                  label mm.
+                  input( ng-model="configModal.motor.z.advance" type="number")
+                .field
+                  label Pasos.
+                  input( ng-model="configModal.motor.z.steps" type="number")
               .field
-                label de Trabajo.
-                input( ng-model="configModal.motor.x.speed.working" type="number")
-              .field
-                label en Vasio.
-                input( ng-model="configModal.motor.x.speed.idle" type="number")
-            //label Sacar de mm/min y el avance {{configModal.motor.x.time}}
-            h4.ui.dividing.header
-              .ui.toggle.checkbox
-                input(checkbox type="checkbox" ng-model="iqualx" ng-click="iqualX()")
-                label Vincular motores.
-            .field
-              .ui.button.secondary.fluid Configuracion motor Y.
-        .column.ui.segment
-          .ui.top.left.attached.label Motor Z
-          .ui.form.small
-            .field
-              .ui.toggle.checkbox
-                input(checkbox type="checkbox" ng-model="configModal.motor.z.sense")
-                label Sentido Invertido.
-            h4.ui.dividing.header Milimetros por pasos.
-            .two.fields
-              .field
-                label mm.
-                input( ng-model="configModal.motor.z.advance" type="number")
-              .field
-                label Pasos.
-                input( ng-model="configModal.motor.z.steps" type="number")
-            h4.ui.dividing.header Velocidad mm/min.
-            .two.fields(disabled)
-              .field
-                label de Trabajo.
-                input( ng-model="configModal.motor.z.speed.working" type="number")
-              .field
-                label en Vasio.
-                input( ng-model="configModal.motor.z.speed.idle" type="number")
+                .ui.toggle.checkbox
+                  input(checkbox type="checkbox" ng-model="configModal.motor.z.sense")
+                  label Sentido Invertido.
     .actions
       button.ui.approve.button.primary( ng-click='save()' ) Guardar
       button.ui.cancel.button( ng-click='cancel()' ) Cancelar
-  
-  .ui.second.modal.small(ng-controller="prefs")
-    .header.small Configuracion para motor Y.
-    .content
-      .ui.form.small
-        .field
-          .ui.toggle.checkbox
-            input(checkbox type="checkbox" ng-model="configModal.motor.z.sense")
-            label Sentido Invertido.
-        h4.ui.dividing.header Milimetros por pasos.
-        .two.fields
-          .field
-            label mm.
-            input( ng-model="configModal.motor.z.advance" type="number")
-          .field
-            label Pasos.
-            input( ng-model="configModal.motor.z.steps" type="number")
-        h4.ui.dividing.header Velocidad mm/min.
-        .two.fields(disabled)
-          .field
-            label de Trabajo.
-            input( ng-model="configModal.motor.z.speed.working" type="number")
-          .field
-            label en Vasio.
-            input( ng-model="configModal.motor.z.speed.idle" type="number")
-        //label Sacar de mm/min y el avance {{configModal.motor.y.time}}
-    .actions
-      button.ui.approve.button.primary( ng-click='' ) Aceptar
-      button.ui.cancel.button( ng-click='' ) Cancelar

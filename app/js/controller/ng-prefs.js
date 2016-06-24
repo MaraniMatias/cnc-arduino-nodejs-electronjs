@@ -14,8 +14,7 @@ angular.controller('prefs',
     return temp;
   }
   var motory = {};
-  var modal = { $: $('.ui.modal').modal({closable  : false}),show:true };
-  var modalY = { $: $('.ui.second.modal').modal({closable  : true}),show:false };
+  var modal = { $: $('.ui.modal').modal({closable  : false}),show:false };
 
   ipc.on('show-prefs-res', (event, config) => {
     if( modal.show ){  modal.$.modal('hide');  }
