@@ -23,15 +23,15 @@ angular.controller('prefs',
     $scope.configModal = config ;
   });
   
+  $scope.cancel = () => { modal.hide(); }
   $scope.save = () => {
     modal.hide();
-    ipc.send('config-send',{ file: $scope.configModal  , save: true});
+    ipc.send('config-save-send', $scope.configModal);
   }
-  $scope.cancel = () => { modal.hide(); }
-    
-  ipc.on('config-res', (event, config) => {
+
+  ipc.on('config-save-res', (event, config) => {
     $scope.configModal = config.file ;
-    if(config.message){ notify( config.message ); }
+    if(config.message){ notify( config.message, 'success' ); }
     modal.hide();
   });
     

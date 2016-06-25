@@ -132,14 +132,14 @@ ipcMain.on('about', (event, arg) => {
 
 ipcMain.on('show-prefs', (event, arg) => {
   globalShortcut.unregisterAll();
-  fs.readFile( CNC.dirConfig , "utf8", function (error, data) {
-    event.sender.send('show-prefs-res',JSON.parse(data));
-  });
+  CNC.configFile.read().then( (data) => {
+    event.sender.send('show-prefs-res',data);
+  })
 });
-ipcMain.on('config-send', (event, arg) => {
+ipcMain.on('config-save-send', (event, arg) => {
   registerGlobalShortcut();
-  CNC.saveConfig( arg , ( data ) => {
-    event.sender.send('config-res',data );
+  CNC.configFile.save( arg , ( data ) => {
+    event.sender.send('config-save-res',data );
   });
 });
 
@@ -151,19 +151,21 @@ Event: ‘on-battery’
 */
 
 function registerGlobalShortcut() {
-  let manalSteps = CNC.readConfig.manalSteps;
-  function globalShortcutSendComand (cmd){
-    CNC.sendCommand( cmd , (dataReceived) => { console.log(dataReceived); });
-  }
-  globalShortcut.register('q', () => { globalShortcutSendComand(`0,0,${manalSteps}`); });
-  globalShortcut.register('e', () => { globalShortcutSendComand(`0,0,-${manalSteps}`); });
-  globalShortcut.register('d', () => { globalShortcutSendComand(`-${manalSteps},0,0`); });
-  globalShortcut.register('a', () => { globalShortcutSendComand(`${manalSteps},0,0`); });
-  globalShortcut.register('w', () => { globalShortcutSendComand(`0,-${manalSteps},0`); });
-  globalShortcut.register('s', () => { globalShortcutSendComand(`0,${manalSteps},0`); });
-  globalShortcut.register('Space', () => { globalShortcutSendComand('0,0,0'); });
-  //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
-  //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
-  //globalShortcut.register('Left', () => { globalShortcutSendComand('10,0,0'); });
-  //globalShortcut.register('Right', () => { globalShortcutSendComand('-10,0,0'); });
+  CNC.configFile.read().then( (file) => {
+    let manalSteps = file.manalSteps;
+    function globalShortcutSendComand (cmd){
+      CNC.sendCommand( cmd , (dataReceived) => { console.log(dataReceived); });
+    }
+    globalShortcut.register('q', () => { globalShortcutSendComand(`0,0,${manalSteps}`); });
+    globalShortcut.register('e', () => { globalShortcutSendComand(`0,0,-${manalSteps}`); });
+    globalShortcut.register('d', () => { globalShortcutSendComand(`-${manalSteps},0,0`); });
+    globalShortcut.register('a', () => { globalShortcutSendComand(`${manalSteps},0,0`); });
+    globalShortcut.register('w', () => { globalShortcutSendComand(`0,-${manalSteps},0`); });
+    globalShortcut.register('s', () => { globalShortcutSendComand(`0,${manalSteps},0`); });
+    globalShortcut.register('Space', () => { globalShortcutSendComand('0,0,0'); });
+    //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
+    //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
+    //globalShortcut.register('Left', () => { globalShortcutSendComand('10,0,0'); });
+    //globalShortcut.register('Right', () => { globalShortcutSendComand('-10,0,0'); });
+  } );
 }

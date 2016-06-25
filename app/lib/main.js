@@ -36,11 +36,7 @@ var arduino = {
 
 function setFile ( dirfile ,initialLine, cb ) {
   if (dirfile){
-    let fileRead = new Promise(function (resolve, reject){
-      fs.readFile( dirConfig , "utf8", function (error, data) {
-        resolve(JSON.parse(data));
-      });
-    }).then( (config) => {
+    readConfig().then( (config) => {
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
       File.dir      = dirfile[0];
@@ -184,28 +180,24 @@ function start (arg,callback) {
   });
 }
 
-function saveConfig(arg , cb) {
-  if(arg.save){
-    fs.writeFile( dirConfig , JSON.stringify(arg.file) , (err) => {
-      if (err) throw err;
-      fs.readFile( dirConfig , "utf8", function (error, data) {
-        cb( { file : JSON.parse(data) , message : 'Cambios guardados.'} );
-      });
+function saveConfig(data , cb) {
+  fs.writeFile( dirConfig , JSON.stringify(data),{encoding:'utf8'} , (err) => {
+    if (err) throw err;
+    readConfig().then( (file) => {
+      cb( { file , message : 'Cambios guardados.'} );
     });
-  }else{
-    fs.readFile( dirConfig , "utf8", function (error, data) {
-      cb( { file : JSON.parse(data) } );
-    });
-  }
-}
-
-function readConfig() {
-   fs.readFile( CNC.dirConfig , "utf8", function (error, data) {
-    return JSON.parse(data);
   });
 }
 
+function readConfig() {
+  return new Promise(function (resolve, reject){
+    fs.readFile( dirConfig , "utf8", function (error, data) {
+      if(error) throw error;
+      resolve(JSON.parse(data));
+    });
+  })
+}
+
 module.exports = {
-  //Arduino : arduino , File  , setFile , sendCommand , start , configFile:{ dir:dirConfig,read:readConfig, save:saveConfig}
-  Arduino : arduino , File  , setFile , sendCommand , start , dirConfig,readConfig, saveConfig
+  Arduino : arduino , File  , setFile , sendCommand , start , configFile:{ dir:dirConfig,read:readConfig, save:saveConfig}
 };
