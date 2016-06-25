@@ -55,6 +55,7 @@ html, body {
     font-size: 14px;
     padding: 0 10px;
     left:0% ;
+    bottom: 0px;
 }
 .statusbar > .statusbar-item{
     display: inline-block;

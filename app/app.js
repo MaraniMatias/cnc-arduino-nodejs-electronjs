@@ -139,7 +139,7 @@ ipcMain.on('show-prefs', (event, arg) => {
 ipcMain.on('config-send', (event, arg) => {
   registerGlobalShortcut();
   CNC.saveConfig( arg , ( data ) => {
-      event.sender.send('config-res',data );
+    event.sender.send('config-res',data );
   });
 });
 
@@ -151,7 +151,7 @@ Event: ‘on-battery’
 */
 
 function registerGlobalShortcut() {
-  let manalSteps = 5;
+  let manalSteps = CNC.readConfig.manalSteps;
   function globalShortcutSendComand (cmd){
     CNC.sendCommand( cmd , (dataReceived) => { console.log(dataReceived); });
   }

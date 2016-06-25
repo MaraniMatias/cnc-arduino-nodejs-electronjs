@@ -185,7 +185,6 @@ function start (arg,callback) {
 }
 
 function saveConfig(arg , cb) {
-  if(arg.iqualx){ arg.file.motor.y = arg.file.motor.x;}
   if(arg.save){
     fs.writeFile( dirConfig , JSON.stringify(arg.file) , (err) => {
       if (err) throw err;
@@ -200,6 +199,13 @@ function saveConfig(arg , cb) {
   }
 }
 
+function readConfig() {
+   fs.readFile( CNC.dirConfig , "utf8", function (error, data) {
+    return JSON.parse(data);
+  });
+}
+
 module.exports = {
-  Arduino : arduino , File  , setFile , dirConfig , sendCommand , start , saveConfig
+  //Arduino : arduino , File  , setFile , sendCommand , start , configFile:{ dir:dirConfig,read:readConfig, save:saveConfig}
+  Arduino : arduino , File  , setFile , sendCommand , start , dirConfig,readConfig, saveConfig
 };
