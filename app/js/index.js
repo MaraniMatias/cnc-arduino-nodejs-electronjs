@@ -17,5 +17,5 @@ window.addEventListener('contextmenu',  (e) => {
 window.onresize = function(event) {
   // algo esta mal  ¿css? al maximizar
   let size = window.outerHeight < 770 ? 81 : 65;
-  $('#statusbar').css( 'top', window.outerHeight - 81);
+  $('#statusbar').css( 'top', window.outerHeight - size);
 };

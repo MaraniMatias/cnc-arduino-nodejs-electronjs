@@ -1,45 +1,38 @@
 /* global angular */
 /* global $ */
-/* global vis */
 angular.controller('prefs',
 [ 'notify','ipc','cnc','$scope','lineTable','config','line',
 ( notify,ipc,cnc,$scope,lineTable,config,line) => {
-'use strict'
-  function clone( obj ) {
-    if ( obj === null || typeof obj  !== 'object' )  return obj;
-    var temp = obj.constructor();
-    for ( var key in obj ) {
-      temp[ key ] = clone( obj[ key ] );
-    }
-    return temp;
-  }
-  var motory = {};
-  var modal = { $: $('.ui.modal').modal({closable  : false}),show:false };
 
+  var modal = { 
+    $: $('.ui.modal').modal({closable  : false}),
+    isActive:false,
+    show:()=>{
+      modal.$.modal('show');
+      this.isActive=true;
+    },
+    hide:()=>{
+      modal.$.modal('hide');
+      this.isActive=false;
+    }
+  };
+  
   ipc.on('show-prefs-res', (event, config) => {
-    if( modal.show ){  modal.$.modal('hide');  }
-    else{  modal.$.modal('show');  }
-    modal.show=!modal.show;
-    $scope.configModal = clone( config );
-    $scope.iqualx = config.motor.y.iqualx;
-    motory = clone( config.motor.y );
+    if( modal.isActive ){  modal.hide();  }
+    else{  modal.show();  }
+    $scope.configModal = config ;
   });
   
-  $scope.iqualX = () => {
-    $scope.configModal.motor.y = clone( ($scope.iqualx) ? $scope.configModal.motor.x : motory );
-  }
   $scope.save = () => {
+    modal.hide();
     ipc.send('config-send',{ file: $scope.configModal  , save: true});
   }
   $scope.cancel = () => { modal.hide(); }
     
   ipc.on('config-res', (event, config) => {
-    $scope.configModal = clone( config.file );
+    $scope.configModal = config.file ;
     if(config.message){ notify( config.message ); }
     modal.hide();
   });
     
 }]);
-
-
-

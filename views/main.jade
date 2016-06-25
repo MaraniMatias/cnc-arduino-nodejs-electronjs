@@ -81,14 +81,14 @@ block content
                   button.ui.button.green(popup-element data-title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
                   button.ui.button(popup-element data-title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
     
-  #statusbar.statusbar(ng-class="statusBar.type" style="top:578px"  role='contentinfo')
-    .statusbar-item.left(ng-show="statusBar.message || lineTable.line.length <= 0" popup-element data-title="{{statusBar.message}}") {{statusBar.message}}
-    
-    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Linea: {{lineTable.line[lineTable.line.length-1].nro}}") Nro: {{lineTable.line[lineTable.line.length-1].nro}}
-    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Code en linea: {{lineTable.line[lineTable.line.length-1].code}}") Code: {{lineTable.line[lineTable.line.length-1].code}}
-    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[0]}}") X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}
-    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[1]}}") Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}
-    .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[2]}}") Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}
+    #statusbar.statusbar(ng-class="statusBar.type" style="top:578px"  role='contentinfo')
+      .statusbar-item.left( popup-element data-title="{{statusBar.message}}") {{statusBar.message}}
+      
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Linea: {{lineTable.line[lineTable.line.length-1].nro}}") Nro: {{lineTable.line[lineTable.line.length-1].nro}}
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Code en linea: {{lineTable.line[lineTable.line.length-1].code}}") Code: {{lineTable.line[lineTable.line.length-1].code}}
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[0]}}") X: {{ lineTable.line[lineTable.line.length-1].ejes[0] | number : 2}}
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[1]}}") Y: {{ lineTable.line[lineTable.line.length-1].ejes[1] | number : 2}}
+      .statusbar-item.left(ng-show="lineTable.line.length > 0" popup-element data-title="Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}" data-content="Pasos: {{lineTable.line[lineTable.line.length-1].steps[2]}}") Z: {{ lineTable.line[lineTable.line.length-1].ejes[2] | number : 2}}
     
     .statusbar-item.right Lineas interpetadas: {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
   block contentPrefs
