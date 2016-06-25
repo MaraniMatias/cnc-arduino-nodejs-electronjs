@@ -24,8 +24,7 @@ angular.controller('main',
     initialLine[0] = parseInt(initialLine[0]);
     initialLine[1] = parseInt(initialLine[1]);
     initialLine[2] = parseInt(initialLine[2]);
-    if(reSetFile){ ipc.send('open-file', { initialLine  , fileDir: cnc.file.name }); }
-    else{ ipc.send('open-file', { initialLine  , fileDir:undefined }); }
+    ipc.send('open-file', { initialLine  , fileDir: reSetFile? cnc.file.name : undefined});
   }
   ipc.on('open-file-res', (event, file) => {
     if ( file.dir ){

@@ -22,8 +22,8 @@ block content
                   label.ui.label(popup-element data-title='Hora estimadas' data-content="Inicio: {{cnc.time.start | date:'HH:mm'}} Fin: {{cnc.time.end | date:'HH:mm'}}"  data-position="right center" data-variation="large") Fin:
                     .detail {{cnc.time.end | date:'HH:mm'}}
             .column(style="padding:0;")
-              .ui.labeled.input.mini.action( popup-element data-content="Posición inicial de la herramienta. {{initialLine}}")
-                .ui.label  Posición de la herramienta:
+              .ui.labeled.input.mini.action
+                label.ui.label(popup-element data-content="Posición inicial de la herramienta. {{initialLine}}")  Posición de la herramienta:
                 input(ng-disabled="cnc.working" style='width:4rem;' ng-model='initialLine' type='text' )
                 button.ui.icon.button(ng-disabled="cnc.working" ng-click="setFile(true)")
                   i.repeat.icon.green

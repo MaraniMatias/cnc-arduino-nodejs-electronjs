@@ -81,7 +81,7 @@ ipcMain.on('arduino', (event, arg) => {
 ipcMain.on('open-file',(event,data) => {
   if(!data.initialLine){ data.initialLine = [0,0,0]; }
   if(data.fileDir){
-    CNC.setFile(data.fileDir ,data.initialLine , (File) => { event.sender.send('open-file-res', File); })
+    CNC.setFile([data.fileDir] ,data.initialLine , (File) => { event.sender.send('open-file-res', File); })
   }else{
     CNC.setFile(
       dialog.showOpenDialog({
