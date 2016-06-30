@@ -5,17 +5,14 @@
     padding: 10px 20px 10px 20px;
 }
 
-
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
     width: 100%;
-    background-color: #fff;
-    font: 16px 'sans-serif';
+    font: 16px ;
     -moz-user-select: none;
     -webkit-user-select: none;
-    font-family: Segoe WPC,Segoe UI,SFUIText-Light,HelveticaNeue-Light,sans-serif;
 }
 .ui.segment {
     margin: 0rem 0em;

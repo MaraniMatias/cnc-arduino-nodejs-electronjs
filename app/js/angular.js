@@ -65,7 +65,12 @@ angular
 .directive('popupElement', function () {
   return {
     link: function (scope, element, attrs) {
-      element.popup();
+      element.popup({
+        title    : attrs.ngPopupTitle,
+        content  : attrs.ngPopup,
+        position : attrs.ngPopupPosition,
+        variation : attrs.ngPopupVariatio
+      });
     }
   }
 })
