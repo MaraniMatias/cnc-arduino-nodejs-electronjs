@@ -139,7 +139,7 @@ angular.controller('main',
       $scope.cnc.file.Progress(data.nro,data.line.travel);
       $('title').text('CNC-ino - '+$scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
 
-ipc.send('taksBar-progress',$scope.cnc.file.line.progress/100);
+      ipc.send('taksBar-progress',$scope.cnc.file.line.progress/100);
 
       let time = new Date().getTime() - $scope.cnc.time.start.getTime();
       let mileSecondsLeft =  $scope.cnc.file.line.total * time / $scope.cnc.file.line.run;

@@ -69,7 +69,19 @@ angular
         title    : attrs.ngPopupTitle,
         content  : attrs.ngPopup,
         position : attrs.ngPopupPosition,
-        variation : attrs.ngPopupVariatio
+        variation : attrs.ngPopupVariatio,
+        delay: {
+          hide: 800
+        }
+      });
+    }
+  }
+})
+.directive('ngPopup', function () {
+  return {
+    link: function (scope, element, attrs) {
+      element.popup({
+        popup : $(attrs.id)
       });
     }
   }

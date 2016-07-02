@@ -87,7 +87,7 @@ function reSet () {
       var comName = undefined;
       ports.forEach( (port) => {
         if(port.manufacturer !== undefined){
-          console.log(`ComName: ${port.comName}\nPnpId: ${port.pnpId}\nManufacturer: ${port.manufacturer}`);
+          //console.log(`ComName: ${port.comName}\nPnpId: ${port.pnpId}\nManufacturer: ${port.manufacturer}`);
           comName = port.comName;
         }
       });// for
@@ -101,7 +101,7 @@ function reSet () {
             if(err){
               resolve({
                 type : 'warning',
-                msg  : 'Arduino detectado: '+Arduino.port.manufacturer+'.\nNo puedo abrir la conexión.\nPrueba con permisos de administrador (root en linux).'
+                msg  : 'Arduino detectado: '+Arduino.port.manufacturer+'. No puedo abrir la conexión. Prueba con permisos de administrador (root en linux).'
               });
               console.log(`ComName: ${Arduino.port.comName}\nPnpId: ${Arduino.port.pnpId}\nManufacturer: ${Arduino.port.manufacturer}`);
               console.log('is err',err);
@@ -112,10 +112,9 @@ function reSet () {
                 type : 'success',
                 msg  : 'Arduino detectado: ' + Arduino.port.manufacturer
               });
-              console.info('Puerto Selecionado %s',Arduino.port.manufacturer);
+              console.info("Puerto Selecionado %s",Arduino.port.manufacturer);
             }
           });// open port
-
         }else{
           Arduino.port = { comName : '' , manufacturer : ''};
           resolve({ type : 'error', msg  : 'No encontramos ardiono.'});
