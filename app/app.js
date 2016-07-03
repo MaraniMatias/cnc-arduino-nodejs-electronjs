@@ -151,21 +151,23 @@ Event: ‘on-battery’
 */
 
 function registerGlobalShortcut() {
-  CNC.configFile.read().then( (file) => {
-    let manalSteps = file.manalSteps;
-    function globalShortcutSendComand (cmd){
-      CNC.sendCommand( cmd , (dataReceived) => { console.log(dataReceived); });
-    }
-    globalShortcut.register('q', () => { globalShortcutSendComand(`0,0,${manalSteps}`); });
-    globalShortcut.register('e', () => { globalShortcutSendComand(`0,0,-${manalSteps}`); });
-    globalShortcut.register('d', () => { globalShortcutSendComand(`-${manalSteps},0,0`); });
-    globalShortcut.register('a', () => { globalShortcutSendComand(`${manalSteps},0,0`); });
-    globalShortcut.register('w', () => { globalShortcutSendComand(`0,-${manalSteps},0`); });
-    globalShortcut.register('s', () => { globalShortcutSendComand(`0,${manalSteps},0`); });
-    globalShortcut.register('Space', () => { globalShortcutSendComand('0,0,0'); });
-    //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
-    //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
-    //globalShortcut.register('Left', () => { globalShortcutSendComand('10,0,0'); });
-    //globalShortcut.register('Right', () => { globalShortcutSendComand('-10,0,0'); });
-  } );
+  if(CNC.Arduino.comName!==undefined && CNC.Arduino.comName!==''){
+    CNC.configFile.read().then( (file) => {
+      let manalSteps = file.manalSteps;
+      function globalShortcutSendComand (cmd){
+        CNC.sendCommand( cmd , (dataReceived) => { console.log(dataReceived); });
+      }
+      globalShortcut.register('q', () => { globalShortcutSendComand(`0,0,${manalSteps}`); });
+      globalShortcut.register('e', () => { globalShortcutSendComand(`0,0,-${manalSteps}`); });
+      globalShortcut.register('d', () => { globalShortcutSendComand(`-${manalSteps},0,0`); });
+      globalShortcut.register('a', () => { globalShortcutSendComand(`${manalSteps},0,0`); });
+      globalShortcut.register('w', () => { globalShortcutSendComand(`0,-${manalSteps},0`); });
+      globalShortcut.register('s', () => { globalShortcutSendComand(`0,${manalSteps},0`); });
+      globalShortcut.register('Space', () => { globalShortcutSendComand('0,0,0'); });
+      //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
+      //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
+      //globalShortcut.register('Left', () => { globalShortcutSendComand('10,0,0'); });
+      //globalShortcut.register('Right', () => { globalShortcutSendComand('-10,0,0'); });
+    } );
+  }
 }

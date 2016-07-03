@@ -14,10 +14,6 @@ html, body {
     -moz-user-select: none;
     -webkit-user-select: none;
 }
-.ui.segment {
-    margin: 0rem 0em;
-    padding: 1em 1em;
-}
 #mygraph {
     height: 100%;
     width: 100%;
@@ -34,13 +30,12 @@ html, body {
     width: 300px;
     height: auto;
 }
-.ui.segment.mini {
-    margin: 0rem 0em;
-    padding: 0.5em 0.5em;
+
+.ui.grid > .column.compact{
+    padding: 7px 7px !important; 
 }
-.ui.input.mini input {
-    line-height: 0em;
-}
+
+
 .statusbar {
     position: fixed;
     box-sizing: border-box;
