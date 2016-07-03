@@ -11,6 +11,22 @@ angular.controller('main',
   $scope.statusBar = statusBar;
   $scope.initialLine = '0,0,0';
   
+  $scope.statisticHour = {
+    option: true,
+    label : "Hora Fin:",
+    value : cnc.time.end,
+    click : function () {
+      if (this.option) {
+        this.label = "Hora Inicio:";
+        this.value = cnc.time.start;
+      }else{
+        this.label = "Hora Fin:";
+        this.value = cnc.time.end;
+      }
+	    this.option = !this.option;
+    }
+  }
+
   ipc.on('show-lineTable',(event, obj) => { lineTable.show = !lineTable.show; });
   ipc.send('arduino');
   ipc.on('arduino-res', (event, obj) => {

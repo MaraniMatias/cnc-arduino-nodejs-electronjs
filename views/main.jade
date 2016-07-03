@@ -44,10 +44,10 @@ block content
                       td(popup-element data-ng-popup-title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
                       td(popup-element data-ng-popup-title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
           .six.wide.column(style="padding-left: 3px;")
-            .ui.segment.center.aligned(style="padding-bottom: 5px; padding-top: 6px;")
-              .ui.statistic(ng-popup data-id='#HourStartEnd')
-                .label Hora Fin:
-                .value {{cnc.time.end | date:'HH:mm'}}
+            .ui.segment.center.aligned(ng-click="statisticHour.click()" style="padding-bottom: 12px; padding-top: 12px; cursor: pointer;")
+              .ui.statistic
+                .label {{statisticHour.label}}
+                .value {{statisticHour.value | date:'HH:mm'}}
       .ui.right.internal.attached.rail.graph
         // comando manuales
         .ui.segment.center.aligned
@@ -68,12 +68,12 @@ block content
                     .item(style="padding: 0.71428571rem 0.7rem !important;" ng-click="setStepsmm('mm')") mm
             .column.compact
               .ui.buttons.six.center.aligned
-                button.ui.button.red(popup-element data-ng-popup-title="A" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+
-                button.ui.button(popup-element data-ng-popup-title="D" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")' ) X-
-                button.ui.button.blue(popup-element data-ng-popup-title="W" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' ) Y+
-                button.ui.button(popup-element data-ng-popup-title="S" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' ) Y-
-                button.ui.button.green(popup-element data-ng-popup-title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
-                button.ui.button(popup-element data-ng-popup-title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
+                button.ui.button.red(popup-element data-ng-popup-title="A" ng-popup-variatio="bottom center" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+
+                button.ui.button(popup-element data-ng-popup-title="D" ng-popup-variatio="bottom center" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")' ) X-
+                button.ui.button.blue(popup-element data-ng-popup-title="W" ng-popup-variatio="bottom center" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' ) Y+
+                button.ui.button(popup-element data-ng-popup-title="S" ng-popup-variatio="bottom center" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' ) Y-
+                button.ui.button.green(popup-element data-ng-popup-title="Q" ng-popup-variatio="bottom center" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
+                button.ui.button(popup-element data-ng-popup-title="E" ng-popup-variatio="bottom center" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
     #statusbar.statusbar(ng-class="statusBar.type" role='contentinfo')
       .statusbar-item.left(ng-popup data-id="#statusBarMsg") {{statusBar.message}}
       
@@ -85,10 +85,6 @@ block content
 
       .statusbar-item.right(ng-popup data-id="#statusBarRighr") Lineas interpetadas: {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
     //popup
-    #HourStartEnd.ui.flowing.popup.top.hidden
-      .ui.header Hora Inicio:
-      p {{cnc.time.start | date:'HH:mm'}}
-      //p Fin: {{cnc.time.end | date:'HH:mm'}}
     #popupLabelTool.ui.fluid.popup.top.hidden.huge
       p Posición inicial de la herramienta. {{initialLine}}
     #popupBar.ui.flowing.popup.top.hidden.huge
