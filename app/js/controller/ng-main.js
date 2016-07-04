@@ -32,6 +32,7 @@ angular.controller('main',
   ipc.on('arduino-res', (event, obj) => {
     config = obj.config;
     cnc.arduino = obj.type === 'success' ;
+//cnc.arduino = true ;
     notify(obj.msg, obj.type);
   });
   
@@ -50,7 +51,7 @@ angular.controller('main',
       $scope.cnc.file.line.duration = parseInt(file.segTotal);
       $scope.cnc.file.travel = file.travel;
       $('title').text('CNC-ino - '+file.name);
-      notify(file.name, 'none');
+      notify(file.name, 'info');
       
       // Cargar Views
       var data = new vis.DataSet();
