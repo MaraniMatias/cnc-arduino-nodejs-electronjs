@@ -6,7 +6,7 @@
   "description": "cnc realizado con nodejs electron serialport arduino",
   "main": "app.js",
   "dependencies": {
-    "serialport": "^3.1.*"
+    "serialport": "4.0.1"
   },
   "scripts": {
     "postinstall": "bower install",
@@ -17,7 +17,7 @@
     "email": "maranimatias@gmail.com"
   },
   "engines": {
-    "node": "~6.2.0",
+    "node": "~6.3.0",
     "npm": "~3.8.9"
   },
   "license": "MIT",
