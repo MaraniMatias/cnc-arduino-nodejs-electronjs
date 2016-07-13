@@ -32,7 +32,6 @@ angular.controller('main',
   ipc.on('arduino-res', (event, obj) => {
     config = obj.config;
     cnc.arduino = obj.type === 'success' ;
-//cnc.arduino = true ;
     notify(obj.msg, obj.type);
   });
 
@@ -105,7 +104,7 @@ angular.controller('main',
       $scope.btnStepsmmClass = 'uk-active'
     }
   };
-  
+
   $scope.moverManual = (num,eje,sentido) => {
     let cmd;
     switch (eje) {
@@ -120,7 +119,7 @@ angular.controller('main',
       $scope.comando  =  '';
     }
   }
-  
+
   ipc.on('close-conex', (event,obj) => {
     if(obj.type == 'none' && obj.steps[0]==='0' && obj.steps[1]==='0' && obj.steps[2]==='0'){
       console.log(obj.steps.toString(),'-> Emit -->> Terminado <<--');
@@ -143,7 +142,7 @@ angular.controller('main',
     }
     $scope.cnc.working = false;
   }); 
-  
+
   ipc.on('add-line', (event, data) => { 
     //graficar trabajo. :D
     if($scope.lineTable.length > 10) $scope.lineTable.shift();
@@ -210,9 +209,8 @@ angular.controller('main',
     //graph.setCameraPosition(0.4, undefined, undefined);
     // terminar loading.
   }drawVisualization();
-    
+
 }]);
 // para marcar el recorido usar dos grupos
 // uno indica lo recorido y el otro lo que falta
 // cada linea procesas  cambiarla de grupo por medio del id
-

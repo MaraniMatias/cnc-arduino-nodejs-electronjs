@@ -64,8 +64,14 @@ function setFile ( dirfile ,initialLine, cb ) {
 function sendCommand ( code , callback ){
   if(debug.arduino.sendCommand) console.log(`${__filename}\n sendCommand, code: ${code}`);
   if( Arduino.port.comName !== '' ){
-    if( Arduino.port.isOpen() )    Arduino.port.close(); 
+    if(debug.arduino.sendCommand)  console.log("port.isOpen()",Arduino.port.isOpen() );
+    if( Arduino.port.isOpen() ){
+      Arduino.port.close((err)=>{
+        if(debug.arduino.sendCommand && err){ console.log('err: ',err); }
+      });
+    }
     Arduino.port.open( (err) => {
+      if(debug.arduino.sendCommand && err){ console.log('err: ',err); }
       Arduino.port.write(new Buffer(code+'\n'), (err) => {
         Arduino.port.drain( () => {
           Arduino.port.on('data', (data) => {
@@ -90,50 +96,53 @@ function sendCommand ( code , callback ){
 }
 
 function reSet (callback) {
-  // si trabaja no poder reSet
-  function set (comName,callback) {
-    if(comName !== undefined){
-      Arduino.port = new serialPort.SerialPort(comName,{
-        parser: serialPort.parsers.readline('\r\n'), dataBits: 8,
-        baudrate:250000, parity: 'none', stopBits: 1, flowControl: true
-      },false);// This does not initiate the connection.
-      Arduino.port.open( (err) => {
-        if(err){
-          callback({
-            type : 'warning',
-            msg  : 'Arduino detectado: '+Arduino.manufacturer+'. No puedo abrir la conexión. Prueba con permisos de administrador (root en linux).'
-          });
-          if(debug.arduino.conect) console.log(`ComName: ${Arduino.comName}\nPnpId: ${Arduino.pnpId}\nManufacturer: ${Arduino.manufacturer}`);
-          console.log('is err',err);
-        }else{
-          Arduino.port.close();
-          callback({
-            type : 'success',
-            msg  : 'Arduino detectado: ' + Arduino.manufacturer
-          });
-          if(debug.arduino.conect) console.info("Puerto Selecionado %s",Arduino.manufacturer);
-        }
-      });// open port
-    }else{
-      Arduino.comName = ''; Arduino.manufacturer = '';
-      callback({
-        type : 'error',
-        msg  : 'No encontramos ardiono.'
-      });
-      if(debug.arduino.conect) console.warn('No Arduino.');
-    }
-  }
-  serialPort.list( (err, ports) => {
-    var comName = undefined;
-    ports.forEach(function(port) {
-      if (port.pnpId !== undefined && port.manufacturer !== undefined){
-        Arduino.comName = port.comName;
-        Arduino.manufacturer = port.manufacturer;
-        if(debug.arduino.conect) console.log(`ComName: ${port.comName}\nPnpId: ${port.pnpId}\nManufacturer: ${port.manufacturer}`);
-        set(port.comName,callback);
+  if(!Arduino.working){
+    function set (comName,callback) {
+      if(comName !== undefined){
+        Arduino.port = new serialPort.SerialPort(comName,{
+          parser: serialPort.parsers.readline('\r\n'), dataBits: 8,
+          baudrate:250000, parity: 'none', stopBits: 1, flowControl: true
+        },false);// This does not initiate the connection.
+        Arduino.port.open( (err) => {
+          if(err){
+            callback({
+              type : 'warning',
+              msg  : 'Arduino detectado: '+Arduino.manufacturer+'. No puedo abrir la conexión. Prueba con permisos de administrador (root en linux).'
+            });
+            if(debug.arduino.conect) console.log(`ComName: ${Arduino.comName}\nPnpId: ${Arduino.pnpId}\nManufacturer: ${Arduino.manufacturer}`);
+            console.log('is err',err);
+          }else{
+            Arduino.port.close();
+            callback({
+              type : 'success',
+              msg  : 'Arduino detectado: ' + Arduino.manufacturer
+            });
+            if(debug.arduino.conect) console.info("Puerto Selecionado %s",Arduino.manufacturer);
+          }
+        });// open port
+      }else{
+        Arduino.comName = ''; Arduino.manufacturer = '';
+        callback({
+          type : 'error',
+          msg  : 'No encontramos ardiono.'
+        });
+        if(debug.arduino.conect) console.warn('No Arduino.');
       }
+    }
+    serialPort.list( (err, ports) => {
+      var comName = undefined;
+      ports.forEach(function(port) {
+        if (port.pnpId !== undefined && port.manufacturer !== undefined){
+          Arduino.comName = port.comName;
+          Arduino.manufacturer = port.manufacturer;
+          if(debug.arduino.conect) console.log(`ComName: ${port.comName}\nPnpId: ${port.pnpId}\nManufacturer: ${port.manufacturer}`);
+          set(port.comName,callback);
+        }
+      });
     });
-  });
+  }else{
+    console.log("Arduino working.");
+  }
 }
 
 function getSteps (l,oldSteps,config) {
