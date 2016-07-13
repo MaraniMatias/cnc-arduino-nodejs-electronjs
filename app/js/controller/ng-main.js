@@ -158,9 +158,8 @@ angular.controller('main',
 
       ipc.send('taksBar-progress',$scope.cnc.file.line.progress/100);
 
-      let time = new Date().getTime() - $scope.cnc.time.start.getTime();
-      let mileSecondsLeft =  $scope.cnc.file.line.total * time / $scope.cnc.file.line.run;
-      $scope.cnc.time.end = new Date( $scope.cnc.time.start.getTime() + mileSecondsLeft );
+      $scope.cnc.time.calcEnd($scope.cnc.file.line);
+      $scope.$watch('cnc.time.end',()=>{ $scope.statisticHour.value = cnc.time.end; })
     }
   });
 

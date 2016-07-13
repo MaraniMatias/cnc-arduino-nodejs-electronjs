@@ -8,11 +8,12 @@ const
     arduino : {
       conect : false ,
       sendCommand : false,
-      working : true
+      working : false
     },
-    file : {},
-    config : {},
-    ipc : { arduino : false, }
+    file    : {},
+    config  : {},
+    ipc     : { arduino : false, console : false },
+    app     : { prevent : true }
   }
 ;
 var lineRunning = 0;

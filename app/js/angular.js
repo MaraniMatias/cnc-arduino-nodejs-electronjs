@@ -31,8 +31,11 @@ angular
     pause:'--:--',
     start:'--:--',
     end:'--:--',
-    calcEnd : function () {
-      // this = cnc
+    calcEnd : function (line) {
+      // this = time
+      let time = new Date().getTime() - this.start.getTime();
+      let mileSecondsLeft =  line.total * time / line.run;
+      this.end = new Date( this.start.getTime() + mileSecondsLeft );
     }
   }
 })
@@ -43,7 +46,7 @@ angular
   "time":3000
 })
 .value('config', {
-   "motor": {
+    "motor": {
     "xy": {
       "time": 24,
       "steps": 4000,

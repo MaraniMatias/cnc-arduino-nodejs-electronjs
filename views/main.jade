@@ -3,10 +3,10 @@ block content
   div(ng-controller="main")
     .ui.segment.graph( style='height: 100%; position: absolute;width: 100%; margin-bottom: 0px;"')
       #mygraph
-      .ui.left.internal.attached.rail.graph(style="width: 500px;")
+      .ui.left.internal.attached.rail.graph(style="width: 400px;")
         .ui.grid
           // elejir archivo
-          .ten.wide.column(style="padding-right: 0px;")
+          .ten.wide.column(style="padding-right: 3px;")
             .ui.segment.center.aligned
               .ui.one.column.grid
                 .column.compact
@@ -20,7 +20,7 @@ block content
                     button.ui.button(ng-disabled="cnc.working" ng-click="setFile(false)" ) Archivo
                 .column.compact
                   .ui.labeled.input.action.fluid(ng-popup data-id="#popupLabelTool" )
-                    label.ui.label Posición de la herramienta:
+                    label.ui.label Posición de la her.:
                     input(ng-disabled="cnc.working" ng-model='initialLine' type='text' )
                     button.ui.icon.button(ng-disabled="cnc.working" ng-click="setFile(true)")
                       i.repeat.icon.green
@@ -43,9 +43,9 @@ block content
                       td(popup-element data-ng-popup-title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
                       td(popup-element data-ng-popup-title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
                       td(popup-element data-ng-popup-title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}
-          .six.wide.column(style="padding-left: 0px;")
+          .six.wide.column(style="padding-left: 3px;")
             .ui.segment.center.aligned(ng-click="statisticHour.click()" style="padding-bottom: 12px; padding-top: 12px; cursor: pointer;")
-              .ui.statistic
+              .ui.statistic.small
                 .label {{statisticHour.label}}
                 .value {{statisticHour.value | date:'HH:mm'}}
       .ui.right.internal.attached.rail.graph
