@@ -10,7 +10,7 @@ angular.controller('main',
   $scope.lineTable = lineTable;
   $scope.statusBar = statusBar;
   $scope.initialLine = '0,0,0';
-  
+
   $scope.statisticHour = {
     option: true,
     label : "Hora Fin:",
@@ -35,7 +35,7 @@ angular.controller('main',
 //cnc.arduino = true ;
     notify(obj.msg, obj.type);
   });
-  
+
   $scope.setFile = (reSetFile) => {
     let initialLine = $scope.initialLine.split(',');
     initialLine[0] = parseInt(initialLine[0]);
@@ -52,7 +52,7 @@ angular.controller('main',
       $scope.cnc.file.travel = file.travel;
       $('title').text('CNC-ino - '+file.name);
       notify(file.name, 'info');
-      
+
       // Cargar Views
       var data = new vis.DataSet();
       for (let index = 0; index < file.gcode.length; index++) {
@@ -63,7 +63,7 @@ angular.controller('main',
       drawVisualization(data);      
     }
   });
-  
+
   $scope.enviarDatos = (cmd) => {
     if(ipc.sendArd(cmd)){ notify( 'Comando manual: '+cmd , 'success' ); }
   }
@@ -104,7 +104,6 @@ angular.controller('main',
       $scope.btnStepsmm = 'Pasos';
       $scope.btnStepsmmClass = 'uk-active'
     }
-    
   };
   
   $scope.moverManual = (num,eje,sentido) => {
@@ -159,7 +158,10 @@ angular.controller('main',
       ipc.send('taksBar-progress',$scope.cnc.file.line.progress/100);
 
       $scope.cnc.time.calcEnd($scope.cnc.file.line);
-      $scope.$watch('cnc.time.end',()=>{ $scope.statisticHour.value = cnc.time.end; })
+      $scope.$watch('cnc.time.end',()=>{ 
+        if($scope.statisticHour.option){ $scope.statisticHour.value = cnc.time.end; }
+        else{ $scope.statisticHour.value = cnc.time.start; }
+      });
     }
   });
 

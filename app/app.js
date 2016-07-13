@@ -17,6 +17,9 @@ app.setName('CNC-ino');
 Menu.setApplicationMenu(Menu.buildFromTemplate( [] ));
 
 app.on('window-all-closed',  () => {
+  CNC.sendCommand('0,0,0',() => {
+    console.log("Parar forzado por cerrar programa.");
+  });
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -56,7 +59,6 @@ app.on('ready',  () => {
   //mainWindow.on('page-title-updated',  () => { console.log('title'); });
   mainWindow.on('closed',  () => {
     globalShortcut.unregisterAll();
-    CNC.sendCommand('0,0,0');
     mainWindow = null;
     if (process.platform != 'darwin') {
       app.quit();
@@ -80,19 +82,24 @@ ipcMain.on('arduino', (event, arg) => {
 });
 
 ipcMain.on('open-file',(event,data) => {
-  if(data.fileDir){
-    CNC.setFile( [data.fileDir] ,
-    data.initialLine? data.initialLine : [0,0,0] ,
-    (File) => { event.sender.send('open-file-res', File); })
-  }else{
-    CNC.setFile(
-      dialog.showOpenDialog({
-        title : fileConfig.name,
-        filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
-        properties: [ 'openFile' ] 
-      }),
+  if(!CNC.Arduino.working){
+    if(data.fileDir){
+      CNC.setFile( [data.fileDir] ,
       data.initialLine? data.initialLine : [0,0,0] ,
       (File) => { event.sender.send('open-file-res', File); })
+    }else{
+      CNC.setFile(
+        dialog.showOpenDialog({
+          title : fileConfig.name,
+          filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
+          properties: [ 'openFile' ] 
+        }),
+        data.initialLine? data.initialLine : [0,0,0] ,
+        (File) => { event.sender.send('open-file-res', File); }
+      )//CNC.setFile
+    }
+  }else{
+    event.sender.send('config-save-res',{type:'error',message:'Esta tabajando.'} );
   }
 });
 
@@ -135,10 +142,14 @@ ipcMain.on('about', (event, arg) => {
 });
 
 ipcMain.on('show-prefs', (event, arg) => {
-  globalShortcut.unregisterAll();
-  CNC.configFile.read().then( (data) => {
-    event.sender.send('show-prefs-res',data);
-  })
+  if(!CNC.Arduino.working){
+    globalShortcut.unregisterAll();
+    CNC.configFile.read().then( (data) => {
+      event.sender.send('show-prefs-res',data);
+    });
+  }else{
+    event.sender.send('config-save-res',{type:'error',message:'Esta tabajando.'} );
+  }
 });
 ipcMain.on('config-save-send', (event, arg) => {
   registerGlobalShortcut();
@@ -174,6 +185,6 @@ function registerGlobalShortcut() {
       //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
       //globalShortcut.register('Left', () => { globalShortcutSendComand('10,0,0'); });
       //globalShortcut.register('Right', () => { globalShortcutSendComand('-10,0,0'); });
-    } );
+    });
   }
 }

@@ -30,8 +30,8 @@ angular.controller('prefs',
   }
 
   ipc.on('config-save-res', (event, config) => {
-    $scope.configModal = config.file ;
-    if(config.message){ notify( config.message, 'success' ); }
+    if(config.file){ $scope.configModal = config.file; }
+    if(config.message){ notify( config.message, config.type ); }
     modal.hide();
   });
     

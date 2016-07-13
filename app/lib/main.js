@@ -7,7 +7,7 @@ const
   debug  =  {
     arduino : {
       conect : false ,
-      sendCommand : false,
+      sendCommand : true,
       working : false
     },
     file    : {},
@@ -21,7 +21,8 @@ var Arduino = {
   port : {},
   comName : "",
   manufacturer : "Sin Arduino.",
-  reSet
+  reSet ,
+  working : false
 };
 
 function getMiliSeg (config)  {
@@ -83,12 +84,13 @@ function sendCommand ( code , callback ){
     });//open
   } else {
     if (typeof (callback) === 'function') {
-      callback({type:'error',data:'Arduino not selected'});
+      callback({type:'error',data:'Arduino not selected.'});
     }
   }
 }
 
 function reSet (callback) {
+  // si trabaja no poder reSet
   function set (comName,callback) {
     if(comName !== undefined){
       Arduino.port = new serialPort.SerialPort(comName,{
@@ -145,54 +147,60 @@ function getSteps (l,oldSteps,config) {
 }
 
 function start (arg,callback) {
-  if(!arg.follow){ lineRunning=0;}
-  let fileRead = new Promise(function (resolve, reject){
-    fs.readFile( dirConfig , "utf8", function (error, data) {
-      resolve(JSON.parse(data));
+  if(!Arduino.working){
+    Arduino.working = true;
+    if(!arg.follow){ lineRunning=0;}
+    let fileRead = new Promise(function (resolve, reject){
+      fs.readFile( dirConfig , "utf8", function (error, data) {
+        resolve(JSON.parse(data));
+      });
+    }).then( (config) => {
+      if( Arduino.port.comName !== '' ){
+        if( Arduino.port.isOpen() ){ Arduino.port.close(); }
+        if(Arduino.port.comName !== '' && File.gcode.length > 0){
+          Arduino.port.open( (err) => {
+            if(err){
+              if(process.platform !== "linux") console.log('It needs to be administrator. puerto '+Arduino.comName);
+              else console.log('sudo chmod 0777 /dev/'+Arduino.comName);
+            } else {
+              Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps,config)+'\n'), (err,results) => {
+                Arduino.port.drain( () => {
+                  callback({ lineRunning, steps:'0,0,0' });
+                })
+              })//write
+              
+              Arduino.port.on('data', (data) => {
+                let result = data.toString().split(',');
+                lineRunning++;
+                if(lineRunning < File.gcode.length){
+                  Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps,config)+'\n'), (err,results) => {
+                    Arduino.port.drain( () => { 
+                      callback({ lineRunning , steps:result });
+                    });
+                  });//write
+                }else{// finsh
+                  Arduino.port.close( (err) => {
+                    callback({ lineRunning : false, steps:['0','0','0'] });
+                    lineRunning = 0;
+                    Arduino.working = false;
+                  });//close
+                }
+              })//data
+            }//else
+          });//open
+        }
+      }// if arduino != ''
     });
-  }).then( (config) => {
-    if( Arduino.port.comName !== '' ){
-      if( Arduino.port.isOpen() ){ Arduino.port.close(); }
-      if(Arduino.port.comName !== '' && File.gcode.length > 0){
-        Arduino.port.open( (err) => {
-          if(err){
-            if(process.platform !== "linux") console.log('It needs to be administrator. puerto '+Arduino.comName);
-            else console.log('sudo chmod 0777 /dev/'+Arduino.comName);
-          } else {
-            Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps,config)+'\n'), (err,results) => {
-              Arduino.port.drain( () => {
-                callback({ lineRunning, steps:'0,0,0' });
-              })
-            })//write
-            
-            Arduino.port.on('data', (data) => {
-              let result = data.toString().split(',');
-              lineRunning++;
-              if(lineRunning < File.gcode.length){
-                Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps,config)+'\n'), (err,results) => {
-                  Arduino.port.drain( () => { 
-                    callback({ lineRunning , steps:result });
-                  });
-                });//write
-              }else{// finsh
-                Arduino.port.close( (err) => {
-                  callback({ lineRunning : false, steps:['0','0','0'] });
-                  lineRunning = 0;
-                });//close
-              }
-            })//data
-          }//else
-        });//open
-      }
-    }// if arduino != ''
-  });
+  }else{
+    callback({ lineRunning : false, steps:['0','0','0'] });
+  }
 }
 
 function saveConfig(data , cb) {
   fs.writeFile( dirConfig , JSON.stringify(data),{encoding:'utf8'} , (err) => {
     if (err) throw err;
     readConfig().then( (file) => {
-      cb( { file , message : 'Cambios guardados.'} );
+      cb( { file , message : 'Cambios guardados.', type:'success'} );
     });
   });
 }
