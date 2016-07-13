@@ -62,16 +62,20 @@ function setFile ( dirfile ,initialLine, cb ) {
  * @param  {function} callback
  */
 function sendCommand ( code , callback ){
-  if(debug.arduino.sendCommand) console.log(`${__filename}\n sendCommand, code: ${code}`);
+  if(debug.arduino.sendCommand) console.log(`${__filename} ==>> sendCommand, code: ${code}`);
   if( Arduino.port.comName !== '' ){
     if(debug.arduino.sendCommand)  console.log("port.isOpen()",Arduino.port.isOpen() );
     if( Arduino.port.isOpen() ){
       Arduino.port.close((err)=>{
-        if(debug.arduino.sendCommand && err){ console.log('err: ',err); }
+        if(debug.arduino.sendCommand){ 
+          if(err) console.log("err:",err); 
+          console.log("Arduino.port.close");
+        }
       });
     }
     Arduino.port.open( (err) => {
       if(debug.arduino.sendCommand && err){ console.log('err: ',err); }
+      if(!err){
       Arduino.port.write(new Buffer(code+'\n'), (err) => {
         Arduino.port.drain( () => {
           Arduino.port.on('data', (data) => {
@@ -80,17 +84,22 @@ function sendCommand ( code , callback ){
               if (typeof (callback) === 'function') {
                 let result = data.toString().split(',');
                 //if(result[0]==0 && result[1]==0 && result[2]==0) lineRunning = 0;
-                if(debug.arduino.working) console.log({ type:'none', line : lineRunning, steps :result })
-                callback({ type:'none', line : lineRunning, steps :result });
+                if(debug.arduino.working){ console.log({ type:'none', line : lineRunning, steps :result }) }
+                callback({ type:err?"error":"none", line : lineRunning, steps :result });
               }
             });//close
           });//data
         });// drain
       });//write
+    } else {
+      if (typeof (callback) === 'function') {
+        callback({type:'error',data:'En la comunicacion.'});
+      }
+    }
     });//open
   } else {
     if (typeof (callback) === 'function') {
-      callback({type:'error',data:'Arduino not selected.'});
+      callback({type:'error',data:'Arduino no selectado.'});
     }
   }
 }
@@ -100,8 +109,8 @@ function reSet (callback) {
     function set (comName,callback) {
       if(comName !== undefined){
         Arduino.port = new serialPort.SerialPort(comName,{
-          parser: serialPort.parsers.readline('\r\n'), dataBits: 8,
-          baudrate:250000, parity: 'none', stopBits: 1, flowControl: true
+          parser: serialPort.parsers.readline('\r\n'), dataBits: 8, autoOpen : true,
+          baudrate:115200, parity: 'none', stopBits: 1, flowControl: true
         },false);// This does not initiate the connection.
         Arduino.port.open( (err) => {
           if(err){

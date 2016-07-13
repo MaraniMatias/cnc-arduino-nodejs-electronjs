@@ -26,8 +26,8 @@ describe ('Arduino Test', function() {
   it('Create Port', function (done) {
     port = new serialPort(comName,{
       parser: serialPort.parsers.readline("\r\n"),
-      dataBits: 8, baudrate:250000, parity: 'none',
-      stopBits: 1, flowControl: true, autoOpen: false 
+      dataBits: 8, baudrate:115200, parity: 'none',
+      stopBits: 1, flowControl: true, autoOpen: true 
     },done());
   });
 
