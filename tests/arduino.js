@@ -26,14 +26,20 @@ describe ('Arduino Test', function() {
   it('Create Port', function (done) {
     port = new serialPort(comName,{
       parser: serialPort.parsers.readline("\r\n"),
-      dataBits: 8, baudrate:9600, parity: 'none',
+      dataBits: 8, baudrate:250000, parity: 'none',
       stopBits: 1, flowControl: true, autoOpen: false 
     },done());
   });
 
   it('Open Port', function (done) {
     port.open(function (err) {
-      if (err)  return console.log("root/administrador \nsudo chmod 0777 /dev/"+ comName +"\nError opening port: ", err.message);
+      if (err) {
+        if (process.platform == 'unix'){
+          console.log("sudo chmod 0777 /dev/"+ comName +"\nError opening port: ", err.message);
+        }else{
+          console.log("root/administrador - Error opening port: ", err.message);
+        }
+      } 
       port.on('open',  done() );
       port.close();
     });

@@ -6,7 +6,7 @@ module.exports = [
         label:'Abrir G-Code...',
         accelerator: 'CmdOrCtrl+F',
         click: () => { 
-          ipcRenderer.send('open-file');
+          ipcRenderer.send('open-file',{initialLine :undefined, fileDir :undefined});
         }
       },
       {

@@ -73,22 +73,26 @@ app.on('ready',  () => {
 });//ready
 
 ipcMain.on('arduino', (event, arg) => {
-  CNC.Arduino.reSet().then(function (obj) {
+  CNC.Arduino.reSet( (obj) => {
+    if(CNC.debug.ipc.arduino) console.log("send",'arduino-res',obj);
     event.sender.send('arduino-res',obj);
-  }) 
+  });
 });
 
 ipcMain.on('open-file',(event,data) => {
-  if(!data.initialLine){ data.initialLine = [0,0,0]; }
   if(data.fileDir){
-    CNC.setFile([data.fileDir] ,data.initialLine , (File) => { event.sender.send('open-file-res', File); })
+    CNC.setFile( [data.fileDir] ,
+    data.initialLine? data.initialLine : [0,0,0] ,
+    (File) => { event.sender.send('open-file-res', File); })
   }else{
     CNC.setFile(
       dialog.showOpenDialog({
         title : fileConfig.name,
         filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
         properties: [ 'openFile' ] 
-      }), data.initialLine , (File) => { event.sender.send('open-file-res', File); })
+      }),
+      data.initialLine? data.initialLine : [0,0,0] ,
+      (File) => { event.sender.send('open-file-res', File); })
   }
 });
 
