@@ -81,11 +81,11 @@ function sendCommand ( code , callback ){
           Arduino.port.on('data', (data) => {
             Arduino.port.close( (err) => {
               if(debug.arduino.sendCommand){ console.log('respuesta: ',data); }
-              if (typeof (callback) === 'function') {
+              if (!err && typeof (callback) === 'function') {
                 let result = data.toString().split(',');
                 //if(result[0]==0 && result[1]==0 && result[2]==0) lineRunning = 0;
                 if(debug.arduino.working){ console.log({ type:'none', line : lineRunning, steps :result }) }
-                callback({ type:err?"error":"none", line : lineRunning, steps :result });
+                callback({ type:"none", line : lineRunning, steps :result });
               }
             });//close
           });//data
@@ -93,6 +93,7 @@ function sendCommand ( code , callback ){
       });//write
     } else {
       if (typeof (callback) === 'function') {
+        if(debug.arduino.sendCommand){ console.log('callback: ',{type:'error',data:'En la comunicacion.'}); }
         callback({type:'error',data:'En la comunicacion.'});
       }
     }
