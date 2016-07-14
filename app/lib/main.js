@@ -7,7 +7,7 @@ const
   debug  =  {
     arduino : {
       conect : false ,
-      sendCommand : true,
+      sendCommand : false,
       working : false
     },
     file    : {},
@@ -17,15 +17,7 @@ const
   }
 ;
 var lineRunning = 0;
-//var Arduino = require("./arduino.js");
-var Arduino = {
-  port : {},
-  comName : "",
-  manufacturer : "Sin Arduino.",
-  reSet ,
-  working : false
-};
-
+var Arduino = require("./arduino.js");
 var File = {
   workpiece : { x:300, y:400 },
   gcode     : [],
@@ -63,94 +55,44 @@ function setFile ( dirfile ,initialLine, cb ) {
  * @param  {function} callback
  */
 function sendCommand ( code , callback ){
-  if(debug.arduino.sendCommand) console.log(`${__filename} ==>> sendCommand, code: ${code}`);
-  if( Arduino.port.comName !== '' ){
-    if(debug.arduino.sendCommand)  console.log("port.isOpen()",Arduino.port.isOpen() );
-    if( Arduino.port.isOpen() ){
-      Arduino.port.close((err)=>{
-        if(debug.arduino.sendCommand){ 
-          if(err) console.log("err:",err); 
-          console.log("Arduino.port.close");
-        }
-      });
-    }
-    Arduino.port.open( (err) => {
-      if(debug.arduino.sendCommand && err){ console.log('err: ',err); }
-      if(!err){
-      Arduino.port.write(new Buffer(code+'\n'), (err) => {
-        Arduino.port.drain( () => {
-          Arduino.port.on('data', (data) => {
-            Arduino.port.close( (err) => {
-              if(debug.arduino.sendCommand){ console.log('respuesta: ',data); }
-              if (!err && typeof (callback) === 'function') {
-                let result = data.toString().split(',');
-                //if(result[0]==0 && result[1]==0 && result[2]==0) lineRunning = 0;
-                if(debug.arduino.working){ console.log({ type:'none', line : lineRunning, steps :result }) }
-                callback({ type:"none", line : lineRunning, steps :result });
-              }
-            });//close
-          });//data
-        });// drain
-      });//write
-    } else {
-      if (typeof (callback) === 'function') {
-        if(debug.arduino.sendCommand){ console.log('callback: ',{type:'error',data:'En la comunicacion.'}); }
-        callback({type:'error',data:'En la comunicacion.'});
-      }
-    }
-    });//open
-  } else {
-    if (typeof (callback) === 'function') {
-      callback({type:'error',data:'Arduino no selectado.'});
+  if(debug.arduino.sendCommand){ console.log(`${__filename} ==>> sendCommand, code: ${code}`); }
+  let event = { 
+    onData : function (data) {
+      Arduino.working = false;
+      let result = data.toString().split(',');
+      if(debug.arduino.working){ console.log({ type:'none', line : lineRunning, steps :result }) }
+      callback({ type:"none", line : lineRunning, steps :result });
     }
   }
+  Arduino.send( code , (err) => {
+    if( err){ 
+      console.log("Error:",err); 
+      if( typeof (callback) === 'function') {
+        callback({type:'error',msg:err});
+      }
+    }else{
+      Arduino.working = true;
+    }
+  },event);
 }
 
-// solo obtenner comName y capas probar connection
+// probar connection ?
 function reSet (callback) {
   if(!Arduino.working){
-    function set (comName,callback) {
+    Arduino.set( ( comName , manufacturer ) => {
       if(comName !== undefined){
-        Arduino.port = new serialPort.SerialPort(comName,{
-          parser: serialPort.parsers.readline('\r\n'), dataBits: 8, autoOpen : true,
-          baudrate:115200, parity: 'none', stopBits: 1, flowControl: true
-        },false);
-        Arduino.port.open( (err) => {
-          if(err){
-            callback({
-              type : 'warning',
-              msg  : 'Arduino detectado: '+Arduino.manufacturer+'. No puedo abrir la conexión. Prueba con permisos de administrador (root en linux).'
-            });
-            if(debug.arduino.conect) console.log(`ComName: ${Arduino.comName}\nPnpId: ${Arduino.pnpId}\nManufacturer: ${Arduino.manufacturer}`);
-            console.log('is err',err);
-          }else{
-            Arduino.port.close();
-            callback({
-              type : 'success',
-              msg  : 'Arduino detectado: ' + Arduino.manufacturer
-            });
-            if(debug.arduino.conect) console.info("Puerto Selecionado %s",Arduino.manufacturer);
-          }
-        });// open port
+        if(debug.arduino.conect) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
+        callback({
+          type : "success",
+          msg  : "Arduino detectado '"+manufacturer+"'. Puerto: "+comName
+        });
       }else{
-        Arduino.comName = ''; Arduino.manufacturer = '';
         callback({
           type : 'error',
-          msg  : 'No encontramos ardiono.'
+          msg  : 'No encontramos arduino.'
         });
         if(debug.arduino.conect) console.warn('No Arduino.');
       }
-    }
-    serialPort.list( (err, ports) => {
-      var comName = undefined;
-      ports.forEach(function(port) {
-        if (port.pnpId !== undefined && port.manufacturer !== undefined){
-          Arduino.comName = port.comName;
-          Arduino.manufacturer = port.manufacturer;
-          if(debug.arduino.conect) console.log(`ComName: ${port.comName}\nPnpId: ${port.pnpId}\nManufacturer: ${port.manufacturer}`);
-          set(port.comName,callback);
-        }
-      });
     });
   }else{
     callback({
@@ -241,10 +183,19 @@ function readConfig() {
 
 module.exports = {
   debug   ,
-  Arduino ,
+  Arduino : {
+    comName: Arduino.comName,
+    manufacturer: Arduino.manufacturer,
+    reSet,
+    working: Arduino.working
+  },
   File    ,
   setFile ,
   start   ,
   sendCommand ,
-  configFile : { dir:dirConfig, read:readConfig, save:saveConfig }
+  configFile : {
+    dir  : dirConfig, 
+    read : readConfig,
+    save : saveConfig
+  }
 };

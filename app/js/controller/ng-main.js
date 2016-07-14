@@ -125,6 +125,8 @@ angular.controller('main',
       console.log(obj.steps.toString(),'-> Emit -->> Terminado <<--');
       notify( 'Terminado: '+obj.steps,'success');
       $scope.progressBar = 'success';
+    }else if(obj.type == 'error'){
+      notify(obj.msg, obj.type);
     }else if(obj.type != 'none'){
       console.log(obj.steps,'Emit -->> indefinido <<--');
       notify( 'Respuesta: '+obj.nro+' - '+obj.result,'' );

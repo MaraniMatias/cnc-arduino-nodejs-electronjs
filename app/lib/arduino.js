@@ -1,5 +1,5 @@
 const
-  SerialPort = require('serialport')
+  serialPort = require('serialport')
 ;
 var
   manufacturer  =  sp? sp.manufacturer:"Sin Arduino.",
@@ -7,13 +7,18 @@ var
   working       =  false,
   log           =  true,
   sp            =  undefined,
-  onData        =  function(data){console.log('Data: ' + data);},
-  onOpen        =  function(err){console.log('Open.');},
-  onClose       =  function(){console.log('Close.');},
-  onError       =  function(err){console.log('Error: ', err.message);},
-  onDisco       =  function(){console.log('Disconnect.');},
+  onData        =  function(data){ if(log)console.log('Data: ' + data);},
+  onOpen        =  function(err){
+    if(err)console.log("Arduino detectado: "+manufacturer+". No puedo abrir la conexión. Prueba con permisos de administrador (root en linux).");
+    if(log)console.log("Open.");
+  },
+  onClose       =  function(){if(log)console.log('Close.');},
+  onError       =  function(err){
+    console.log('Error: ', err.message);
+  },
+  onDisco       =  function(){if(log)console.log('Disconnect.');},
   option        =  {
-    parser      :  SerialPort.parsers.readline('\r\n'), 
+    parser      :  serialPort.parsers.readline('\r\n'), 
     autoOpen    :  false,
     dataBits    :  8, 
     baudrate    :  115200,
@@ -29,7 +34,7 @@ var
  */
 function list(callback){
   let ardu = [];
-  SerialPort.list( function (err, ports) {
+  serialPort.list( function (err, ports) {
     ports.forEach(function(port) {
       if (port.pnpId !== undefined && port.manufacturer !== undefined){
         ardu.push(port);
@@ -40,7 +45,7 @@ function list(callback){
 }
 
 function search(callback) {
-  SerialPort.list( function (err, ports) {
+  serialPort.list( function (err, ports) {
     ports.forEach(function(port) {
       if (port.pnpId !== undefined && port.manufacturer !== undefined){
         comName = port.comName;
@@ -53,23 +58,30 @@ function search(callback) {
 }
 
 function newArduino(comName) {
-  sp = new SerialPort(comName,option);
+  sp = new serialPort.SerialPort(comName,option);
   sp.on('open'  , onOpen );
   sp.on('error' , onError );
-  sp.on('data'  , onData );
+//  sp.on('data'  , onData );
   sp.on('close' , onClose );
   sp.on('disconnect', onDisco );
 }
 
-function send(code , callback){
-  if( sp.isOpen() ){  write( code , callback );  }
-  else{  sp.open( (err) => { write( code , callback ); });  }
+function send(code , callback , event ){
+  if(log)console.log("send:\n\tCode:",code);
+  if(comName===""){
+    if(log)console.log("Arduino no selectado.");
+    callback("Arduino no selectado.");
+  }else{
+    if(event.onData){ sp.on('data' , event.onData ); }
+    if( sp.isOpen() ){  write( code , callback );  }
+    else{  sp.open( (err) => { write( code , callback ); });  }
+  }
 }
 function write(code , callback){
   if(log)console.log("write:\n\tCode:",code);
   sp.write(new Buffer(code+'\n'), (err) => {
     if(err) throw err
-    sp.drain( callback() );
+    sp.drain( callback(err) );
   });
 }
 
@@ -89,12 +101,9 @@ module.exports = {
   set,
   send,
 //  list,
-  search,
+//  search,
 //  log,
   working,
   manufacturer,
-  comName,
-  onData,
-  onError,
-  onOpen
+  comName
 }
