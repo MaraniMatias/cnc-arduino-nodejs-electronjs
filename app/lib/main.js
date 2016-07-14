@@ -17,6 +17,7 @@ const
   }
 ;
 var lineRunning = 0;
+//var Arduino = require("./arduino.js");
 var Arduino = {
   port : {},
   comName : "",
@@ -24,13 +25,6 @@ var Arduino = {
   reSet ,
   working : false
 };
-
-function getMiliSeg (config)  {
-  let steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
-  let time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
-  let advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
-  return steps * time / advance ;
-}
 
 var File = {
   workpiece : { x:300, y:400 },
@@ -41,6 +35,13 @@ var File = {
   travel    : 0 ,
   segTotal  : 0
 };
+
+function getMiliSeg (config)  {
+  let steps   = ( config.motor.x.steps   + config.motor.y.steps   ) / 2;
+  let time    = ( config.motor.x.time    + config.motor.y.time    ) / 2;
+  let advance = ( config.motor.x.advance + config.motor.y.advance ) / 2;
+  return steps * time / advance ;
+}
 
 function setFile ( dirfile ,initialLine, cb ) {
   if (dirfile){
@@ -105,6 +106,7 @@ function sendCommand ( code , callback ){
   }
 }
 
+// solo obtenner comName y capas probar connection
 function reSet (callback) {
   if(!Arduino.working){
     function set (comName,callback) {
@@ -112,7 +114,7 @@ function reSet (callback) {
         Arduino.port = new serialPort.SerialPort(comName,{
           parser: serialPort.parsers.readline('\r\n'), dataBits: 8, autoOpen : true,
           baudrate:115200, parity: 'none', stopBits: 1, flowControl: true
-        },false);// This does not initiate the connection.
+        },false);
         Arduino.port.open( (err) => {
           if(err){
             callback({
@@ -151,7 +153,11 @@ function reSet (callback) {
       });
     });
   }else{
-    console.log("Arduino working.");
+    callback({
+      type : 'warning',
+      msg  : 'Arduino trabajando '+Arduino.manufacturer
+    });
+    if(debug.arduino.conect)console.log("Arduino working.");
   }
 }
 
