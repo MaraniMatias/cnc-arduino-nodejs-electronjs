@@ -121,6 +121,7 @@ ipcMain.on('send-start', (event, arg) => {
       if(CNC.debug.ipc.console) console.log("I: %s - Ejes: %s - Result: %s", data.lineRunning, CNC.File.gcode[data.lineRunning].ejes , data.steps );  
     }else{
       powerSaveBlocker.stop(id);
+      mainWindow.setProgressBar(0); 
       event.sender.send('close-conex',{type: 'none', steps : data.steps});
       if(CNC.debug.ipc.console) console.log("Finish.");
     }

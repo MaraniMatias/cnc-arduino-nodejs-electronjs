@@ -134,6 +134,7 @@ angular.controller('main',
           console.log(obj.steps.toString(),'-->> Terminado <<--');
           notify(obj.msg,'success');
           $scope.progressBar = 'success';
+          $('title').text('CNC-ino - '+$scope.cnc.file.name);
         }else{//Pause
           console.log(obj.line,obj.steps.toString(),'-->> Pausado <<--');
           notify( 'Pausado en los pasos: '+obj.steps,'warning' );
