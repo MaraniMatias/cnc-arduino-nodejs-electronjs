@@ -18,14 +18,12 @@ var
   workingGCode  =  false,
   onData        =  function(data){
     if(debug.on)console.log('Data: ' + data);
-    //sp.close( (err)=>{
-      working = false;
-      let result = data.toString().split(',');
-      if(debug.on) console.log({ type:'none', line : 0, steps :result });
-      if( typeof (cb) === 'function') {
-        cb({ type:"none", line : 0, steps :result , msg:"Respuesta Arduino: "+result });
-      }
-    //});
+    working = false;
+    let result = data.toString().split(',');
+    if(debug.on) console.log({ type:'none', line : 0, steps :result });
+    if( typeof (cb) === 'function') {
+      cb({ type:"none", line : 0, steps :result , msg:"Respuesta Arduino: "+result });
+    }
   },
   onOpen        =  function(err){
     if(err)console.log("Arduino detectado: "+manufacturer+". No puedo abrir la conexión. Prueba con permisos de administrador (root en linux).");
@@ -134,21 +132,13 @@ function write( code , callback) {
   });
 }
 
-module.exports = {
-  set,  send, sendGcode, close,
-//  list,  search,  log,
-  working,  manufacturer,  comName
-}
-
 function sendGcode(code,cbWrite,cbAnswer) {
   if(debug.sendGcode)console.log("send:\tCode:",code);
   if(comName===""){  if(debug.sendGcode)console.log("Arduino no selectado.");
     callback({type:"error",msg:"Arduino no selectado."});
   }else{
     if(sp.isOpen()){  if(debug.sendGcode)console.log("Conexc open");
-      //sp.close( (err)=>{
-        writeGcode( code , cbWrite , cbAnswer );
-      //});
+      writeGcode( code , cbWrite , cbAnswer );
     }else{  if(debug.sendGcode)console.log("Conexc No open.")
       sp.open( (err)=>{
         if(err){
@@ -162,29 +152,21 @@ function sendGcode(code,cbWrite,cbAnswer) {
     }
   }
 }
-
 function writeGcode( code , cbWrite , cbAnswer ) {
-/*  sp.open( (err)=>{
+  if(debug.write)console.log("write:\tCode:",code);
+  cb = cbAnswer;
+  sp.write(new Buffer(code+'\n'), (err)=>{
     if(err){
-      let msg = process.platform !== "linux"? "It needs to be administrator. puerto "+comName : "sudo chmod 0777 /dev/"+comName ;
-      callback({type:"error",msg})
-      console.log(msg,'\n',err.message);
-    }else{*/
-      if(debug.write)console.log("write:\tCode:",code);
-      cb = cbAnswer;
-      sp.write(new Buffer(code+'\n'), (err)=>{
-        if(err){
-          cbWrite({type:"error",msg:err.message})
-        }else{
-          working = false;
-          sp.drain( 
-            cbWrite({type:"info",msg:"Comando enviado: "+code})
-          );
-        }
-      });
-    //}
-//  });
+      cbWrite({type:"error",msg:err.message})
+    }else{
+      working = false;
+      sp.drain( 
+        cbWrite({type:"info",msg:"Comando enviado: "+code})
+      );
+    }
+  });
 }
+
 function close(callback){
   if(sp.isOpen()){  if(debug.sendGcode)console.log("Conexc open -> close");
     sp.close( (err)=>{
@@ -192,42 +174,5 @@ function close(callback){
     });
   }
 }
-/*
-if( sp.comName !== '' ){
-  if( sp.isOpen() ){ sp.close(); }
-  if(sp.comName !== '' && File.gcode.length > 0){
-    sp.open( (err) => {
-      if(err){
-        if(process.platform !== "linux") console.log('It needs to be administrator. puerto '+Arduino.comName);
-        else console.log('sudo chmod 0777 /dev/'+Arduino.comName);
-      } else {
-        sp.write(new Buffer(getSteps(lineRunning,arg.steps,config)+'\n'), (err,results) => {
-          sp.drain( () => {
-            callback({ lineRunning, steps:'0,0,0' });
-          })
-        })//write
-        
-        sp.on('data', (data) => {
-          let result = data.toString().split(',');
-          lineRunning++;
-          if(lineRunning < File.gcode.length){
-            sp.write(new Buffer(
-              getSteps(lineRunning,arg.steps,config)
-              +'\n'), (err,results) => {
-              sp.drain( () => { 
-                callback({ lineRunning , steps:result });
-              });
-            });//write
-          }else{// finsh
-            sp.close( (err) => {
-              callback({ lineRunning : false, steps:['0','0','0'] });
-              lineRunning = 0;
-              Arduino.working = false;
-            });//close
-          }
-        })//data
-      }//else
-    });//open
-  }
-}// if arduino != ''
-*/
+
+module.exports = {  set,  send, sendGcode, close, working,  manufacturer,  comName }

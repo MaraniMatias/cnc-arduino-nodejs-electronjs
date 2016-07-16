@@ -131,7 +131,7 @@ callback({ lineRunning, steps:'0,0,0' });
         }
 
         Arduino.sendGcode(getSteps(lineRunning,arg.steps,config),cbWrite,cbAnswer);
-        
+
       }//  File.gcode.length > 0 
     });// then Promise
   }else{
