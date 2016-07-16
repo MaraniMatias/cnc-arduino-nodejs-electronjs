@@ -125,10 +125,7 @@ callback({ lineRunning : false, steps:['0','0','0'] });
             });
           }
         };
-        let cbWrite = (data)=>{
-          if(debug.arduino.start)console.log("cbWrite",lineRunning,data);
-callback({ lineRunning, steps:'0,0,0' });
-        }
+        let cbWrite = (data)=>{  if(debug.arduino.start)console.log("cbWrite",lineRunning,data);  }
 
         Arduino.sendGcode(getSteps(lineRunning,arg.steps,config),cbWrite,cbAnswer);
 

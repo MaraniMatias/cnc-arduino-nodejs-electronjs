@@ -168,7 +168,7 @@ Event: ‘on-battery’
 */
 
 function registerGlobalShortcut() {
-  if(CNC.Arduino.comName!==undefined && CNC.Arduino.comName!==''){
+  if(!CNC.Arduino.working){
     CNC.configFile.read().then( (file) => {
       let manalSteps = file.manalSteps;
       function globalShortcutSendComand (cmd){

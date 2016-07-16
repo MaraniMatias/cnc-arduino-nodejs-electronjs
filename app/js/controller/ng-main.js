@@ -5,9 +5,10 @@ angular.controller('main',
 [ 'notify','ipc','cnc','$scope','lineTable','config','line','statusBar',
 ( notify,ipc,cnc,$scope,lineTable,config,line,statusBar) => {
 'use strict'
-  var exceeds_x = false, exceeds_y = false; lineTable.show = false;
+  var exceeds_x = false, exceeds_y = false;
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
+  $scope.lineTableShow = false;
   $scope.statusBar = statusBar;
   $scope.initialLine = '0,0,0';
 
@@ -27,7 +28,7 @@ angular.controller('main',
     }
   }
 
-  ipc.on('show-lineTable',(event, obj) => { lineTable.show = !lineTable.show; });
+  ipc.on('show-lineTable',(event, obj) => { $scope.lineTableShow = !$scope.lineTableShow; });
   ipc.send('arduino');
   ipc.on('arduino-res', (event, obj) => {
     config = obj.config;
@@ -70,9 +71,9 @@ angular.controller('main',
     if(ipc.sendArd('o') ){ notify( 'Comando mover al origen.' , 'success' ); }
   }
   $scope.pausa = () => { 
-    window.alert('No se recomienda pausar la ejecucion.')
     $scope.cnc.time.pause = new Date();
     if(ipc.sendArd('p')){ notify( 'Orden de pausa' , 'warning' ); }
+    window.alert('No se recomienda pausar la ejecucion.');
   }
   $scope.parar = () => {
     if(ipc.sendArd('0,0,0')){
@@ -121,7 +122,7 @@ angular.controller('main',
   }
 
   ipc.on('close-conex', (event,obj) => {
-    console.log('close-conex',obj);
+    //console.log('close-conex',obj);
     switch(obj.type){
       case "info":
         $scope.cnc.working = true;
@@ -161,7 +162,9 @@ angular.controller('main',
 
   ipc.on('add-line', (event, data) => { 
     //graficar trabajo. :D
-    if($scope.lineTable.length > 10) $scope.lineTable.shift();
+    if($scope.lineTable.length > 10){
+      $scope.lineTable.shift();
+    }
     $scope.lineTable.push( line.new( data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
 
     notify('Trabajando con '+data.line.code,'info');
