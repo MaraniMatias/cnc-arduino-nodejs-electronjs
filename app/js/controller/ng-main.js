@@ -121,28 +121,41 @@ angular.controller('main',
   }
 
   ipc.on('close-conex', (event,obj) => {
-    if(obj.type == 'none' && obj.steps[0]==='0' && obj.steps[1]==='0' && obj.steps[2]==='0'){
-      console.log(obj.steps.toString(),'-> Emit -->> Terminado <<--');
-      notify( 'Terminado: '+obj.steps,'success');
-      $scope.progressBar = 'success';
-    }else if(obj.type == 'error'){
-      notify(obj.msg, obj.type);
-    }else if(obj.type != 'none'){
-      console.log(obj.steps,'Emit -->> indefinido <<--');
-      notify( 'Respuesta: '+obj.nro+' - '+obj.result,'' );
-      $scope.progressBar = 'success';
-    }else{//Pause
-      console.log(obj.line,obj.steps.toString(),'Emit -->> Pausado <<--');
-      notify( 'Pausado en los pasos: '+obj.steps,'warning' );
-      $scope.progressBar = 'warning';
-      cnc.pause.line      =  obj.line ;
-      cnc.pause.steps[0]  =  obj.steps[0];
-      cnc.pause.steps[1]  =  obj.steps[1];
-      cnc.pause.steps[2]  =  obj.steps[2];
-      cnc.pause.status    =  true;
-      $scope.comando      =  cnc.pause.steps.toString();
+    console.log('close-conex',obj);
+    switch(obj.type){
+      case "info":
+        $scope.cnc.working = true;
+        $scope.progressBar = 'success';
+        notify(obj.msg, obj.type);
+      break;
+      case "none":
+        $scope.cnc.working = false;
+        if(obj.steps[0]==='0' && obj.steps[1]==='0' && obj.steps[2]==='0'){
+          console.log(obj.steps.toString(),'-->> Terminado <<--');
+          notify(obj.msg,'success');
+          $scope.progressBar = 'success';
+        }else{//Pause
+          console.log(obj.line,obj.steps.toString(),'-->> Pausado <<--');
+          notify( 'Pausado en los pasos: '+obj.steps,'warning' );
+          $scope.progressBar = 'warning';
+          cnc.pause.line      =  obj.line ;
+          cnc.pause.steps[0]  =  obj.steps[0];
+          cnc.pause.steps[1]  =  obj.steps[1];
+          cnc.pause.steps[2]  =  obj.steps[2];
+          cnc.pause.status    =  true;
+          $scope.comando      =  cnc.pause.steps.toString();
+        }
+      break;
+      case "error":
+        notify(obj.msg, obj.type);
+        $scope.cnc.working = false;
+      break;
+      default:
+        console.log('Algo inesperado...');
+        notify("Algo inesperado...","question");
+        $scope.progressBar = 'warning';
+        $scope.cnc.working = false;
     }
-    $scope.cnc.working = false;
   }); 
 
   ipc.on('add-line', (event, data) => { 
@@ -158,11 +171,14 @@ angular.controller('main',
 
       ipc.send('taksBar-progress',$scope.cnc.file.line.progress/100);
 
-      $scope.cnc.time.calcEnd($scope.cnc.file.line);
+      if($scope.cnc.file.Progress>30 || $scope.cnc.file.Progress===0){
+        $scope.cnc.time.calcEnd($scope.cnc.file.line);
+      }
       $scope.$watch('cnc.time.end',()=>{ 
         if($scope.statisticHour.option){ $scope.statisticHour.value = cnc.time.end; }
         else{ $scope.statisticHour.value = cnc.time.start; }
       });
+
     }
   });
 

@@ -74,7 +74,7 @@ angular
         position : attrs.ngPopupPosition,
         variation : attrs.ngPopupVariatio,
         delay: {
-          hide: 650
+          hide: 450
         }
       });
     }

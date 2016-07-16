@@ -6,14 +6,15 @@ const
   gc          =  require("./gcode"),
   debug  =  {
     arduino : {
-      conect : false ,
+      start       : false,
+      conect      : false ,
       sendCommand : false,
-      working : false
+      working     : false
     },
     file    : {},
     config  : {},
     ipc     : { arduino : false, console : false },
-    app     : { prevent : true }
+    app     : { prevent : false }
   }
 ;
 var lineRunning = 0;
@@ -37,7 +38,7 @@ function getMiliSeg (config)  {
 
 function setFile ( dirfile ,initialLine, cb ) {
   if (dirfile){
-    readConfig().then( (config) => {
+    readConfig().then( (config)=>{
       File.workpiece.x  =  config.workpiece.x;
       File.workpiece.y  =  config.workpiece.y;
       File.dir          =  dirfile[0];
@@ -56,30 +57,13 @@ function setFile ( dirfile ,initialLine, cb ) {
  */
 function sendCommand ( code , callback ){
   if(debug.arduino.sendCommand){ console.log(`${__filename} ==>> sendCommand, code: ${code}`); }
-  let event = { 
-    onData : function (data) {
-      Arduino.working = false;
-      let result = data.toString().split(',');
-      if(debug.arduino.working){ console.log({ type:'none', line : lineRunning, steps :result }) }
-      callback({ type:"none", line : lineRunning, steps :result });
-    }
-  }
-  Arduino.send( code , (err) => {
-    if( err){ 
-      console.log("Error:",err); 
-      if( typeof (callback) === 'function') {
-        callback({type:'error',msg:err});
-      }
-    }else{
-      Arduino.working = true;
-    }
-  },event);
+  Arduino.send( code , callback );
 }
 
 // probar connection ?
 function reSet (callback) {
   if(!Arduino.working){
-    Arduino.set( ( comName , manufacturer ) => {
+    Arduino.set( ( comName , manufacturer )=>{
       if(comName !== undefined){
         if(debug.arduino.conect) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
         callback({
@@ -114,59 +98,51 @@ function getSteps (l,oldSteps,config) {
 }
 
 function start (arg,callback) {
+  if(debug.arduino.start) console.log(arg ,"working: " + Arduino.working);
   if(!Arduino.working){
-    Arduino.working = true;
     if(!arg.follow){ lineRunning=0;}
+    if(debug.arduino.start) console.log("lineRunning: " + lineRunning);
     let fileRead = new Promise(function (resolve, reject){
       fs.readFile( dirConfig , "utf8", function (error, data) {
         resolve(JSON.parse(data));
       });
-    }).then( (config) => {
-      if( Arduino.port.comName !== '' ){
-        if( Arduino.port.isOpen() ){ Arduino.port.close(); }
-        if(Arduino.port.comName !== '' && File.gcode.length > 0){
-          Arduino.port.open( (err) => {
-            if(err){
-              if(process.platform !== "linux") console.log('It needs to be administrator. puerto '+Arduino.comName);
-              else console.log('sudo chmod 0777 /dev/'+Arduino.comName);
-            } else {
-              Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps,config)+'\n'), (err,results) => {
-                Arduino.port.drain( () => {
-                  callback({ lineRunning, steps:'0,0,0' });
-                })
-              })//write
-              
-              Arduino.port.on('data', (data) => {
-                let result = data.toString().split(',');
-                lineRunning++;
-                if(lineRunning < File.gcode.length){
-                  Arduino.port.write(new Buffer(getSteps(lineRunning,arg.steps,config)+'\n'), (err,results) => {
-                    Arduino.port.drain( () => { 
-                      callback({ lineRunning , steps:result });
-                    });
-                  });//write
-                }else{// finsh
-                  Arduino.port.close( (err) => {
-                    callback({ lineRunning : false, steps:['0','0','0'] });
-                    lineRunning = 0;
-                    Arduino.working = false;
-                  });//close
-                }
-              })//data
-            }//else
-          });//open
+    }).then( (config)=>{
+      if( File.gcode.length > 0 ){
+
+        let cbAnswer = (data)=>{
+          let result = data.toString().split(',');
+          lineRunning++;
+          if(lineRunning < File.gcode.length){
+            if(debug.arduino.start)console.log("cbAnswer:",lineRunning,result);
+callback({ lineRunning , steps:result });
+            Arduino.sendGcode(getSteps(lineRunning,arg.steps,config),cbWrite,cbAnswer);
+          }else{
+            console.log(lineRunning,"fin :D");
+            lineRunning = 0;
+            Arduino.close( (err)=>{
+              Arduino.working = false;
+callback({ lineRunning : false, steps:['0','0','0'] });
+            });
+          }
+        };
+        let cbWrite = (data)=>{
+          if(debug.arduino.start)console.log("cbWrite",lineRunning,data);
+callback({ lineRunning, steps:'0,0,0' });
         }
-      }// if arduino != ''
-    });
+
+        Arduino.sendGcode(getSteps(lineRunning,arg.steps,config),cbWrite,cbAnswer);
+        
+      }//  File.gcode.length > 0 
+    });// then Promise
   }else{
-    callback({ lineRunning : false, steps:['0','0','0'] });
+    callback({ type:"error", msg:"Arduino trabajando. o error en comunicacion." });
   }
 }
 
 function saveConfig(data , cb) {
-  fs.writeFile( dirConfig , JSON.stringify(data),{encoding:'utf8'} , (err) => {
+  fs.writeFile( dirConfig , JSON.stringify(data),{encoding:'utf8'} , (err)=>{
     if (err) throw err;
-    readConfig().then( (file) => {
+    readConfig().then( (file)=>{
       cb( { file , message : 'Cambios guardados.', type:'success'} );
     });
   });

@@ -72,8 +72,8 @@ html, body {
     background: grey;
 }
 .statusbar.question {
-    background: #007acc;
+    background: cornflowerblue;
 }
 .statusbar.info {
-    background: cornflowerblue;
+    background: #007acc;
 }
