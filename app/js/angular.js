@@ -20,23 +20,23 @@ angular
       duration : 0,
       progress : 0
     },
-    travel:0,
-    Progress: function  (nro,trvl) {
-      nro++;
-      this.line.run = nro;
-      this.line.progress = ((trvl*100)/this.travel).toFixed(2);
+    travel : 0
+  },
+  Progress: function  (trvl) {
+	  // this = cnc
+    this.file.line.run++;
+    this.file.line.progress = ((trvl*100)/this.file.travel).toFixed(2);
+    if(this.file.line.progress>16 || this.file.line.progress===0){
+      let time = new Date().getTime() - this.time.start.getTime();
+      let mileSecondsLeft =  this.file.travel * time / trvl;
+      this.time.end = new Date( this.time.start.getTime() + mileSecondsLeft );
+      console.log(mileSecondsLeft / trvl);
     }
   },
   time:{
     pause:'--:--',
     start:'--:--',
-    end:'--:--',
-    calcEnd : function (line) {
-      // this = time
-      let time = new Date().getTime() - this.start.getTime();
-      let mileSecondsLeft =  line.total * time / line.run;
-      this.end = new Date( this.start.getTime() + mileSecondsLeft );
-    }
+    end:'--:--'
   }
 })
 .value('lineTable', [])

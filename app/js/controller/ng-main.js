@@ -83,6 +83,7 @@ angular.controller('main',
 
       $scope.cnc.file.line.interpreted = 0;
       $scope.cnc.file.line.progress = 0;
+      $scope.cnc.file.line.run = 0;
       $scope.cnc.pause.steps[0]=0;
       $scope.cnc.pause.steps[1]=0;
       $scope.cnc.pause.steps[2]=0;
@@ -170,14 +171,11 @@ angular.controller('main',
     notify('Trabajando con '+data.line.code,'info');
 
     if(data.nro && data.line.travel){
-      $scope.cnc.file.Progress(data.nro,data.line.travel);
+      $scope.cnc.Progress(data.line.travel);
       $('title').text('CNC-ino - '+$scope.cnc.file.line.progress+"% - "+$scope.cnc.file.name);
 
       ipc.send('taksBar-progress',$scope.cnc.file.line.progress/100);
 
-      if($scope.cnc.file.Progress>30 || $scope.cnc.file.Progress===0){
-        $scope.cnc.time.calcEnd($scope.cnc.file.line);
-      }
       $scope.$watch('cnc.time.end',()=>{ 
         if($scope.statisticHour.option){ $scope.statisticHour.value = cnc.time.end; }
         else{ $scope.statisticHour.value = cnc.time.start; }
@@ -188,6 +186,7 @@ angular.controller('main',
 
   $scope.start = () => {
     if(!cnc.pause.status){
+      $scope.cnc.file.line.run = 0;
       $scope.lineTable = [];
       $scope.cnc.time.start = new Date();
       $scope.cnc.time.end = new Date( new Date().getTime() + $scope.cnc.file.line.duration );
