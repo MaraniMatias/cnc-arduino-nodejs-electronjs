@@ -30,7 +30,6 @@ angular
       let time = new Date().getTime() - this.time.start.getTime();
       let mileSecondsLeft =  this.file.travel * time / trvl;
       this.time.end = new Date( this.time.start.getTime() + mileSecondsLeft );
-      console.log(mileSecondsLeft / trvl);
     }
   },
   time:{
