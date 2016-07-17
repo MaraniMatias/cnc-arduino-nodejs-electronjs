@@ -20,9 +20,9 @@ var
     if(debug.on)console.log('Data: ' + data);
     working = false;
     let result = data.toString().split(',');
-    if(debug.on) console.log({ type:'none', line : 0, steps :result });
+    if(debug.on) console.log({ type:'none' , steps :result });
     if( typeof (cb) === 'function') {
-      cb({ type:"none", line : 0, steps :result , msg:"Respuesta Arduino: "+result });
+      cb({ type:"none", steps :result , msg:"Respuesta Arduino: "+result });
     }
   },
   onOpen        =  function(err){

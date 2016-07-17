@@ -111,6 +111,7 @@ ipcMain.on('send-command', (event, arg) => {
 });
 
 ipcMain.on('send-start', (event, arg) => {
+  if(CNC.debug.ipc.sendStart) console.log('send-start\n',arg);
   //prevent-display-sleep
   //prevent-app-suspension
   var id = powerSaveBlocker.start('prevent-app-suspension');

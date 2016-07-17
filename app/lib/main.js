@@ -13,7 +13,7 @@ const
     },
     file    : {},
     config  : {},
-    ipc     : { arduino : false, console : false },
+    ipc     : { arduino : false, console : false , sendStart : false},
     app     : { prevent : false }
   }
 ;

@@ -65,15 +65,21 @@ angular.controller('main',
   });
 
   $scope.enviarDatos = (cmd) => {
-    if(ipc.sendArd(cmd)){ notify( 'Comando manual: '+cmd , 'success' ); }
+    if(ipc.sendArd(cmd)){ 
+      notify( 'Comando manual: '+cmd , 'success' );
+      $scope.progressBar = 'indicating';
+    }
   }
-  $scope.moverOrigen = () => {
-    if(ipc.sendArd('o') ){ notify( 'Comando mover al origen.' , 'success' ); }
-  }
+  /*$scope.moverOrigen = () => {
+    if(ipc.sendArd('o') ){
+      notify( 'Comando mover al origen.' , 'success' );
+      $scope.progressBar = '';
+    }
+  }*/
   $scope.pausa = () => { 
     $scope.cnc.time.pause = new Date();
     if(ipc.sendArd('p')){ notify( 'Orden de pausa' , 'warning' ); }
-    window.alert('No se recomienda pausar la ejecucion.');
+    if(cnc.file.line.run){  window.alert('No se recomienda pausar la ejecucion.');  }
   }
   $scope.parar = () => {
     if(ipc.sendArd('0,0,0')){
@@ -123,7 +129,7 @@ angular.controller('main',
   }
 
   ipc.on('close-conex', (event,obj) => {
-    //console.log('close-conex',obj);
+console.log('close-conex',obj);
     switch(obj.type){
       case "info":
         $scope.cnc.working = true;
@@ -133,14 +139,18 @@ angular.controller('main',
       case "none":
         $scope.cnc.working = false;
         if(obj.steps[0]==='0' && obj.steps[1]==='0' && obj.steps[2]==='0'){
-          console.log(obj.steps.toString(),'-->> Terminado <<--');
+console.log('-->> Terminado <<--');
           notify(obj.msg,'success');
-          $scope.progressBar = 'success';
-          $('title').text('CNC-ino - '+$scope.cnc.file.name);
+          if(obj.line){
+            $scope.progressBar = 'success';
+            $('title').text('CNC-ino'+$scope.cnc.file.name?' - '+$scope.cnc.file.name:'');
+          }else{
+            $scope.progressBar = 'indicating';
+          }
         }else{//Pause
-          console.log(obj.line,obj.steps.toString(),'-->> Pausado <<--');
+console.log('-->> Pausado <<--');
           notify( 'Pausado en los pasos: '+obj.steps,'warning' );
-          $scope.progressBar = 'warning';
+          $scope.progressBar  =  'warning';
           cnc.pause.line      =  obj.line ;
           cnc.pause.steps[0]  =  obj.steps[0];
           cnc.pause.steps[1]  =  obj.steps[1];
@@ -150,11 +160,12 @@ angular.controller('main',
         }
       break;
       case "error":
+console.log('-->> Error <<--');
         notify(obj.msg, obj.type);
         $scope.cnc.working = false;
       break;
       default:
-        console.log('Algo inesperado...');
+console.log('-->> Algo inesperado  <<--');
         notify("Algo inesperado...","question");
         $scope.progressBar = 'warning';
         $scope.cnc.working = false;
@@ -190,17 +201,20 @@ angular.controller('main',
       $scope.lineTable = [];
       $scope.cnc.time.start = new Date();
       $scope.cnc.time.end = new Date( new Date().getTime() + $scope.cnc.file.line.duration );
-      ipc.startArd({follow:false, steps:[0,0,0]});
+      ipc.startArd({ follow : false, steps : [0,0,0] });
     }else{ // pausa
+      if($scope.cnc.file.line.run !== 0){//si paras en linea 0 esto andaria mal
+        ipc.startArd({ follow : true, steps: cnc.pause.steps });
+        // saber cunato tiempo estuvo parado y sumar
+        $scope.cnc.time.end = new Date(
+          $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
+        );
+      }else{
+        ipc.sendArd(cnc.pause.steps);
+      }
       $scope.cnc.pause.status = false;
-      $scope.cnc.steps = [0,0,0];
-      // saber cunato tiempo estuvo parado y sumar
-      $scope.cnc.time.end = new Date(
-        $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
-      );
-      //
       $scope.cnc.time.pause = '--:--'
-      ipc.startArd({follow : true, steps: cnc.pause.steps });
+      $scope.cnc.steps = [0,0,0];
     }
     $scope.progressBar = 'indicating';
   }
