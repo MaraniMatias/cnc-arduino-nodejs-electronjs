@@ -2,6 +2,8 @@ extends ./layout.jade
 block content
   div(ng-controller="main")
     .ui.segment.graph( style='height: 100%; position: absolute;width: 100%; margin-bottom: 0px;"')
+      #loader.ui.active.inverted.dimmer(style="background-color: #F5F5F5;")
+        .ui.loader
       #mygraph
       .ui.left.internal.attached.rail.graph(style="width: 400px;")
         .ui.grid

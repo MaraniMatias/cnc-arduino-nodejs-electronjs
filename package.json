@@ -29,8 +29,9 @@
     "start": "./node_modules/.bin/electron ./app",
     "test": "mocha ./tests/**/*.js",
     "dist": "build",
-    "runwin": "grunt runwin"
-  },
+    "runwin": "grunt runwin",
+    "builder": "electron-packager .\\app CNC-ino  --platform=wi32 --arch=x64"
+    },
   "author": {
     "name": "Marani Matias Ezequiel",
     "email": "maranimatias@gmail.com"
@@ -52,32 +53,18 @@
     "express",
     "nodejs"
   ],
+  "directories":{
+  "buildResources":"build",
+  "output":"dist"
+  },
   "build": {
     "asar": false,
     "compression": "maximum",
-    "app-bundle-id": "cnc-ino",
+    "appId": "CNC-ino",
     "app-category-type": "public.app-category.education",
-    "productName": "cnc-ino",
-    "osx": {
-      "title": "CNC-ino",
-      "background": "",
-      "icon": "./app/recursos/cnc-ino.icns",
-      "icon-size": 80,
-      "contents": [
-        {
-          "x": 438,
-          "y": 344,
-          "type": "link",
-          "path": "/Applications"
-        },
-        {
-          "x": 192,
-          "y": 344,
-          "type": "file"
-        }
-      ]
-    },
+    "productName":"CNC-ino",
     "win": {
+      "target":"tar.xz",
       "title": "CNC-ino",
       "icon": "./app/recursos/cnc-ino.ico",
       "publisher": "cnc realizado con nodejs electron serialport arduino."

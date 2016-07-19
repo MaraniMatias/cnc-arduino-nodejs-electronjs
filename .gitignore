@@ -26,3 +26,4 @@ g-code/jscut_svg2gcode/
 g-code/jscut_svg2gcode/bower_components/
 build-serialport/
 *.html
+dist/

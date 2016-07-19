@@ -5,6 +5,7 @@ angular.controller('main',
 [ 'notify','ipc','cnc','$scope','lineTable','config','line','statusBar',
 ( notify,ipc,cnc,$scope,lineTable,config,line,statusBar) => {
 'use strict'
+  $("#loader").removeClass("active");
   var exceeds_x = false, exceeds_y = false;
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
