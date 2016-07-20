@@ -12,8 +12,10 @@ build/Release
 /.vscode
 node_modules
 typings
-public/components/
+app/components/
 *.png
 *.svg
 *.tap
 *.old.*
+dist/
+old/
