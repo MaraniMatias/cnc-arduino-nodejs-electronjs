@@ -14,7 +14,7 @@ var
     send    : false,
     on      : false
   },
-  sp            =  undefined,
+  sp,
   workingGCode  =  false,
   onData        =  function(data){
     if(debug.on)console.log('Data: ' + data);

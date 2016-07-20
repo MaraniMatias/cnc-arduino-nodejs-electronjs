@@ -7,7 +7,7 @@
     "colors": "~1.1.2",
     "electron-builder": "~5.12.1",
     "electron-packager": "~7.3.0",
-    "electron-prebuilt": "~1.2.7",
+    "electron-prebuilt": "1.2.7",
     "electron-rebuild": "~1.1.5",
     "grunt": "~1.0.1",
     "grunt-contrib-jade": "~1.0.0",
@@ -25,13 +25,10 @@
     "zombie": "~4.2.1"
   },
   "scripts": {
-    "rebuild" :"cd ./app/node_modules/serialport ; node-gyp rebuild --target=1.2.6 --arch=x64 --dist-url=https://atom.io/download/atom-shell",
-    "start": "./node_modules/.bin/electron ./app",
-    "test": "mocha ./tests/**/*.js",
-    "dist": "build",
-    "runwin": "grunt runwin",
-    "builder": "electron-packager .\\app CNC-ino  --platform=wi32 --arch=x64"
-    },
+    "rebuild" :"grunt buildsp",
+    "start": "grunt run",
+    "test": "mocha ./tests/**/*.js"
+  },
   "author": {
     "name": "Marani Matias Ezequiel",
     "email": "maranimatias@gmail.com"
@@ -51,11 +48,14 @@
     "arduino",
     "electron",
     "express",
-    "nodejs"
+    "nodejs",
+    "serialport",
+    "gcode"
   ],
   "directories":{
-  "buildResources":"build",
-  "output":"dist"
+    "buildResources":"build",
+    "output":"./dist",
+    "app":"./app"
   },
   "build": {
     "asar": false,
@@ -66,12 +66,12 @@
     "win": {
       "target":"tar.xz",
       "title": "CNC-ino",
-      "icon": "./app/recursos/cnc-ino.ico",
+      "icon": "./app/recursos/icon.ico",
       "publisher": "cnc realizado con nodejs electron serialport arduino."
     },
     "linux": {
       "description": "cnc realizado con nodejs electron serialport arduino.",
-      "synopsis": "Arduino + NodeJS + AngularJS + SerialPort",
+      "synopsis": "Arduino + SerialPort + NodeJS + ElectronJS + AngularJS + Semantic UI",
       "executable": "CNC-ino",
       "target": "deb",
       "compression": "xz"

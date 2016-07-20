@@ -1,4 +1,3 @@
-'use strict'
 const
   dirConfig   =  __dirname + "/config.json",
   serialPort  =  require('serialport'),
