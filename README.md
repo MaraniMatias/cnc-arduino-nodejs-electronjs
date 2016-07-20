@@ -15,7 +15,7 @@ Con el tiempo a medida que mejora mi experiencia con otros trabajos voy descubri
 ## Demo.
 ![CNC Mar](https://github.com/MaraniMatias/router-cnc-nodejs-arduino/blob/dev/cnc-arduino-nodejs.jpg)
 
-[Ver en YouTube un video resumen :D.](https://youtu.be/3uy0TsIahks) (primera versión)
+[Ver en YouTube un video.](https://youtu.be/3uy0TsIahks) (primera versión)
 
 ## Circuito.
 Consiste en un circuito rectificador de corriente, un circuito auto acoplador para cada motor el cual recibe un pulso positivo según la correspondencia entre pin del Arduino y la bobina del motor paso a paso.
