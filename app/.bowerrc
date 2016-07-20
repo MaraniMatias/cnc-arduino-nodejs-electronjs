@@ -1,5 +1,5 @@
 {
 "analytics": true,
-"directory": "app/components",
+"directory": "components",
 "interactive": true
 }

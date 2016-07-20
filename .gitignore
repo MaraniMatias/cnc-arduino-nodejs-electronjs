@@ -1,6 +1,7 @@
 logs
 *.log
 *.*~
+*~
 pids
 *.pid
 *.seed
@@ -8,10 +9,10 @@ lib-cov
 coverage
 .grunt
 .lock-wscript
-build/Release
-/.vscode
-node_modules
-typings
+#.vscode/
+app/node_modules/
+node_modules/
+typings/
 app/components/
 *.png
 *.svg
@@ -19,3 +20,5 @@ app/components/
 *.old.*
 dist/
 old/
+docs/
+g-code/**/*

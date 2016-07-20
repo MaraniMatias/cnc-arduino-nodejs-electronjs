@@ -1,0 +1,1 @@
+{"manalSteps":5,"motor":{"x":{"advance":29.3,"sense":false,"speed":{"idle":4,"working":4},"steps":4000,"time":22},"y":{"advance":29.3,"sense":false,"speed":{"idle":4,"working":4},"steps":4000,"time":22},"z":{"advance":14.18,"sense":false,"speed":{"idle":1000,"working":1000},"steps":2000}},"scale":1,"workpiece":{"x":200,"y":200}}

@@ -1,62 +1,72 @@
 /*jslint node: true */
 /*global describe, it */
 var chai = require('chai');
-var util = require('util');
+
+// install en ./app -> configed for electronjs
 var serialPort = require('serialport');
+var comName = "", port = {};
 
 describe ('Arduino Test', function() {
 
-  describe('General', function() {
-    it('Looking Arduino connected', function (done) {
-      serialPort.list(function(err, ports) {
-        
-        chai.assert.isUndefined(err, util.inspect(err));
-        chai.assert.isDefined(ports, 'ports is not defined');
-        chai.assert.isTrue(ports.length > 0, 'no ports found');
-        
-        done();
+  it('Looking Arduino connected', function(done) {
+    serialPort.list(function(err, ports) {
+      var foundPort = false;
+      ports.forEach(function(port) {
+        if (port.pnpId !== undefined && port.manufacturer !== undefined){
+          foundPort = true;
+          comName = port.comName;
+          console.log("\tcomName",port.comName);
+        }
       });
-    })
-    it('Send [0,0,0]', function (done) {
-      serialPort.list(function(err, ports) {
-        var data = new Buffer('[0,0,0]\n');
+      chai.assert.isTrue(foundPort);
+      done();
+    });
+  });
 
-        var port = new serialPort.SerialPort(ports.slice(-1)[0].comName,{
-                    parser: serialPort.parsers.readline("\r\n"),
-                    dataBits: 8, baudrate:9600, parity: 'none',
-                    stopBits: 1, flowControl: false
-                  },false);
-        port.on('error', function(err) {
-          chai.assert.fail(util.inspect(err));
-        });
-      
-        port.on('data', function(d) {   
-          chai.assert.equal("0,0,0", d.toString(), 'incorrect data received');
-          port.close(function(err) {
-            chai.assert.isUndefined(err, util.inspect(err));
-            done();
-          });
-        });
+  it('Create Port', function (done) {
+    port = new serialPort(comName,{
+      parser: serialPort.parsers.readline("\r\n"),
+      dataBits: 8, baudrate:115200, parity: 'none',
+      stopBits: 1, flowControl: true, autoOpen: true 
+    },done());
+  });
 
-        port.open(function(err) {
-          chai.assert.isUndefined(err, util.inspect(err));
-          port.write(data);
-        });
-        
+  it('Open Port', function (done) {
+    port.open(function (err) {
+      if (err) {
+        if (process.platform == 'unix'){
+          console.log("sudo chmod 0777 /dev/"+ comName +"\nError opening port: ", err.message);
+        }else{
+          console.log("root/administrador - Error opening port: ", err.message);
+        }
+      } 
+      port.on('open',  done() );
+      port.close();
+    });
+  });
+
+  it('Send [1,1,1]', function (done) {
+    var data = new Buffer("1,1,1\r\n");
+    port.open(function (err) {
+      port.write(data,function (err) {
+        chai.assert.isNull(err);
       });
-    })
-        
-    it.skip("Send 'o'", function (done) {
+      port.on('data', function(d) {
+        chai.assert.equal("0,0,0", d.toString(), 'incorrect data received');
+        port.close();
+      });
+      port.on('error', function(err) {
+        chai.assert.fail(util.inspect(err));
+      });
+      port.on('close', function(err) { done() });
+    });
+  });
 
-    })
-    
-    it.skip("Send 'f'", function (done) {
+  it.skip("Send 'o'", function (done) { });
 
-    })
-    
-    it.skip('Pause and Restart', function (done) {
+  it.skip("Send 'f'", function (done) { });
 
-    })
+  it.skip('Pause and Restart', function (done) { });
 
-  })
-})
+
+});
