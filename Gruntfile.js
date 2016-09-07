@@ -18,7 +18,7 @@ module.exports = (grunt) => {
         // arch ["ia32", "x64", "all"]
         command : (platform,arch) =>  { 
           return [path.resolve("./node_modules/.bin/build"),path.resolve("./dist/CNC-ino-win32-x64"),"--platform="+platform,"--arch="+arch,"--dir="+path.resolve("./dist")].join(' ')
-        }  
+        }
       },
       rebuidsp : {
         command : ["cd",path.resolve(appPath+"/node_modules/serialport"),"&&",path.resolve(nodePreGypPath),"rebuild --target=<%=pckg.devDependencies['electron-prebuilt']%> --dist-url=https://atom.io/download/atom-shell"].join(' ')
@@ -46,7 +46,7 @@ module.exports = (grunt) => {
         jshintrc: './.jshintrc'
       }
     }, 
-    jade: {      
+    jade: {
       compile: {
         options: {
           data: {
