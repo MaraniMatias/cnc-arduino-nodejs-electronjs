@@ -6,6 +6,7 @@ buscar arduino mientras se trabaja
 tabla tendria que tener una linea menos
 css tooltip
 refresh no anda otra vez
+sudo chmod 0777 /dev//dev/ttyACM0 
 ----------------------------------
 
 Hola mi nombre es matias marani.
