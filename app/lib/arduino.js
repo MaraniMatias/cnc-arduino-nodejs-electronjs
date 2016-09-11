@@ -74,7 +74,7 @@ function search(callback) {
 }
 
 function newArduino(comName) {
-  sp = new serialPort.SerialPort(comName,option);
+  sp = new serialPort(comName,option);
   sp.on('open'  , onOpen );
   sp.on('error' , onError );
   sp.on('data'  , onData );
