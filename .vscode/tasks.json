@@ -34,7 +34,7 @@
       "args": []
     },
     { 
-      "taskName": "default", 
+      "taskName": "pug", 
       "isTestCommand": true,
       "showOutput": "always",
       "args": []
