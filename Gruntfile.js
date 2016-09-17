@@ -5,7 +5,7 @@ module.exports = (grunt) => {
     outPath = './dist',
     electronPath = './node_modules/.bin/electron',
     electronPackagerPath = './node_modules/.bin/electron-packager',
-    nodePreGypPath = appPath+'/node_modules/serialport/node_modules/node-pre-gyp/bin/node-pre-gyp',
+    node_modules = ['serialport','lwip'],
     iconPath = appPath+'/recursos/icon'
   ;
   require('load-grunt-tasks')(grunt);
@@ -20,8 +20,11 @@ module.exports = (grunt) => {
           return [path.resolve("./node_modules/.bin/build"),path.resolve("./dist/CNC-ino-win32-x64"),"--platform="+platform,"--arch="+arch,"--dir="+path.resolve("./dist")].join(' ')
         }
       },
-      rebuidsp : {
-        command : ["cd",path.resolve(appPath+"/node_modules/serialport"),"&&",path.resolve(nodePreGypPath),"rebuild --target=<%=pckg.devDependencies['electron-prebuilt']%> --dist-url=https://atom.io/download/atom-shell"].join(' ')
+      rebuidserialport : {
+        command : ["cd",path.resolve(appPath+"/node_modules/"+node_modules[0]),";","node-gyp rebuild --target=<%=pckg.devDependencies['electron-prebuilt']%> --dist-url=https://atom.io/download/atom-shell"].join(' ')
+      },
+      rebuidimg2gcode: {
+        command : ["cd",path.resolve(appPath+"/node_modules/"+node_modules[1]),";","node-gyp rebuild --target=<%=pckg.devDependencies['electron-prebuilt']%> --dist-url=https://atom.io/download/atom-shell"].join(' ')
       },
       erun : {
         command : [path.resolve(electronPath),path.resolve(appPath)].join(' ')
@@ -92,9 +95,9 @@ module.exports = (grunt) => {
 //  grunt.registerTask('default', ['jshint','jade','docco-plus','shell:erun']);
   grunt.registerTask('default', ['jshint','jade','shell:erun']);
 
-  grunt.registerTask('test'     , ['jshint','mochaTest']);
-  grunt.registerTask('run'      , ['jade','shell:erun']);
-  grunt.registerTask('buildsp'  , ['shell:rebuidsp']);
-  grunt.registerTask('pack'     , ['jade','shell:epack:win32:x64']);
+  grunt.registerTask('test', ['jshint', 'mochaTest']);
+  grunt.registerTask('run', ['jade', 'shell:erun']);
+  grunt.registerTask('buildmodule', ['shell:rebuidserialport','shell:rebuidimg2gcode']);
+  grunt.registerTask('pack', ['jade', 'shell:epack:win32:x64']);
 //  grunt.registerTask('build'    , ['jade','shell:ebuild:win32:x64']);
 };

@@ -6,13 +6,14 @@
   "description": "cnc realizado con nodejs electron serialport arduino.",
   "main": "app.js",
   "dependencies": {
+    "img2gcode": "0.0.9",
     "serialport": "~4.0.1"
   },
   "scripts": {
     "postinstall": "bower install",
     "start": "../node_modules/.bin/electron ."
   },
-  "author":{
+  "author": {
     "name": "Marani Matias Ezequiel",
     "email": "maranimatias@gmail.com"
   },
@@ -21,7 +22,7 @@
     "npm": "~3.8.9"
   },
   "license": "MIT",
-  "private":false,
+  "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/MaraniMatias/router-cnc-nodejs-arduino"

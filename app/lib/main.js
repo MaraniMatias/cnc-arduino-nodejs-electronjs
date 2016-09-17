@@ -1,12 +1,12 @@
 const
-  dirConfig   =  __dirname + "/config.json",
-  serialPort  =  require('serialport'),
-  fs          =  require('fs'),
-  gc          =  require("./gcode"),
+  dirConfig = __dirname + "/config.json",
+  fs = require('fs'),
+  path = require('path'),
+  gc = require("./gcode"),
   debug  =  {
     arduino : {
       start       : false,
-      conect      : false ,
+      conect      : false,
       sendCommand : false,
       working     : false
     },
@@ -15,7 +15,10 @@ const
     ipc     : { arduino : false, console : false , sendStart : false},
     app     : { prevent : false }
   }
-;
+  ;
+var img2gcode = require('img2gcode');
+var lwip = require('lwip');
+
 var lineRunning = 0;
 var Arduino = require("./arduino.js");
 var File = {
@@ -35,14 +38,35 @@ function getMiliSeg (config)  {
   return steps * time / advance ;
 }
 
-function setFile ( dirfile ,initialLine, cb ) {
-  if (dirfile){
-    readConfig().then( (config)=>{
+function setFile(dir, initialLine, cb) {
+  let dirfile = path.resolve(dir[0]);
+  let extension = path.extname(dirfile);
+  if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg' /*|| extension === '.png'*/) {
+    img2gcode({  // It is mm
+      toolDiameter: 1,
+      scaleAxes: 700,
+      deepStep: -1,
+      whiteZ: 0,
+      blackZ: -2,
+      sevaZ: 2,
+      dirImg:dirfile
+    }).then((data) => {
+      console.log(data.config);
+      console.log(data.dirgcode);
+      setGCode(data.dirgcode, initialLine, cb);
+    });
+  } else {
+    setGCode(dirfile, initialLine, cb);
+  }
+}
+function setGCode(dirfile, initialLine, cb) {
+  if (dirfile) {
+    readConfig().then((config) => {
       File.workpiece.x  =  config.workpiece.x;
       File.workpiece.y  =  config.workpiece.y;
-      File.dir          =  dirfile[0];
-      File.gcode        =  gc(fs.readFileSync(dirfile[0]).toString(),initialLine);
-      File.name         =  dirfile[0].split('/')[dirfile[0].split('/').length-1];
+      File.dir          =  dirfile;
+      File.gcode        =  gc(fs.readFileSync(dirfile).toString(),initialLine);
+      File.name         =  path.posix.basename(dirfile);
       File.lines        =  File.gcode.length;
       File.travel       =  File.gcode[File.gcode.length-1].travel;
       File.segTotal     =  File.gcode[File.gcode.length-1].travel * getMiliSeg(config);
@@ -54,15 +78,14 @@ function setFile ( dirfile ,initialLine, cb ) {
  * @param  {String} code '0,0,0' or p or any
  * @param  {function} callback
  */
-function sendCommand ( code , callback ){
+function sendCommand(code, callback) {
   if(debug.arduino.sendCommand){ console.log(`${__filename} ==>> sendCommand, code: ${code}`); }
   Arduino.send( code , callback );
 }
 
-// probar connection ?
-function reSet (callback) {
+function reSet(callback) {
   if(!Arduino.working){
-    Arduino.set( ( comName , manufacturer )=>{
+    Arduino.set((comName, manufacturer) => {
       if(comName !== undefined){
         if(debug.arduino.conect) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
         callback({
@@ -86,7 +109,7 @@ function reSet (callback) {
   }
 }
 
-function getSteps (l,oldSteps,config) {
+function getSteps(l, oldSteps, config) {
   let a = l!==0 ? File.gcode[l-1].ejes : File.gcode[l].ejes;
   let x = [0,0,0];
   let b = File.gcode[l].ejes;

@@ -90,8 +90,13 @@ ipcMain.on('open-file',(event,data) => {
     }else{
       CNC.setFile(
         dialog.showOpenDialog({
-          title : fileConfig.name,
-          filters: [{ name: 'G-Code', extensions: ['txt', 'gcode'] },{ name: 'All Files', extensions: ['*'] }],
+          title: fileConfig.name,
+          filters: [
+            { name: 'File CNC', extensions: ['gcode','gif', 'jpg', 'jpeg', 'png'] },
+            { name: 'G-Code', extensions: ['gcode'] },
+            { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg', 'png']},
+            { name: 'All Files', extensions: ['*'] }
+          ],
           properties: [ 'openFile' ] 
         }),
         data.initialLine? data.initialLine : [0,0,0] ,

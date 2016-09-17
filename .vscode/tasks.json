@@ -28,7 +28,7 @@
   "isShellCommand": true, 
   "args": [], 
   "tasks": [     { 
-      "taskName": "erun", 
+      "taskName": "run", 
       "isTestCommand": false,
       "showOutput": "always",
       "args": []
