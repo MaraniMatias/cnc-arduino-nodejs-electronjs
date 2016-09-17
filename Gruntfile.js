@@ -49,7 +49,7 @@ module.exports = (grunt) => {
         jshintrc: './.jshintrc'
       }
     }, 
-    jade: {
+    pug: {
       compile: {
         options: {
           data: {
@@ -61,7 +61,7 @@ module.exports = (grunt) => {
         },
         files: [ {
           cwd: "./views",
-          src: ["**/*.jade", "!**/old/*.jade"],
+          src: ["**/*.pug"],
           dest: "./app/html/",
           expand: true,
           ext: ".html"
@@ -85,19 +85,20 @@ module.exports = (grunt) => {
       }
     },
     watch: {
-      files: ['<%= jade.files %>','./views/**/*'],
-      tasks: ['jade']
+      files: ['<%= pug.files %>','./views/**/*'],
+      tasks: ['pug']
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-pug');
 
-//  grunt.registerTask('default', ['jshint','jade','docco-plus','shell:erun']);
-  grunt.registerTask('default', ['jshint','jade','shell:erun']);
+//  grunt.registerTask('default', ['jshint','pug','docco-plus','shell:erun']);
+  grunt.registerTask('default', ['jshint','pug','shell:erun']);
 
   grunt.registerTask('test', ['jshint', 'mochaTest']);
-  grunt.registerTask('run', ['jade', 'shell:erun']);
+  grunt.registerTask('run', ['pug', 'shell:erun']);
   grunt.registerTask('buildmodule', ['shell:rebuidserialport','shell:rebuidimg2gcode']);
-  grunt.registerTask('pack', ['jade', 'shell:epack:win32:x64']);
-//  grunt.registerTask('build'    , ['jade','shell:ebuild:win32:x64']);
+  grunt.registerTask('pack', ['pug', 'shell:epack:win32:x64']);
+//  grunt.registerTask('build'    , ['pug','shell:ebuild:win32:x64']);
 };
