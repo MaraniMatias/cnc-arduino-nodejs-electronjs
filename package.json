@@ -5,7 +5,7 @@
   "dependencies": {},
   "devDependencies": {
     "colors": "~1.1.2",
-    "electron-builder": "7.0.0",
+    "electron-builder": "7.3.0",
     "electron-packager": "8.0.0",
     "electron-prebuilt": "1.4.0",
     "electron-rebuild": "~1.2.0",
