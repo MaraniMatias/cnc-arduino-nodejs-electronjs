@@ -1,6 +1,6 @@
 /* global angular */
 /* global $ */
-angular.controller('prefs',
+angular.controller('img2gcode',
 [ 'notify','ipc','cnc','$scope','lineTable','config','line',
 ( notify,ipc,cnc,$scope,lineTable,config,line) => {
 
@@ -16,13 +16,13 @@ angular.controller('prefs',
       this.isActive=false;
     }
   };
-
+  
   ipc.on('show-prefs-res', (event, config) => {
     if( modal.isActive ){  modal.hide();  }
     else{  modal.show();  }
     $scope.configModal = config ;
   });
-
+  
   $scope.cancel = () => { modal.hide(); }
   $scope.save = () => {
     modal.hide();
@@ -34,5 +34,5 @@ angular.controller('prefs',
     if(config.message){ notify( config.message, config.type ); }
     modal.hide();
   });
-
+    
 }]);
