@@ -96,9 +96,9 @@ ipcMain.on('open-file', (event, data) => {
         dialog.showOpenDialog({
           title: fileConfig.name,
           filters: [
-            { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg', 'png'] },
+            { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg'/*, 'png'*/] },
             { name: 'G-Code', extensions: ['gcode'] },
-            { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg', 'png'] },
+            { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg'/*, 'png'*/] },
             { name: 'All Files', extensions: ['*'] }
           ],
           properties: ['openFile']
@@ -145,13 +145,20 @@ ipcMain.on('taksBar-progress', (event, arg) => { mainWindow.setProgressBar(arg);
 ipcMain.on('show-lineTable', (event, arg) => { event.sender.send('show-lineTable') });
 
 ipcMain.on('about', (event, arg) => {
+  //process.setFdLimit(maxDescriptors)
   let chosen = dialog.showMessageBox(mainWindow, {
     cancelId: 0,
     type: 'info',
     title: 'Acerca De',
     buttons: ['Aceptar'],
     message: 'CNC-ino, Arduino y NodeJS',
-    detail: 'Proyecto de Router CNC casero con ideas, mano de obra y programacion propia dentro de lo posible.\n\tMarani Cesar Juan.\n\tMarani Matias Ezequiel.'
+    detail: `Proyecto de Router CNC casero con ideas, mano de obra y programacion propia dentro de lo posible.
+    \tCNC-ino: v${fileConfig.version}.
+    \tElectronJS: ${process.versions.electron}.
+    \tRenderer: ${process.versions.chrome}.
+    \tRAM: ${process.getProcessMemoryInfo().workingSetSize}Mb.
+    Marani Cesar Juan.
+    Marani Matias Ezequiel.`
   });
   // if (chosen == 0)  mainWindow.destroy();
 });
