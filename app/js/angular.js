@@ -1,7 +1,6 @@
 /* global electron */
 /* global angular */
 /* global $ */
-(function() { 'use strict';
 angular
   .value('cnc', {
     arduino:false,
@@ -88,4 +87,3 @@ angular
       }
     }
   })
-})();// fuctions
