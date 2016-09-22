@@ -1,26 +1,26 @@
 /* global angular */
 /* global $ */
-angular.controller('modalPrefs',
+angular.controller('modalprefs',
 [ 'notify','ipc','cnc','$scope','lineTable','config','line',
 ( notify,ipc,cnc,$scope,lineTable,config,line) => {
 
   var modal = {
-    $: $('.ui.modal').modal({closable  : false}),
-    isActive:false,
-    show:()=>{
+    $: $('.ui.modal').modal({ closable: false }),
+    isActive: false,
+    show: () => {
       modal.$.modal('show');
-      this.isActive=true;
+      this.isActive = true;
     },
-    hide:()=>{
+    hide: () => {
       modal.$.modal('hide');
-      this.isActive=false;
+      this.isActive = false;
     }
   };
 
   ipc.on('show-prefs-res', (event, config) => {
-    if( modal.isActive ){  modal.hide();  }
-    else{  modal.show();  }
-    $scope.configModal = config ;
+    if (modal.isActive) { modal.hide(); }
+    else { modal.show(); }
+    $scope.configModal = config;
   });
 
   $scope.cancel = () => { modal.hide(); }
@@ -30,8 +30,8 @@ angular.controller('modalPrefs',
   }
 
   ipc.on('config-save-res', (event, config) => {
-    if(config.file){ $scope.configModal = config.file; }
-    if(config.message){ notify( config.message, config.type ); }
+    if (config.file) { $scope.configModal = config.file; }
+    if (config.message) { notify(config.message, config.type); }
     modal.hide();
   });
 

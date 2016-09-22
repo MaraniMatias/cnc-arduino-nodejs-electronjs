@@ -52,7 +52,7 @@ module.exports = (grunt) => {
     pug: {
       compile: {
         files: {
-          './app/html/index.html': ['./views/layout.pug','./views/index.pug','./views/img2gcode.pug','./views/preferencias.pug']
+          './app/html/index.html': ['./views/layout.pug','./views/main.pug','./views/preferencias.pug','./views/img2gcode.pug']
         }
       }
     },
