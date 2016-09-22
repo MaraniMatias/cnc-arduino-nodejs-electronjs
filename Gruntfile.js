@@ -51,21 +51,9 @@ module.exports = (grunt) => {
     },
     pug: {
       compile: {
-        /*options: {
-          data: {
-            client: false,
-            pretty: true,
-            timestamp: "<%= grunt.template.today() %>",
-            debug: false
-          }
-        },*/
-        files: [{
-          cwd: "./views",
-          src: ["**/*.pug"],
-          dest: "./app/html/",
-          expand: true,
-          ext: ".html"
-        }]
+        files: {
+          './app/html/index.html': ['./views/layout.pug','./views/index.pug','./views/img2gcode.pug','./views/preferencias.pug']
+        }
       }
     },
     mochaTest: {

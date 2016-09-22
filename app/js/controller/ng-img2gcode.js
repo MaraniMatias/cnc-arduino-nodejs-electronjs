@@ -1,8 +1,9 @@
 /* global angular */
 /* global $ */
-angular.controller('img2gcode',
-[ 'notify','ipc','cnc','$scope','lineTable','config','line',
-( notify,ipc,cnc,$scope,lineTable,config,line) => {
+/*
+angular.controller('modalImg2gcode',
+[ 'notify','ipc','cnc','$scope','config',
+( notify,ipc,cnc,$scope,config) => {
 
   var modal = { 
     $: $('.ui.modal').modal({closable  : false}),
@@ -34,5 +35,6 @@ angular.controller('img2gcode',
     if(config.message){ notify( config.message, config.type ); }
     modal.hide();
   });
-    
+
 }]);
+*/

@@ -1,10 +1,10 @@
 /* global angular */
 /* global $ */
-angular.controller('prefs',
+angular.controller('modalPrefs',
 [ 'notify','ipc','cnc','$scope','lineTable','config','line',
 ( notify,ipc,cnc,$scope,lineTable,config,line) => {
 
-  var modal = { 
+  var modal = {
     $: $('.ui.modal').modal({closable  : false}),
     isActive:false,
     show:()=>{
