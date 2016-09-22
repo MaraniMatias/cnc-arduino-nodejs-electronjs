@@ -41,7 +41,8 @@ function getMiliSeg(config) {
 function setFile(dir, initialLine, cb) {
   let dirfile = path.resolve(dir[0]);
   let extension = path.extname(dirfile);
-  if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg' || extension === '.png') {
+  if (extension === '.png') { console.log('Por ahora no podemos leer png :('); }
+  else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
     img2gcode.start({  // It is mm
       toolDiameter: 1,
       scaleAxes: 700,

@@ -2,10 +2,11 @@
   "globalDevDependencies": {
     "electron-builder": "registry:dt/electron-builder#2.0.2+20160316155526",
     "electron-packager": "registry:dt/electron-packager#5.1.0+20160316155526",
-    "mocha": "registry:dt/mocha#2.2.5+20160720003353"
+    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
+    "pug": "registry:dt/pug#2.0.0-beta6+20160919072324"
   },
   "globalDependencies": {
-    "node": "registry:dt/node#6.0.0+20160915134512",
+    "node": "registry:dt/node#6.0.0+20160921192128",
     "npm": "registry:dt/npm#0.0.0+20160317120654"
   }
 }

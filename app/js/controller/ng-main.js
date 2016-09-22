@@ -38,10 +38,8 @@ angular.controller('main',
   });
 
   $scope.setFile = (reSetFile) => {
-    let initialLine = $scope.initialLine.split(',');
-    initialLine[0] = parseInt(initialLine[0]);
-    initialLine[1] = parseInt(initialLine[1]);
-    initialLine[2] = parseInt(initialLine[2]);
+    let initLine = $scope.initialLine.split(',');
+    let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
     ipc.send('open-file', { initialLine  , fileDir: reSetFile? cnc.file.name : undefined});
   }
   ipc.on('open-file-res', (event, file) => {
@@ -61,7 +59,7 @@ angular.controller('main',
         if( !exceeds_y && file.gcode[index].ejes[1] * file.scale > file.workpiece.y){ exceeds_y = true; }
         data.add({ id : index , x : file.gcode[index].ejes[0], y : file.gcode[index].ejes[1], z : file.gcode[index].ejes[2] });
       }
-      drawVisualization(data);      
+      drawVisualization(data);
     }
   });
 
