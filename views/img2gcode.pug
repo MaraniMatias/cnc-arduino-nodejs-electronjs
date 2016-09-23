@@ -1,19 +1,22 @@
 div(ng-controller="modalImg2gcode")
-.ui.modal#modalConfig
-  i.close.icon
-  .header  Modal Title
-  .image.content
-    .image  An image can appear on left or an icon
-    .description  A description can appear on the right
-  .actions
-    button.ui.approve.button.primary( ng-click='save()' ) Guardar
-    button.ui.cancel.button( ng-click='cancel()' ) Cancelar
+  .ui.modal.small#modalConfig
+    i.close.icon
+    .header  Configuración para procesar la imagen y comvertirla a código-G.
+    .image.content
+      .image 
+        i.right.arrow.icon
+      .description  A description can appear on the right
+        |  An image can appear on left or an icon
+    .actions
+      button.ui.approve.button.primary( ng-click='save()' ) Guardar
+      button.ui.cancel.button( ng-click='cancel()' ) Cancelar
 
-.ui.modal#modalProgress
-  i.close.icon
-  .header  Modal Title
-  .image.content
-    .image  An image can appear on left or an icon
-    .description  A description can appear on the right
-  .actions
-    button.ui.cancel.button( ng-click='cancel()' ) Cancelar
+  .ui.modal.small#modalProgress
+    .header.small Procesando filename
+    .content
+      .ui.indicating.progress(ng-class='progressBar' data-percent='{{cnc.file.line.progress}}')
+        .bar(style='transition-duration: 300ms; width: {{cnc.file.line.progress}}%;')
+        .label Loging...
+
+    .actions
+      button.ui.cancel.button( ng-click='cancel()' ) Cancelar

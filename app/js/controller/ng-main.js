@@ -99,7 +99,6 @@ angular.controller('main',
   var stepsmm = 'steps';
   $scope.inputStepsmm = '200';
   $scope.btnStepsmm = 'Pasos';
-  $scope.btnStepsmmClass = 'uk-active'
   $scope.setStepsmm = () => {
     if(stepsmm === 'steps'){
       stepsmm='mm';
@@ -108,7 +107,6 @@ angular.controller('main',
     }else{
       stepsmm='steps';
       $scope.btnStepsmm = 'Pasos';
-      $scope.btnStepsmmClass = 'uk-active'
     }
   };
 

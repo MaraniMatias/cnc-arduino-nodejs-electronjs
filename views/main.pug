@@ -19,7 +19,7 @@ block contentMain
                       i.pause.icon.blue
                     button.ui.button(ng-disabled="!cnc.working && !cnc.pause.status" ng-click='parar()')
                       i.stop.icon.red
-                    button.ui.black.button(ng-disabled="cnc.working" ng-click="setFile(false)" ) Archivo
+                    button.ui.grey.button(ng-disabled="cnc.working" ng-click="setFile(false)" ) Archivo
                 .column.compact
                   .ui.labeled.input.action.fluid(ng-popup data-id="#popupLabelTool" )
                     label.ui.label Posición de la her.:
@@ -61,7 +61,6 @@ block contentMain
             .column.compact
               .ui.right.labeled.input.fluid(ng-popup data-id="#inputStepsmm")
                 input(ng-model='inputStepsmm' type='text' )
-                //button.ui.primary.right.labeled.button(ng-class='btnStepsmmClass' ng-click='setStepsmm()' ) {{btnStepsmm}}
                 .ui.dropdown.label
                   .text pasos
                   i.dropdown.icon

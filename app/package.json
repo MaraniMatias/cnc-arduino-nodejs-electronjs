@@ -6,7 +6,7 @@
   "description": "cnc realizado con nodejs electron serialport arduino.",
   "main": "app.js",
   "dependencies": {
-    "img2gcode": "^0.1.1",
+    "img2gcode": "^0.1.2",
     "serialport": "~4.0.1"
   },
   "scripts": {

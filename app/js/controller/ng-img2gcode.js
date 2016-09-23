@@ -4,10 +4,29 @@ angular.controller('modalImg2gcode',
 ['notify', 'ipc', 'cnc', '$scope', 'config', 'modalFactory',
 (notify, ipc, cnc, $scope, config, modalFactory) => {
 
-  var modalConfig = modalFactory('modalConfig', false);
+  var modalConfig = modalFactory('modalConfig');
   modalConfig.show();
-  var modalProgress = modalFactory('modalProgress', true);
+  var modalProgress = modalFactory('modalProgress');
   modalProgress.show();
+
+
+  var toolConfig = {
+    toolDiameter: 1,
+    scaleAxes: 700,
+    deepStep: -1,
+    whiteZ: 0,
+    blackZ: -2,
+    sevaZ: 2
+  }
+
+  
+  $scope.progressBar = 'warning';
+  /*
+  $scope.progressBar = 'active';
+  $scope.progressBar = 'error';
+  $scope.progressBar = 'success';
+  $scope.progressBar = 'indicating';
+  */
 
   /*
     ipc.on('show-prefs-res', (event, config) => {

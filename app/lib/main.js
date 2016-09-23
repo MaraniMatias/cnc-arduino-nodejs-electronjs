@@ -43,22 +43,27 @@ function setFile(dir, initialLine, cb) {
   let extension = path.extname(dirfile);
   if (extension === '.png') { console.log('Por ahora no podemos leer png :('); }
   else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
-    img2gcode.start({  // It is mm
-      toolDiameter: 1,
-      scaleAxes: 700,
-      deepStep: -1,
-      whiteZ: 0,
-      blackZ: -2,
-      sevaZ: 2,
-      info: "emitter",
-      dirImg: dirfile
-    })
+    readConfig().then((fileConfig) => {
+      img2gcode.start({  // It is mm
+        toolDiameter: fileConfig.toolConfig.toolDiameter,
+        scaleAxes: fileConfig.toolConfig.scaleAxes,
+        deepStep: fileConfig.toolConfig.deepStep,
+        whiteZ: fileConfig.toolConfig.whiteZ,
+        blackZ: fileConfig.toolConfig.blackZ,
+        sevaZ: fileConfig.toolConfig.sevaZ,
+        info: "emitter",
+        dirImg: dirfile
+      })
+      .on('log', (log) => {
+        console.log(log);
+      })
       .on('tick', (perc) => {
-        console.log(perc);
+        //console.log(perc);
       })
       .then((data) => {
         setGCode(data.dirgcode, initialLine, cb);
-      });
+      })
+    })
   } else {
     setGCode(dirfile, initialLine, cb);
   }
