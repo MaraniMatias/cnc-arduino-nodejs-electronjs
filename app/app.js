@@ -83,7 +83,7 @@ ipcMain.on('arduino', (event, arg) => {
 
 ipcMain.on('open-file', (event, data) => {
   if (!CNC.Arduino.working) {
-    console.log(data);
+    console.log("open-file",data);
     globalShortcut.unregisterAll();
     if (data.fileDir) {
       CNC.setFile([data.fileDir],

@@ -40,12 +40,13 @@ angular.controller('main',
   $scope.setFile = (reSetFile) => {
     let initLine = $scope.initialLine.split(',');
     let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
-    ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.name : undefined });
+    ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
   }
   ipc.on('open-file-res', (event, file) => {
     if (file.dir) {
       //console.log(file)
       $scope.cnc.file.name = file.name;
+      $scope.cnc.file.dir = file.dir;
       $scope.cnc.file.line.total = file.lines;
       $scope.cnc.file.line.duration = parseInt(file.segTotal);
       $scope.cnc.file.travel = file.travel;
