@@ -16,7 +16,6 @@ const
   }
   ;
 var img2gcode = require('img2gcode');
-var lwip = require('lwip');
 
 var lineRunning = 0;
 var Arduino = require("./arduino.js");
