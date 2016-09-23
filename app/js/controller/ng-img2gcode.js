@@ -4,24 +4,25 @@ angular.controller('modalImg2gcode',
 ['notify', 'ipc', 'cnc', '$scope', 'config', 'modalFactory',
 (notify, ipc, cnc, $scope, config, modalFactory) => {
 
-  var modalConfig = modalFactory('modalConfig');
-  modalConfig.show();
-  var modalProgress = modalFactory('modalProgress');
-  modalProgress.show();
-
-
-  var toolConfig = {
+  $scope.toolConfig = {
     toolDiameter: 1,
     scaleAxes: 700,
     deepStep: -1,
     whiteZ: 0,
-    blackZ: -2,
+    blackZ: 2,
     sevaZ: 2
-  }
+  };
 
+  var modalConfig = modalFactory('modalConfig');
+  modalConfig.show();
   
-  $scope.progressBar = 'warning';
+  $scope.progressBar = 'active';
+  var modalProgress = modalFactory('modalProgress');
+  modalProgress.show();
+
+
   /*
+  $scope.progressBar = 'warning';
   $scope.progressBar = 'active';
   $scope.progressBar = 'error';
   $scope.progressBar = 'success';
@@ -34,13 +35,13 @@ angular.controller('modalImg2gcode',
       else { modal.show(); }
       $scope.configModal = config;
     });
-  */
+
   $scope.cancel = () => { modal.hide(); }
   $scope.save = () => {
     modal.hide();
-    //ipc.send('config-save-send', $scope.configModal);
+    ipc.send('config-save-send', $scope.configModal);
   }
-  /*
+
     ipc.on('config-save-res', (event, config) => {
       if (config.file) { $scope.configModal = config.file; }
       if (config.message) { notify(config.message, config.type); }
