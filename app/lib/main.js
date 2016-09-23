@@ -5,10 +5,9 @@ const
   gc = require("./gcode"),
   debug = {
     arduino: {
-      start: false,
+      start: true,
       conect: false,
-      sendCommand: false,
-      working: false
+      sendCommand: true
     },
     file: {},
     config: {},

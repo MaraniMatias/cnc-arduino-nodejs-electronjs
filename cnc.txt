@@ -1,11 +1,9 @@
 // notas 
-cando usas las teclas, angular no actua acore con los botones stop play
 css tooltip
 sudo chmod 0777 /dev//dev/ttyACM0
 ----------------------------------
 
-Hola mi nombre es matias marani.
-Disculpa por mi ingles.
+Hola mi nombre es matias ezeqiel marani.
 
 Mi padre y yo construimos una maquina de cnc.
 nosotros diseñamos y construimos la maquina con sus circuetos electronicos.
@@ -17,7 +15,7 @@ Este proyecto es todo casero en lo posible y  nosotros no usamos controladores A
 
 ----------------------------------
 
-Hello my name is matias marani.
+Hello my name is matias ezequiel marani.
 Sorry for my English.
 
 My father and I built a CNC machine.

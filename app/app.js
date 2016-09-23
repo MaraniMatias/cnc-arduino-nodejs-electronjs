@@ -26,8 +26,6 @@ app.on('window-all-closed', () => {
 });
 
 var mainWindow = null;
-var prefsWindow = null;
-
 app.on('ready', () => {
   //var appIcon = new Tray('./recursos/icon.png');
   //appIcon.setToolTip('This is my application.');
@@ -118,7 +116,7 @@ ipcMain.on('open-file', (event, data) => {
 
 ipcMain.on('send-command', (event, arg) => {
   CNC.sendCommand(arg, (dataReceived) => {
-    if (CNC.debug.arduino.sendCommand) console.log("sendCommand: ", dataReceived);
+    if (CNC.debug.arduino.sendCommand) { console.log("sendCommand: ", dataReceived); }
     event.sender.send('close-conex', dataReceived);
   });
 });
@@ -188,7 +186,8 @@ function registerGlobalShortcut() {
       let manalSteps = file.manalSteps;
       function globalShortcutSendComand(cmd) {
         CNC.sendCommand(cmd, (dataReceived) => {
-          if (CNC.debug.arduino.sendCommand) console.log(dataReceived);
+          if (CNC.debug.arduino.sendCommand) { console.log(dataReceived); }
+          mainWindow.webContents.send('close-conex', dataReceived);
         });
       }
       globalShortcut.register('q', () => { globalShortcutSendComand(`0,0,${manalSteps}`); });
