@@ -83,7 +83,7 @@ ipcMain.on('arduino', (event, arg) => {
 
 ipcMain.on('open-file', (event, data) => {
   if (!CNC.Arduino.working) {
-    console.log("open-file",data);
+    console.log("open-file\n",data);
     globalShortcut.unregisterAll();
     if (data.fileDir) {
       CNC.setFile([data.fileDir],
@@ -168,6 +168,11 @@ ipcMain.on('config-save-send', (event, arg) => {
   CNC.configFile.save(arg, (data) => {
     event.sender.send('config-save-res', data);
   });
+});
+
+ipcMain.on('contextmenu-enabled', (event, arg) => {
+  // Send items to invertir enabled
+  event.sender.send('contextmenu-enabled-res', arg);
 });
 
 /*

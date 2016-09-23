@@ -1,10 +1,8 @@
 // notas 
 cando usas las teclas, angular no actua acore con los botones stop play
-eviatar carga gcode cauando se esta trabajando desde el menu
 buscar arduino mientras se trabaja
 css tooltip
 sudo chmod 0777 /dev//dev/ttyACM0
-tomar muestras (divir en clases) el gcode en vis.js (tener cuidado con Z hay que incluirla) capas que en doc vis.js esta la solucion
 ----------------------------------
 
 Hola mi nombre es matias marani.

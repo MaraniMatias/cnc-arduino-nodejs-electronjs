@@ -130,6 +130,7 @@ angular.controller('main',
 
   ipc.on('close-conex', (event, obj) => {
     console.log('close-conex', obj);
+    ipc.send('contextmenu-enabled', [0,4]);
     switch (obj.type) {
       case "info":
         $scope.cnc.working = true;
@@ -173,7 +174,8 @@ angular.controller('main',
   });
 
   ipc.on('add-line', (event, data) => {
-    //graficar trabajo. :D
+    ipc.send('contextmenu-enabled', [0,4]); // bloquear menu
+    // graficar trabajo. :D
     if ($scope.lineTable.length > 10) {
       $scope.lineTable.shift();
     }
