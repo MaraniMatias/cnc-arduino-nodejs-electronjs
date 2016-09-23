@@ -13,7 +13,15 @@ window.addEventListener('contextmenu', (e) => {
 }, false);
 
 ipcRenderer.on('contextmenu-enabled-res', (event, items) => {
-  for (let i = 0; i <= items; i++) {
-    cMenu.items[items[i]].enabled = !cMenu.items[items[i]].enabled;
+  // items = { main : [], context : [], }
+  for (let i = 0; i < items.main.length; i++) {
+    let submenu = items.main[i];
+    for (let menu = 0; menu < submenu.length; menu++) {
+      //console.log(mMenu.items[i].submenu.items[menu]);
+      mMenu.items[i].submenu.items[menu].enabled = !mMenu.items[i].submenu.items[menu].enabled;
+    }
+  }
+  for (let i = 0; i < items.context.length; i++) {
+    cMenu.items[items.context[i]].enabled = !cMenu.items[items.context[i]].enabled;
   }
 });
