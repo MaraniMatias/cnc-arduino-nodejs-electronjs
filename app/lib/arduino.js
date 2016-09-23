@@ -2,8 +2,8 @@ const
   serialPort = require('serialport')
   ;
 var
-  manufacturer = sp.manufacturer || "Sin Arduino.",
-  comName = sp.comName || "",
+  manufacturer = sp ? sp.manufacturer : "Sin Arduino.",
+  comName = sp ? sp.comName : "",
   working = false,
   debug = {
     write: false,
