@@ -1,5 +1,5 @@
 extends ./layout.pug
-block content
+block contentMain
   div(ng-controller="main")
     .ui.segment.graph( style='height: 100%; position: absolute;width: 100%; margin-bottom: 0px;"')
       #loader.ui.active.inverted.dimmer(style="background-color: #F5F5F5;")
@@ -107,3 +107,5 @@ block content
     #statusBarRighr.ui.flowing.popup.top.hidden.huge
       .ui.header  Lineas interpetadas 
       p {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}
+  include ./preferencias.pug
+  include ./img2gcode.pug

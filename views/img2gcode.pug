@@ -1,10 +1,19 @@
-//div(ng-controller="modalImg2gcode")
-  .ui.modal
-    i.close.icon
-    .header  Modal Title
-    .image.content
-      .image  An image can appear on left or an icon
-      .description  A description can appear on the right
-    .actions
-      .ui.button Cancel
-      .ui.button OK
+div(ng-controller="modalImg2gcode")
+.ui.modal#modalConfig
+  i.close.icon
+  .header  Modal Title
+  .image.content
+    .image  An image can appear on left or an icon
+    .description  A description can appear on the right
+  .actions
+    button.ui.approve.button.primary( ng-click='save()' ) Guardar
+    button.ui.cancel.button( ng-click='cancel()' ) Cancelar
+
+.ui.modal#modalProgress
+  i.close.icon
+  .header  Modal Title
+  .image.content
+    .image  An image can appear on left or an icon
+    .description  A description can appear on the right
+  .actions
+    button.ui.cancel.button( ng-click='cancel()' ) Cancelar

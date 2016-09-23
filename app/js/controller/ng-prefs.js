@@ -5,7 +5,7 @@ angular.controller('modalprefs',
 ( notify,ipc,cnc,$scope,lineTable,config,line) => {
 
   var modal = {
-    $: $('.ui.modal').modal({ closable: false }),
+    $: $('#modalprefs').modal({ closable: false }),
     isActive: false,
     show: () => {
       modal.$.modal('show');
