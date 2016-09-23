@@ -39,28 +39,32 @@ function getMiliSeg(config) {
 }
 
 function setFile(dir, initialLine, cb) {
-  let dirfile = path.resolve(dir[0]);
-  let extension = path.extname(dirfile);
-  if (extension === '.png') { console.log('Por ahora no podemos leer png :('); }
-  else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
-    img2gcode.start({  // It is mm
-      toolDiameter: 1,
-      scaleAxes: 700,
-      deepStep: -1,
-      whiteZ: 0,
-      blackZ: -2,
-      sevaZ: 2,
-      info: "emitter",
-      dirImg: dirfile
-    })
-      .on('tick', (perc) => {
-        console.log(perc);
+  if (dir) {
+    let dirfile = path.resolve(dir[0]);
+    let extension = path.extname(dirfile);
+    if (extension === '.png') { console.log('Por ahora no podemos leer png :('); }
+    else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
+      img2gcode.start({  // It is mm
+        toolDiameter: 1,
+        scaleAxes: 700,
+        deepStep: -1,
+        whiteZ: 0,
+        blackZ: -2,
+        sevaZ: 2,
+        info: "emitter",
+        dirImg: dirfile
       })
-      .then((data) => {
-        setGCode(data.dirgcode, initialLine, cb);
-      });
+        .on('tick', (perc) => {
+          console.log(perc);
+        })
+        .then((data) => {
+          setGCode(data.dirgcode, initialLine, cb);
+        });
+    } else {
+      setGCode(dirfile, initialLine, cb);
+    }
   } else {
-    setGCode(dirfile, initialLine, cb);
+    console.log('It isn\'t file.');
   }
 }
 function setGCode(dirfile, initialLine, cb) {
