@@ -1,21 +1,10 @@
 /* global angular */
 /* global $ */
 angular.controller('modalprefs',
-[ 'notify','ipc','cnc','$scope','lineTable','config','line',
-( notify,ipc,cnc,$scope,lineTable,config,line) => {
+['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'modalFactory',
+(notify, ipc, cnc, $scope, lineTable, config, line, modalFactory) => {
 
-  var modal = {
-    $: $('#modalprefs').modal({ closable: false }),
-    isActive: false,
-    show: () => {
-      modal.$.modal('show');
-      this.isActive = true;
-    },
-    hide: () => {
-      modal.$.modal('hide');
-      this.isActive = false;
-    }
-  };
+  var modal = modalFactory('modalprefs');
 
   ipc.on('show-prefs-res', (event, config) => {
     if (modal.isActive) { modal.hide(); }
