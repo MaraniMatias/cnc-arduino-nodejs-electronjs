@@ -1,4 +1,5 @@
-const
+const cp = require('child_process'),
+  child = { img2gcode : cp.fork(`${__dirname}/img2gcode.js`)},
   dirConfig = __dirname + "/config.json",
   fs = require('fs'),
   path = require('path'),
@@ -14,9 +15,11 @@ const
     ipc: { arduino: false, console: false, sendStart: false },
     app: { prevent: false }
   }
-  ;
-var img2gcode = require('img2gcode');
+;
 
+var img2gcode = {
+  end: () => { child.img2gcode.send({ end: true }); }
+}
 var lineRunning = 0;
 var Arduino = require("./arduino.js");
 var File = {
@@ -42,6 +45,22 @@ function setFile(dir, initialLine, cb) {
     let extension = path.extname(dirfile);
     if (extension === '.png') { console.log('Por ahora no podemos leer png :('); }
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
+    child.img2gcode.send({dirImg:dirfile});// send option o config armado
+    child.img2gcode.on('message', (m) => {
+      switch (m.msj) {
+        case 'tick':
+          console.log(m.perc);
+          break;
+        case 'finiged':
+          console.log('Loading... gCode:', m.data.dirgcode);
+          setGCode(m.data.dirgcode, initialLine, cb);
+          break;
+        default:
+          console.log(m);
+          break;
+      }
+    });
+/*
       img2gcode.start({  // It is mm
         toolDiameter: 1,
         scaleAxes: 700,
@@ -58,6 +77,7 @@ function setFile(dir, initialLine, cb) {
         .then((data) => {
           setGCode(data.dirgcode, initialLine, cb);
         });
+*/
     } else {
       setGCode(dirfile, initialLine, cb);
     }
@@ -184,6 +204,7 @@ function readConfig() {
 
 module.exports = {
   debug,
+  img2gcode,
   Arduino: {
     comName: Arduino.comName,
     manufacturer: Arduino.manufacturer,
