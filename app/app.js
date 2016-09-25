@@ -17,10 +17,7 @@ app.setName('CNC-ino');
 Menu.setApplicationMenu(Menu.buildFromTemplate([]));
 
 app.on('window-all-closed', () => {
-  CNC.childEnd();
-  CNC.sendCommand('0,0,0', () => {
-    console.log("Parar forzado por cerrar programa.");
-  });
+  CNC.end();
   if (process.platform !== 'darwin') {
     app.quit();
   }

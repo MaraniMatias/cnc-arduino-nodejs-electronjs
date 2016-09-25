@@ -19,10 +19,6 @@ const cp = require('child_process'),
   }
   ;
 
-var childEnd = () => {
-  child.gcode.send({ end: true });
-  child.img2gcode.send({ end: true });
-}
 var lineRunning = 0;
 var Arduino = require("./arduino.js");
 var File = {
@@ -40,6 +36,14 @@ function getMiliSeg(config) {
   let time = (config.motor.x.time + config.motor.y.time) / 2;
   let advance = (config.motor.x.advance + config.motor.y.advance) / 2;
   return steps * time / advance;
+}
+
+function end(){
+  child.gcode.send({ end: true });
+  child.img2gcode.send({ end: true });
+  this.sendCommand('0,0,0', () => {
+    console.log("Parar forzado por cerrar programa.");
+  });
 }
 
 function setFile(dir, initialLine, cb) {
@@ -102,7 +106,7 @@ function setGCode(dirfile, initialLine, cb) {
           //console.log(m.line);
         }else if (m.msj == 'gcode') {
           File.gcode = m.arrGCode;
-          cb(File);
+          //cb(File);
         }
       });
       //File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
@@ -111,6 +115,7 @@ function setGCode(dirfile, initialLine, cb) {
       File.lines = File.gcode.length;
       File.travel = File.gcode[File.gcode.length - 1].travel;
       File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
+      cb(File);
     });
   }
 }
@@ -218,7 +223,7 @@ function readConfig() {
 
 module.exports = {
   debug,
-  childEnd,
+  end,
   Arduino: {
     comName: Arduino.comName,
     manufacturer: Arduino.manufacturer,
