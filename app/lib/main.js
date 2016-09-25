@@ -96,7 +96,11 @@ function setGCode(dirfile, initialLine, cb) {
       File.workpiece.y = config.workpiece.y;
       File.dir = dirfile;
       child.gcode.on('message', (m) => {
-        if (m.msj == 'gcode') {
+        if (m.msj == 'tick') {
+          console.log(m.perc);
+        }else if(m.msj == 'linne'){
+          //console.log(m.line);
+        }else if (m.msj == 'gcode') {
           File.gcode = m.arrGCode;
           cb(File);
         }

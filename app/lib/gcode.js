@@ -127,9 +127,13 @@ function parseGCode(fileContent) {
   var lines = fileContent.split(/\r\n|\n/);
   var gcode = [];
   for (var i = 0; i < lines.length; i++) {
-    var stripped = lines[i].replace(/^N\d+\s+/, "")
+    var stripped = lines[i].replace(/^N\d+\s+/, "");
+    process.send({ msj: 'tick', perc: i / lines.length });
     if (stripped.match(/^(G|M)/)) {
-      gcode.push(removeInLineComment(stripped));
+      let line = removeInLineComment(stripped);
+      process.send({ msj: 'tick', perc: 1 });
+      process.send({ msj: 'line', line });
+      gcode.push(line);
     }
   }
   return gcode;
@@ -150,8 +154,7 @@ process.on('message', (option) => {
     start(option.content, option.initialLine, (arrGCode) => {
       process.send({ msj: 'gcode', arrGCode });
     });
-  }
-  if (option.end) {
+  }else {//if (option.end) 
     process.nextTick(() => {
       process.exit(0);
     });
