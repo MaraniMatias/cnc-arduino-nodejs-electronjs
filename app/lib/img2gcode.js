@@ -13,15 +13,15 @@ process.on('message', (option) => {
       info: "emitter",
       dirImg: option.dirImg
     })
-  }else { // if (option.end)
+  } else { // if (option.end)
     process.nextTick(() => {
       process.exit(0);
     });
   }
   img2gcode.on('tick', (perc) => {
-    process.send({ msj: 'tick', data:{perc} });
+    process.send({ msj: 'tick', data: { perc } });
   })
-  .then((dirgcode) => {
-    process.send({ msj: 'finished', data:{dirgcode} });
+  .then((data) => {
+    process.send({ msj: 'finished', data });
   });
 });

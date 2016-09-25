@@ -54,13 +54,15 @@ angular.controller('main',
       notify(file.name, 'info');
 
       // loading Views -> sending of app while proces.gcode send line
+      /*
       data = new vis.DataSet();
-      /*for (let index = 0; index < file.gcode.length; index++) {
+      for (let index = 0; index < file.gcode.length; index++) {
         if (!exceeds_x && file.gcode[index].ejes[0] * file.scale > file.workpiece.x) { exceeds_x = true; }
         if (!exceeds_y && file.gcode[index].ejes[1] * file.scale > file.workpiece.y) { exceeds_y = true; }
         data.add({ id: index, x: file.gcode[index].ejes[0], y: file.gcode[index].ejes[1], z: file.gcode[index].ejes[2] });
-      }*/
+      }
       drawVisualization(data);
+      */
     }
   });
 

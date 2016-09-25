@@ -3,10 +3,7 @@ const cp = require('child_process'),
   path = require('path'),
   child = {
     img2gcode: cp.fork(`${__dirname}/img2gcode.js`),
-    gcode: cp.fork(`${__dirname}/gcode.js`)/*,
-    onMessage:(child,data) => {
-
-    }*/
+    gcode: cp.fork(`${__dirname}/gcode.js`)
   },
   dirConfig = `${__dirname}/config.json`,
   debug = {
@@ -57,16 +54,17 @@ function setFile(dir, initialLine, cb) {
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
       child.img2gcode.send({ dirImg: dirfile });// send option o config armado
       child.img2gcode.on('message', (m) => {
-        let cb = {
+        let cbMessage = {
           tick: (data) => {
             console.log(data.perc);
           },
           finished: (data) => {
+            child.img2gcode.send('end');
             console.log('Loading... gCode:', data.dirgcode);
             setGCode(data.dirgcode, initialLine, cb);
           }
         }
-        cb[m.msj](m.data)
+        cbMessage[m.msj](m.data)
       });
 
       /*
@@ -103,23 +101,25 @@ function setGCode(dirfile, initialLine, cb) {
       File.dir = dirfile;
       child.gcode.send({ content: fs.readFileSync(dirfile).toString(), initialLine: initialLine });
       child.gcode.on('message', (m) => {
-        let cb = {
+        let cbMessage = {
         tick: (data) => {
           console.log(data.perc, data.ejes);
         },
         finished: (data) => {
+          console.log('File gcode loaded.');
+          child.gcode.send('end');
           File.gcode = data.gcode;
-          //cb(File);
+          cb(File);
         }
         }
-        cb[m.msj](m.data)
+        cbMessage[m.msj](m.data)
       });
       //File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
       File.name = path.posix.basename(dirfile);
       File.lines = File.gcode.length;
       File.travel = File.gcode[File.gcode.length - 1].travel;
       File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
-      cb(File);
+      //cb(File);
     });
   }
 }
