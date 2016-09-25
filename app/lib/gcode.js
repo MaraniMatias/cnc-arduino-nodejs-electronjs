@@ -112,7 +112,7 @@ function executeGCodes(gcodes, initialLine) {
   var history = [inicializarLine(initialLine)];
   for (var i = 0; i < gcodes.length; ++i) {
     let line = nextLine(gcodes[i], history[i]);
-    process.send({ msj: 'tick', ejes: line.ejes, perc: i / gcodes.length });
+    process.send({ msj: 'tick', data: { ejes: line.ejes, perc: i / gcodes.length } });
     history.push(line);
   }
   return history;
@@ -150,8 +150,8 @@ function start(content, initialLine, cb) {
 process.on('message', (option) => {
   if (option.content && option.initialLine) {
     console.log('gCode line: ', option.initialLine);
-    start(option.content, option.initialLine, (arrGCode) => {
-      process.send({ msj: 'finished', arrGCode });
+    start(option.content, option.initialLine, (gcode) => {
+      process.send({ msj: 'finished', data:{gcode} });
     });
   } else {//if (option.end)
     process.nextTick(() => {

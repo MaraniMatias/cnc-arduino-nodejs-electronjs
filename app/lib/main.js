@@ -3,7 +3,10 @@ const cp = require('child_process'),
   path = require('path'),
   child = {
     img2gcode: cp.fork(`${__dirname}/img2gcode.js`),
-    gcode: cp.fork(`${__dirname}/gcode.js`)
+    gcode: cp.fork(`${__dirname}/gcode.js`)/*,
+    onMessage:(child,data) => {
+
+    }*/
   },
   dirConfig = `${__dirname}/config.json`,
   debug = {
@@ -38,7 +41,7 @@ function getMiliSeg(config) {
   return steps * time / advance;
 }
 
-function end(){
+function end() {
   child.gcode.send({ end: true });
   child.img2gcode.send({ end: true });
   this.sendCommand('0,0,0', () => {
@@ -54,19 +57,18 @@ function setFile(dir, initialLine, cb) {
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
       child.img2gcode.send({ dirImg: dirfile });// send option o config armado
       child.img2gcode.on('message', (m) => {
-        switch (m.msj) {
-          case 'tick':
-            console.log(m.perc);
-            break;
-          case 'finiged':
-            console.log('Loading... gCode:', m.data.dirgcode);
-            setGCode(m.data.dirgcode, initialLine, cb);
-            break;
-          default:
-            console.log(m);
-            break;
+        let cb = {
+          tick: (data) => {
+            console.log(data.perc);
+          },
+          finished: (data) => {
+            console.log('Loading... gCode:', data.dirgcode);
+            setGCode(data.dirgcode, initialLine, cb);
+          }
         }
+        cb[m.msj](m.data)
       });
+
       /*
             img2gcode.start({  // It is mm
               toolDiameter: 1,
@@ -101,12 +103,16 @@ function setGCode(dirfile, initialLine, cb) {
       File.dir = dirfile;
       child.gcode.send({ content: fs.readFileSync(dirfile).toString(), initialLine: initialLine });
       child.gcode.on('message', (m) => {
-        if (m.msj == 'tick') {
-          console.log(m.perc,m.ejes);
-        }else if (m.msj == 'finished') {
-          File.gcode = m.arrGCode;
+        let cb = {
+        tick: (data) => {
+          console.log(data.perc, data.ejes);
+        },
+        finished: (data) => {
+          File.gcode = data.gcode;
           //cb(File);
         }
+        }
+        cb[m.msj](m.data)
       });
       //File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
       File.name = path.posix.basename(dirfile);

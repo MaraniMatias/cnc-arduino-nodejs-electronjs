@@ -19,9 +19,9 @@ process.on('message', (option) => {
     });
   }
   img2gcode.on('tick', (perc) => {
-    process.send({ msj: 'tick', perc });
+    process.send({ msj: 'tick', data:{perc} });
   })
-  .then((data) => {
-    process.send({ msj: 'finished', data });
+  .then((dirgcode) => {
+    process.send({ msj: 'finished', data:{dirgcode} });
   });
 });
