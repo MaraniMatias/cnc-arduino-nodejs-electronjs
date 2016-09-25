@@ -1,12 +1,6 @@
 var img2gcode = require('img2gcode');
 
 process.on('message', (option) => {
-  img2gcode.on('tick', (perc) => {
-    process.send({ msj: 'tick', perc });
-  })
-  .then((data) => {
-    process.send({ msj: 'finiged', data });
-  });
   if (option.dirImg) {
     console.log('Reading Image: ', option.dirImg);
     img2gcode.start({  // It is mm
@@ -19,10 +13,15 @@ process.on('message', (option) => {
       info: "emitter",
       dirImg: option.dirImg
     })
-  }
-  if (option.end) {
+  }else { // if (option.end)
     process.nextTick(() => {
       process.exit(0);
     });
   }
+  img2gcode.on('tick', (perc) => {
+    process.send({ msj: 'tick', perc });
+  })
+  .then((data) => {
+    process.send({ msj: 'finished', data });
+  });
 });

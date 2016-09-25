@@ -111,7 +111,9 @@ function removeUnimplemented(history) {
 function executeGCodes(gcodes, initialLine) {
   var history = [inicializarLine(initialLine)];
   for (var i = 0; i < gcodes.length; ++i) {
-    history.push(nextLine(gcodes[i], history[i]));
+    let line = nextLine(gcodes[i], history[i]);
+    process.send({ msj: 'tick', ejes: line.ejes, perc: i / gcodes.length });
+    history.push(line);
   }
   return history;
 }
@@ -128,11 +130,8 @@ function parseGCode(fileContent) {
   var gcode = [];
   for (var i = 0; i < lines.length; i++) {
     var stripped = lines[i].replace(/^N\d+\s+/, "");
-    process.send({ msj: 'tick', perc: i / lines.length });
     if (stripped.match(/^(G|M)/)) {
       let line = removeInLineComment(stripped);
-      process.send({ msj: 'tick', perc: 1 });
-      process.send({ msj: 'line', line });
       gcode.push(line);
     }
   }
@@ -152,9 +151,9 @@ process.on('message', (option) => {
   if (option.content && option.initialLine) {
     console.log('gCode line: ', option.initialLine);
     start(option.content, option.initialLine, (arrGCode) => {
-      process.send({ msj: 'gcode', arrGCode });
+      process.send({ msj: 'finished', arrGCode });
     });
-  }else {//if (option.end)
+  } else {//if (option.end)
     process.nextTick(() => {
       process.exit(0);
     });

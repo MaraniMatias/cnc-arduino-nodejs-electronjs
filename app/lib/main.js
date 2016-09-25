@@ -1,11 +1,11 @@
 const cp = require('child_process'),
+  fs = require('fs'),
+  path = require('path'),
   child = {
     img2gcode: cp.fork(`${__dirname}/img2gcode.js`),
     gcode: cp.fork(`${__dirname}/gcode.js`)
   },
-  dirConfig = __dirname + "/config.json",
-  fs = require('fs'),
-  path = require('path'),
+  dirConfig = `${__dirname}/config.json`,
   debug = {
     arduino: {
       start: true,
@@ -50,7 +50,7 @@ function setFile(dir, initialLine, cb) {
   if (dir) {
     let dirfile = path.resolve(dir[0]);
     let extension = path.extname(dirfile);
-    if (extension === '.png') { console.log('Por ahora no podemos leer png :('); }
+    if (extension === '.png') { console.log('Por ahora solo leems GIF , JPEG , JPG'); }
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
       child.img2gcode.send({ dirImg: dirfile });// send option o config armado
       child.img2gcode.on('message', (m) => {
@@ -99,18 +99,16 @@ function setGCode(dirfile, initialLine, cb) {
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
       File.dir = dirfile;
+      child.gcode.send({ content: fs.readFileSync(dirfile).toString(), initialLine: initialLine });
       child.gcode.on('message', (m) => {
         if (m.msj == 'tick') {
-          console.log(m.perc);
-        }else if(m.msj == 'linne'){
-          //console.log(m.line);
-        }else if (m.msj == 'gcode') {
+          console.log(m.perc,m.ejes);
+        }else if (m.msj == 'finished') {
           File.gcode = m.arrGCode;
           //cb(File);
         }
       });
       //File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
-      child.gcode.send({ content: fs.readFileSync(dirfile).toString(), initialLine: initialLine });
       File.name = path.posix.basename(dirfile);
       File.lines = File.gcode.length;
       File.travel = File.gcode[File.gcode.length - 1].travel;
