@@ -154,7 +154,7 @@ process.on('message', (option) => {
     start(option.content, option.initialLine, (arrGCode) => {
       process.send({ msj: 'gcode', arrGCode });
     });
-  }else {//if (option.end) 
+  }else {//if (option.end)
     process.nextTick(() => {
       process.exit(0);
     });
