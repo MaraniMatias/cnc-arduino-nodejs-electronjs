@@ -75,7 +75,7 @@ angular.factory('line', ['lineTable','config' ,(lineTable,config) => {
       }
     },
     addMsj: function  (msg,type) {
-      if(lineTable.length > 14){ 
+      if(lineTable.length > 12){ 
         lineTable.shift();
       }
       switch(type){

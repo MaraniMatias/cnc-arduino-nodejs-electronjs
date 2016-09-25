@@ -1,14 +1,16 @@
-const
-  dirConfig = __dirname + "/config.json",
+const cp = require('child_process'),
   fs = require('fs'),
   path = require('path'),
-  gc = require("./gcode"),
+  child = {
+    img2gcode: cp.fork(`${__dirname}/img2gcode.js`),
+    gcode: cp.fork(`${__dirname}/gcode.js`)
+  },
+  dirConfig = `${__dirname}/config.json`,
   debug = {
     arduino: {
-      start: false,
+      start: true,
       conect: false,
-      sendCommand: false,
-      working: false
+      sendCommand: true
     },
     file: {},
     config: {},
@@ -16,8 +18,6 @@ const
     app: { prevent: false }
   }
   ;
-var img2gcode = require('img2gcode');
-var lwip = require('lwip');
 
 var lineRunning = 0;
 var Arduino = require("./arduino.js");
@@ -38,11 +38,36 @@ function getMiliSeg(config) {
   return steps * time / advance;
 }
 
+function end() {
+  child.gcode.send({ end: true });
+  child.img2gcode.send({ end: true });
+  this.sendCommand('0,0,0', () => {
+    console.log("Parar forzado por cerrar programa.");
+  });
+}
+
 function setFile(dir, initialLine, cb) {
-  let dirfile = path.resolve(dir[0]);
-  let extension = path.extname(dirfile);
-  if (extension === '.png') { console.log('Por ahora no podemos leer png :('); }
-  else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
+  if (dir) {
+    let dirfile = path.resolve(dir[0]);
+    let extension = path.extname(dirfile);
+    if (extension === '.png') { console.log('Por ahora solo leems GIF , JPEG , JPG'); }
+    else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
+      child.img2gcode.send({ dirImg: dirfile });// send option o config armado
+      child.img2gcode.on('message', (m) => {
+        let cbMessage = {
+          tick: (data) => {
+            console.log(data.perc);
+          },
+          finished: (data) => {
+            child.img2gcode.send('end');
+            console.log('Loading... gCode:', data.dirgcode);
+            setGCode(data.dirgcode, initialLine, cb);
+          }
+        }
+        cbMessage[m.msj](m.data)
+      });
+
+      /*
     readConfig().then((fileConfig) => {
       img2gcode.start({  // It is mm
         toolDiameter: fileConfig.toolConfig.toolDiameter,
@@ -54,32 +79,40 @@ function setFile(dir, initialLine, cb) {
         info: "emitter",
         dirImg: dirfile
       })
-      .on('log', (log) => {
-        console.log(log);
-      })
-      .on('tick', (perc) => {
-        //console.log(perc);
-      })
-      .then((data) => {
-        setGCode(data.dirgcode, initialLine, cb);
-      })
     })
+      */
   } else {
-    setGCode(dirfile, initialLine, cb);
+    console.log('It isn\'t file.');
   }
 }
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
     readConfig().then((config) => {
+      console.log('Loading... gCode');
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
       File.dir = dirfile;
-      File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
+      child.gcode.send({ content: fs.readFileSync(dirfile).toString(), initialLine: initialLine });
+      child.gcode.on('message', (m) => {
+        let cbMessage = {
+        tick: (data) => {
+          console.log(data.perc, data.ejes);
+        },
+        finished: (data) => {
+          console.log('File gcode loaded.');
+          child.gcode.send('end');
+          File.gcode = data.gcode;
+          cb(File);
+        }
+        }
+        cbMessage[m.msj](m.data)
+      });
+      //File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
       File.name = path.posix.basename(dirfile);
       File.lines = File.gcode.length;
       File.travel = File.gcode[File.gcode.length - 1].travel;
       File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
-      cb(File);
+      //cb(File);
     });
   }
 }
@@ -187,6 +220,7 @@ function readConfig() {
 
 module.exports = {
   debug,
+  end,
   Arduino: {
     comName: Arduino.comName,
     manufacturer: Arduino.manufacturer,

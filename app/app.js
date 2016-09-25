@@ -17,17 +17,13 @@ app.setName('CNC-ino');
 Menu.setApplicationMenu(Menu.buildFromTemplate([]));
 
 app.on('window-all-closed', () => {
-  CNC.sendCommand('0,0,0', () => {
-    console.log("Parar forzado por cerrar programa.");
-  });
+  CNC.end();
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
 var mainWindow = null;
-var prefsWindow = null;
-
 app.on('ready', () => {
   //var appIcon = new Tray('./recursos/icon.png');
   //appIcon.setToolTip('This is my application.');
@@ -83,6 +79,7 @@ ipcMain.on('arduino', (event, arg) => {
 
 ipcMain.on('open-file', (event, data) => {
   if (!CNC.Arduino.working) {
+    console.log("open-file\n",data);
     globalShortcut.unregisterAll();
     if (data.fileDir) {
       CNC.setFile([data.fileDir],
@@ -117,7 +114,7 @@ ipcMain.on('open-file', (event, data) => {
 
 ipcMain.on('send-command', (event, arg) => {
   CNC.sendCommand(arg, (dataReceived) => {
-    if (CNC.debug.arduino.sendCommand) console.log("sendCommand: ", dataReceived);
+    if (CNC.debug.arduino.sendCommand) { console.log("sendCommand: ", dataReceived); }
     event.sender.send('close-conex', dataReceived);
   });
 });
@@ -169,6 +166,11 @@ ipcMain.on('config-save-send', (event, arg) => {
   });
 });
 
+ipcMain.on('contextmenu-enabled', (event, arg) => {
+  // Send items to invertir enabled
+  event.sender.send('contextmenu-enabled-res', arg);
+});
+
 /*
 Event: ‘suspend’
 Event: ‘resume’
@@ -182,7 +184,8 @@ function registerGlobalShortcut() {
       let manalSteps = file.manalSteps;
       function globalShortcutSendComand(cmd) {
         CNC.sendCommand(cmd, (dataReceived) => {
-          if (CNC.debug.arduino.sendCommand) console.log(dataReceived);
+          if (CNC.debug.arduino.sendCommand) { console.log(dataReceived); }
+          mainWindow.webContents.send('close-conex', dataReceived);
         });
       }
       globalShortcut.register('q', () => { globalShortcutSendComand(`0,0,${manalSteps}`); });
