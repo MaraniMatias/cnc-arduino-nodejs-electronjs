@@ -1,9 +1,11 @@
 const cp = require('child_process'),
-  child = { img2gcode : cp.fork(`${__dirname}/img2gcode.js`)},
+  child = {
+    img2gcode: cp.fork(`${__dirname}/img2gcode.js`),
+    gcode: cp.fork(`${__dirname}/gcode.js`)
+  },
   dirConfig = __dirname + "/config.json",
   fs = require('fs'),
   path = require('path'),
-  gc = require("./gcode"),
   debug = {
     arduino: {
       start: true,
@@ -15,10 +17,11 @@ const cp = require('child_process'),
     ipc: { arduino: false, console: false, sendStart: false },
     app: { prevent: false }
   }
-;
+  ;
 
-var img2gcode = {
-  end: () => { child.img2gcode.send({ end: true }); }
+var childEnd = () => {
+  child.gcode.send({ end: true });
+  child.img2gcode.send({ end: true });
 }
 var lineRunning = 0;
 var Arduino = require("./arduino.js");
@@ -45,39 +48,39 @@ function setFile(dir, initialLine, cb) {
     let extension = path.extname(dirfile);
     if (extension === '.png') { console.log('Por ahora no podemos leer png :('); }
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
-    child.img2gcode.send({dirImg:dirfile});// send option o config armado
-    child.img2gcode.on('message', (m) => {
-      switch (m.msj) {
-        case 'tick':
-          console.log(m.perc);
-          break;
-        case 'finiged':
-          console.log('Loading... gCode:', m.data.dirgcode);
-          setGCode(m.data.dirgcode, initialLine, cb);
-          break;
-        default:
-          console.log(m);
-          break;
-      }
-    });
-/*
-      img2gcode.start({  // It is mm
-        toolDiameter: 1,
-        scaleAxes: 700,
-        deepStep: -1,
-        whiteZ: 0,
-        blackZ: -2,
-        sevaZ: 2,
-        info: "emitter",
-        dirImg: dirfile
-      })
-        .on('tick', (perc) => {
-          console.log(perc);
-        })
-        .then((data) => {
-          setGCode(data.dirgcode, initialLine, cb);
-        });
-*/
+      child.img2gcode.send({ dirImg: dirfile });// send option o config armado
+      child.img2gcode.on('message', (m) => {
+        switch (m.msj) {
+          case 'tick':
+            console.log(m.perc);
+            break;
+          case 'finiged':
+            console.log('Loading... gCode:', m.data.dirgcode);
+            setGCode(m.data.dirgcode, initialLine, cb);
+            break;
+          default:
+            console.log(m);
+            break;
+        }
+      });
+      /*
+            img2gcode.start({  // It is mm
+              toolDiameter: 1,
+              scaleAxes: 700,
+              deepStep: -1,
+              whiteZ: 0,
+              blackZ: -2,
+              sevaZ: 2,
+              info: "emitter",
+              dirImg: dirfile
+            })
+              .on('tick', (perc) => {
+                console.log(perc);
+              })
+              .then((data) => {
+                setGCode(data.dirgcode, initialLine, cb);
+              });
+      */
     } else {
       setGCode(dirfile, initialLine, cb);
     }
@@ -88,15 +91,22 @@ function setFile(dir, initialLine, cb) {
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
     readConfig().then((config) => {
+      console.log('Loading... gCode');
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
       File.dir = dirfile;
-      File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
+      child.gcode.on('message', (m) => {
+        if (m.msj == 'gcode') {
+          File.gcode = m.arrGCode;
+          cb(File);
+        }
+      });
+      //File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
+      child.gcode.send({ content: fs.readFileSync(dirfile).toString(), initialLine: initialLine });
       File.name = path.posix.basename(dirfile);
       File.lines = File.gcode.length;
       File.travel = File.gcode[File.gcode.length - 1].travel;
       File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
-      cb(File);
     });
   }
 }
@@ -204,7 +214,7 @@ function readConfig() {
 
 module.exports = {
   debug,
-  img2gcode,
+  childEnd,
   Arduino: {
     comName: Arduino.comName,
     manufacturer: Arduino.manufacturer,
