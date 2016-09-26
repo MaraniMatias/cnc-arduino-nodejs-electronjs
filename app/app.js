@@ -86,7 +86,7 @@ ipcMain.on('open-file', (event, data) => {
         data.initialLine = data.initialLine || [0, 0, 0],
         {
           tick: (data) => {
-            mainWindow.webContents.send('open-file-tick',data);
+            event.sender.send('open-file-tick',data);
           },
           finished: (File) => {
             event.sender.send('open-file-res', File);
@@ -109,9 +109,10 @@ ipcMain.on('open-file', (event, data) => {
         data.initialLine = data.initialLine || [0, 0, 0],
         {
           tick: (data) => {
-            mainWindow.webContents.send('open-file-tick',data);
+            event.sender.send('open-file-tick',data);
           },
           finished: (File) => {
+            console.log('File gcode loaded. and crate viwe por gcode...');
             event.sender.send('open-file-res', File);
             registerGlobalShortcut();
           }

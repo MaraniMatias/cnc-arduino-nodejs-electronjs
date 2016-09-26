@@ -3,8 +3,8 @@ const cp = require('child_process'),
   path = require('path'),
   gc = require('./gcode.js'),
   childDir = {
-    img2gcode: `${__dirname}/img2gcode.js`,
-    gcode: `${__dirname}/gcode.js`
+    //gcode: `${__dirname}/gcode.js`,
+    img2gcode: `${__dirname}/img2gcode.js`
   },
   dirConfig = `${__dirname}/config.json`,
   debug = {
@@ -90,31 +90,18 @@ function setFile(dir, initialLine, cb) {
 
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
-File.name = path.posix.basename(dirfile);
+    File.name = path.posix.basename(dirfile);
     cb.tick({ info: `Preparando gcode desde ${File.name}...` });
+    console.log(`Preparando gcode desde ${File.name}...`);
     readConfig().then((config) => {
-      console.log('Loading... gCode');
-File.workpiece.x = config.workpiece.x;
-File.workpiece.y = config.workpiece.y;
-File.dir = dirfile;
-File.lines = File.gcode.length;
-      childFactory(childDir.gcode, {
-        tick: (child, arg) => {
-            // progresBar
-            // perc: arg.perc,
-            // imgName: File.name,
-        },
-        finished: (child, data) => {
-          child.kill();
-          console.log('File gcode loaded. and crate viwe por gcode...');
-File.gcode = data.gcode;
-File.travel = File.gcode[File.gcode.length - 1].travel;
-File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
-          cb.finished(File);
-        }
-      }).send({
-        content: fs.readFileSync(dirfile).toString(), initialLine
-      });
+      File.workpiece.x = config.workpiece.x;
+      File.workpiece.y = config.workpiece.y;
+      File.dir = dirfile;
+      File.lines = File.gcode.length;
+      File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
+      File.travel = File.gcode[File.gcode.length - 1].travel;
+      File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
+      cb.finished(File);
     });
   }
 }
