@@ -56,33 +56,29 @@ function setFile(dir, initialLine, cb) {
     let extension = path.extname(dirfile);
     if (extension === '.png') { console.log('Por ahora solo leems GIF , JPEG , JPG'); }
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
-      childFactory(childDir.img2gcode, {
-        tick: (child, data) => {
-          console.log(data.perc);
-        },
-        finished: (child, data) => {
-          child.kill();
-          console.log('Loading... gCode:', data.dirgcode);
-          setGCode(data.dirgcode, initialLine, cb);
-        }
-      }).send({ dirImg: dirfile });
-
-      /*
-    readConfig().then((fileConfig) => {
-      img2gcode.start({  // It is mm
-        toolDiameter: fileConfig.toolConfig.toolDiameter,
-        scaleAxes: fileConfig.toolConfig.scaleAxes,
-        deepStep: fileConfig.toolConfig.deepStep,
-        whiteZ: fileConfig.toolConfig.whiteZ,
-        blackZ: fileConfig.toolConfig.blackZ,
-        sevaZ: fileConfig.toolConfig.sevaZ,
-        info: "emitter",
-        dirImg: dirfile
+      readConfig().then((fileConfig) => {
+        childFactory(childDir.img2gcode, {
+          tick: (child, data) => {
+            console.log(data.perc);
+          },
+          finished: (child, data) => {
+            child.kill();
+            console.log('Loading... gCode:', data.dirgcode);
+            setGCode(data.dirgcode, initialLine, cb);
+          }
+        }).send({ // It is mm
+          toolDiameter: fileConfig.toolConfig.toolDiameter,
+          scaleAxes: fileConfig.toolConfig.scaleAxes,
+          deepStep: fileConfig.toolConfig.deepStep,
+          whiteZ: fileConfig.toolConfig.whiteZ,
+          blackZ: fileConfig.toolConfig.blackZ,
+          sevaZ: fileConfig.toolConfig.sevaZ,
+          info: "emitter",
+          dirImg: dirfile
+        });
       })
-    })
-      */
     } else { setGCode(dirfile, initialLine, cb); }
-  }else{ console.log('It isn\'t file.');}
+  } else { console.log('It isn\'t file.'); }
 }
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
