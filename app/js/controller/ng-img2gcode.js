@@ -4,15 +4,6 @@ angular.controller('modalImg2gcode',
 ['notify', 'ipc', 'cnc', '$scope', 'config', 'modalFactory',
 (notify, ipc, cnc, $scope, config, modalFactory) => {
 
-  $scope.toolConfig = {
-    toolDiameter: 1,
-    scaleAxes: 700,
-    deepStep: -1,
-    whiteZ: 0,
-    blackZ: 2,
-    sevaZ: 2
-  };
-
   var modalConfig = modalFactory('modalConfig');
   //modalConfig.show();
 
@@ -24,23 +15,25 @@ angular.controller('modalImg2gcode',
   $scope.progressBar = 'indicating';
   */
 
-  /*
-    ipc.on('show-prefs-res', (event, config) => {
-      if (modal.isActive) { modal.hide(); }
-      else { modal.show(); }
-      $scope.configModal = config;
+
+    ipc.on('show-prefs-i2gc-res', (event, argConfig) => {
+      if (modalConfig.isActive) { modalConfig.hide(); }
+      else {
+        $scope.toolConfig = argConfig.toolConfig;
+        modalConfig.show();
+      }
     });
 
-  $scope.cancel = () => { modal.hide(); }
+  $scope.cancel = () => { modalConfig.hide(); }
   $scope.save = () => {
-    modal.hide();
+    modalConfig.hide();
     ipc.send('config-save-send', $scope.configModal);
   }
 
-    ipc.on('config-save-res', (event, config) => {
-      if (config.file) { $scope.configModal = config.file; }
-      if (config.message) { notify(config.message, config.type); }
-      modal.hide();
-    });
-  */
+  ipc.on('config-save-res', (event, config) => {
+    if (config.file) { $scope.configModal = config.file; }
+    if (config.message) { notify(config.message, config.type); }
+    modal.hide();
+  });
+
 }]);

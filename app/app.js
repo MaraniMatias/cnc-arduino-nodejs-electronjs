@@ -94,6 +94,9 @@ ipcMain.on('open-file', (event, data) => {
       }),
       data.initialLine = data.initialLine || [0, 0, 0],
       { // CallBack
+        fileImg: (config) => {
+          event.sender.send('show-modal-i2g', data);
+        },
         tick: (data) => {
           event.sender.send('open-file-tick', data);
         },
@@ -163,9 +166,15 @@ ipcMain.on('config-save-send', (event, arg) => {
   });
 });
 
-ipcMain.on('contextmenu-enabled', (event, arg) => {
-  // Send items to invertir enabled
-  event.sender.send('contextmenu-enabled-res', arg);
+ipcMain.on('show-prefs-i2gc', (event, arg) => {
+  if (!CNC.Arduino.working) {
+    globalShortcut.unregisterAll();
+    CNC.configFile.read().then((data) => {
+      event.sender.send('show-prefs-i2gc-res', data);
+    });
+  } else {
+    event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
+  }
 });
 
 /*

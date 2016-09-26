@@ -23,9 +23,15 @@ module.exports = [
         }
       },
       {
-        label: 'Preferancia',
+        label: 'Preferancia generales',
         click: (item, focusedWindow) => { 
           ipcRenderer.send('show-prefs');
+        }
+      },
+      {
+        label: 'Preferancia img a gcode',
+        click: (item, focusedWindow) => { 
+          ipcRenderer.send('show-prefs-i2gc');
         }
       },
       {type: 'separator'},

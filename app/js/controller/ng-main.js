@@ -63,7 +63,7 @@ angular.controller('main',
         viewsGCode.add({ id: index, x: file.gcode[index].ejes[0], y: file.gcode[index].ejes[1], z: file.gcode[index].ejes[2] });
       }
       drawVisualization(viewsGCode);
-    }
+    }else{ modalProgress.hide(); }
   });
 
   $scope.enviarDatos = (cmd) => {

@@ -86,7 +86,7 @@ function setFile(dir, initialLine, cb) {
         });
       })
     } else { setGCode(dirfile, initialLine, cb); }
-  } else { console.log('It isn\'t file.'); }
+  } else { cb.finished({dir:null}); console.log('It isn\'t file.'); }
 }
 
 function setGCode(dirfile, initialLine, cb) {
