@@ -6,7 +6,7 @@
     "pug": "registry:dt/pug#2.0.0-beta6+20160919072324"
   },
   "globalDependencies": {
-    "node": "registry:dt/node#6.0.0+20160921192128",
+    "node": "registry:dt/node#6.0.0+20160925070332",
     "npm": "registry:dt/npm#0.0.0+20160317120654"
   }
 }

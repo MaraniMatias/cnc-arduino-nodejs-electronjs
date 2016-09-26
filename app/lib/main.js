@@ -1,9 +1,9 @@
 const cp = require('child_process'),
   fs = require('fs'),
   path = require('path'),
-  child = {
-    img2gcode: cp.fork(`${__dirname}/img2gcode.js`),
-    gcode: cp.fork(`${__dirname}/gcode.js`)
+  childDir = {
+    img2gcode: `${__dirname}/img2gcode.js`,
+    gcode: `${__dirname}/gcode.js`
   },
   dirConfig = `${__dirname}/config.json`,
   debug = {
@@ -39,33 +39,33 @@ function getMiliSeg(config) {
 }
 
 function end() {
-  child.gcode.send({ end: true });
-  child.img2gcode.send({ end: true });
-  this.sendCommand('0,0,0', () => {
+  sendCommand('0,0,0', () => {
     console.log("Parar forzado por cerrar programa.");
   });
 }
-
+function childFactory(forkDir, cbMessage) {
+  let fork = cp.fork(forkDir);
+  fork.on('message', (m) => {
+    if (typeof (cbMessage[m.msj]) === 'function') cbMessage[m.msj](fork, m.data);
+  });
+  return fork;
+}
 function setFile(dir, initialLine, cb) {
-  if (dir) {
+  if (dir[0]) {
     let dirfile = path.resolve(dir[0]);
     let extension = path.extname(dirfile);
     if (extension === '.png') { console.log('Por ahora solo leems GIF , JPEG , JPG'); }
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
-      child.img2gcode.send({ dirImg: dirfile });// send option o config armado
-      child.img2gcode.on('message', (m) => {
-        let cbMessage = {
-          tick: (data) => {
-            console.log(data.perc);
-          },
-          finished: (data) => {
-            child.img2gcode.send('end');
-            console.log('Loading... gCode:', data.dirgcode);
-            setGCode(data.dirgcode, initialLine, cb);
-          }
+      childFactory(childDir.img2gcode, {
+        tick: (child, data) => {
+          console.log(data.perc);
+        },
+        finished: (child, data) => {
+          child.kill();
+          console.log('Loading... gCode:', data.dirgcode);
+          setGCode(data.dirgcode, initialLine, cb);
         }
-        cbMessage[m.msj](m.data)
-      });
+      }).send({ dirImg: dirfile });
 
       /*
     readConfig().then((fileConfig) => {
@@ -81,9 +81,8 @@ function setFile(dir, initialLine, cb) {
       })
     })
       */
-  } else {
-    console.log('It isn\'t file.');
-  }
+    } else { setGCode(dirfile, initialLine, cb); }
+  }else{ console.log('It isn\'t file.');}
 }
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
@@ -92,21 +91,19 @@ function setGCode(dirfile, initialLine, cb) {
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
       File.dir = dirfile;
-      child.gcode.send({ content: fs.readFileSync(dirfile).toString(), initialLine: initialLine });
-      child.gcode.on('message', (m) => {
-        let cbMessage = {
-        tick: (data) => {
+
+      childFactory(childDir.gcode, {
+        tick: (child, data) => {
           console.log(data.perc, data.ejes);
         },
-        finished: (data) => {
+        finished: (child, data) => {
+          child.kill();
           console.log('File gcode loaded.');
-          child.gcode.send('end');
           File.gcode = data.gcode;
           cb(File);
         }
-        }
-        cbMessage[m.msj](m.data)
-      });
+      }).send({ content: fs.readFileSync(dirfile).toString(), initialLine });
+
       //File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
       File.name = path.posix.basename(dirfile);
       File.lines = File.gcode.length;
