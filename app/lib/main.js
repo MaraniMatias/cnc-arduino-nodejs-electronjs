@@ -210,15 +210,15 @@ function readConfig() {
 module.exports = {
   debug,
   end,
-  Arduino: {
-    comName: Arduino.comName,
-    manufacturer: Arduino.manufacturer,
-    reSet,
-    working: Arduino.working
-  },
   File,
-  setFile,
   start,
+  setFile,
+  Arduino: {
+    reSet,
+    working: Arduino.working,
+    comName: Arduino.comName,
+    manufacturer: Arduino.manufacturer
+  },
   sendCommand,
   configFile: {
     dir: dirConfig,
