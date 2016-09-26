@@ -24,7 +24,16 @@ angular.controller('modalImg2gcode',
   //modalConfig.show();
 
   var modalProgress = modalFactory('modalProgress');
-  modalProgress.show();
+  //modalProgress.show();
+
+  ipc.on('show-modalImg2gcode', (event, arg) => {
+    if (!modalProgress.isActive) { modalProgress.show(); }
+    $scope.progressBar = {
+      class:  'active',
+      info: 'Loading..',
+      perc: arg.perc
+    };
+  });
 
 
   /*
