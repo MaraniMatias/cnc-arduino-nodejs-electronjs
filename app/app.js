@@ -84,7 +84,7 @@ ipcMain.on('open-file', (event, data) => {
     if (data.fileDir) {
       CNC.setFile(data.fileDir,
         data.initialLine = data.initialLine || [0, 0, 0],
-        mainWindow.webContents,
+//        mainWindow.webContents,
         (File) => {
           event.sender.send('open-file-res', File);
           registerGlobalShortcut();
@@ -102,7 +102,7 @@ ipcMain.on('open-file', (event, data) => {
           properties: ['openFile']
         })[0],
         data.initialLine = data.initialLine || [0, 0, 0],
-        mainWindow.webContents,
+//        mainWindow.webContents,
         (File) => {
           event.sender.send('open-file-res', File);
           registerGlobalShortcut();

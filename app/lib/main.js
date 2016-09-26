@@ -53,7 +53,7 @@ function childFactory(forkDir, cbMessage) {
   return fork;
 }
 
-function setFile(dir, initialLine, webContents, cb) {
+function setFile(dir, initialLine, cb) {
   if (dir) {
     let dirfile = path.resolve(dir);
     let extension = path.extname(dirfile);
@@ -62,11 +62,7 @@ function setFile(dir, initialLine, webContents, cb) {
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
           tick: (child, data) => {
-            console.log(data.perc);
-            webContents.send('show-modalImg2gcode', {
-              info: path.posix.basename(dirfile) + ' Loading..',
-              perc: data.perc * 100
-            })
+            //console.log(data.perc);
           },
           finished: (child, data) => {
             child.kill();
