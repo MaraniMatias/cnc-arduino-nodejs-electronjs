@@ -42,7 +42,7 @@ angular.controller('main',
     let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
   }
-  // modal progress in ng-modalProgres
+
   ipc.on('open-file-res', (event, file) => {
     if (file.dir) {
       console.log(file)

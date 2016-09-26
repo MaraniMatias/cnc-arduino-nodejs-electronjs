@@ -81,44 +81,29 @@ ipcMain.on('open-file', (event, data) => {
   if (!CNC.Arduino.working) {
     console.log("open-file", data);
     globalShortcut.unregisterAll();
-    if (data.fileDir) {
-      CNC.setFile(data.fileDir,
-        data.initialLine = data.initialLine || [0, 0, 0],
-        {
-          tick: (data) => {
-            event.sender.send('open-file-tick',data);
-          },
-          finished: (File) => {
-            event.sender.send('open-file-res', File);
-            registerGlobalShortcut();
-          }
+    CNC.setFile(
+      data.fileDir || dialog.showOpenDialog({
+        title: fileConfig.name,
+        filters: [
+          { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg'/*, 'png'*/] },
+          { name: 'G-Code', extensions: ['gcode'] },
+          { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg'/*, 'png'*/] },
+          { name: 'All Files', extensions: ['*'] }
+        ],
+        properties: ['openFile']
+      })[0],
+      data.initialLine = data.initialLine || [0, 0, 0],
+      { // CallBack
+        tick: (data) => {
+          event.sender.send('open-file-tick', data);
+        },
+        finished: (File) => {
+          console.log('File gcode loaded. and crate viwe por gcode...');
+          event.sender.send('open-file-res', File);
+          registerGlobalShortcut();
         }
-      )
-    } else {
-      CNC.setFile(
-        dialog.showOpenDialog({
-          title: fileConfig.name,
-          filters: [
-            { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg'/*, 'png'*/] },
-            { name: 'G-Code', extensions: ['gcode'] },
-            { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg'/*, 'png'*/] },
-            { name: 'All Files', extensions: ['*'] }
-          ],
-          properties: ['openFile']
-        })[0],
-        data.initialLine = data.initialLine || [0, 0, 0],
-        {
-          tick: (data) => {
-            event.sender.send('open-file-tick',data);
-          },
-          finished: (File) => {
-            console.log('File gcode loaded. and crate viwe por gcode...');
-            event.sender.send('open-file-res', File);
-            registerGlobalShortcut();
-          }
-        }
-      )//CNC.setFile
-    }
+      }
+    ) // CNC.setFile
   } else {
     event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
   }
