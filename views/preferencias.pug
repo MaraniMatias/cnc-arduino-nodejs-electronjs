@@ -6,7 +6,7 @@
       a.item(data-tab='motorX') Motor X
       a.item(data-tab='motorY') Motor Y
       a.item(data-tab='motorZ') Motor Z
-    .ui.bottom.attached.active.tab.segment(data-tab='setting')
+    .ui.bottom.attached.active.tab.segment(data-tab='setting' style="margin-bottom: 0px;")
       .ui.form.small
         .two.fields
           .field
@@ -23,7 +23,7 @@
           .field
             label Y (mm).
             input( ng-model="configModal.workpiece.y" type="number")
-    .ui.bottom.attached.tab.segment(data-tab='motorX')
+    .ui.bottom.attached.tab.segment(data-tab='motorX' style="margin-bottom: 0px;")
       .ui.form.small
         h4.ui.dividing.header Milimetros por pasos.
         .two.fields
