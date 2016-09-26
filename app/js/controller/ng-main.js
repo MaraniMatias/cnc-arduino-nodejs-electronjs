@@ -2,8 +2,8 @@
 /* global $ */
 /* global vis */
 angular.controller('main',
-['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'modalFactory', 'statusBar',
-(notify, ipc, cnc, $scope, lineTable, config, line, modalFactory, statusBar ) => {
+['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'statusBar', 'modalFactory',
+(notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFactory ) => {
   'use strict'
   var modalProgress = modalFactory('modalProgress');
   var exceeds_x = false, exceeds_y = false;
@@ -38,6 +38,7 @@ angular.controller('main',
   });
 
   $scope.setFile = (reSetFile) => {
+    modalProgress.show();
     let initLine = $scope.initialLine.split(',');
     let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
@@ -45,9 +46,8 @@ angular.controller('main',
 
   ipc.on('open-file-res', (event, file) => {
     if (file.dir) {
-      console.log(file)
+      //console.log(file)
       $('title').text('CNC-ino - ' + file.name);
-
       $scope.cnc.file.name = file.name;
       $scope.cnc.file.dir = file.dir;
       $scope.cnc.file.line.total = file.lines;
@@ -250,8 +250,8 @@ angular.controller('main',
 
   ipc.on('open-file-tick', (event, data) => {
     modalProgress.show();
-    $scope.modalProgressInfo = data.info;
-  })
+    $('#modalProgressInfo').text(data.info);
+  });
 
 }]);
 // para marcar el recorido usar dos grupos

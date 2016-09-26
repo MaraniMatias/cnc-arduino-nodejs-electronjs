@@ -91,7 +91,7 @@ ipcMain.on('open-file', (event, data) => {
           { name: 'All Files', extensions: ['*'] }
         ],
         properties: ['openFile']
-      })[0],
+      }),
       data.initialLine = data.initialLine || [0, 0, 0],
       { // CallBack
         tick: (data) => {

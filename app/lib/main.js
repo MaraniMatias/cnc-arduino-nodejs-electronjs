@@ -55,6 +55,7 @@ function childFactory(forkDir, cbMessage) {
 
 function setFile(dir, initialLine, cb) {
   if (dir) {
+    if (typeof (dir) !== 'string'){ dir = dir[0]; }
     let dirfile = path.resolve(dir);
     let extension = path.extname(dirfile);
     let fileName = path.posix.basename(dirfile);

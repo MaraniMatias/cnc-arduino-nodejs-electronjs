@@ -106,5 +106,8 @@ block contentMain
     #statusBarRighr.ui.flowing.popup.top.hidden.huge
       .ui.header  Lineas interpetadas 
       p {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}
+  #modalProgress.ui.basic.modal
+    .ui.inverted.active(style="background-color: #F0F0F0;")
+      #modalProgressInfo.ui.text.loader Cargando...
   include ./preferencias.pug
   include ./img2gcode.pug
