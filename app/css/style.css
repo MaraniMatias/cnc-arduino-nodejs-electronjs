@@ -11,8 +11,7 @@ html, body {
     padding: 0;
     width: 100%;
     font: 16px ;
-    -moz-user-select: none;
-    -webkit-user-select: none;
+    -user-select: none;
 }
 #mygraph {
     height: 100%;
@@ -34,7 +33,6 @@ html, body {
 .ui.grid > .column.compact{
     padding: 7px 7px !important; 
 }
-
 
 .statusbar {
     position: fixed;
