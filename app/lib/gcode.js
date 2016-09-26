@@ -1,6 +1,6 @@
 function G0(prevState, nextState, command, args) {
   var travel = prevState.travel;
-  for (var j = 0; j < args.length; j++) {
+  for (var j = 0, x = args.length; j < x; j++) {
     switch (args[j].charAt(0).toLowerCase()) {
       case 'x':
         nextState.ejes[0] = parseFloat(args[j].slice(1));
@@ -100,7 +100,7 @@ function nextLine(gcode, prevLine) {
 }
 
 function removeUnimplemented(history) {
-  for (var i = 0; i < history.length; i++) {
+  for (let i = 0; i < history.length; i++) {
     if (!history[i].implemented) {
       history.splice(i, 1);
     }
@@ -110,7 +110,7 @@ function removeUnimplemented(history) {
 
 function executeGCodes(gcodes, initialLine) {
   var history = [inicializarLine(initialLine)];
-  for (var i = 0; i < gcodes.length; ++i) {
+  for (let i = 0, x = gcodes.length; i < x; ++i) {
     /*let line = nextLine(gcodes[i], history[i]);
     process.send({ msj: 'tick', data: { ejes: line.ejes, perc: i / gcodes.length } });
     history.push(line);*/
@@ -129,11 +129,10 @@ function parseGCode(fileContent) {
   // código dividido en líneas y extraer aquellos que son relevantes. También eliminar los comentarios en línea.
   var lines = fileContent.split(/\r\n|\n/);
   var gcode = [];
-  for (var i = 0; i < lines.length; i++) {
-    var stripped = lines[i].replace(/^N\d+\s+/, "");
+  for (let i = 0, x = lines.length; i < x; i++) {
+    let stripped = lines[i].replace(/^N\d+\s+/, "");
     if (stripped.match(/^(G|M)/)) {
-      let line = removeInLineComment(stripped);
-      gcode.push(line);
+      gcode.push(removeInLineComment(stripped));
     }
   }
   return gcode;

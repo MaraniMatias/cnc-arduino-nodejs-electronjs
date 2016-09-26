@@ -64,11 +64,11 @@ function setFile(dir, initialLine, cb) {
       cb.tick({ info: `Preparando... ${fileName}.` });
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
-          tick: (child, arg) => {
+          /*tick: (child, arg) => {
             // progresBar
             // perc: arg.perc,
             // imgName: fileName,
-          },
+          },*/
           finished: (child, data) => {
             child.kill();
             cb.tick({ info: `GCode creado con ${fileName}.\nGuardado en ${data.dirgcode}.` });
@@ -83,7 +83,7 @@ function setFile(dir, initialLine, cb) {
           sevaZ: fileConfig.toolConfig.sevaZ,
           info: "emitter",
           dirImg: dirfile
-        });
+          });
       })
     } else { setGCode(dirfile, initialLine, cb); }
   } else { cb.finished({dir:null}); console.log('It isn\'t file.'); }

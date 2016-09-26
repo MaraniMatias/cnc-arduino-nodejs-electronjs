@@ -95,7 +95,8 @@ ipcMain.on('open-file', (event, data) => {
       data.initialLine = data.initialLine || [0, 0, 0],
       { // CallBack
         fileImg: (config) => {
-          event.sender.send('show-modal-i2g', data);
+          console.log('Config for img2gcode.');
+          event.sender.send('show-prefs-img2gcode-res', config);
         },
         tick: (data) => {
           event.sender.send('open-file-tick', data);
