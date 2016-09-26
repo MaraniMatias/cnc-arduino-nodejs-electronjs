@@ -149,11 +149,11 @@ ipcMain.on('about', (event, arg) => {
   // if (chosen == 0)  mainWindow.destroy();
 });
 
-ipcMain.on('show-prefs', (event, arg) => {
+ipcMain.on('show-prefs', (event, argType) => {
   if (!CNC.Arduino.working) {
     globalShortcut.unregisterAll();
     CNC.configFile.read().then((data) => {
-      event.sender.send('show-prefs-res', data);
+      event.sender.send(`show-prefs-${argType}-res`, data);
     });
   } else {
     event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
@@ -164,17 +164,6 @@ ipcMain.on('config-save-send', (event, arg) => {
   CNC.configFile.save(arg, (data) => {
     event.sender.send('config-save-res', data);
   });
-});
-
-ipcMain.on('show-prefs-i2gc', (event, arg) => {
-  if (!CNC.Arduino.working) {
-    globalShortcut.unregisterAll();
-    CNC.configFile.read().then((data) => {
-      event.sender.send('show-prefs-i2gc-res', data);
-    });
-  } else {
-    event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
-  }
 });
 
 /*

@@ -9,24 +9,24 @@
           .field
             h4.ui.dividing.header Medidas en milimetros.
             label Distancia segura para mover la broca.
-            input( ng-model="toolConfig.sevaZ" type="number")
+            input( ng-model="configModal.toolConfig.sevaZ" type="number")
           .field
             label Altura para tomar como referencia para el color blanco.
-            input( ng-model="toolConfig.whiteZ" type="number")
+            input( ng-model="configModal.toolConfig.whiteZ" type="number")
         .two.fields
           .field
             label Altura para tomar como referencia para el color negro.
-            input( ng-model="toolConfig.blackZ" type="number")
+            input( ng-model="configModal.toolConfig.blackZ" type="number")
           .field
             label Profundidad de cada paso de la broca, cuanto debe comer la heramienta.
-            input( ng-model="toolConfig.deepStep" type="number")
+            input( ng-model="configModal.toolConfig.deepStep" type="number")
         .two.fields
           .field
             label Diámetro de la broca.
-            input( ng-model="toolConfig.toolDiameter" type="number")
+            input( ng-model="configModal.toolConfig.toolDiameter" type="number")
           .field
             label Dimensión de la altura de la imagen en milimetros.
-            input( ng-model="toolConfig.scaleAxes" type="number")
+            input( ng-model="configModal.toolConfig.scaleAxes" type="number")
   .actions
     button.ui.approve.button.primary( ng-click='save()' ) Guardar
     button.ui.cancel.button( ng-click='cancel()' ) Cancelar
