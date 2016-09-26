@@ -32,10 +32,10 @@
     button.ui.cancel.button( ng-click='cancel()' ) Cancelar
 
 .ui.modal.small#modalProgress(ng-controller="modalImg2gcode")
-  .header.small Procesando filename
+  .header.small Creando GCode desde {{imgName}}
   .content
-    .ui.indicating.progress(ng-class='progressBar' data-percent='{{cnc.file.line.progress}}')
-      .bar(style='transition-duration: 300ms; width: {{cnc.file.line.progress}}%;')
-      .label Loging...
+    .ui.indicating.progress(ng-class='progressBar.class' data-percent='{{progressBar.perc}}')
+      .bar(style='transition-duration: 300ms; width: {{progressBar.perc}}%;')
+      .label {{progressBar.info}}
   .actions
     button.ui.cancel.button( ng-click='cancel()' ) Cancelar

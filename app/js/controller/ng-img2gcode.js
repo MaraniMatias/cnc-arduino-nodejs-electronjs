@@ -13,10 +13,16 @@ angular.controller('modalImg2gcode',
     sevaZ: 2
   };
 
+  $scope.imgName = 'Nada :(';
+  $scope.progressBar = {
+    class:  'active',
+    info: 'Loading..',
+    perc: 78.4554
+  };
+
   var modalConfig = modalFactory('modalConfig');
-  modalConfig.show();
-  
-  $scope.progressBar = 'active';
+  //modalConfig.show();
+
   var modalProgress = modalFactory('modalProgress');
   modalProgress.show();
 

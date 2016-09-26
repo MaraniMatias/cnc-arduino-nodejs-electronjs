@@ -82,8 +82,8 @@ ipcMain.on('open-file', (event, data) => {
     console.log("open-file\n",data);
     globalShortcut.unregisterAll();
     if (data.fileDir) {
-      CNC.setFile([data.fileDir],
-        data.initialLine ? data.initialLine : [0, 0, 0],
+      CNC.setFile(data.fileDir,
+        data.initialLine = data.initialLine || [0, 0, 0],
         (File) => {
           event.sender.send('open-file-res', File);
           registerGlobalShortcut();
@@ -99,8 +99,8 @@ ipcMain.on('open-file', (event, data) => {
             { name: 'All Files', extensions: ['*'] }
           ],
           properties: ['openFile']
-        }),
-        data.initialLine ? data.initialLine : [0, 0, 0],
+        })[0],
+        data.initialLine = data.initialLine || [0, 0, 0],
         (File) => {
           event.sender.send('open-file-res', File);
           registerGlobalShortcut();

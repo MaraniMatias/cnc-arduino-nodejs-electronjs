@@ -1,6 +1,7 @@
 const cp = require('child_process'),
   fs = require('fs'),
   path = require('path'),
+  gc = require('./gcode.js'),
   childDir = {
     img2gcode: `${__dirname}/img2gcode.js`,
     gcode: `${__dirname}/gcode.js`
@@ -43,6 +44,7 @@ function end() {
     console.log("Parar forzado por cerrar programa.");
   });
 }
+
 function childFactory(forkDir, cbMessage) {
   let fork = cp.fork(forkDir);
   fork.on('message', (m) => {
@@ -50,9 +52,10 @@ function childFactory(forkDir, cbMessage) {
   });
   return fork;
 }
+
 function setFile(dir, initialLine, cb) {
-  if (dir[0]) {
-    let dirfile = path.resolve(dir[0]);
+  if (dir) {
+    let dirfile = path.resolve(dir);
     let extension = path.extname(dirfile);
     if (extension === '.png') { console.log('Por ahora solo leems GIF , JPEG , JPG'); }
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
@@ -80,14 +83,12 @@ function setFile(dir, initialLine, cb) {
     } else { setGCode(dirfile, initialLine, cb); }
   } else { console.log('It isn\'t file.'); }
 }
+
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
     readConfig().then((config) => {
       console.log('Loading... gCode');
-      File.workpiece.x = config.workpiece.x;
-      File.workpiece.y = config.workpiece.y;
-      File.dir = dirfile;
-
+      /*
       childFactory(childDir.gcode, {
         tick: (child, data) => {
           console.log(data.perc, data.ejes);
@@ -96,16 +97,19 @@ function setGCode(dirfile, initialLine, cb) {
           child.kill();
           console.log('File gcode loaded.');
           File.gcode = data.gcode;
-          cb(File);
+          webContents.send('open-file-res', { });
         }
       }).send({ content: fs.readFileSync(dirfile).toString(), initialLine });
-
-      //File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
+      */
+      File.workpiece.x = config.workpiece.x;
+      File.workpiece.y = config.workpiece.y;
+      File.dir = dirfile;
+      File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
       File.name = path.posix.basename(dirfile);
       File.lines = File.gcode.length;
       File.travel = File.gcode[File.gcode.length - 1].travel;
       File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
-      //cb(File);
+      cb(File);
     });
   }
 }

@@ -3,9 +3,8 @@
 /* global vis */
 angular.controller('main',
 ['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'statusBar',
-(notify, ipc, cnc, $scope, lineTable, config, line, statusBar) => {
+(notify, ipc, cnc, $scope, lineTable, config, line, statusBar ) => {
   'use strict'
-  $("#loader").removeClass("active");
   var exceeds_x = false, exceeds_y = false;
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
@@ -38,6 +37,7 @@ angular.controller('main',
   });
 
   $scope.setFile = (reSetFile) => {
+    $("#loader").addClass("active");
     let initLine = $scope.initialLine.split(',');
     let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
@@ -53,17 +53,14 @@ angular.controller('main',
       $('title').text('CNC-ino - ' + file.name);
       notify(file.name, 'info');
 
-      // loading Views -> sending of app while proces.gcode send line
-      /*
-      data = new vis.DataSet();
+      viewsGCode = new vis.DataSet();
       for (let index = 0; index < file.gcode.length; index++) {
         if (!exceeds_x && file.gcode[index].ejes[0] * file.scale > file.workpiece.x) { exceeds_x = true; }
         if (!exceeds_y && file.gcode[index].ejes[1] * file.scale > file.workpiece.y) { exceeds_y = true; }
-        data.add({ id: index, x: file.gcode[index].ejes[0], y: file.gcode[index].ejes[1], z: file.gcode[index].ejes[2] });
+        viewsGCode.add({ id: index, x: file.gcode[index].ejes[0], y: file.gcode[index].ejes[1], z: file.gcode[index].ejes[2] });
       }
-      drawVisualization(data);
-      */
-    }
+      drawVisualization(viewsGCode);
+    }else{ $("#loader").removeClass("active"); }
   });
 
   $scope.enviarDatos = (cmd) => {
@@ -221,7 +218,7 @@ angular.controller('main',
     $scope.progressBar = 'indicating';
   }
 
-  var data = null, graph = null;
+  var viewsGCode = null, graph = null;
   function drawVisualization(data) {
     if (exceeds_x) { notify('El modelo se excede en X.', 'warning'); }
     if (exceeds_y) { notify('El modelo se excede en Y.', 'warning'); }
@@ -240,11 +237,11 @@ angular.controller('main',
       keepAspectRatio: true,
       verticalRatio: 0.5
     };
-    // create our graph
+
     var container = document.getElementById('mygraph');
     graph = new vis.Graph3d(container, data, options);
     //graph.setCameraPosition(0.4, undefined, undefined);
-    // terminar loading.
+    $("#loader").removeClass("active");
   } drawVisualization();
 
 }]);
