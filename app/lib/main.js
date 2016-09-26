@@ -60,28 +60,17 @@ function setFile(dir, initialLine, cb) {
     let fileName = path.posix.basename(dirfile);
     if (extension === '.png') { console.log('Por ahora solo leems GIF , JPEG , JPG'); }
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
-      cb.tick({
-        imgName: fileName,
-        perc: 0,
-        info: 'Preparando...'
-      });
+      cb.tick({ info: `Preparando... ${fileName}.` });
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
           tick: (child, arg) => {
-            cb.tick({
-              imgName: fileName,
-              perc: arg.perc * 100
-            });
+            // progresBar
+            // perc: arg.perc,
+            // imgName: fileName,
           },
           finished: (child, data) => {
             child.kill();
-            cb.tick({
-              imgName: fileName,
-              end: true,
-              perc: 100,
-              inf: 'GCode creado. en '+data.dirgcode
-            });
-            console.log('Loading... gCode:', data.dirgcode);
+            cb.tick({ info: `GCode creado con ${fileName}.\nGuardado en ${data.dirgcode}.` });
             setGCode(data.dirgcode, initialLine, cb);
           }
         }).send({ // It is mm
@@ -101,41 +90,26 @@ function setFile(dir, initialLine, cb) {
 
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
-    File.name = path.posix.basename(dirfile);
-    cb.tick({
-      imgName: File.name,
-      perc: 0,
-      inf: 'Preparando gcode...'
-      //ejes: arg.ejes
-    });
+File.name = path.posix.basename(dirfile);
+    cb.tick({ info: `Preparando gcode desde ${File.name}...` });
     readConfig().then((config) => {
       console.log('Loading... gCode');
-      File.workpiece.x = config.workpiece.x;
-      File.workpiece.y = config.workpiece.y;
-      File.dir = dirfile;
-      //File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
-      File.lines = File.gcode.length;
+File.workpiece.x = config.workpiece.x;
+File.workpiece.y = config.workpiece.y;
+File.dir = dirfile;
+File.lines = File.gcode.length;
       childFactory(childDir.gcode, {
         tick: (child, arg) => {
-          cb.tick({
-            imgName: File.name,
-            perc: arg.perc * 100,
-            inf: 'Procesando gcode...'
-            //ejes: arg.ejes
-          });
+            // progresBar
+            // perc: arg.perc,
+            // imgName: File.name,
         },
         finished: (child, data) => {
           child.kill();
           console.log('File gcode loaded. and crate viwe por gcode...');
-          cb.tick({
-            imgName: File.name,
-            end: true,
-            perc: 100,
-            inf: 'Creando vista para gcode...'
-          });
-          File.gcode = data.gcode;
-          File.travel = File.gcode[File.gcode.length - 1].travel;
-          File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
+File.gcode = data.gcode;
+File.travel = File.gcode[File.gcode.length - 1].travel;
+File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
           cb.finished(File);
         }
       }).send({

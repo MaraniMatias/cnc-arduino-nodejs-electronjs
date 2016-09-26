@@ -150,13 +150,9 @@ function start(content, initialLine, cb) {
 
 process.on('message', (option) => {
   if (option.content && option.initialLine) {
-    console.log('gCode line: ', option.initialLine);
+    console.log('child_process GCode line: ', option.initialLine);
     start(option.content, option.initialLine, (gcode) => {
       process.send({ msj: 'finished', data:{gcode} });
-    });
-  } else {//if (option.end)
-    process.nextTick(() => {
-      process.exit(0);
     });
   }
 });

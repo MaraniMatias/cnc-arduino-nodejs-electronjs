@@ -31,11 +31,6 @@
     button.ui.approve.button.primary( ng-click='save()' ) Guardar
     button.ui.cancel.button( ng-click='cancel()' ) Cancelar
 
-.ui.modal.small#modalProgress(ng-controller="modalProgress")
-  .header.small Creando GCode desde {{progressBar.imgName}}
-  .content
-    .ui.indicating.progress(ng-class='progressBar.class' data-percent='{{progressBar.perc}}')
-      .bar(style='transition-duration: 300ms; width: {{progressBar.perc}}%;')
-      .label {{progressBar.info}}
-  .actions
-    button.ui.cancel.button( ng-click='cancel()' ) Cancelar
+.ui.basic.modal#modalProgress(ng-controller="main")
+  .ui.inverted.active(style="background-color: #F0F0F0;")
+    .ui.text.loader {{modalProgressInfo}}

@@ -2,9 +2,10 @@
 /* global $ */
 /* global vis */
 angular.controller('main',
-['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'statusBar',
-(notify, ipc, cnc, $scope, lineTable, config, line, statusBar ) => {
+['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'modalFactory', 'statusBar',
+(notify, ipc, cnc, $scope, lineTable, config, line, modalFactory, statusBar ) => {
   'use strict'
+  var modalProgress = modalFactory('modalProgress');
   var exceeds_x = false, exceeds_y = false;
   $scope.cnc = cnc;
   $scope.lineTable = lineTable;
@@ -37,7 +38,6 @@ angular.controller('main',
   });
 
   $scope.setFile = (reSetFile) => {
-    //$("#loader").addClass("active");
     let initLine = $scope.initialLine.split(',');
     let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
@@ -45,7 +45,7 @@ angular.controller('main',
   // modal progress in ng-modalProgres
   ipc.on('open-file-res', (event, file) => {
     if (file.dir) {
-      //console.log(file)
+      console.log(file)
       $('title').text('CNC-ino - ' + file.name);
 
       $scope.cnc.file.name = file.name;
@@ -55,7 +55,7 @@ angular.controller('main',
       $scope.cnc.file.travel = file.travel;
 
       notify(file.name, 'info');
-      /*
+
       viewsGCode = new vis.DataSet();
       for (let index = 0; index < file.gcode.length; index++) {
         if (!exceeds_x && file.gcode[index].ejes[0] * file.scale > file.workpiece.x) { exceeds_x = true; }
@@ -63,9 +63,6 @@ angular.controller('main',
         viewsGCode.add({ id: index, x: file.gcode[index].ejes[0], y: file.gcode[index].ejes[1], z: file.gcode[index].ejes[2] });
       }
       drawVisualization(viewsGCode);
-      */
-    } else {
-      //$("#loader").removeClass("active");
     }
   });
 
@@ -248,7 +245,13 @@ angular.controller('main',
     graph = new vis.Graph3d(container, data, options);
     //graph.setCameraPosition(0.4, undefined, undefined);
     $("#loader").removeClass("active");
+    modalProgress.hide();
   } drawVisualization();
+
+  ipc.on('open-file-tick', (event, data) => {
+    modalProgress.show();
+    $scope.modalProgressInfo = data.info;
+  })
 
 }]);
 // para marcar el recorido usar dos grupos
