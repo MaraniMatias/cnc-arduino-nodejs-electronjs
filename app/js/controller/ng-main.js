@@ -37,22 +37,25 @@ angular.controller('main',
   });
 
   $scope.setFile = (reSetFile) => {
-    $("#loader").addClass("active");
+    //$("#loader").addClass("active");
     let initLine = $scope.initialLine.split(',');
     let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
   }
+  // modal progress in ng-modalProgres
   ipc.on('open-file-res', (event, file) => {
     if (file.dir) {
       //console.log(file)
+      $('title').text('CNC-ino - ' + file.name);
+
       $scope.cnc.file.name = file.name;
       $scope.cnc.file.dir = file.dir;
       $scope.cnc.file.line.total = file.lines;
       $scope.cnc.file.line.duration = parseInt(file.segTotal);
       $scope.cnc.file.travel = file.travel;
-      $('title').text('CNC-ino - ' + file.name);
-      notify(file.name, 'info');
 
+      notify(file.name, 'info');
+      /*
       viewsGCode = new vis.DataSet();
       for (let index = 0; index < file.gcode.length; index++) {
         if (!exceeds_x && file.gcode[index].ejes[0] * file.scale > file.workpiece.x) { exceeds_x = true; }
@@ -60,7 +63,10 @@ angular.controller('main',
         viewsGCode.add({ id: index, x: file.gcode[index].ejes[0], y: file.gcode[index].ejes[1], z: file.gcode[index].ejes[2] });
       }
       drawVisualization(viewsGCode);
-    }else{ $("#loader").removeClass("active"); }
+      */
+    } else {
+      //$("#loader").removeClass("active");
+    }
   });
 
   $scope.enviarDatos = (cmd) => {

@@ -5,8 +5,10 @@ angular
         $: $('#' + id).modal({ closable: clsbl || false }),
         isActive: false,
         show: () => {
-          modal.$.modal('show');
-          this.isActive = true;
+          if (!this.isActive) {
+            modal.$.modal('show');
+            this.isActive = true;
+          }
         },
         hide: () => {
           modal.$.modal('hide');

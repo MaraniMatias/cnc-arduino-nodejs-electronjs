@@ -112,7 +112,7 @@ function executeGCodes(gcodes, initialLine) {
   var history = [inicializarLine(initialLine)];
   for (var i = 0; i < gcodes.length; ++i) {
     let line = nextLine(gcodes[i], history[i]);
-    //process.send({ msj: 'tick', data: { ejes: line.ejes, perc: i / gcodes.length } });
+    process.send({ msj: 'tick', data: { ejes: line.ejes, perc: i / gcodes.length } });
     history.push(line);
   }
   return history;
@@ -137,12 +137,12 @@ function parseGCode(fileContent) {
   }
   return gcode;
 }
-
+/*
 module.exports = (content, initialLine) => {
   var codigo = executeGCodes(parseGCode(content), initialLine);
   return removeUnimplemented(codigo);
 }
-/*
+*/
 function start(content, initialLine, cb) {
   var codigo = executeGCodes(parseGCode(content), initialLine);
   cb(removeUnimplemented(codigo));
@@ -160,4 +160,3 @@ process.on('message', (option) => {
     });
   }
 });
-*/

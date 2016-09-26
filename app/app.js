@@ -79,16 +79,21 @@ ipcMain.on('arduino', (event, arg) => {
 
 ipcMain.on('open-file', (event, data) => {
   if (!CNC.Arduino.working) {
-    console.log("open-file\n",data);
+    console.log("open-file\n", data);
     globalShortcut.unregisterAll();
     if (data.fileDir) {
       CNC.setFile(data.fileDir,
         data.initialLine = data.initialLine || [0, 0, 0],
-//        mainWindow.webContents,
-        (File) => {
-          event.sender.send('open-file-res', File);
-          registerGlobalShortcut();
-        })
+        {
+          tick: (data) => {
+            mainWindow.webContents.send('open-file-tick',data);
+          },
+          finished: (File) => {
+            event.sender.send('open-file-res', File);
+            registerGlobalShortcut();
+          }
+        }
+      )
     } else {
       CNC.setFile(
         dialog.showOpenDialog({
@@ -102,10 +107,14 @@ ipcMain.on('open-file', (event, data) => {
           properties: ['openFile']
         })[0],
         data.initialLine = data.initialLine || [0, 0, 0],
-//        mainWindow.webContents,
-        (File) => {
-          event.sender.send('open-file-res', File);
-          registerGlobalShortcut();
+        {
+          tick: (data) => {
+            mainWindow.webContents.send('open-file-tick',data);
+          },
+          finished: (File) => {
+            event.sender.send('open-file-res', File);
+            registerGlobalShortcut();
+          }
         }
       )//CNC.setFile
     }

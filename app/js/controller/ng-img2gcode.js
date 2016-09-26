@@ -13,28 +13,8 @@ angular.controller('modalImg2gcode',
     sevaZ: 2
   };
 
-  $scope.imgName = 'Nada :(';
-  $scope.progressBar = {
-    class:  'active',
-    info: 'Loading..',
-    perc: 0
-  };
-
   var modalConfig = modalFactory('modalConfig');
   //modalConfig.show();
-
-  var modalProgress = modalFactory('modalProgress');
-  //modalProgress.show();
-
-  ipc.on('show-modalImg2gcode', (event, arg) => {
-    if (!modalProgress.isActive) { modalProgress.show(); }
-    if (arg.end) { modalProgress.hide(); }
-    $scope.progressBar = {
-      class:  'active',
-      info: 'Loading..',
-      perc: arg.perc
-    };
-  });
 
   /*
   $scope.progressBar = 'warning';
