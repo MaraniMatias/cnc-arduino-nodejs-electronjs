@@ -1,7 +1,7 @@
 {
   "name": "cnc-ino",
   "desktopName": "cnc-ino",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "productName": "CNC-ino",
   "description": "cnc realizado con nodejs electron serialport arduino.",
   "main": "app.js",

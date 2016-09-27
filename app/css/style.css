@@ -34,6 +34,13 @@ html, body {
   padding: 7px 7px !important; 
 }
 
+.ui.grid > .column.compact.left{
+  padding: 0.5em 0em 0.5em 1em !important;
+}
+.ui.grid > .column.compact.right{
+  padding: 0.5em 0.5em 0.5em 0em !important;
+}
+
 .statusbar {
   position: fixed;
   box-sizing: border-box;

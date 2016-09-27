@@ -67,12 +67,13 @@ app.on('ready', () => {
 
   // ver como informar ala capa superior de que termino
   mainWindow.on('blur', () => { globalShortcut.unregisterAll(); });
-  mainWindow.on('focus', () => { registerGlobalShortcut(); });
+  mainWindow.on('focus', () => { if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); } });
 });//ready
 
 ipcMain.on('arduino', (event, arg) => {
   CNC.Arduino.reSet((obj) => {
     if (CNC.debug.ipc.arduino) console.log("send", 'arduino-res', obj);
+    if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); }
     event.sender.send('arduino-res', obj);
   });
 });

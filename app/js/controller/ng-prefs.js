@@ -1,11 +1,10 @@
 /* global angular */
 /* global $ */
 angular.controller('modalprefs',
-['notify', 'ipc', '$scope', 'config', 'modalFactory',
-(notify, ipc, $scope, config, modalFactory) => {
+['notify', 'ipc', '$scope', 'modalFactory',
+(notify, ipc, $scope, modalFactory) => {
 
   var modal = modalFactory('modalprefs');
-  $scope.configModal = config;
 
   ipc.on('show-prefs-general-res', (event, argConfig) => {
     if (modal.isActive) { modal.hide(); }

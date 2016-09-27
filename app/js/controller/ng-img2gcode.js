@@ -1,15 +1,13 @@
 /* global angular */
 /* global $ */
 angular.controller('modalImg2gcode',
-['notify', 'ipc', '$scope', 'config', 'modalFactory',
-(notify, ipc, $scope, config, modalFactory) => {
+['notify', 'ipc', '$scope', 'modalFactory',
+(notify, ipc, $scope, modalFactory) => {
 
-  var modalProgress = modalFactory('modalProgress');
   var modal = modalFactory('modalConfig');
-  $scope.configModal = config;
+  //ipc.send('show-prefs','img2gcode');
 
   ipc.on('show-prefs-img2gcode-res', (event, argConfig) => {
-    modalProgress.hide();
     if (modal.isActive) { modal.hide(); }
     else { modal.show(); }
     $scope.configModal = argConfig;

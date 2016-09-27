@@ -19,7 +19,7 @@ block contentMain
                       i.pause.icon.blue
                     button.ui.button(ng-disabled="!cnc.working && !cnc.pause.status" ng-click='parar()')
                       i.stop.icon.red
-                    button.ui.grey.button(ng-disabled="cnc.working" ng-click="setFile(false)" ) Archivo
+                    button.ui.secondary.button(ng-disabled="cnc.working" ng-click="setFile(false)" ) Archivo
                 .column.compact
                   .ui.labeled.input.action.fluid(ng-popup data-id="#popupLabelTool" )
                     label.ui.label Posición de la her.:
@@ -59,14 +59,18 @@ block contentMain
                 input( placeholder='Enviar comando.' type='text' ng-model='comando' ng-value='' ng-disabled="!cnc.arduino || cnc.working ")
                 button.ui.teal.button(ng-disabled="!cnc.arduino || cnc.working || comando.length==0" type="submit",ng-click='enviarDatos(comando)') Enviar
             .column.compact
-              .ui.right.labeled.input.fluid(ng-popup data-id="#inputStepsmm")
-                input(ng-model='inputStepsmm' type='text' )
-                .ui.dropdown.label
-                  .text pasos
-                  i.dropdown.icon
-                  .menu
-                    .item(style="padding: 0.71428571rem 0.74rem !important;" ng-click="setStepsmm('steps')") pasos
-                    .item(style="padding: 0.71428571rem 0.7rem !important;" ng-click="setStepsmm('mm')") mm
+              .ui.grid
+                .eight.wide.column.compact.left
+                  .ui.right.labeled.input.fluid(ng-popup data-id="#inputStepsmm")
+                    input(ng-model='inputStepsmm' type='text' )
+                    .ui.dropdown.label
+                      .text pasos
+                      i.dropdown.icon
+                      .menu
+                        .item(style="padding: 0.71428571rem 0.74rem !important;" ng-click="setStepsmm('steps')") pasos
+                        .item(style="padding: 0.71428571rem 0.7rem !important;" ng-click="setStepsmm('mm')") mm
+                .eight.wide.column.compact.right
+                  button.ui.button.primary( ng-disabled="cnc.working" ng-click="showPrefsImg2gcode()" ) img to gcode.
             .column.compact
               .six.ui.buttons.compact
                 button.ui.button.red(popup-element data-ng-popup-title="A" ng-popup-variatio="bottom center" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+ 
