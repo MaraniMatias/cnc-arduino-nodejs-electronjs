@@ -4,7 +4,9 @@
 .uk-modal-header {
   padding: 10px 20px 10px 20px;
 }
-
+button {
+  -webkit-app-region: no-drag;
+}
 html, body {
   height: 100%;
   margin: 0;

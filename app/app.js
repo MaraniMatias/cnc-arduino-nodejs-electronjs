@@ -1,4 +1,7 @@
-const dirBase = `file://${__dirname}/html/`,
+const dirBase = {
+    html: `file://${__dirname}/html/`,
+    icon: './recursos/toolConfig.png'
+  },
   fs = require('fs'),
   fileConfig = require('./package.json'),
   CNC = require('./lib/main.js'),
@@ -25,7 +28,7 @@ app.on('window-all-closed', () => {
 
 var mainWindow = null;
 app.on('ready', () => {
-  //var appIcon = new Tray('./recursos/icon.png');
+  //var appIcon = new Tray(dirBase.icon);
   //appIcon.setToolTip('This is my application.');
   //appIcon.setContextMenu(contextMenu);
 
@@ -41,7 +44,7 @@ app.on('ready', () => {
     frame: true, // Default true
     type: 'normal', // Default normal . On Linux, desktop, dock, toolbar, splash, notification.  On OS X, desktop, textured
     //webPreferences 
-    //icon       :  appIcon,
+    icon: dirBase.icon,
     center: true,
     minWidth: 600,
     minHeight: 500,
@@ -51,7 +54,7 @@ app.on('ready', () => {
     height: 600,
     title: fileConfig.name
   });
-  mainWindow.loadURL(dirBase + 'index.html');
+  mainWindow.loadURL(dirBase.html + 'index.html');
   //mainWindow.on('page-title-updated',  () => { console.log('title'); });
   mainWindow.on('closed', () => {
     globalShortcut.unregisterAll();
@@ -72,7 +75,7 @@ app.on('ready', () => {
 
 ipcMain.on('arduino', (event, arg) => {
   CNC.Arduino.reSet((obj) => {
-    if (CNC.debug.ipc.arduino) console.log("send", 'arduino-res', obj);
+    if (CNC.debug.ipc.arduino){ console.log("send", 'arduino-res', obj); }
     if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); }
     event.sender.send('arduino-res', obj);
   });
@@ -122,22 +125,24 @@ ipcMain.on('send-command', (event, arg) => {
 });
 
 ipcMain.on('send-start', (event, arg) => {
-  if (CNC.debug.ipc.sendStart) console.log('send-start\n', arg);
-  //prevent-display-sleep
-  //prevent-app-suspension
-  var id = powerSaveBlocker.start('prevent-app-suspension');
-  if (CNC.debug.app.prevent) console.log('prevent-app-suspension', powerSaveBlocker.isStarted(id));
-  CNC.start(arg, (data) => {
-    if (data.lineRunning !== false) {
-      event.sender.send('add-line', { nro: data.lineRunning, line: CNC.File.gcode[data.lineRunning] });
-      if (CNC.debug.ipc.console) console.log("I: %s - Ejes: %s - Result: %s", data.lineRunning, CNC.File.gcode[data.lineRunning].ejes, data.steps);
-    } else {
-      powerSaveBlocker.stop(id);
-      mainWindow.setProgressBar(0);
-      event.sender.send('close-conex', { type: 'none', steps: data.steps });
-      if (CNC.debug.ipc.console) console.log("Finish.");
-    }
-  });
+  if (!CNC.Arduino.working) {
+    if (CNC.debug.ipc.sendStart) console.log('send-start', arg);
+    //prevent-display-sleep
+    //prevent-app-suspension
+    var id = powerSaveBlocker.start('prevent-app-suspension');
+    if (CNC.debug.app.prevent) console.log('prevent-app-suspension', powerSaveBlocker.isStarted(id));
+    CNC.start(arg, (data) => {
+      if (data.lineRunning !== false) {
+        event.sender.send('add-line', { nro: data.lineRunning, line: CNC.File.gcode[data.lineRunning] });
+        if (CNC.debug.ipc.console) console.log("I: %s - Ejes: %s - Result: %s", data.lineRunning, CNC.File.gcode[data.lineRunning].ejes, data.steps);
+      } else {
+        powerSaveBlocker.stop(id);
+        mainWindow.setProgressBar(0);
+        event.sender.send('close-conex', { type: 'none', steps: data.steps });
+        if (CNC.debug.ipc.console) console.log("Finish.");
+      }
+    });
+  } else { console.log('Working in other project.') }
 });
 
 ipcMain.on('taksBar-progress', (event, arg) => { mainWindow.setProgressBar(arg); });
