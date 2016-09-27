@@ -168,6 +168,10 @@ ipcMain.on('config-save-send', (event, arg) => {
   });
 });
 
+ipcMain.on('contextmenu-enabled', (event, arg) => {
+  event.sender.send('contextmenu-enabled-res', arg);
+});
+
 /*
 Event: ‘suspend’
 Event: ‘resume’

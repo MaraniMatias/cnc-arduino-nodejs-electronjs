@@ -13,15 +13,18 @@ window.addEventListener('contextmenu', (e) => {
 }, false);
 
 ipcRenderer.on('contextmenu-enabled-res', (event, items) => {
-  // items = { main : [], context : [], }
-  for (let i = 0; i < items.main.length; i++) {
-    let submenu = items.main[i];
-    for (let menu = 0; menu < submenu.length; menu++) {
-      //console.log(mMenu.items[i].submenu.items[menu]);
-      mMenu.items[i].submenu.items[menu].enabled = !mMenu.items[i].submenu.items[menu].enabled;
+  // items = { main : {0:[]}, context : [], }
+  let mm = mMenu.items;
+  for (let keyM in items.main) {
+    let menu = items.main[keyM];
+    if (typeof (menu) === 'object') {
+      for (let keySM in menu) {
+        let isubm = menu[keySM];
+        mm[keyM].submenu.items[isubm].enabled = !mm[keyM].submenu.items[isubm].enabled;
+      }
     }
   }
-  for (let i = 0; i < items.context.length; i++) {
+  for (let i = 0, x = items.context.length; i < x; i++) {
     cMenu.items[items.context[i]].enabled = !cMenu.items[items.context[i]].enabled;
   }
 });

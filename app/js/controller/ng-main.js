@@ -130,7 +130,7 @@ angular.controller('main',
 
   ipc.on('close-conex', (event, obj) => {
     console.log('close-conex', obj);
-    ipc.send('contextmenu-enabled', { main: [ [0, 1] ], context: [0, 3] });
+    ipc.send('contextmenu-enabled', { main: { 0: [0, 1, 4] }, context: [0, 3] });
     switch (obj.type) {
       case "info":
         $scope.cnc.working = true;
@@ -174,7 +174,7 @@ angular.controller('main',
   });
 
   ipc.on('add-line', (event, data) => {
-    ipc.send('contextmenu-enabled', { main: [ [0, 1] ], context: [0, 3] }); // bloquear menu
+    ipc.send('contextmenu-enabled', { main: { 0: [0, 1, 4] }, context: [0, 3] }); // bloquear menu
     // graficar trabajo. :D
     if ($scope.lineTable.length > 10) {
       $scope.lineTable.shift();
