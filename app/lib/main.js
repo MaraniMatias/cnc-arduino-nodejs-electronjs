@@ -81,8 +81,8 @@ function setFile(dir, initialLine, cb) {
           whiteZ: fileConfig.toolConfig.whiteZ,
           blackZ: fileConfig.toolConfig.blackZ,
           sevaZ: fileConfig.toolConfig.sevaZ,
-          info: "emitter",
-          dirImg: dirfile
+          dirImg: dirfile,
+          info: "emitter"
           });
       })
     } else { setGCode(dirfile, initialLine, cb); }
@@ -98,8 +98,8 @@ function setGCode(dirfile, initialLine, cb) {
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
       File.dir = dirfile;
-      File.lines = File.gcode.length;
       File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
+      File.lines = File.gcode.length;
       File.travel = File.gcode[File.gcode.length - 1].travel;
       File.segTotal = File.gcode[File.gcode.length - 1].travel * getMiliSeg(config);
       cb.finished(File);
