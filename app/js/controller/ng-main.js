@@ -38,7 +38,6 @@ angular.controller('main',
   });
 
   $scope.setFile = (reSetFile) => {
-    modalProgress.show();
     let initLine = $scope.initialLine.split(',');
     let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });

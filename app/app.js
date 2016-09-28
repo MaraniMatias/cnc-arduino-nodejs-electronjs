@@ -46,8 +46,8 @@ app.on('ready', () => {
     //webPreferences 
     icon: dirBase.icon,
     center: true,
-    minWidth: 600,
-    minHeight: 500,
+    minWidth: 560,
+    minHeight: 450,
     //maxWidth   :  960, 
     //maxHeight  :  600,
     width: 800,
@@ -85,6 +85,7 @@ ipcMain.on('open-file', (event, data) => {
   if (!CNC.Arduino.working) {
     console.log("open-file", data);
     globalShortcut.unregisterAll();
+    event.sender.send('open-file-tick', {info:'Abriendo archivo...'});
     CNC.setFile(
       data.fileDir || dialog.showOpenDialog({
         title: fileConfig.name,
