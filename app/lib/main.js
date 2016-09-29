@@ -80,7 +80,7 @@ function setFile(dir, initialLine, cb) {
           deepStep: fileConfig.toolConfig.deepStep,
           whiteZ: fileConfig.toolConfig.whiteZ,
           blackZ: fileConfig.toolConfig.blackZ,
-          sevaZ: fileConfig.toolConfig.sevaZ,
+          safeZ: fileConfig.toolConfig.safeZ,
           dirImg: dirfile,
           info: "emitter"
           });
