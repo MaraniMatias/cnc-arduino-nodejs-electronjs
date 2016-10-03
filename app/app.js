@@ -106,6 +106,9 @@ ipcMain.on('open-file', (event, data) => {
         tick: (data) => {
           event.sender.send('open-file-tick', data);
         },
+        error: (data) => {
+          event.sender.send('close-conex', data);
+        },
         finished: (File) => {
           console.log('File gcode loaded. and crate viwe por gcode...');
           event.sender.send('open-file-res', File);

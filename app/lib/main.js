@@ -59,11 +59,18 @@ function setFile(dir, initialLine, cb) {
     let dirfile = path.resolve(dir);
     let extension = path.extname(dirfile);
     let fileName = path.posix.basename(dirfile);
-    if (extension === '.png') { console.log('Por ahora solo leems GIF , JPEG , JPG'); }
+    if (extension === '.png') { 
+      console.log('Por ahora solo leems GIF , JPEG , JPG');
+      cb.error({ type:'error', msg:'Por ahora solo leems GIF , JPEG , JPG' });
+    }
     else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
       cb.tick({ info: `Preparando... ${fileName}.` });
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
+          error: (child, error) => {
+            cb.error({ type:'error', msg:`${fileName} - ${error}` });
+            child.kill();
+          },
           /*tick: (child, arg) => {
             // progresBar
             // perc: arg.perc,

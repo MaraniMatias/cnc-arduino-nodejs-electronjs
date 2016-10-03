@@ -1,5 +1,9 @@
 // notas
 css tooltip
+cosumo de ram
+las teclas las toma cuando no esta conectado arduino
+informar sobre npm2gcode
+creo que aveces no cierra child_process
 
 ----------------------------------
 
