@@ -12,7 +12,7 @@
     "grunt-contrib-pug": "~1.0.0",
     "grunt-contrib-jshint": "~1.0.0",
     "grunt-contrib-watch": "~1.0.0",
-    "grunt-docco-plus": "~2.0.1",
+    "grunt-docco-plus": "~3.0.0",
     "grunt-mocha-test": "0.13.2",
     "grunt-shell": "~2.0.0",
     "pug": "2.0.0-beta6",
