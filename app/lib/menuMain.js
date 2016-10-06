@@ -38,8 +38,7 @@ module.exports = [
             }
           }
         ]
-      }
-      ,
+      },
       { type: 'separator' },
       {
         label: 'Salir',

@@ -112,7 +112,6 @@ ipcMain.on('open-file', (event, data) => {
         finished: (File) => {
           console.log('File gcode loaded. and crate viwe por gcode...');
           event.sender.send('open-file-res', File);
-          registerGlobalShortcut();
         }
       }
     ) // CNC.setFile
@@ -171,7 +170,7 @@ ipcMain.on('show-prefs', (event, argType) => {
   }
 });
 ipcMain.on('config-save-send', (event, arg) => {
-  registerGlobalShortcut();
+  globalShortcut.unregisterAll();
   CNC.configFile.save(arg, (data) => {
     event.sender.send('config-save-res', data);
   });
