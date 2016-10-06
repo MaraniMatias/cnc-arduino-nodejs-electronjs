@@ -21,10 +21,10 @@ module.exports = (grunt) => {
         }
       },
       rebuidserialport: {
-        command: ["cd", path.resolve(appPath + "/node_modules/" + node_modules[0]), ";", "node-gyp rebuild --target=<%=pckg.devDependencies['electron-prebuilt']%> --dist-url=https://atom.io/download/atom-shell"].join(' ')
+        command: ["cd", path.resolve(appPath + "/node_modules/" + node_modules[0]), "&&", "node-gyp rebuild --target=<%=pckg.devDependencies['electron-prebuilt']%> --dist-url=https://atom.io/download/atom-shell"].join(' ')
       },
       rebuidimg2gcode: {
-        command: ["cd", path.resolve(appPath + "/node_modules/" + node_modules[1]), ";", "node-gyp rebuild --target=<%=pckg.devDependencies['electron-prebuilt']%> --dist-url=https://atom.io/download/atom-shell"].join(' ')
+        command: ["cd", path.resolve(appPath + "/node_modules/" + node_modules[1]), "&&", "node-gyp rebuild --target=<%=pckg.devDependencies['electron-prebuilt']%> --dist-url=https://atom.io/download/atom-shell"].join(' ')
       },
       erun: {
         command: [path.resolve(electronPath), path.resolve(appPath)].join(' ')
