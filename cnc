@@ -1,9 +1,8 @@
 // notas
 css tooltip
-cosumo de ram
-las teclas las toma cuando no esta conectado arduino
+consumo de ram ?
 los try catch
-mas y mejor config en modal img2gcode
+mas y mejor config en modal img2gcode true or false
 
 ----------------------------------
 
