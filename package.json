@@ -31,7 +31,7 @@
     "email": "maranimatias@gmail.com"
   },
   "engines": {
-    "node": "~6.6.0",
+    "node": "~6.7.0",
     "npm": "~3.10.7"
   },
   "private": false,
