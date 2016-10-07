@@ -2,6 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+      "program": "${workspaceRoot}/main.js"
+    },
+    {
       "name": "Arduino",
       "type": "node",
       "request": "launch",

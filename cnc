@@ -3,8 +3,13 @@ css tooltip
 consumo de ram ?
 los try catch
 mas y mejor config en modal img2gcode true or false
-grunt buildmodule in windows
-
+grunt buildmodule in windows, esta ?
+mostrar comentarios de g code ??
+teclas desbloquear cuando es necesario desde fonntend
+tabla no muestra mas de tres con comandos manuales
+menu  no se bloquea
+no avisa que me ase de la mesa al leer gcode
+aconmodar css letra en tabla y tooltip en trabla
 ----------------------------------
 
 Hola mi nombre es matias ezeqiel marani.

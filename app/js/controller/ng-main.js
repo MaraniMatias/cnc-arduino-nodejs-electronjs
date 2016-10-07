@@ -255,6 +255,7 @@ angular.controller('main',
   $scope.showPrefsImg2gcode = () => {
     ipc.send('show-prefs', 'img2gcode');
   }
+
 }]);
 // para marcar el recorido usar dos grupos
 // uno indica lo recorido y el otro lo que falta

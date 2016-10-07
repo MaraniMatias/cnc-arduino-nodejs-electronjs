@@ -18,13 +18,15 @@ html(lang='es', ng-app="app" )
       $('.menu .item').tab();
       $('.ui.dropdown').dropdown();
       $('.ui.sticky').sticky();
-      $('button').keydown(function(e){
-        if(e.which === 32 || e.which === 13) {
+      /*
+      $('.ui .button').keydown(function (e) {
+        if ( e.which === 32 || e.which === 13 ) {
           e.preventDefault();
           return;
         }
         console.log(e.which);
       });
+      */
     script(src="./../js/angular.js" type="text/javascript")
     script(src="./../js/factory/ipc.js" type="text/javascript")
     script(src="./../js/factory/line.js" type="text/javascript")

@@ -12,7 +12,7 @@ const int pinLED = 13,          // LED StatusLED indicator
           pinX[] = {0,1,3,2},   // Motor pin X
           pinY[] = {4,5,7,6},   // Motor pin Y
           pinZ[] = {8,10,9,11}; // Motor pin Z
-const float _time = 14;         // Time between step //~14
+const float _time = 28;         // Time between step //~14
 // seting:END
 
 bool bStatusLED = true;     // StatusLED indicator var

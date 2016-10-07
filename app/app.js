@@ -90,9 +90,9 @@ ipcMain.on('open-file', (event, data) => {
       data.fileDir || dialog.showOpenDialog({
         title: fileConfig.name,
         filters: [
-          { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg'/*, 'png'*/] },
+          { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg','png','nc'] },
           { name: 'G-Code', extensions: ['gcode'] },
-          { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg'/*, 'png'*/] },
+          { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg', 'png'] },
           { name: 'All Files', extensions: ['*'] }
         ],
         properties: ['openFile']

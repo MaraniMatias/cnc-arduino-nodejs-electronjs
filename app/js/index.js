@@ -12,15 +12,15 @@ window.addEventListener('contextmenu', (e) => {
   cMenu.popup(remote.getCurrentWindow());
 }, false);
 
-ipcRenderer.on('contextmenu-enabled-res', (event, enabled) => {
+ipcRenderer.on('contextmenu-enabled-res', (event, enable) => {
   //let items = { main: { 0: [0, 1, 4] }, context: [0, 3] }
   let mm = mMenu.items[0].submenu.items;
-  mm[0].enabled = enabled;
-  mm[1].enabled = enabled;
-  mm[4].enabled = enabled;
+  mm[0].enabled = enable;
+  mm[1].enabled = enable;
+  mm[4].enabled = enable;
   let cm = cMenu.items;
-  cm[0].enabled = enabled;
-  cm[3].enabled = enabled;
+  cm[0].enabled = enable;
+  cm[3].enabled = enable;
 
   /*
   let mm = mMenu.items;
