@@ -1,5 +1,6 @@
 const cp = require('child_process'),
   fs = require('fs'),
+  os = require('os'),
   path = require('path'),
   gc = require('./gcode.js'),
   childDir = {
@@ -53,17 +54,39 @@ function childFactory(forkDir, cbMessage) {
   return fork;
 }
 
+function isImg(extension) {
+  switch (extension) {
+    case '.png':
+      return true
+    case '.jpeg':
+      return true
+    case '.gif':
+      return true
+    case '.jpg':
+      return true
+    default:
+      return false
+  }
+}
+
 function setFile(dir, initialLine, cb) {
   if (dir) {
-    if (typeof (dir) !== 'string'){ dir = dir[0]; }
+    if (typeof (dir) !== 'string') { dir = dir[0]; }
     let dirfile = path.resolve(dir);
     let extension = path.extname(dirfile);
-    let fileName = path.posix.basename(dirfile);
-    if (extension === '.png') { console.log('Por ahora solo leems GIF , JPEG , JPG'); }
-    else if (extension === '.gif' || extension === '.jpeg' || extension === '.jpg') {
+    let fileName = path.win32.basename(dirfile);
+    if (extension === '.png' && os.platform() === 'linux' ) {
+      console.log("Con linux solo GIF , JPEG , JPG. lwip y electronjs en linux no se llevan :D.");
+      cb.error({ type: 'error', msg: 'Por ahora solo leems GIF , JPEG , JPG' });
+    }
+    else if (isImg(extension)) {
       cb.tick({ info: `Preparando... ${fileName}.` });
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
+          error: (child, error) => {
+            cb.error({ type: 'error', msg: `${fileName} - ${error}` });
+            child.kill();
+          },
           /*tick: (child, arg) => {
             // progresBar
             // perc: arg.perc,
@@ -83,15 +106,15 @@ function setFile(dir, initialLine, cb) {
           safeZ: fileConfig.toolConfig.safeZ,
           dirImg: dirfile,
           info: "emitter"
-          });
+        });
       })
     } else { setGCode(dirfile, initialLine, cb); }
-  } else { cb.finished({dir:null}); console.log('It isn\'t file.'); }
+  } else { cb.finished({ dir: null }); console.log('It isn\'t file.'); }
 }
 
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
-    File.name = path.posix.basename(dirfile);
+    File.name = path.win32.basename(dirfile);
     cb.tick({ info: `Preparando gcode desde ${File.name}...` });
     console.log(`Preparando gcode desde ${File.name}...`);
     readConfig().then((config) => {

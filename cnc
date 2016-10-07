@@ -1,5 +1,9 @@
 // notas
 css tooltip
+consumo de ram ?
+los try catch
+mas y mejor config en modal img2gcode true or false
+grunt buildmodule in windows
 
 ----------------------------------
 

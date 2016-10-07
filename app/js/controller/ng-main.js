@@ -128,6 +128,7 @@ angular.controller('main',
   }
 
   ipc.on('close-conex', (event, obj) => {
+    modalProgress.hide();
     console.log('close-conex', obj);
     ipc.send('contextmenu-enabled', true);
     switch (obj.type) {

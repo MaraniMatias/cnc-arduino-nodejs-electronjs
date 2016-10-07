@@ -25,4 +25,6 @@ docs/
 g-code/**/*
 dist/
 *.swp
+*.swi
+*.swo
 *.html
