@@ -10,6 +10,7 @@ tabla no muestra mas de tres con comandos manuales
 menu  no se bloquea
 no avisa que me ase de la mesa al leer gcode
 aconmodar css letra en tabla y tooltip en trabla
+arduino use F con minimo 14
 ----------------------------------
 
 Hola mi nombre es matias ezeqiel marani.
