@@ -33,7 +33,7 @@ html, body {
 }
 
 .ui.grid > .column.compact{
-  padding: 7px 7px !important; 
+  padding: 7px 7px !important;
 }
 
 .ui.grid > .column.compact.left{

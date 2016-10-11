@@ -3,48 +3,48 @@
 /* global $ */
 angular
   .value('cnc', {
-    arduino:false,
-    working:false,
-    pause:{
+    arduino: false,
+    working: false,
+    pause: {
       line: 0,
       status: false,
-      steps: [0,0,0]
+      steps: [0, 0, 0]
     },
-    file:{
+    file: {
       //gcode : [],
-      name:'Sin Archivo.',
+      name: 'Sin Archivo.',
       line: {
-        total : 0,
-        run : 0,
-        duration : 0,
-        progress : 0
+        total: 0,
+        run: 0,
+        duration: 0,
+        progress: 0
       },
-      travel : 0
+      travel: 0
     },
-    Progress: function  (trvl) {
+    Progress: function (trvl) {
       // this = cnc
       this.file.line.run++;
-      this.file.line.progress = ((trvl*100)/this.file.travel).toFixed(2);
-      if(this.file.line.progress>16 || this.file.line.progress===0){
+      this.file.line.progress = ((trvl * 100) / this.file.travel).toFixed(2);
+      if (this.file.line.progress > 16 || this.file.line.progress === 0) {
         let time = new Date().getTime() - this.time.start.getTime();
-        let mileSecondsLeft =  this.file.travel * time / trvl;
-        this.time.end = new Date( this.time.start.getTime() + mileSecondsLeft );
+        let mileSecondsLeft = this.file.travel * time / trvl;
+        this.time.end = new Date(this.time.start.getTime() + mileSecondsLeft);
       }
     },
-    time:{
-      pause:'--:--',
-      start:'--:--',
-      end:'--:--'
+    time: {
+      pause: '--:--',
+      start: '--:--',
+      end: '--:--'
     }
   })
   .value('lineTable', [])
   .value('statusBar', {
-    "message":"CNC-ino.",
-    "type":"none",
-    "time":3000
+    "message": "CNC-ino.",
+    "type": "none",
+    "time": 3000
   })
   .value('config', {
-      "motor": {
+    "motor": {
       "xy": {
         "time": 24,
         "steps": 4000,
@@ -59,18 +59,19 @@ angular
   .directive('checkbox', function () {
     return {
       link: function (scope, element, attrs) {
-          element.checkbox();
+        element.checkbox();
       }
     }
   })
+
   .directive('popupElement', function () {
     return {
       link: function (scope, element, attrs) {
         element.popup({
-          title    : attrs.ngPopupTitle,
-          content  : attrs.ngPopup,
-          position : attrs.ngPopupPosition,
-          variation : attrs.ngPopupVariatio,
+          variation: attrs.ngPopupVariatio || 'very wide, large',
+          position: attrs.ngPopupPosition,
+          content: attrs.ngPopup,
+          title: attrs.ngPopupTitle,
           delay: {
             hide: 450
           }
@@ -82,7 +83,7 @@ angular
     return {
       link: function (scope, element, attrs) {
         element.popup({
-          popup : $(attrs.id)
+          popup: $(attrs.id)
         });
       }
     }

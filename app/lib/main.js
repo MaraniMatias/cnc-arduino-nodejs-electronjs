@@ -101,6 +101,7 @@ function setFile(dir, initialLine, cb) {
           toolDiameter: fileConfig.toolConfig.toolDiameter,
           scaleAxes: fileConfig.toolConfig.scaleAxes,
           deepStep: fileConfig.toolConfig.deepStep,
+          feedrate: fileConfig.toolConfig.feedrate,
           whiteZ: fileConfig.toolConfig.whiteZ,
           blackZ: fileConfig.toolConfig.blackZ,
           safeZ: fileConfig.toolConfig.safeZ,

@@ -1,43 +1,41 @@
 #modalConfig.ui.modal(ng-controller="modalImg2gcode" style='-webkit-user-select: none;')
-  .header.small Configuración para procesar la imagen y comvertirla a código-G.
+  .header.small Configuración para comvertir una imagen a código-G.
   .content
-    .ui.form.small
-      .ui.two.column.grid
-        .six.wide.column
-          .image
-            img(width="73%" src="../recursos/toolConfig.png")
-          .two.fields
+    .ui.grid
+      .four.wide.tablet.four.wide.computer.only.column
+        .image
+          img(width="100%" src="../recursos/toolConfig.png")
+      .twelve.wide.computer.twelve.wide.tablet.sixteen.wide.mobile.column
+        .ui.form.small
+          h4.ui.dividing.header Medidas en milimetros.
+          .three.fields
+            .field
+              label Distancia segura.
+              input( ng-model="configModal.toolConfig.safeZ" type="number" popup-element data-ng-popup-title="Distancia segura al mover la broca.")
+            .field
+              label Altura para el color negro.
+              input( ng-model="configModal.toolConfig.blackZ" type="number" popup-element data-ng-popup-title="Altura para el color negro." )
+            .field
+              label Profundidad del paso de la broca.
+              input( ng-model="configModal.toolConfig.deepStep" type="number" popup-element data-ng-popup-title="Profundidad del paso de la broca.")
+          .three.fields
+            .field
+              label Altura para el color blanco.
+              input( ng-model="configModal.toolConfig.whiteZ" type="number" popup-element data-ng-popup-title="Altura para el color blanco.")
+            .field
+              label Diámetro de la fresa.
+              input( ng-model="configModal.toolConfig.toolDiameter" type="number" popup-element data-ng-popup-title="Diámetro de la broca.")
+            .field
+              label Velocidad de trabajo.
+              input( ng-model="configModal.toolConfig.feedrate.work" type="number" popup-element data-ng-popup-title="Velocidad de trabajo.")
+          .inline.fields
             .field
               label Altura de la imagen.
-              input(popup-element data-ng-popup-title="Altura de la imagen en milimetros." ng-disabled="configModal.toolConfig.heightImage" ng-model="configModal.toolConfig.scaleAxes" type="number")
+              input( ng-disabled="configModal.toolConfig.heightImage" ng-model="configModal.toolConfig.scaleAxes" type="number" popup-element data-ng-popup-title="Altura de la imagen en milimetros.")
             .field
-              label Igual a la imagen.
               .ui.toggle.checkbox
-                input(checkbox type="checkbox" ng-model="configModal.toolConfig.heightImage" popup-element data-ng-popup-title="Igual a la altura de la imagen.")
+                input( checkbox type="checkbox" ng-model="configModal.toolConfig.heightImage" popup-element data-title="Igual a la altura de la imagen en mm. Pixel de la imgen igual a mm.")
                 label
-        .ten.wide.column
-            h4.ui.dividing.header Medidas en milimetros.
-            .two.fields
-              .field
-                label Distancia segura.
-                input( ng-model="configModal.toolConfig.safeZ" type="number" popup-element data-ng-popup-title="Distancia segura al mover la broca.")
-              .field
-                label Altura para el color negro.
-                input( ng-model="configModal.toolConfig.blackZ" type="number" popup-element data-ng-popup-title="Altura para el color negro." )
-            .two.fields
-              .field
-                label Profundidad del paso de la broca.
-                input( ng-model="configModal.toolConfig.deepStep" type="number" popup-element data-ng-popup-title="Profundidad del paso de la broca.")
-              .field
-                label Altura para el color blanco.
-                input( ng-model="configModal.toolConfig.whiteZ" type="number" popup-element data-ng-popup-title="Altura para el color blanco.")
-            .two.fields
-              .field
-                label Diámetro de la fresa.
-                input( ng-model="configModal.toolConfig.toolDiameter" type="number" popup-element data-ng-popup-title="Diámetro de la broca.")
-              .field
-                label Velocidad de trabajo.
-                input( ng-model="configModal.toolConfig.feedrate.work" type="number" popup-element data-ng-popup-title="Velocidad de trabajo.")
   .actions
     button.ui.approve.button.primary( ng-click='save()' ) Guardar
     button.ui.cancel.button( ng-click='cancel()' ) Cancelar
