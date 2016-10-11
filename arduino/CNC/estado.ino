@@ -1,3 +1,7 @@
+/*
+  Author: Marani Matias Ezequiel
+  Email: maranimatias@gmail.com
+*/
 void StatusLED(){
   digitalWrite(pinLED,bStatusLED  ? 1 : 0);
   bStatusLED = !bStatusLED;

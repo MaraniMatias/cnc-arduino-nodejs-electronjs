@@ -84,3 +84,9 @@ html, body {
 .statusbar.info {
   background: #007acc;
 }
+.ui.mini.segments .segment, .ui.mini.segment table{
+    font-size: 1rem !important;
+}
+.ui.small.table {
+    font-size: 1em !important;
+}

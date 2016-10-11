@@ -40,8 +40,8 @@ block contentMain
                       th Y
                       th Z
                   tbody
-                    tr(popup-element data-ng-popup-title="{{line.code}}" ng-repeat="line in lineTable" ng-class="line.type" )
-                      td {{line.nro}}
+                    tr( ng-repeat="line in lineTable" ng-class="line.type" )
+                      td(popup-element data-ng-popup-title="{{line.code}}") {{line.nro}}
                       td(popup-element data-ng-popup-title="Pasos: {{line.steps[0]}}") {{ line.ejes[0] | number : 2}}
                       td(popup-element data-ng-popup-title="Pasos: {{line.steps[1]}}") {{ line.ejes[1] | number : 2}}
                       td(popup-element data-ng-popup-title="Pasos: {{line.steps[2]}}") {{ line.ejes[2] | number : 2}}

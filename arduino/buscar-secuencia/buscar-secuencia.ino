@@ -1,3 +1,7 @@
+/*
+  Author: Marani Matias Ezequiel
+  Email: maranimatias@gmail.com
+*/
 const int pin[] = {8,9,10,11}; // indicar pines 
 const float tiempo = 10; // minimo 5 - 7 
 

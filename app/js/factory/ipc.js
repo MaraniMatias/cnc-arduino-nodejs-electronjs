@@ -23,7 +23,7 @@ angular.factory('ipc',  ['$rootScope','cnc',($rootScope,cnc) => {
     },
     on:  (eventName, callback) => {
       ipcRenderer.on(eventName, (event, arg) => {
-        callback(event,arg);        
+        callback(event,arg);
         $rootScope.$apply();
       });
     },

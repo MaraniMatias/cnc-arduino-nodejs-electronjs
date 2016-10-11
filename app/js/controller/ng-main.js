@@ -175,12 +175,7 @@ angular.controller('main',
 
   ipc.on('add-line', (event, data) => {
     ipc.send('contextmenu-enabled', false);
-    // graficar trabajo. :D
-    if ($scope.lineTable.length > 10) {
-      $scope.lineTable.shift();
-    }
-    $scope.lineTable.push(line.new(data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
-
+    line.add(line.new(data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
     notify('Trabajando con ' + data.line.code, 'info');
 
     if (data.nro && data.line.travel) {

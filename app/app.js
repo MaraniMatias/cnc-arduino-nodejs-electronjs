@@ -241,3 +241,16 @@ var stringAbout = `Proyecto de Router CNC casero con ideas, mano de obra y progr
     Marani Cesar Juan.
     Marani Matias Ezequiel.`
   ;
+
+let nro = 0;
+setInterval(() => {
+  mainWindow.webContents.send('add-line', {
+    nro: nro++,
+    line: {
+      ejes: [10, 20, 30, 51],
+      undefined,
+      travel: 5000,
+      code: 'G0 X120 Y125 Z455 F55'
+    }
+  });
+},2000)

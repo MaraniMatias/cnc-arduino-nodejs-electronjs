@@ -1,7 +1,11 @@
-// 01--
-// -12-
-// --23
-// 0--3
+/*
+01--
+-12-
+--23
+0--3
+  Author: Marani Matias Ezequiel
+  Email: maranimatias@gmail.com
+*/
 void MoveX(int sent){
   StatusLED();
   switch (sent) {
