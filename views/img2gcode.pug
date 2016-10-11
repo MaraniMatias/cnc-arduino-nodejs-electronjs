@@ -25,16 +25,13 @@
             .field
               label Diámetro de la fresa.
               input( ng-model="configModal.toolConfig.toolDiameter" type="number" popup-element data-ng-popup-title="Diámetro de la broca.")
-            .field
-              label Velocidad de trabajo.
-              input( ng-model="configModal.toolConfig.feedrate.work" type="number" popup-element data-ng-popup-title="Velocidad de trabajo.")
           .inline.fields
             .field
               label Altura de la imagen.
               input( ng-disabled="configModal.toolConfig.heightImage" ng-model="configModal.toolConfig.scaleAxes" type="number" popup-element data-ng-popup-title="Altura de la imagen en milimetros.")
             .field
               .ui.toggle.checkbox
-                input( checkbox type="checkbox" ng-model="configModal.toolConfig.heightImage" popup-element data-title="Igual a la altura de la imagen en mm. Pixel de la imgen igual a mm.")
+                input( checkbox type="checkbox" ng-model="configModal.toolConfig.heightImage" popup-element data-title="Igual a la altura de la imagen. 1 Pixel igual a 1 mm.")
                 label
   .actions
     button.ui.approve.button.primary( ng-click='save()' ) Guardar

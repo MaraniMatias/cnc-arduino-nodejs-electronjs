@@ -6,6 +6,7 @@
       a.item(data-tab='motorX') Motor X
       a.item(data-tab='motorY') Motor Y
       a.item(data-tab='motorZ') Motor Z
+
     .ui.bottom.attached.active.tab.segment(data-tab='setting' style="margin-bottom: 0px;")
       .ui.form.small
         .two.fields
@@ -15,7 +16,7 @@
           .field
             label Movimiento manual (Pasos):
             input(type='number' ng-model="configModal.manalSteps" )
-        h4.ui.dividing.header(style="margin-top: 10px;margin-bottom: 10px;") Medidas de la piesa.
+        h4.ui.dividing.header(style="margin-top: 10px;margin-bottom: 10px;") Medidas de la mesa de trabajo.
         .two.fields
           .field
             label X (mm).
@@ -23,6 +24,23 @@
           .field
             label Y (mm).
             input( ng-model="configModal.workpiece.y" type="number")
+        h4.ui.dividing.header(style="margin-top: 10px;margin-bottom: 10px;") Velocidad de avance mm por minuto.
+        .fields(ng-class="[three | !configModal.feedSpeed.ignore , two | configModal.feedSpeed.ignore]")
+          .field
+            label Ignorar Velocidad.
+            .ui.toggle.checkbox
+              input(checkbox type="checkbox" ng-model="configModal.feedSpeed.ignore")
+              label
+          .field(ng-show="!configModal.feedSpeed.ignore")
+            label De Trabajo.
+            input( ng-model="configModal.toolConfig.feedrate.work" type="number" )
+          .field(ng-show="!configModal.feedSpeed.ignore")
+            label De Ocioso.
+            input( ng-model="configModal.toolConfig.feedrate.idle" type="number" )
+          .field(ng-show="configModal.feedSpeed.ignore")
+            label Unica.
+            input( ng-model="configModal.feedSpeed.value" type="number" ng-disabled="!configModal.feedSpeed.ignore")
+
     .ui.bottom.attached.tab.segment(data-tab='motorX' style="margin-bottom: 0px;")
       .ui.form.small
         h4.ui.dividing.header Milimetros por pasos.
@@ -38,6 +56,7 @@
             input(checkbox type="checkbox" ng-model="configModal.motor.x.sense")
             label Sentido Invertido.
         //label Sacar de mm/min y el avance {{configModal.motor.x.time}}
+
     .ui.bottom.attached.tab.segment(data-tab='motorY' style="margin-bottom: 0px;")
       .ui.form.small
         h4.ui.dividing.header Milimetros por pasos.
@@ -53,6 +72,7 @@
             input(checkbox type="checkbox" ng-model="configModal.motor.y.sense")
             label Sentido Invertido.
         //label Sacar de mm/min y el avance {{configModal.motor.y.time}}
+
     .ui.bottom.attached.tab.segment(data-tab='motorZ')
       .ui.form.small
         h4.ui.dividing.header Milimetros por pasos.

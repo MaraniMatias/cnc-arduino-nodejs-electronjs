@@ -1,17 +1,13 @@
 // notas
 css tooltip
 consumo de ram ?
-los try catch
-mas y mejor config en modal img2gcode true or false
 mostrar comentarios de g code ??
+los try catch
 teclas desbloquear cuando es necesario desde fonntend
 tabla no muestra mas de tres con comandos manuales
 menu no se bloquea
-no avisa que me ase de la mesa de trabajo al leer gcode
+no avisa que pase las medidas de la mesa de trabajo al leer gcode
 aconmodar css letra en tabla y tooltip en trabla
-arduino use F con minimo 14
-usar f mm/minutos
-forsar ingorar f in gcode
 asar http://electron.atom.io/docs/tutorial/application-packaging/
 ----------------------------------
 

@@ -172,7 +172,8 @@ function getSteps(l, oldSteps, config) {
   x[0] = Math.round((b[0] - a[0]) * config.motor.x.steps / config.motor.x.advance) - oldSteps[0];//* (config.motor.x.sense)? -1 : 1;
   x[1] = Math.round((b[1] - a[1]) * config.motor.y.steps / config.motor.y.advance) - oldSteps[1];//* (config.motor.y.sense)? -1 : 1;
   x[2] = Math.round((b[2] - a[2]) * config.motor.z.steps / config.motor.z.advance) - oldSteps[2];//* (config.motor.z.sense)? -1 : 1;
-  return x;
+  x[3] = config.feedSpeed.ignore && a.f || config.feedSpeed.value
+  return x
 }
 
 function start(arg, callback) {

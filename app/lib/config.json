@@ -38,11 +38,18 @@
     "safeZ": 1,
     "scaleAxes": 500,
     "toolDiameter": 1,
-    "feedrate": { "work": 30, "idle": 15 },
+    "feedrate": {
+      "work": 30,
+      "idle": 15
+    },
     "whiteZ": 0
   },
   "workpiece": {
     "x": 200,
     "y": 200
+  },
+  "feedSpeed": {
+    "ignore": false,
+    "value": 14
   }
 }
