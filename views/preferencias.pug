@@ -25,7 +25,7 @@
             label Y (mm).
             input( ng-model="configModal.workpiece.y" type="number")
         h4.ui.dividing.header(style="margin-top: 10px;margin-bottom: 10px;") Velocidad de avance mm por minuto.
-        .fields
+        .fields(ng-class="{ three : !configModal.feedSpeed.ignore , two : configModal.feedSpeed.ignore }")
           .field
             label Ignorar Velocidad.
             .ui.toggle.checkbox
