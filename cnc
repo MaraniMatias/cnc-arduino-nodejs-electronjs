@@ -1,6 +1,5 @@
 // notas
 css tooltip ?
-consumo de ram ?
 mostrar comentarios de g code ??
 icons
 
