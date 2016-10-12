@@ -1,7 +1,7 @@
 const dirBase = {
-    html: `file://${__dirname}/html/`,
-    icon: './recursos/toolConfig.png'
-  },
+  html: `file://${__dirname}/html/`,
+  icon: './recursos/toolConfig.png'
+},
   fs = require('fs'),
   fileConfig = require('./package.json'),
   CNC = require('./lib/main.js'),
@@ -71,84 +71,113 @@ app.on('ready', () => {
 });//ready
 
 ipcMain.on('arduino', (event, arg) => {
-  CNC.Arduino.reSet((obj) => {
-    if (CNC.debug.ipc.arduino){ console.log("send", 'arduino-res', obj); }
-    //if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); }
-    event.sender.send('arduino-res', obj);
-  });
+  try {
+    CNC.Arduino.reSet((obj) => {
+      if (CNC.debug.ipc.arduino) { console.log("send", 'arduino-res', obj); }
+      //if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); }
+      event.sender.send('arduino-res', obj);
+    });
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+    });
+  }
 });
 
 ipcMain.on('open-file', (event, data) => {
-  if (!CNC.Arduino.working) {
-    console.log("open-file", data);
-    globalShortcut.unregisterAll();
-    event.sender.send('open-file-tick', {info:'Abriendo archivo...'});
-    CNC.setFile(
-      data.fileDir || dialog.showOpenDialog({
-        title: fileConfig.name,
-        filters: [
-          { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg','png','nc'] },
-          { name: 'G-Code', extensions: ['gcode'] },
-          { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg', 'png'] },
-          { name: 'All Files', extensions: ['*'] }
-        ],
-        properties: ['openFile']
-      }),
-      data.initialLine = data.initialLine || [0, 0, 0],
-      { // CallBack
-        fileImg: (config) => {
-          console.log('Config for img2gcode.');
-          event.sender.send('show-prefs-img2gcode-res', config);
-        },
-        tick: (data) => {
-          event.sender.send('open-file-tick', data);
-        },
-        error: (data) => {
-          event.sender.send('close-conex', data);
-        },
-        finished: (File) => {
-          console.log('File gcode loaded. and crate viwe por gcode...');
-          event.sender.send('open-file-res', File);
+  try {
+    if (!CNC.Arduino.working) {
+      console.log("open-file", data);
+      globalShortcut.unregisterAll();
+      event.sender.send('open-file-tick', { info: 'Abriendo archivo...' });
+      CNC.setFile(
+        data.fileDir || dialog.showOpenDialog({
+          title: fileConfig.name,
+          filters: [
+            { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg', 'png', 'nc'] },
+            { name: 'G-Code', extensions: ['gcode'] },
+            { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg', 'png'] },
+            { name: 'All Files', extensions: ['*'] }
+          ],
+          properties: ['openFile']
+        }),
+        data.initialLine = data.initialLine || [0, 0, 0],
+        { // CallBack
+          fileImg: (config) => {
+            console.log('Config for img2gcode.');
+            event.sender.send('show-prefs-img2gcode-res', config);
+          },
+          tick: (data) => {
+            event.sender.send('open-file-tick', data);
+          },
+          error: (data) => {
+            event.sender.send('close-conex', data);
+          },
+          finished: (File) => {
+            console.log('File gcode loaded. and crate viwe por gcode...');
+            event.sender.send('open-file-res', File);
+          }
         }
-      }
-    ) // CNC.setFile
-  } else {
-    event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
+      ) // CNC.setFile
+    } else {
+      event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
+    }
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+    });
   }
 });
 
 ipcMain.on('send-command', (event, arg) => {
-  CNC.sendCommand(arg, (dataReceived) => {
-    if (CNC.debug.arduino.sendCommand) { console.log("sendCommand: ", dataReceived); }
-    event.sender.send('close-conex', dataReceived);
-  });
+  try {
+    CNC.sendCommand(arg, (dataReceived) => {
+      if (CNC.debug.arduino.sendCommand) { console.log("sendCommand: ", dataReceived); }
+      event.sender.send('close-conex', dataReceived);
+    });
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+    });
+  }
 });
 
 ipcMain.on('send-start', (event, arg) => {
-  if (!CNC.Arduino.working) {
-    if (CNC.debug.ipc.sendStart) console.log('send-start', arg);
-    //prevent-display-sleep
-    //prevent-app-suspension
-    var id = powerSaveBlocker.start('prevent-app-suspension');
-    if (CNC.debug.app.prevent) console.log('prevent-app-suspension', powerSaveBlocker.isStarted(id));
-    CNC.start(arg, (data) => {
-      if (data.lineRunning !== false) {
-        event.sender.send('add-line', { nro: data.lineRunning, line: CNC.File.gcode[data.lineRunning] });
-        if (CNC.debug.ipc.console) console.log("I: %s - Ejes: %s - Result: %s", data.lineRunning, CNC.File.gcode[data.lineRunning].ejes, data.steps);
-      } else {
-        powerSaveBlocker.stop(id);
-        mainWindow.setProgressBar(0);
-        event.sender.send('close-conex', { type: 'none', steps: data.steps });
-        if (CNC.debug.ipc.console) console.log("Finish.");
-      }
+  try {
+    if (!CNC.Arduino.working) {
+      if (CNC.debug.ipc.sendStart) console.log('send-start', arg);
+      //prevent-display-sleep
+      //prevent-app-suspension
+      var id = powerSaveBlocker.start('prevent-app-suspension');
+      if (CNC.debug.app.prevent) console.log('prevent-app-suspension', powerSaveBlocker.isStarted(id));
+      CNC.start(arg, (data) => {
+        if (data.lineRunning !== false) {
+          event.sender.send('add-line', { nro: data.lineRunning, line: CNC.File.gcode[data.lineRunning] });
+          if (CNC.debug.ipc.console) console.log("I: %s - Ejes: %s - Result: %s", data.lineRunning, CNC.File.gcode[data.lineRunning].ejes, data.steps);
+        } else {
+          powerSaveBlocker.stop(id);
+          mainWindow.setProgressBar(0);
+          event.sender.send('close-conex', { type: 'none', steps: data.steps });
+          if (CNC.debug.ipc.console) console.log("Finish.");
+        }
+      });
+    } else { console.log('Working in other project.') }
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
-  } else { console.log('Working in other project.') }
+  }
 });
 
 ipcMain.on('taksBar-progress', (event, arg) => { mainWindow.setProgressBar(arg); });
 ipcMain.on('show-lineTable', (event, arg) => { event.sender.send('show-lineTable') });
 
 ipcMain.on('about', (event, arg) => {
+  console.log('RAM:', process.getProcessMemoryInfo());
   let chosen = dialog.showMessageBox(mainWindow, {
     cancelId: 0, type: 'info', buttons: ['Aceptar'],
     title: 'Acerca De', message: 'CNC-ino, Arduino y NodeJS', detail: stringAbout
@@ -157,20 +186,34 @@ ipcMain.on('about', (event, arg) => {
 });
 
 ipcMain.on('show-prefs', (event, argType) => {
-  if (!CNC.Arduino.working) {
-    globalShortcut.unregisterAll();
-    CNC.configFile.read().then((data) => {
-      event.sender.send(`show-prefs-${argType}-res`, data);
+  try {
+    if (!CNC.Arduino.working) {
+      globalShortcut.unregisterAll();
+      CNC.configFile.read().then((data) => {
+        event.sender.send(`show-prefs-${argType}-res`, data);
+      });
+    } else {
+      event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
+    }
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
-  } else {
-    event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
   }
 });
 ipcMain.on('config-save-send', (event, arg) => {
-  globalShortcut.unregisterAll();
-  CNC.configFile.save(arg, (data) => {
-    event.sender.send('config-save-res', data);
-  });
+  try {
+    globalShortcut.unregisterAll();
+    CNC.configFile.save(arg, (data) => {
+      event.sender.send('config-save-res', data);
+    });
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+    });
+  }
 });
 
 ipcMain.on('contextmenu-enabled', (event, arg) => {
@@ -188,47 +231,54 @@ ipcMain.on('globalShortcut', (event, endable) => {
   else globalShortcut.unregisterAll();
 });
 function registerGlobalShortcut() {
-  if (!CNC.Arduino.working) {
-    CNC.configFile.read().then((file) => {
-      let manalSteps = file.manalSteps;
-      function globalShortcutSendComand(cmd) {
-        CNC.sendCommand(cmd, (dataReceived) => {
-          if (CNC.debug.arduino.sendCommand) { console.log(dataReceived); }
-          mainWindow.webContents.send('close-conex', dataReceived);
+  try {
+    if (!CNC.Arduino.working) {
+      CNC.configFile.read().then((file) => {
+        let manalSteps = file.manalSteps;
+        function globalShortcutSendComand(cmd) {
+          CNC.sendCommand(cmd, (dataReceived) => {
+            if (CNC.debug.arduino.sendCommand) { console.log(dataReceived); }
+            mainWindow.webContents.send('close-conex', dataReceived);
+          });
+        }
+        globalShortcut.register('q', () => {
+          globalShortcutSendComand(`0,0,${manalSteps}`);
+          console.log(`Q key pressed and sent 0,0,${manalSteps} command.`);
         });
-      }
-      globalShortcut.register('q', () => {
-        globalShortcutSendComand(`0,0,${manalSteps}`);
-        console.log(`Q key pressed and sent 0,0,${manalSteps} command.`);
+        globalShortcut.register('e', () => {
+          globalShortcutSendComand(`0,0,-${manalSteps}`);
+          console.log(`E key pressed and sent 0,0,-${manalSteps} command.`);
+        });
+        globalShortcut.register('d', () => {
+          globalShortcutSendComand(`-${manalSteps},0,0`);
+          console.log(`D key pressed and sent -${manalSteps}0,0 command.`);
+        });
+        globalShortcut.register('a', () => {
+          globalShortcutSendComand(`${manalSteps},0,0`);
+          console.log(`A key pressed and sent ${manalSteps},0,0 command.`);
+        });
+        globalShortcut.register('w', () => {
+          globalShortcutSendComand(`0,-${manalSteps},0`);
+          console.log(`W key pressed and sent 0,-${manalSteps},0 command.`);
+        });
+        globalShortcut.register('s', () => {
+          globalShortcutSendComand(`0,${manalSteps},0`);
+          console.log(`S key pressed and sent 0,${manalSteps},0 command.`);
+        });
+        globalShortcut.register('Space', () => {
+          globalShortcutSendComand('0,0,0');
+          console.log("SPACE key pressed and sent '0,0,0' command.");
+        });
+        //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
+        //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
+        //globalShortcut.register('Left', () => { globalShortcutSendComand('10,0,0'); });
+        //globalShortcut.register('Right', () => { globalShortcutSendComand('-10,0,0'); });
       });
-      globalShortcut.register('e', () => {
-        globalShortcutSendComand(`0,0,-${manalSteps}`);
-        console.log(`E key pressed and sent 0,0,-${manalSteps} command.`);
-      });
-      globalShortcut.register('d', () => {
-        globalShortcutSendComand(`-${manalSteps},0,0`);
-        console.log(`D key pressed and sent -${manalSteps}0,0 command.`);
-      });
-      globalShortcut.register('a', () => {
-        globalShortcutSendComand(`${manalSteps},0,0`);
-        console.log(`A key pressed and sent ${manalSteps},0,0 command.`);
-      });
-      globalShortcut.register('w', () => {
-        globalShortcutSendComand(`0,-${manalSteps},0`);
-        console.log(`W key pressed and sent 0,-${manalSteps},0 command.`);
-      });
-      globalShortcut.register('s', () => {
-        globalShortcutSendComand(`0,${manalSteps},0`);
-        console.log(`S key pressed and sent 0,${manalSteps},0 command.`);
-      });
-      globalShortcut.register('Space', () => {
-        globalShortcutSendComand('0,0,0');
-        console.log("SPACE key pressed and sent '0,0,0' command.");
-      });
-      //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
-      //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
-      //globalShortcut.register('Left', () => { globalShortcutSendComand('10,0,0'); });
-      //globalShortcut.register('Right', () => { globalShortcutSendComand('-10,0,0'); });
+    }
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
   }
 }
@@ -237,7 +287,7 @@ var stringAbout = `Proyecto de Router CNC casero con ideas, mano de obra y progr
     \tCNC-ino: v${fileConfig.version}.
     \tElectronJS: ${process.versions.electron}.
     \tRenderer: ${process.versions.chrome}.
-    \tRAM: ${process.getProcessMemoryInfo().workingSetSize}Mb.
+    \tRAM: ${process.getProcessMemoryInfo().sharedBytes/100}Mb.
     Marani Cesar Juan.
     Marani Matias Ezequiel.`
   ;
