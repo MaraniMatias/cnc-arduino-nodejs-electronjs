@@ -189,8 +189,8 @@ angular.controller('main',
         if ($scope.statisticHour.option) { $scope.statisticHour.value = cnc.time.end; }
         else { $scope.statisticHour.value = cnc.time.start; }
       });
-
     }
+
   });
 
   $scope.start = () => {
