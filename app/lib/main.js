@@ -28,6 +28,7 @@ var File = {
   gcode: [],
   dir: '',
   name: 'Sin Archivo',
+  scale: 1,
   lines: 0,
   travel: 0,
   segTotal: 0
@@ -75,7 +76,7 @@ function setFile(dir, initialLine, cb) {
     let dirfile = path.resolve(dir);
     let extension = path.extname(dirfile);
     let fileName = path.win32.basename(dirfile);
-    if (extension === '.png' && os.platform() === 'linux' ) {
+    if (extension === '.png' && os.platform() === 'linux') {
       console.log("Con linux solo GIF , JPEG , JPG. lwip y electronjs en linux no se llevan :D.");
       cb.error({ type: 'error', msg: 'Por ahora solo leems GIF , JPEG , JPG' });
     }
@@ -122,6 +123,7 @@ function setGCode(dirfile, initialLine, cb) {
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
       File.dir = dirfile;
+      File.scale = config.scale;
       File.gcode = gc(fs.readFileSync(dirfile).toString(), initialLine);
       File.lines = File.gcode.length;
       File.travel = File.gcode[File.gcode.length - 1].travel;
@@ -169,9 +171,9 @@ function getSteps(l, oldSteps, config) {
   let a = l !== 0 ? File.gcode[l - 1].ejes : File.gcode[l].ejes;
   let x = [0, 0, 0, 0];// [X, Y, Z, F]
   let b = File.gcode[l].ejes;
-  x[0] = Math.round((b[0] - a[0]) * config.motor.x.steps / config.motor.x.advance) - oldSteps[0];//* (config.motor.x.sense)? -1 : 1;
-  x[1] = Math.round((b[1] - a[1]) * config.motor.y.steps / config.motor.y.advance) - oldSteps[1];//* (config.motor.y.sense)? -1 : 1;
-  x[2] = Math.round((b[2] - a[2]) * config.motor.z.steps / config.motor.z.advance) - oldSteps[2];//* (config.motor.z.sense)? -1 : 1;
+  x[0] = Math.round((b[0] - a[0]) * config.motor.x.steps / config.motor.x.advance) * config.scale - oldSteps[0];//* (config.motor.x.sense)? -1 : 1;
+  x[1] = Math.round((b[1] - a[1]) * config.motor.y.steps / config.motor.y.advance) * config.scale - oldSteps[1];//* (config.motor.y.sense)? -1 : 1;
+  x[2] = Math.round((b[2] - a[2]) * config.motor.z.steps / config.motor.z.advance) * config.scale - oldSteps[2];//* (config.motor.z.sense)? -1 : 1;
   x[3] = config.feedSpeed.ignore && a.f || config.feedSpeed.value
   return x
 }

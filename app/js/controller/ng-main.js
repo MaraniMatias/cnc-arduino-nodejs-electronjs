@@ -45,6 +45,7 @@ angular.controller('main',
 
   ipc.on('open-file-res', (event, file) => {
     if (file.dir) {
+      exceeds_x = false; exceeds_y = false;
       //console.log(file)
       $('title').text('CNC-ino - ' + file.name);
       $scope.cnc.file.name = file.name;

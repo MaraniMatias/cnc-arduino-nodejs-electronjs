@@ -2,7 +2,6 @@
 css tooltip
 
 teclas desbloquear cuando es necesario desde fonntend
-Avisa que pase las medidas de la mesa de trabajo al leer gcode
 menu no se bloquea
 
 los try catch
