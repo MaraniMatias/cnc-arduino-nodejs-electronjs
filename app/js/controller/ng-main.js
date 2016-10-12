@@ -132,6 +132,7 @@ angular.controller('main',
     modalProgress.hide();
     console.log('close-conex', obj);
     ipc.send('contextmenu-enabled', true);
+    ipc.send('globalShortcut', false);
     switch (obj.type) {
       case "info":
         $scope.cnc.working = true;
@@ -176,6 +177,7 @@ angular.controller('main',
 
   ipc.on('add-line', (event, data) => {
     ipc.send('contextmenu-enabled', false);
+    ipc.send('globalShortcut', true);
     line.add(line.new(data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
     notify('Trabajando con ' + data.line.code, 'info');
 

@@ -1,8 +1,7 @@
 // notas
 css tooltip
 
-teclas desbloquear cuando es necesario desde fonntend
-menu no se bloquea
+pobrar las teclas no Arduino ver si los botones se desactivan y activan
 
 los try catch
 consumo de ram ?

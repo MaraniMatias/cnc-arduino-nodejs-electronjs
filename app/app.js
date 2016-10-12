@@ -64,11 +64,8 @@ app.on('ready', () => {
     }
   });
 
-  // Open the devtools.
-  //mainWindow.openDevTools();
-  //mainWindow.setProgressBar(0.7);
-
-  // ver como informar ala capa superior de que termino
+  //mainWindow.openDevTools(); // Open the devtools.
+  // Event -> unresponsive, responsive, show, hide
   mainWindow.on('blur', () => { globalShortcut.unregisterAll(); });
   mainWindow.on('focus', () => { if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); } });
 });//ready
@@ -76,7 +73,7 @@ app.on('ready', () => {
 ipcMain.on('arduino', (event, arg) => {
   CNC.Arduino.reSet((obj) => {
     if (CNC.debug.ipc.arduino){ console.log("send", 'arduino-res', obj); }
-    if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); }
+    //if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); }
     event.sender.send('arduino-res', obj);
   });
 });
@@ -186,7 +183,10 @@ Event: ‘resume’
 Event: ‘on-ac’
 Event: ‘on-battery’
 */
-
+ipcMain.on('globalShortcut', (event, endable) => {
+  if (endable) registerGlobalShortcut();
+  else globalShortcut.unregisterAll();
+});
 function registerGlobalShortcut() {
   if (!CNC.Arduino.working) {
     CNC.configFile.read().then((file) => {
