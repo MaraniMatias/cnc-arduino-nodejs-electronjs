@@ -1,6 +1,6 @@
 const dirBase = {
   html: `file://${__dirname}/html/`,
-  icon: './recursos/toolConfig.png'
+  icon: './recursos/cnc-ino.png'
 },
   fs = require('fs'),
   fileConfig = require('./package.json'),
