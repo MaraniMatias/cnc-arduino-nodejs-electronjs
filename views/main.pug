@@ -70,7 +70,7 @@ block contentMain
                         .item(style="padding: 0.71428571rem 0.74rem !important;" ng-click="setStepsmm('steps')") pasos
                         .item(style="padding: 0.71428571rem 0.7rem !important;" ng-click="setStepsmm('mm')") mm
                 .six.wide.column.compact.right
-                  button.ui.button.primary( ng-disabled="cnc.working" ng-click="showPrefsImg2gcode()" style="margin-right: 0px; margin-right: 0px;padding-left: 10px;padding-right: 10px;" ) img to gcode.
+                  button.ui.button.primary( ng-disabled="cnc.working" ng-click="showPrefsImg2gcode()" style="margin-right: 0px; margin-right: 0px;padding-left: 5px;padding-right: 5px;" ) img to gcode.
             .column.compact
               .six.ui.buttons.compact
                 button.ui.button.red(popup-element data-ng-popup-title="A" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+ 
