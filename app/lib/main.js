@@ -143,8 +143,8 @@ function sendCommand(code, callback) {
 
 function reSet(callback) {
   if (!Arduino.working) {
-    Arduino.set((comName, manufacturer) => {
-      if (comName !== undefined) {
+    Arduino.set((err,comName, manufacturer) => {
+      if (!err) {
         if (debug.arduino.conect) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
         callback({
           type: "success",
@@ -152,7 +152,7 @@ function reSet(callback) {
         });
       } else {
         callback({
-          type: 'error',
+          type: 'warning',
           msg: 'No encontramos arduino.'
         });
         if (debug.arduino.conect) console.warn('No Arduino.');

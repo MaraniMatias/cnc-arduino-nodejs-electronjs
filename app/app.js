@@ -74,7 +74,6 @@ ipcMain.on('arduino', (event, arg) => {
   try {
     CNC.Arduino.reSet((obj) => {
       if (CNC.debug.ipc.arduino) { console.log("send", 'arduino-res', obj); }
-      //if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); }
       event.sender.send('arduino-res', obj);
     });
   } catch (error) {

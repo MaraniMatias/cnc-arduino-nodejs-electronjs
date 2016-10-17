@@ -33,8 +33,9 @@ angular.controller('main',
   ipc.send('arduino');
   ipc.on('arduino-res', (event, obj) => {
     config = obj.config;
-    cnc.arduino = obj.type === 'success';
     notify(obj.msg, obj.type);
+    $scope.cnc.arduino = obj.type === 'success';
+    ipc.send('globalShortcut', obj.type === 'success');
   });
 
   $scope.setFile = (reSetFile) => {

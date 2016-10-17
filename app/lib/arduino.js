@@ -1,19 +1,18 @@
 const
-  serialPort = require('serialport')
-  ;
-var
-  manufacturer = sp ? sp.manufacturer : "Sin Arduino.",
-  comName = sp ? sp.comName : "",
-  working = false,
+  serialPort = require('serialport'),
   debug = {
-    write: false,
+    write: true,
     sendGcode: false,
     search: false,
     isOpen: false,
     comName: false,
     send: false,
     on: false
-  },
+  };
+var
+  manufacturer = sp ? sp.manufacturer : "Sin Arduino.",
+  comName = sp ? sp.comName : "",
+  working = false,
   sp,
   workingGCode = false,
   onData = function (data) {
@@ -62,14 +61,18 @@ function list(callback) {
 
 function search(callback) {
   serialPort.list(function (err, ports) {
-    ports.forEach(function (port) {
+    if (err) throw new Error(err);
+    let answer = true;
+    ports.forEach(function (port, i, posrts) {
       if (port.pnpId !== undefined && port.manufacturer !== undefined) {
+        answer = false;
         comName = port.comName;
         manufacturer = port.manufacturer;
         if (debug.search) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
-        callback(port.comName);
+        callback(answer, port.comName, port.manufacturer);
       }
     });
+    if (answer) { callback(new Error('No encuentro Arduino')); }
   });
 }
 
@@ -88,9 +91,14 @@ function newArduino(comName) {
  * @param {function} callback: (ports: port[]) => void
  */
 function set(callback) {
-  search((comName) => {
-    newArduino(comName);
-    callback(comName, manufacturer);
+  search((err, comName, manufacturer) => {
+    if (err) {
+      callback(err);
+    } else {
+      newArduino(comName);
+      write('0,0,0,14', callback(comName, manufacturer));
+      callback(false,comName, manufacturer)
+    }
   });
 }
 
