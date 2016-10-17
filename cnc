@@ -4,5 +4,3 @@ icons
 asar http://electron.atom.io/docs/tutorial/application-packaging/
 
 pobrar las teclas  ver si los botones se desactivan y activan
-
-tooltip mal no se cierra y se de mal el de comandos
