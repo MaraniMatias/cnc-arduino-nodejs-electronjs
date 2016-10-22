@@ -43,7 +43,7 @@ function getMiliSeg(config) {
 
 function end() {
   sendCommand('0,0,0', () => {
-    console.log("Parar forzado por cerrar programa.");
+    console.log("Por cierre de programa, envio 0,0,0 para arduino");
   });
 }
 
