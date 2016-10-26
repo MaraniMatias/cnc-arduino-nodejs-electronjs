@@ -32,8 +32,8 @@
     "email": "maranimatias@gmail.com"
   },
   "engines": {
-    "node": "~6.8.0",
-    "npm": "~3.10.8"
+    "node": "~6.9.1",
+    "npm": "~3.10.9"
   },
   "private": false,
   "license": "MIT",

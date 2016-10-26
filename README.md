@@ -21,6 +21,7 @@ Consiste en un circuito rectificador de corriente, un circuito auto acoplador pa
 
 ## Licencia.
 Espero que a alguien más le sirva ([MIT](http://opensource.org/licenses/mit-license.php)).
-Autores:
-Marani Cesar J.
-Marani Matias E.
+
+**Autores:**
+`Marani Cesar J.`
+`Marani Matias E.`
