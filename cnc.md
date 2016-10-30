@@ -2,5 +2,7 @@
 mostrar comentarios de g code ??
 icons
 asar http://electron.atom.io/docs/tutorial/application-packaging/
+tooltip no me connnvencen
 
-pobrar las teclas  ver si los botones se desactivan y activan
+teclas no andan
+no cierra la conexcion

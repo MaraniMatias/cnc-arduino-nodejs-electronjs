@@ -58,6 +58,10 @@ function list(callback) {
     callback(ardu);
   });
 }
+function factoryMsg(type, msg) {
+  if (debug.msg) console.log(nro, type, msg);
+  return { type, msg: type === 'open' && process.platform !== "linux" ? "It needs to be administrator. puerto " + comName : "sudo chmod 0777 /dev/" + comName || msg, ard: { comName, manufacturer } }
+}
 
 function search(callback) {
   serialPort.list(function (err, ports) {
@@ -72,7 +76,7 @@ function search(callback) {
         callback(answer, port.comName, port.manufacturer);
       }
     });
-    if (answer) { callback(new Error('No encuentro Arduino')); }
+    if (answer) { callback(new Error('No encuentro Arduino conectado.')); }
   });
 }
 
@@ -93,11 +97,10 @@ function newArduino(comName) {
 function set(callback) {
   search((err, comName, manufacturer) => {
     if (err) {
-      callback(err);
+      callback(factoryMsg('error', err.message));
     } else {
       newArduino(comName);
-      write('0,0,0,14', callback(comName, manufacturer));
-      callback(false,comName, manufacturer)
+      write('0,0,0,14', callback);
     }
   });
 }
@@ -105,8 +108,7 @@ function set(callback) {
 function send(code, callback) {
   if (debug.send) console.log("send:\tCode:", code);
   if (comName === "") {
-    if (debug.comName) console.log("Arduino no selectado.");
-    callback({ type: "error", msg: "Arduino no selectado." });
+    callback(factoryMsg('error', "Arduino no selectado."));
   } else {
     if (sp.isOpen()) {
       if (debug.isOpen) console.log("Conexc open");
@@ -124,19 +126,15 @@ function send(code, callback) {
 function write(code, callback) {
   sp.open((err) => {
     if (err) {
-      let msg = process.platform !== "linux" ? "It needs to be administrator. puerto " + comName : "sudo chmod 0777 " + comName;
-      callback({ type: "error", msg })
-      console.log(msg, '\n', err.message);
+      callback(factoryMsg('open', err.message));
     } else {
       if (debug.write) console.log("write:\tCode:", code);
       sp.write(new Buffer(code + '\n'), (err) => {
         if (err) {
-          callback({ type: "error", msg: err.message })
+          callback(factoryMsg('error', err.message));
         } else {
           working = false;
-          sp.drain(
-            callback({ type: "info", msg: "Comando enviado: " + code })
-          );
+          sp.drain(callback(factoryMsg('info', "Comando enviado: " + code)));
         }
       });
     }
@@ -146,8 +144,7 @@ function write(code, callback) {
 function sendGcode(code, cbWrite, cbAnswer) {
   if (debug.sendGcode) console.log("send:\tCode:", code);
   if (comName === "") {
-    if (debug.sendGcode) console.log("Arduino no selectado.");
-    callback({ type: "error", msg: "Arduino no selectado." });
+    callback(factoryMsg('error', "Arduino no selectado."));
   } else {
     if (sp.isOpen()) {
       if (debug.sendGcode) console.log("Conexc open");
@@ -156,9 +153,7 @@ function sendGcode(code, cbWrite, cbAnswer) {
       if (debug.sendGcode) console.log("Conexc No open.")
       sp.open((err) => {
         if (err) {
-          let msg = process.platform !== "linux" ? "It needs to be administrator. puerto " + comName : "sudo chmod 0777 /dev/" + comName;
-          cbWrite({ type: "error", msg: msg + " (" + err.message + ")." })
-          console.log(msg, '\n', err.message);
+          cbWrite(factoryMsg("error", err.message));
         } else {
           writeGcode(code, cbWrite, cbAnswer);
         }
@@ -171,12 +166,10 @@ function writeGcode(code, cbWrite, cbAnswer) {
   cb = cbAnswer;
   sp.write(new Buffer(code + '\n'), (err) => {
     if (err) {
-      cbWrite({ type: "error", msg: err.message })
+      cbWrite(factoryMsg("error", err.message))
     } else {
       working = false;
-      sp.drain(
-        cbWrite({ type: "info", msg: "Comando enviado: " + code })
-      );
+      sp.drain(cbWrite(factoryMsg("info", "Comando enviado: " + code)));
     }
   });
 }
@@ -185,7 +178,7 @@ function close(callback) {
   if (sp.isOpen()) {
     if (debug.sendGcode) console.log("Conexc open -> close");
     sp.close((err) => {
-      callback(err);
+      callback(factoryMsg("error", err.message));
     });
   }
 }

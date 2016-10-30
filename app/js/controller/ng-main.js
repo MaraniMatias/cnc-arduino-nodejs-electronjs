@@ -32,6 +32,7 @@ angular.controller('main',
   ipc.on('show-lineTable', (event, obj) => { $scope.lineTableShow = !$scope.lineTableShow; });
   ipc.send('arduino');
   ipc.on('arduino-res', (event, obj) => {
+    console.log(obj);
     config = obj.config;
     notify(obj.msg, obj.type);
     $scope.cnc.arduino = obj.type === 'success';
