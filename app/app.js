@@ -103,10 +103,10 @@ ipcMain.on('open-file', (event, data) => {
         }),
         data.initialLine = data.initialLine || [0, 0, 0],
         { // CallBack
-          fileImg: (config) => {
+          /*fileImg: (config) => {
             console.log('Config for img2gcode.');
             event.sender.send('show-prefs-img2gcode-res', config);
-          },
+          },*/
           tick: (data) => {
             event.sender.send('open-file-tick', data);
           },
@@ -176,6 +176,7 @@ ipcMain.on('taksBar-progress', (event, arg) => { mainWindow.setProgressBar(arg);
 ipcMain.on('show-lineTable', (event, arg) => { event.sender.send('show-lineTable') });
 
 ipcMain.on('about', (event, arg) => {
+  event.sender.send('config-save-res', { type: 'none', message: 'CNC-ino.' });
   console.log('RAM:', process.getProcessMemoryInfo());
   let chosen = dialog.showMessageBox(mainWindow, {
     cancelId: 0, type: 'info', buttons: ['Aceptar'],
@@ -187,6 +188,7 @@ ipcMain.on('about', (event, arg) => {
 ipcMain.on('show-prefs', (event, argType) => {
   try {
     if (!CNC.Arduino.working) {
+      event.sender.send('config-save-res', { type: 'none', message: 'CNC-ino.' });
       globalShortcut.unregisterAll();
       CNC.configFile.read().then((data) => {
         event.sender.send(`show-prefs-${argType}-res`, data);

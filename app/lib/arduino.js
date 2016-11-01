@@ -19,9 +19,9 @@ var
     if (debug.on) console.log('Data: ' + data);
     working = false;
     let result = data.toString().split(',');
-    if (debug.on) console.log({ type: 'none', steps: result });
+    if (debug.on) console.log({ type: 'data', steps: result });
     if (typeof (cb) === 'function') {
-      cb({ type: "none", steps: result, msg: "Respuesta Arduino: " + result });
+      cb({ type: 'data', steps: result, msg: "Respuesta Arduino: " + result });
     }
   },
   onOpen = function (err) {
@@ -47,6 +47,7 @@ var
  *
  * @param {function} callback: (ports: port[]) => void
  */
+/*
 function list(callback) {
   let ardu = [];
   serialPort.list(function (err, ports) {
@@ -58,10 +59,7 @@ function list(callback) {
     callback(ardu);
   });
 }
-function factoryMsg(type, msg) {
-  if (debug.msg) console.log(nro, type, msg);
-  return { type, msg: type === 'open' && process.platform !== "linux" ? "It needs to be administrator. puerto " + comName : "sudo chmod 0777 /dev/" + comName || msg, ard: { comName, manufacturer } }
-}
+*/
 
 function search(callback) {
   serialPort.list(function (err, ports) {
@@ -73,20 +71,21 @@ function search(callback) {
         comName = port.comName;
         manufacturer = port.manufacturer;
         if (debug.search) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
-        callback(answer, port.comName, port.manufacturer);
+        callback(null, port.comName, port.manufacturer);
       }
     });
     if (answer) { callback(new Error('No encuentro Arduino conectado.')); }
   });
 }
 
-function newArduino(comName) {
+function newArduino(comName, cb) {
   sp = new serialPort(comName, option);
   sp.on('open', onOpen);
   sp.on('error', onError);
   sp.on('data', onData);
   sp.on('close', onClose);
   sp.on('disconnect', onDisco);
+  cb();
 }
 
 /**
@@ -96,11 +95,19 @@ function newArduino(comName) {
  */
 function set(callback) {
   search((err, comName, manufacturer) => {
-    if (err) {
-      callback(factoryMsg('error', err.message));
-    } else {
-      newArduino(comName);
-      write('0,0,0,14', callback);
+    if (err) { callback(err); }
+    else {
+      newArduino(comName, () => {
+        sp.open((err) => {
+          if (err) {
+            callback(new Error(process.platform !== "linux" ? "It needs to be administrator. puerto " + comName : "sudo chmod 0777 /dev/" + comName), comName, manufacturer);
+          } else {
+            close((err) => {
+              callback(err, comName, manufacturer)
+            }); // sp.write(new Buffer('0,0,0,14\n'), (err) => {});
+          }
+        });
+      });
     }
   });
 }
@@ -108,7 +115,7 @@ function set(callback) {
 function send(code, callback) {
   if (debug.send) console.log("send:\tCode:", code);
   if (comName === "") {
-    callback(factoryMsg('error', "Arduino no selectado."));
+    callback(new Error("Arduino no selectado."));
   } else {
     if (sp.isOpen()) {
       if (debug.isOpen) console.log("Conexc open");
@@ -126,15 +133,15 @@ function send(code, callback) {
 function write(code, callback) {
   sp.open((err) => {
     if (err) {
-      callback(factoryMsg('open', err.message));
+      callback(err);
     } else {
       if (debug.write) console.log("write:\tCode:", code);
       sp.write(new Buffer(code + '\n'), (err) => {
         if (err) {
-          callback(factoryMsg('error', err.message));
+          callback(err);
         } else {
           working = false;
-          sp.drain(callback(factoryMsg('info', "Comando enviado: " + code)));
+          sp.drain(callback(null, "Comando enviado: " + code));
         }
       });
     }
@@ -144,7 +151,7 @@ function write(code, callback) {
 function sendGcode(code, cbWrite, cbAnswer) {
   if (debug.sendGcode) console.log("send:\tCode:", code);
   if (comName === "") {
-    callback(factoryMsg('error', "Arduino no selectado."));
+    callback(new Error("Arduino no selectado."));
   } else {
     if (sp.isOpen()) {
       if (debug.sendGcode) console.log("Conexc open");
@@ -153,7 +160,7 @@ function sendGcode(code, cbWrite, cbAnswer) {
       if (debug.sendGcode) console.log("Conexc No open.")
       sp.open((err) => {
         if (err) {
-          cbWrite(factoryMsg("error", err.message));
+          cbWrite(err);
         } else {
           writeGcode(code, cbWrite, cbAnswer);
         }
@@ -166,10 +173,10 @@ function writeGcode(code, cbWrite, cbAnswer) {
   cb = cbAnswer;
   sp.write(new Buffer(code + '\n'), (err) => {
     if (err) {
-      cbWrite(factoryMsg("error", err.message))
+      cbWrite(err)
     } else {
       working = false;
-      sp.drain(cbWrite(factoryMsg("info", "Comando enviado: " + code)));
+      sp.drain(cbWrite(null, "Comando enviado: " + code));
     }
   });
 }
@@ -178,7 +185,7 @@ function close(callback) {
   if (sp.isOpen()) {
     if (debug.sendGcode) console.log("Conexc open -> close");
     sp.close((err) => {
-      callback(factoryMsg("error", err.message));
+      callback(err.message);
     });
   }
 }

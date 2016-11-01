@@ -4,7 +4,7 @@
 angular.controller('main',
 ['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'statusBar', 'modalFactory',
 (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFactory ) => {
-  'use strict'
+'use strict'
   var modalProgress = modalFactory('modalProgress');
   var exceeds_x = false, exceeds_y = false;
   $scope.cnc = cnc;
@@ -34,12 +34,13 @@ angular.controller('main',
   ipc.on('arduino-res', (event, obj) => {
     console.log(obj);
     config = obj.config;
-    notify(obj.msg, obj.type);
+    notify(obj.message, obj.type);
     $scope.cnc.arduino = obj.type === 'success';
     ipc.send('globalShortcut', obj.type === 'success');
   });
 
   $scope.setFile = (reSetFile) => {
+    notify('CNC-ino.', 'none');
     let initLine = $scope.initialLine.split(',');
     let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
@@ -139,13 +140,13 @@ angular.controller('main',
       case "info":
         $scope.cnc.working = true;
         $scope.progressBar = 'success';
-        notify(obj.msg, obj.type);
+        notify(obj.message, obj.type);
         break;
       case "none":
         $scope.cnc.working = false;
         if (obj.steps[0] === '0' && obj.steps[1] === '0' && obj.steps[2] === '0') {
           console.log('-->> Terminado <<--');
-          notify(obj.msg, 'success');
+          notify(obj.message, 'success');
           if (obj.line) {
             $scope.progressBar = 'success';
             $('title').text('CNC-ino' + $scope.cnc.file.name ? ' - ' + $scope.cnc.file.name : '');
@@ -166,7 +167,7 @@ angular.controller('main',
         break;
       case "error":
         console.log('-->> Error <<--');
-        notify(obj.msg, obj.type);
+        notify(obj.message, obj.type);
         $scope.cnc.working = false;
         break;
       default:

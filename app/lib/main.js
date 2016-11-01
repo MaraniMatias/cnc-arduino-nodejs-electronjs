@@ -78,14 +78,14 @@ function setFile(dir, initialLine, cb) {
     let fileName = path.win32.basename(dirfile);
     if (extension === '.png' && os.platform() === 'linux') {
       console.log("Con linux solo GIF , JPEG , JPG. lwip y electronjs en linux no se llevan :D.");
-      cb.error({ type: 'error', msg: 'Por ahora solo leems GIF , JPEG , JPG' });
+      cb.error(factoryMsg(0, 'Por ahora solo leems GIF , JPEG , JPG'));
     }
     else if (isImg(extension)) {
       cb.tick({ info: `Preparando... ${fileName}.` });
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
           error: (child, error) => {
-            cb.error({ type: 'error', msg: `${fileName} - ${error}` });
+            cb.error(factoryMsg(0, `${fileName} - ${error}`));
             child.kill();
           },
           /*tick: (child, arg) => {
@@ -95,7 +95,7 @@ function setFile(dir, initialLine, cb) {
           },*/
           finished: (child, data) => {
             child.kill();
-            cb.tick({ info: `GCode creado con ${fileName}.\nGuardado en ${data.dirgcode}.` });
+            cb.tick(factoryMsg(3, `GCode creado con ${fileName}.\nGuardado en ${data.dirgcode}.`));
             setGCode(data.dirgcode, initialLine, cb);
           }
         }).send({ // It is mm
@@ -117,7 +117,7 @@ function setFile(dir, initialLine, cb) {
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
     File.name = path.win32.basename(dirfile);
-    cb.tick({ info: `Preparando gcode desde ${File.name}...` });
+    cb.tick(factoryMsg(3, `Preparando gcode desde ${File.name}...`));
     console.log(`Preparando gcode desde ${File.name}...`);
     readConfig().then((config) => {
       File.workpiece.x = config.workpiece.x;
@@ -137,32 +137,23 @@ function setGCode(dirfile, initialLine, cb) {
  * @param  {function} callback
  */
 function sendCommand(code, callback) {
-  if (debug.arduino.sendCommand) { console.log(`${__filename} ==>> sendCommand, code: ${code}`); }
+  if (debug.arduino.sendCommand) { console.log(`${__filename} => sendCommand, code: ${code}`); }
   Arduino.send(code, callback);
 }
 
 function reSet(callback) {
   if (!Arduino.working) {
-    Arduino.set((err,comName, manufacturer) => {
+    Arduino.set((err, comName, manufacturer) => {
       if (!err) {
         if (debug.arduino.conect) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
-        callback({
-          type: "success",
-          msg: "Arduino detectado '" + manufacturer + "'. Puerto: " + comName
-        });
+        callback(factoryMsg(2, "Arduino detectado '" + manufacturer + "'. Puerto: " + comName));
       } else {
-        callback({
-          type: 'warning',
-          msg: 'No encontramos arduino.'
-        });
+        callback(factoryMsg(comName ? 0 : 1, err.message));
         if (debug.arduino.conect) console.warn('No Arduino.');
       }
     });
   } else {
-    callback({
-      type: 'warning',
-      msg: 'Arduino trabajando ' + Arduino.manufacturer
-    });
+    callback(factoryMsg(1, "Arduino trabajando " + Arduino.manufacturer));
     if (debug.arduino.conect) console.log("Arduino working.");
   }
 }
@@ -213,7 +204,7 @@ function start(arg, callback) {
       }//  File.gcode.length > 0 
     });// then Promise
   } else {
-    callback({ type: "error", msg: "Arduino trabajando. o error en comunicacion." });
+    callback(factoryMsg(0, "Arduino trabajando. o error en comunicacion."));
   }
 }
 
@@ -221,7 +212,7 @@ function saveConfig(data, cb) {
   fs.writeFile(dirConfig, JSON.stringify(data), { encoding: 'utf8' }, (err) => {
     if (err) throw err;
     readConfig().then((file) => {
-      cb({ file, message: 'Cambios guardados.', type: 'success' });
+      cb(factoryMsg(2, 'Cambios guardados.', file));
     });
   });
 }
@@ -233,6 +224,17 @@ function readConfig() {
       resolve(JSON.parse(data));
     });
   })
+}
+
+function factoryMsg(type, message, data) {
+  switch (type) {
+    case 0: type = 'error'; break;
+    case 1: type = 'warning'; break;
+    case 2: type = 'success'; break;
+    case 3: type = 'info'; break;
+    default: type = type; break;
+  }
+  return { type, message, data }
 }
 
 module.exports = {
