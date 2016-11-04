@@ -7,7 +7,7 @@
   "main": "app.js",
   "dependencies": {
     "img2gcode": "^0.1.10",
-    "serialport": "~4.0.4"
+    "serialport": "~4.0.5"
   },
   "scripts": {
     "postinstall": "bower install",
