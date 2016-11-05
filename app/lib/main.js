@@ -148,7 +148,7 @@ function reSet(callback) {
         if (debug.arduino.conect) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
         callback(factoryMsg(2, "Arduino detectado '" + manufacturer + "'. Puerto: " + comName));
       } else {
-        callback(factoryMsg(comName ? 0 : 1, err.message));
+        callback(factoryMsg(comName ? 0 : 1, err && err.message || "Arduino conectado."));
         if (debug.arduino.conect) console.warn('No Arduino.');
       }
     });

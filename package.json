@@ -4,7 +4,7 @@
   "description": "cnc realizado con nodejs electron serialport arduino.",
   "dependencies": {},
   "devDependencies": {
-    "electron-builder": "7.15.2",
+    "electron-builder": "7.21.0",
     "electron-packager": "8.2.0",
     "electron-prebuilt": "1.4.5",
     "electron-rebuild": "~1.3.0",
@@ -14,7 +14,7 @@
     "grunt-contrib-watch": "~1.0.0",
     "grunt-docco-plus": "~3.0.0",
     "grunt-mocha-test": "0.13.2",
-    "grunt-shell": "~2.0.0",
+    "grunt-shell": "~2.1.0",
     "pug": "2.0.0-beta6",
     "jshint": "~2.9.4",
     "jshint-stylish": "~2.2.1",

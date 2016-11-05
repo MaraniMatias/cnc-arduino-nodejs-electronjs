@@ -185,7 +185,7 @@ function close(callback) {
   if (sp.isOpen()) {
     if (debug.sendGcode) console.log("Conexc open -> close");
     sp.close((err) => {
-      callback(err.message);
+      callback(err);
     });
   }
 }
