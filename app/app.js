@@ -2,7 +2,6 @@ const dirBase = {
   html: `file://${__dirname}/html/`,
   icon: './recursos/cnc-ino.png'
 },
-  fs = require('fs'),
   fileConfig = require('./package.json'),
   CNC = require('./lib/main.js'),
   electron = require('electron'),
@@ -16,6 +15,7 @@ const dirBase = {
   globalShortcut = electron.globalShortcut
   ;
 app.setName('CNC-ino');
+
 // to not display the default menu to start
 Menu.setApplicationMenu(Menu.buildFromTemplate([]));
 
@@ -27,47 +27,66 @@ app.on('window-all-closed', () => {
 });
 
 var mainWindow = null;
+
+const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) { mainWindow.restore(); }
+    mainWindow.focus()
+  }
+})
+if (shouldQuit) {
+  app.quit()
+}
+
 app.on('ready', () => {
-  //var appIcon = new Tray(dirBase.icon);
-  //appIcon.setToolTip('This is my application.');
-  //appIcon.setContextMenu(contextMenu);
+  try {
+    CNC.configFile.set(app.getPath('userData'));
+    //var appIcon = new Tray(dirBase.icon);
+    //appIcon.setToolTip('This is my application.');
+    //appIcon.setContextMenu(contextMenu);
 
-  mainWindow = new BrowserWindow({
-    experimentalCanvasFeatures: true, // Default false
-    disableAutoHideCursor: false, // Default false
-    autoHideMenuBar: false, // Default false
-    backgroundColor: '#F5F5F5', // Default #FFF 
-    useContentSize: true,
-    skipTaskbar: false, // Default false
-    alwaysOnTop: false, // Default false
-    fullscreen: false, // Default false
-    frame: true, // Default true
-    type: 'normal', // Default normal . On Linux, desktop, dock, toolbar, splash, notification.  On OS X, desktop, textured
-    //webPreferences 
-    icon: dirBase.icon,
-    center: true,
-    minWidth: 560,
-    minHeight: 450,
-    //maxWidth   :  960, 
-    //maxHeight  :  600,
-    width: 800,
-    height: 600,
-    title: fileConfig.name
-  });
-  mainWindow.loadURL(dirBase.html + 'index.html');
-  //mainWindow.on('page-title-updated',  () => { console.log('title'); });
-  mainWindow.on('closed', () => {
-    globalShortcut.unregisterAll();
-    mainWindow = null;
-    if (process.platform != 'darwin') {
-      app.quit();
-    }
-  });
+    mainWindow = new BrowserWindow({
+      experimentalCanvasFeatures: true, // Default false
+      disableAutoHideCursor: false, // Default false
+      autoHideMenuBar: false, // Default false
+      backgroundColor: '#F5F5F5', // Default #FFF 
+      useContentSize: true,
+      skipTaskbar: false, // Default false
+      alwaysOnTop: false, // Default false
+      fullscreen: false, // Default false
+      frame: true, // Default true
+      type: 'normal', // Default normal . On Linux, desktop, dock, toolbar, splash, notification.  On OS X, desktop, textured
+      //webPreferences 
+      icon: dirBase.icon,
+      center: true,
+      minWidth: 560,
+      minHeight: 450,
+      //maxWidth   :  960, 
+      //maxHeight  :  600,
+      width: 800,
+      height: 600,
+      title: fileConfig.name
+    });
+    mainWindow.loadURL(dirBase.html + 'index.html');
+    //mainWindow.on('page-title-updated',  () => { console.log('title'); });
+    mainWindow.on('closed', () => {
+      globalShortcut.unregisterAll();
+      mainWindow = null;
+      if (process.platform != 'darwin') {
+        app.quit();
+      }
+    });
 
-  //mainWindow.openDevTools(); // Open the devtools.
-  // Event -> unresponsive, responsive, show, hide
-  mainWindow.on('blur', () => { globalShortcut.unregisterAll(); });
-  mainWindow.on('focus', () => { if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); } });
+    //mainWindow.openDevTools(); // Open the devtools.
+    // Event -> unresponsive, responsive, show, hide
+    mainWindow.on('blur', () => { globalShortcut.unregisterAll(); });
+    mainWindow.on('focus', () => { if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); } });
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+    });
+  }
 });//ready
 
 ipcMain.on('arduino', (event, arg) => {
@@ -79,7 +98,7 @@ ipcMain.on('arduino', (event, arg) => {
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
-      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
   }
 });
@@ -125,7 +144,7 @@ ipcMain.on('open-file', (event, data) => {
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
-      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
   }
 });
@@ -139,7 +158,7 @@ ipcMain.on('send-command', (event, arg) => {
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
-      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
   }
 });
@@ -167,7 +186,7 @@ ipcMain.on('send-start', (event, arg) => {
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
-      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
   }
 });
@@ -177,7 +196,7 @@ ipcMain.on('show-lineTable', (event, arg) => { event.sender.send('show-lineTable
 
 ipcMain.on('about', (event, arg) => {
   event.sender.send('config-save-res', { type: 'none', message: 'CNC-ino.' });
-  console.log('RAM:', process.getProcessMemoryInfo());
+  console.log("App path:", app.getAppPath(), '\nRAM:', process.getProcessMemoryInfo());
   let chosen = dialog.showMessageBox(mainWindow, {
     cancelId: 0, type: 'info', buttons: ['Aceptar'],
     title: 'Acerca De', message: 'CNC-ino, Arduino y NodeJS', detail: stringAbout
@@ -199,7 +218,7 @@ ipcMain.on('show-prefs', (event, argType) => {
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
-      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
   }
 });
@@ -212,7 +231,20 @@ ipcMain.on('config-save-send', (event, arg) => {
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
-      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+    });
+  }
+});
+
+ipcMain.on('original-values-prefs', (event, arg) => {
+  try {
+    CNC.configFile.save(null, (data) => {
+      event.sender.send('config-save-res', data);
+    });
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
   }
 });
@@ -279,13 +311,13 @@ function registerGlobalShortcut() {
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
-      title: 'CNC-ino', message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
   }
 }
 
 var stringAbout = `Proyecto de Router CNC casero con ideas, mano de obra y programacion propia dentro de lo posible.
-    \tCNC-ino: v${fileConfig.version}.
+    \t${app.getName()} v${app.getVersion()}.
     \tElectronJS: ${process.versions.electron}.
     \tRenderer: ${process.versions.chrome}.
     \tRAM: ${process.getProcessMemoryInfo().sharedBytes / 100}Mb.

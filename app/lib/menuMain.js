@@ -36,6 +36,13 @@ module.exports = [
             click: (item, focusedWindow) => {
               ipcRenderer.send('show-prefs', 'img2gcode');
             }
+          },
+          { type: 'separator' },
+          {
+            label: 'Valores originales.',
+            click: (item, focusedWindow) => {
+              ipcRenderer.send('original-values-prefs');
+            }
           }
         ]
       },

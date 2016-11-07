@@ -7,7 +7,7 @@ const cp = require('child_process'),
     //gcode: `${__dirname}/gcode.js`,
     img2gcode: `${__dirname}/img2gcode.js`
   },
-  dirConfig = `${__dirname}/config.json`,
+  dirDefaultConfig = `${__dirname}/config.json`,
   debug = {
     arduino: {
       start: true,
@@ -21,6 +21,7 @@ const cp = require('child_process'),
   }
   ;
 
+var dirConfig = dirDefaultConfig;
 var lineRunning = 0;
 var Arduino = require("./arduino.js");
 var File = {
@@ -212,8 +213,23 @@ function start(arg, callback) {
   }
 }
 
+function setConfig(dirUserData) {
+  let newDir = path.resolve(dirUserData, "config.json");
+  fs.stat(newDir, (err, stats) => {
+    if (err) {
+      console.log("File config isn't in userData.");
+      fs.writeFile(newDir, JSON.stringify(require(dirConfig)), { encoding: 'utf8' }, (errW) => {
+        if (errW) throw errW;
+        dirConfig = newDir;
+      })
+    } else {
+      dirConfig = newDir;
+    }
+  })
+}
+
 function saveConfig(data, cb) {
-  fs.writeFile(dirConfig, JSON.stringify(data), { encoding: 'utf8' }, (err) => {
+  fs.writeFile(dirConfig, JSON.stringify(data || require(dirDefaultConfig)), { encoding: 'utf8' }, (err) => {
     if (err) throw err;
     readConfig().then((file) => {
       cb(factoryMsg(2, 'Cambios guardados.', file));
@@ -264,6 +280,7 @@ module.exports = {
   },
   sendCommand,
   configFile: {
+    set: setConfig,
     dir: dirConfig,
     read: readConfig,
     save: saveConfig

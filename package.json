@@ -56,7 +56,7 @@
     "app": "./app"
   },
   "build": {
-    "asar": false,
+    "asar": true,
     "compression": "maximum",
     "appId": "CNC-ino",
     "app-category-type": "public.app-category.education",

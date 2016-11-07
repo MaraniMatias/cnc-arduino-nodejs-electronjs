@@ -17,7 +17,7 @@ module.exports = (grunt) => {
         // platform ["mac", "osx", "win", "linux", "darwin", "win32", "all"]
         // arch ["ia32", "x64", "all"]
         command: (platform, arch) => {
-          return [path.resolve("./node_modules/.bin/build"), path.resolve("./dist/CNC-ino-win32-x64"), "--platform=" + platform, "--arch=" + arch, "--dir=" + path.resolve("./dist")].join(' ')
+          return [path.resolve("./node_modules/.bin/build"), path.resolve("./dist/CNC-ino-win32-x64"), "--platform=" + platform, "--arch=" + arch, "--dir=" + path.resolve("./dist"), "--asar"].join(' ')
         }
       },
       rebuidserialport: {
@@ -31,7 +31,7 @@ module.exports = (grunt) => {
       },
       epack: {
         command: (platform, arch) => {
-          return [path.resolve(electronPackagerPath), path.resolve(appPath), grunt.file.readJSON(path.resolve(appPath + '/package.json')).productName, "--platform=" + platform, "--arch=" + arch, "--out=" + path.resolve(outPath), "--overwrite", "--icon=" + path.resolve(iconPath)].join(' ');
+          return [path.resolve(electronPackagerPath), path.resolve(appPath), grunt.file.readJSON(path.resolve(appPath + '/package.json')).productName, "--platform=" + platform, "--arch=" + arch, "--out=" + path.resolve(outPath), "--overwrite", "--icon=" + path.resolve(iconPath), "--asar"].join(' ');
         }
       }
     },
