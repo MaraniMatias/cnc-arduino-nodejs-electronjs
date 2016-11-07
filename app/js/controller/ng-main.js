@@ -130,7 +130,9 @@ angular.controller('main',
       $scope.comando = '';
     }
   }
-
+  /**
+  *  obj { type, message, data }
+  */
   ipc.on('close-conex', (event, obj) => {
     modalProgress.hide();
     console.log('close-conex', obj);
@@ -142,12 +144,12 @@ angular.controller('main',
         $scope.progressBar = 'success';
         notify(obj.message, obj.type);
         break;
-      case "none":
+      case "data":
         $scope.cnc.working = false;
-        if (obj.steps[0] === '0' && obj.steps[1] === '0' && obj.steps[2] === '0') {
+        if (obj.data.steps[0] === '0' && obj.data.steps[1] === '0' && obj.data.steps[2] === '0') {
           console.log('-->> Terminado <<--');
           notify(obj.message, 'success');
-          if (obj.line) {
+          if (obj.data.line) {
             $scope.progressBar = 'success';
             $('title').text('CNC-ino' + $scope.cnc.file.name ? ' - ' + $scope.cnc.file.name : '');
           } else {
@@ -155,12 +157,12 @@ angular.controller('main',
           }
         } else {//Pause
           console.log('-->> Pausado <<--');
-          notify('Pausado en los pasos: ' + obj.steps, 'warning');
+          notify('Pausado en los pasos: ' + obj.data.steps, 'warning');
           $scope.progressBar = 'warning';
-          cnc.pause.line = obj.line;
-          cnc.pause.steps[0] = obj.steps[0];
-          cnc.pause.steps[1] = obj.steps[1];
-          cnc.pause.steps[2] = obj.steps[2];
+          cnc.pause.line = obj.data.line;
+          cnc.pause.steps[0] = obj.data.steps[0];
+          cnc.pause.steps[1] = obj.data.steps[1];
+          cnc.pause.steps[2] = obj.data.steps[2];
           cnc.pause.status = true;
           $scope.comando = cnc.pause.steps.toString();
         }
