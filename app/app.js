@@ -132,9 +132,9 @@ ipcMain.on('open-file', (event, data) => {
 
 ipcMain.on('send-command', (event, arg) => {
   try {
-    CNC.sendCommand(arg, (dataReceived) => {
-      if (CNC.debug.arduino.sendCommand) { console.log("sendCommand: ", dataReceived); }
-      event.sender.send('close-conex', dataReceived);
+    CNC.sendCommand(arg, (data) => {
+      if (!CNC.debug.arduino.sendCommand) { console.log("sendCommand: ", dataReceived); }
+      event.sender.send('close-conex', data);
     });
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
@@ -288,7 +288,7 @@ var stringAbout = `Proyecto de Router CNC casero con ideas, mano de obra y progr
     \tCNC-ino: v${fileConfig.version}.
     \tElectronJS: ${process.versions.electron}.
     \tRenderer: ${process.versions.chrome}.
-    \tRAM: ${process.getProcessMemoryInfo().sharedBytes/100}Mb.
+    \tRAM: ${process.getProcessMemoryInfo().sharedBytes / 100}Mb.
     Marani Cesar Juan.
     Marani Matias Ezequiel.`
   ;

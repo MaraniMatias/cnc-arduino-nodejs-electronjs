@@ -5,4 +5,4 @@ asar http://electron.atom.io/docs/tutorial/application-packaging/
 tooltip no me connnvencen
 
 teclas no andan
-no cierra la conexcion
+no avisa que termino

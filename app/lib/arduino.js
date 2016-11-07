@@ -21,7 +21,7 @@ var
     let result = data.toString().split(',');
     if (debug.on) console.log({ type: 'data', steps: result });
     if (typeof (cb) === 'function') {
-      cb({ type: 'data', steps: result, msg: "Respuesta Arduino: " + result });
+      cb(null, "Respuesta Arduino: " + result, { steps: result });
     }
   },
   onOpen = function (err) {
@@ -120,8 +120,12 @@ function send(code, callback) {
     if (sp.isOpen()) {
       if (debug.isOpen) console.log("Conexc open");
       sp.close((err) => {
-        cb = callback;
-        write(code, callback);
+        if (err) {
+          callback(new Error('Error al cerrar el puerto.\n ' + err.message))
+        } else {
+          cb = callback;
+          write(code, callback);
+        }
       });
     } else {
       if (debug.isOpen) console.log("Conexc No open.")

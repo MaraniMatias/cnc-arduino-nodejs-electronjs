@@ -138,7 +138,9 @@ function setGCode(dirfile, initialLine, cb) {
  */
 function sendCommand(code, callback) {
   if (debug.arduino.sendCommand) { console.log(`${__filename} => sendCommand, code: ${code}`); }
-  Arduino.send(code, callback);
+  Arduino.send(code, (err, msg, data) => {
+    callback(factoryMsg(err ? 0 : data ? 4 : 3, msg, data));
+  });
 }
 
 function reSet(callback) {
@@ -225,13 +227,22 @@ function readConfig() {
     });
   })
 }
-
+/**
+ * 'e' -> 0, 'w' -> 1, 's' -> 2, 'i' -> 3, 'd' -> 4, 'n' -> 5
+ * 
+ * @param {any} type 
+ * @param {String} message
+ * @param {any} data
+ * @returns
+ */
 function factoryMsg(type, message, data) {
   switch (type) {
     case 0: type = 'error'; break;
     case 1: type = 'warning'; break;
     case 2: type = 'success'; break;
     case 3: type = 'info'; break;
+    case 4: type = 'data'; break;
+    case 5: type = 'none'; break;
     default: type = type; break;
   }
   return { type, message, data }
