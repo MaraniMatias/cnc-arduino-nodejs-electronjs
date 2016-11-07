@@ -252,7 +252,7 @@ function registerGlobalShortcut() {
         });
         globalShortcut.register('d', () => {
           globalShortcutSendComand(`-${manalSteps},0,0`);
-          console.log(`D key pressed and sent -${manalSteps}0,0 command.`);
+          console.log(`D key pressed and sent -${manalSteps},0,0 command.`);
         });
         globalShortcut.register('a', () => {
           globalShortcutSendComand(`${manalSteps},0,0`);

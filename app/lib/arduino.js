@@ -16,12 +16,10 @@ var
   sp,
   workingGCode = false,
   onData = function (data) {
-    if (debug.on) console.log('Data: ' + data);
+    if (debug.on) console.log("Ardu. 'data':", data);
     working = false;
-    let result = data.toString().split(',');
-    if (debug.on) console.log({ type: 'data', steps: result });
     if (typeof (cb) === 'function') {
-      cb(null, "Respuesta Arduino: " + result, { steps: result });
+      cb(null, "Respuesta Arduino: " + data, { steps: data.toString().split(',') });
     }
   },
   onOpen = function (err) {
@@ -40,7 +38,7 @@ var
     lock: true, // Impedir que otros procesos de abrir el puerto
     bufferSize: 65536
   },
-  cb = function (data) { console.log("default:", data) }
+  cb = function (err, msg, data) { console.log("default:", data) }
   ;
 /**
  * Listado de puertos encontrados.
@@ -90,8 +88,8 @@ function newArduino(comName, cb) {
 
 /**
  * Set automaticamente con el primer puerto encontrado
- * 
- * @param {function} callback: (ports: port[]) => void
+ * Y prueba la conexión, then run callback(err,comName,manufacturer)
+ * @param {function} callback:(err:Error,comName:String,manufacturer:String)=>void
  */
 function set(callback) {
   search((err, comName, manufacturer) => {
@@ -117,19 +115,18 @@ function send(code, callback) {
   if (comName === "") {
     callback(new Error("Arduino no selectado."));
   } else {
+    cb = callback;
     if (sp.isOpen()) {
       if (debug.isOpen) console.log("Conexc open");
       sp.close((err) => {
         if (err) {
           callback(new Error('Error al cerrar el puerto.\n ' + err.message))
         } else {
-          cb = callback;
           write(code, callback);
         }
       });
     } else {
       if (debug.isOpen) console.log("Conexc No open.")
-      cb = callback;
       write(code, callback);
     }
   }

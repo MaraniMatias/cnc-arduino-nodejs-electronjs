@@ -133,17 +133,19 @@ function setGCode(dirfile, initialLine, cb) {
   }
 }
 /**
- * @param  {String} code '0,0,0' or p or any
+ * @param  {String} code '0,0,0,14' or p or any
  * @param  {function} callback
  */
 function sendCommand(code, callback) {
   if (debug.arduino.sendCommand) { console.log(`${__filename} => sendCommand, code: ${code}`); }
   Arduino.send(code, (err, msg, data) => {
-    callback(factoryMsg(err ? 0 : data ? 4 : 3, msg, data));
+    //callback({type: 'data',message:"message",data:{steps:['0','0','0']}});
+    callback(factoryMsg(err ? 0 : data ? 4 : 3, err ? err.message : msg, data));
   });
 }
 
 function reSet(callback) {
+  //callback(factoryMsg(2, "Arduino detectado ''. Puerto: "));
   if (!Arduino.working) {
     Arduino.set((err, comName, manufacturer) => {
       if (!err) {
@@ -230,10 +232,10 @@ function readConfig() {
 /**
  * 'e' -> 0, 'w' -> 1, 's' -> 2, 'i' -> 3, 'd' -> 4, 'n' -> 5
  * 
- * @param {any} type 
+ * @param {number} type 
  * @param {String} message
  * @param {any} data
- * @returns
+ * @returns { type, message, data }
  */
 function factoryMsg(type, message, data) {
   switch (type) {

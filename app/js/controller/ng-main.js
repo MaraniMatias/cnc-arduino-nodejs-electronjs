@@ -148,6 +148,7 @@ angular.controller('main',
         $scope.cnc.working = false;
         if (obj.data.steps[0] === '0' && obj.data.steps[1] === '0' && obj.data.steps[2] === '0') {
           console.log('-->> Terminado <<--');
+          ipc.send('globalShortcut', true);
           notify(obj.message, 'success');
           if (obj.data.line) {
             $scope.progressBar = 'success';
