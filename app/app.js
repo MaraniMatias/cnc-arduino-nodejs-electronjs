@@ -1,6 +1,6 @@
 const dirBase = {
   html: `file://${__dirname}/html/`,
-  icon: __dirname + './recursos/cnc-ino'
+  icon: __dirname + "/recursos/app-icon/png/512.png"// "mac-win/app"
 },
   fileConfig = require('./package.json'),
   CNC = require('./lib/main.js'),
@@ -27,7 +27,7 @@ app.on('window-all-closed', () => {
   }
 });
 
-var mainWindow = null,appIcon=null;
+var mainWindow = null;
 
 const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
   if (mainWindow) {
@@ -35,18 +35,16 @@ const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
     mainWindow.focus()
   }
 })
-if (shouldQuit) {
-  app.quit()
-}
+if (shouldQuit) { app.quit() }
 
 app.on('ready', () => {
   try {
     CNC.configFile.set(app.getPath('userData'));
-
-    appIcon = new Tray(nativeImage.createFromPath(dirBase.icon));
-    //appIcon.setToolTip(app.getName());
-    //appIcon.setContextMenu(contextMenu);
-
+    /*
+      var appIcon = new Tray(nativeImage.createFromPath(dirBase.icon));
+      appIcon.setToolTip(app.getName());
+      appIcon.setContextMenu(Menu.buildFromTemplate([{label: 'Item1', type: 'radio'},{label: 'Item3', type: 'radio', checked: true}]));
+    */
     mainWindow = new BrowserWindow({
       experimentalCanvasFeatures: true, // Default false
       disableAutoHideCursor: false, // Default false
@@ -70,6 +68,7 @@ app.on('ready', () => {
       title: fileConfig.name
     });
     mainWindow.loadURL(dirBase.html + 'index.html');
+
     //mainWindow.on('page-title-updated',  () => { console.log('title'); });
     mainWindow.on('closed', () => {
       globalShortcut.unregisterAll();

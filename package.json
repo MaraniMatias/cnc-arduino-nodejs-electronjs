@@ -64,11 +64,11 @@
     "win": {
       "target": "tar.xz",
       "title": "CNC-ino",
-      "icon": "./app/recursos/cnc-ino.ico",
-      "publisher": "cnc realizado con nodejs electron serialport arduino."
+      "icon": "./app/recursos/mac-win/app",
+      "publisher": "CNC realizado con nodejs electron serialport arduino."
     },
     "linux": {
-      "description": "cnc realizado con nodejs electron serialport arduino.",
+      "description": "CNC realizado con nodejs electron serialport arduino.",
       "synopsis": "Arduino + SerialPort + NodeJS + ElectronJS + AngularJS + Semantic UI",
       "executable": "CNC-ino",
       "target": "deb",
