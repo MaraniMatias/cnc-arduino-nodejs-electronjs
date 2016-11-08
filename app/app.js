@@ -1,12 +1,13 @@
 const dirBase = {
   html: `file://${__dirname}/html/`,
-  icon: './recursos/cnc-ino.png'
+  icon: __dirname + './recursos/cnc-ino'
 },
   fileConfig = require('./package.json'),
   CNC = require('./lib/main.js'),
   electron = require('electron'),
   app = electron.app,
   BrowserWindow = electron.BrowserWindow,
+  nativeImage = electron.nativeImage,
   ipcMain = electron.ipcMain,
   dialog = electron.dialog,
   Menu = electron.Menu,
@@ -26,7 +27,7 @@ app.on('window-all-closed', () => {
   }
 });
 
-var mainWindow = null;
+var mainWindow = null,appIcon=null;
 
 const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
   if (mainWindow) {
@@ -41,8 +42,9 @@ if (shouldQuit) {
 app.on('ready', () => {
   try {
     CNC.configFile.set(app.getPath('userData'));
-    //var appIcon = new Tray(dirBase.icon);
-    //appIcon.setToolTip('This is my application.');
+
+    appIcon = new Tray(nativeImage.createFromPath(dirBase.icon));
+    //appIcon.setToolTip(app.getName());
     //appIcon.setContextMenu(contextMenu);
 
     mainWindow = new BrowserWindow({

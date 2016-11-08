@@ -37,6 +37,7 @@
   },
   "scale": 1,
   "toolConfig": {
+    "heightImage":true,
     "blackZ": -1,
     "deepStep": -0.23,
     "feedrate": {

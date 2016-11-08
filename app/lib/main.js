@@ -101,7 +101,7 @@ function setFile(dir, initialLine, cb) {
           }
         }).send({ // It is mm
           toolDiameter: fileConfig.toolConfig.toolDiameter,
-          scaleAxes: fileConfig.toolConfig.scaleAxes,
+          scaleAxes: !fileConfig.toolConfig.heightImage && fileConfig.toolConfig.scaleAxes || undefined,
           deepStep: fileConfig.toolConfig.deepStep,
           feedrate: fileConfig.toolConfig.feedrate,
           whiteZ: fileConfig.toolConfig.whiteZ,
@@ -217,7 +217,7 @@ function setConfig(dirUserData) {
   let newDir = path.resolve(dirUserData, "config.json");
   fs.stat(newDir, (err, stats) => {
     if (err) {
-      console.log("File config isn't in userData.");
+      console.log("File config isn't in userData.",dirUserData);
       fs.writeFile(newDir, JSON.stringify(require(dirConfig)), { encoding: 'utf8' }, (errW) => {
         if (errW) throw errW;
         dirConfig = newDir;
