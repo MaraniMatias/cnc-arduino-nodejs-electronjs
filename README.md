@@ -8,7 +8,7 @@ El código del Arduino es de mi autoría y se puede compilar desde el IDE de Ard
 
 La parte electrónica y la mecánica realizada conjuntamente con mi padre.
 
-Uso el G-Code que genera Jscut apartar de un SVG  con medidas en milímetro. http://jscut.org/jscut.html, Estoy trabajando para crear G-Code a partir de una imagen.
+Apartir de una imagen genra el codigo para poder realizar el trabajo, si tienes una imgane svg puedes usar [JScut](http://jscut.org/jscut.html) (medidas en milímetros) para obtener un GCode funcional.
 
 Con el tiempo a medida que mejora mi experiencia con otros trabajos voy descubriendo errores y malas prácticas al programar, si tengo tiempo las voy a pulir.
 
