@@ -239,8 +239,16 @@ ipcMain.on('config-save-send', (event, arg) => {
 
 ipcMain.on('original-values-prefs', (event, arg) => {
   try {
-    CNC.configFile.save(null, (data) => {
-      event.sender.send('config-save-res', data);
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 1, type: 'question', buttons: ['Aceptar','Canselar'],
+      title: app.getName(), message: 'Volver a los valores originales.',
+      detail: 'Se perderan las configuraciones personalizadas generales y image to gcode.'
+    }, (opt) => {
+      if (opt === 0) {
+        CNC.configFile.save(null, (data) => {
+          event.sender.send('config-save-res', data);
+        });
+      }
     });
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
