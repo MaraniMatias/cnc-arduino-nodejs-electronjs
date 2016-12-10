@@ -35,7 +35,7 @@ void render(){
   _delayY  = 0;
   addX = 0;
   addY = 0;
-  double auxX=xyzp[0],auxY=xyzp[1];
+  long auxX=xyzp[0],auxY=xyzp[1];
   // si son distintos realizo calculos para corregir errores
   if(auxX!=auxY){
     if(auxX<0){auxX = auxX*-1;}
@@ -43,14 +43,14 @@ void render(){
     if(auxX<auxY){
     // mayor Y
       _delayX  = floor(auxY / auxX);
-      int rta = auxY - auxX*_delayX;
+      long rta = auxY - auxX*_delayX;
       _saveAddY = floor(auxX*_delayX / rta);
       addY = auxY - _saveAddY;
       rx = _delayX;
     }else{
     // mayor X
       _delayY  = floor(auxX / auxY);
-      int rta = auxX - auxY*_delayY;
+      long rta = auxX - auxY*_delayY;
       _saveAddX = floor(auxY*_delayY / rta);
       addX = auxX - _saveAddX;
       ry = _delayY;

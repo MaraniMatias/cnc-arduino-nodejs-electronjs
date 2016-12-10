@@ -6,23 +6,23 @@
   "manalSteps": 5,
   "motor": {
     "x": {
-      "advance": 29.3,
+      "advance": 25.85,
       "sense": false,
       "speed": {
         "idle": 4,
         "working": 4
       },
-      "steps": 4000,
+      "steps": 40000,
       "time": 22
     },
     "y": {
-      "advance": 29.3,
+      "advance": 25.85,
       "sense": false,
       "speed": {
         "idle": 4,
         "working": 4
       },
-      "steps": 4000,
+      "steps": 40000,
       "time": 22
     },
     "z": {

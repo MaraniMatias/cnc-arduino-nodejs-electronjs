@@ -124,7 +124,7 @@ angular.controller('main',
       case "Z": cmd = "0,0," + sentido + num; break;
       default: cmd = "0,0,0"; break;
     }
-    var l = line.codeType(cmd, stepsmm);
+    let l = line.codeType(cmd, stepsmm);
     if (ipc.sendArd(l.steps.toString())) {
       line.add(l);
       $scope.comando = '';

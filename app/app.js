@@ -153,7 +153,7 @@ ipcMain.on('open-file', (event, data) => {
 ipcMain.on('send-command', (event, arg) => {
   try {
     CNC.sendCommand(arg, (data) => {
-      if (!CNC.debug.arduino.sendCommand) { console.log("sendCommand: ", dataReceived); }
+      if (!CNC.debug.arduino.sendCommand) { console.log("sendCommand:", dataReceived); }
       event.sender.send('close-conex', data);
     });
   } catch (error) {

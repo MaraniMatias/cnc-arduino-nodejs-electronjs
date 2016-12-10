@@ -4,6 +4,8 @@
   Author: Marani Matias Ezequiel
   Email: maranimatias@gmail.com
 */
+#include <stdio.h>
+#include <float.h> 
 #include <math.h>
 
 // seting:START
@@ -17,11 +19,11 @@ const int pinLED = 13,       // LED StatusLED indicator
 
 bool bStatusLED = true; // StatusLED indicator var
 
-int xyzp[] = {0, 0, 0, 0},  // Steps to go
+long int xyzp[] = {0, 0, 0, 0},  // Steps to go
     xp = 0, yp = 0, zp = 0, // Save last step used
     _delayX = 0, _delayY = 0, rx = 0, ry = 0,
-    addX = 0, addY = 0, _saveAddX = 0, _saveAddY = 0, // when the angles are different from 90° or 45°
-    i = 0, inChar = 0, _time = 28;                    // Time between step //~14
+    addX = 0, addY = 0, _saveAddX = 0, _saveAddY = 0; // when the angles are different from 90° or 45°
+int i = 0, inChar = 0, _time = 28;                    // Time between step //~14
 String inString = "";
 boolean start = false;
 
@@ -133,7 +135,8 @@ void loop() {
   }
 
   while (Serial.available() > 0) {
-    int inChar = Serial.read();
+    //int
+    inChar = Serial.read();
     if (inChar != ',') {
       if (inChar == 'p') {
         PauseStop();
@@ -143,16 +146,16 @@ void loop() {
       }
       if (isDigit(inChar)) {
         inString += (char)inChar;
-        if (i < 3) {
-          xyzp[i] = inString.toInt();
-        }
-        if (i == 3) {
-          int f = inString.toInt();
-          _time = f >= timeMin ? f : timeMin;
-
-        }
       }
     } else {
+       // case 0 1 2
+      if (i < 3) {
+        xyzp[i] = inString.toInt();
+      }
+      if (i == 3) {
+        int f = inString.toInt();
+        _time = f >= timeMin ? f : timeMin;
+      }
       i++;
       inString = "";
     }
