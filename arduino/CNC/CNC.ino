@@ -4,8 +4,6 @@
   Author: Marani Matias Ezequiel
   Email: maranimatias@gmail.com
 */
-#include <stdio.h>
-#include <float.h> 
 #include <math.h>
 
 // seting:START
