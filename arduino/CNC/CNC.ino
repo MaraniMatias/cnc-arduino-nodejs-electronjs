@@ -7,7 +7,6 @@
 #include <math.h>
 
 // seting:START
-const bool debug = false;    // Debug
 const int pinLED = 13,       // LED StatusLED indicator
     pinX[] = {0, 1, 3, 2},   // Motor pin X
     pinY[] = {4, 5, 7, 6},   // Motor pin Y
@@ -121,9 +120,9 @@ void loop() {
       MoveZ(1);
     }
 
-    if (debug) {
-      sendData();
-    }
+// debug:START
+//sendData();
+// debug:END
 
     if (xyzp[0] == 0 && xyzp[1] == 0 && xyzp[2] == 0) {
       start = false;

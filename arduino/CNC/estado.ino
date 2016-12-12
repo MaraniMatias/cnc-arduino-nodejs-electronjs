@@ -20,7 +20,6 @@ void PauseStop(){
 }
 
 void sendData(){
-// if debug
   Serial.print(xyzp[0]);
   Serial.print(',');
   Serial.print(xyzp[1]);
@@ -57,14 +56,15 @@ void render(){
     }
   }//auxX!=auxY
   
-  if(debug){
-    Serial.print("X: ");Serial.println(xyzp[0]);
-    Serial.print("Y: ");Serial.println(xyzp[1]);
-    Serial.print("rx ");Serial.println(_delayX);
-    Serial.print("ry ");Serial.println(_delayY);
-    Serial.print("addX ");Serial.println(addX);
-    Serial.print("addY ");Serial.println(addY);
-    Serial.println("-----------");
-  }
+/* 
+  // debug
+  Serial.print("X: ");Serial.println(xyzp[0]);
+  Serial.print("Y: ");Serial.println(xyzp[1]);
+  Serial.print("rx ");Serial.println(_delayX);
+  Serial.print("ry ");Serial.println(_delayY);
+  Serial.print("addX ");Serial.println(addX);
+  Serial.print("addY ");Serial.println(addY);
+  Serial.println("-----------");
+*/
 
 }
