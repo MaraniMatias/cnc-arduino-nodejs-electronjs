@@ -9,6 +9,7 @@ void StatusLED(){
 
 void PauseStop(){
   sendData();
+  start = false;
   xyzp[0]=0;
   xyzp[1]=0;
   xyzp[2]=0;
@@ -16,7 +17,6 @@ void PauseStop(){
   ry=0;
   _saveAddX=0;
   _saveAddY=0;
-  start=false;
 }
 
 void sendData(){
@@ -24,7 +24,9 @@ void sendData(){
   Serial.print(',');
   Serial.print(xyzp[1]);
   Serial.print(',');
-  Serial.println(xyzp[2]);
+  Serial.print(xyzp[2]);
+  Serial.print(',');
+  Serial.println(xyzp[3]);
 }
 
 void render(){

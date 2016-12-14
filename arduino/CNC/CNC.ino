@@ -1,6 +1,6 @@
 /* 
-  Please use IDE Arduino 1.6.5 with versions 1.6.6 and 1.6.7 code behaves not expected.
-  Por favor utilice el IDE Arduino 1.6.5, para un correcto funcionamiento.
+  Please use IDE Arduino 1.6.5 or 1.6.13 with versions 1.6.6 and 1.6.7 code behaves not expected.
+  Por favor utilice el IDE Arduino 1.6.5 o 1.6.13, para un correcto funcionamiento.
   Author: Marani Matias Ezequiel
   Email: maranimatias@gmail.com
 */
@@ -22,7 +22,7 @@ long int xyzp[] = {0, 0, 0, 0},  // Steps to go
     addX = 0, addY = 0, _saveAddX = 0, _saveAddY = 0; // when the angles are different from 90° or 45°
 int i = 0, inChar = 0, _time = 28;                    // Time between step //~14
 String inString = "";
-boolean start = false;
+boolean start = false, pause = false;
 
 void setup() {
   Serial.begin(9600);
@@ -124,7 +124,7 @@ void loop() {
 //sendData();
 // debug:END
 
-    if (xyzp[0] == 0 && xyzp[1] == 0 && xyzp[2] == 0) {
+    if (start == true && xyzp[0] == 0 && xyzp[1] == 0 && xyzp[2] == 0) {
       start = false;
       sendData();
       digitalWrite(pinLED, LOW);
@@ -137,6 +137,7 @@ void loop() {
     if (inChar != ',') {
       if (inChar == 'p') {
         PauseStop();
+        pause = true;
       }
       if (inChar == '-') {
         inString += "-";
@@ -145,6 +146,7 @@ void loop() {
         inString += (char)inChar;
       }
     } else {
+      pause = false;
        // case 0 1 2
       if (i < 3) {
         xyzp[i] = inString.toInt();
@@ -156,7 +158,7 @@ void loop() {
       i++;
       inString = "";
     }
-    if (inChar == '\n' || inChar == ';') {
+    if (pause == false && ( inChar == '\n' || inChar == ';') ){
       i = 0;
       inString = "";
       render();

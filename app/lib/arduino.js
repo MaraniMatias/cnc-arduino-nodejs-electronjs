@@ -98,7 +98,7 @@ function set(callback) {
       newArduino(comName, () => {
         sp.open((err) => {
           if (err) {
-            callback(new Error(process.platform !== "linux" ? "It needs to be administrator. puerto " + comName : "sudo chmod 0777 /dev/" + comName), comName, manufacturer);
+            callback(new Error(process.platform !== "linux" ? "It needs to be administrator. puerto " + comName : "sudo chmod 0777 " + comName), comName, manufacturer);
           } else {
             close((err) => {
               callback(err, comName, manufacturer)
