@@ -3,7 +3,7 @@
 
 # Notas
 creo que despues de guardar preferencia no anda las teclas
-Menu no se bloquea con arduino y comando manuales
+Mover con flachas tablas
 
 # Tooltip
   * no me convencen

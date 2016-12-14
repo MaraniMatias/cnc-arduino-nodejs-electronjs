@@ -3,7 +3,7 @@
 /* global vis */
 angular.controller('main',
 ['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'statusBar', 'modalFactory',
-(notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFactory ) => {
+function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFactory) {
 'use strict'
   var modalProgress = modalFactory('modalProgress');
   var exceeds_x = false, exceeds_y = false;
@@ -39,14 +39,14 @@ angular.controller('main',
     ipc.send('globalShortcut', obj.type === 'success');
   });
 
-  $scope.setFile = (reSetFile) => {
+  $scope.setFile = function (reSetFile) {
     notify('CNC-ino.', 'none');
-    let initLine = $scope.initialLine.split(',');
-    let initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
+    var initLine = $scope.initialLine.split(',');
+    var  initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
   }
 
-  ipc.on('open-file-res', (event, file) => {
+  ipc.on('open-file-res', function (event, file) {
     if (file.dir) {
       exceeds_x = false; exceeds_y = false;
       //console.log(file)
@@ -69,24 +69,24 @@ angular.controller('main',
     }else{ modalProgress.hide(); }
   });
 
-  $scope.enviarDatos = (cmd) => {
+  $scope.enviarDatos = function (cmd) {
     if (ipc.sendArd(cmd)) {
       notify('Comando manual: ' + cmd, 'success');
       $scope.progressBar = 'indicating';
     }
   }
-  /*$scope.moverOrigen = () => {
+  /*$scope.moverOrigen = function () {
     if(ipc.sendArd('o') ){
       notify( 'Comando mover al origen.' , 'success' );
       $scope.progressBar = '';
     }
   }*/
-  $scope.pausa = () => {
+  $scope.pausa = function () {
     $scope.cnc.time.pause = new Date();
     if (ipc.sendArd('p')) { notify('Orden de pausa', 'warning'); }
     if (cnc.file.line.run) { window.alert('No se recomienda pausar la ejecucion.'); }
   }
-  $scope.parar = () => {
+  $scope.parar = function () {
     if (ipc.sendArd('0,0,0')) {
       $('title').text('CNC-ino');
 
@@ -105,7 +105,7 @@ angular.controller('main',
   var stepsmm = 'steps';
   $scope.inputStepsmm = '200';
   $scope.btnStepsmm = 'Pasos';
-  $scope.setStepsmm = () => {
+  $scope.setStepsmm = function () {
     if (stepsmm === 'steps') {
       stepsmm = 'mm';
       $scope.btnStepsmm = 'mm';
@@ -116,15 +116,15 @@ angular.controller('main',
     }
   };
 
-  $scope.moverManual = (num, eje, sentido) => {
-    let cmd;
+  $scope.moverManual = function (num, eje, sentido) {
+    var cmd;
     switch (eje) {
       case "X": cmd = sentido + num + ",0,0"; break;
       case "Y": cmd = "0," + sentido + num + ",0"; break;
       case "Z": cmd = "0,0," + sentido + num; break;
       default: cmd = "0,0,0"; break;
     }
-    let l = line.codeType(cmd, stepsmm);
+    var l = line.codeType(cmd, stepsmm);
     if (ipc.sendArd(l.steps.toString())) {
       line.add(l);
       $scope.comando = '';
@@ -136,7 +136,7 @@ angular.controller('main',
   ipc.on('close-conex', (event, obj) => {
     modalProgress.hide();
     console.log('close-conex', obj);
-    ipc.send('contextmenu-enabled', true);
+    ipc.send('contextmenu-enabled', false);
     ipc.send('globalShortcut', false);
     switch (obj.type) {
       case "info":
@@ -149,6 +149,7 @@ angular.controller('main',
         if (obj.data.steps[0] === '0' && obj.data.steps[1] === '0' && obj.data.steps[2] === '0') {
           console.log('-->> Terminado <<--');
           ipc.send('globalShortcut', true);
+          ipc.send('contextmenu-enabled', true);
           notify(obj.message, 'success');
           if (obj.data.line) {
             $scope.progressBar = 'success';
@@ -193,7 +194,7 @@ angular.controller('main',
 
       ipc.send('taksBar-progress', $scope.cnc.file.line.progress / 100);
 
-      $scope.$watch('cnc.time.end', () => {
+      $scope.$watch('cnc.time.end', function () {
         if ($scope.statisticHour.option) { $scope.statisticHour.value = cnc.time.end; }
         else { $scope.statisticHour.value = cnc.time.start; }
       });
@@ -201,7 +202,7 @@ angular.controller('main',
 
   });
 
-  $scope.start = () => {
+  $scope.start = function () {
     if (!cnc.pause.status) {
       $scope.cnc.file.line.run = 0;
       $scope.lineTable = [];
@@ -252,11 +253,11 @@ angular.controller('main',
     modalProgress.hide();
   } drawVisualization();
 
-  ipc.on('open-file-tick', (event, data) => {
+  ipc.on('open-file-tick', function (event, data) {
     modalProgress.show();
     $('#modalProgressInfo').text(data.info);
   });
-  $scope.showPrefsImg2gcode = () => {
+  $scope.showPrefsImg2gcode = function () {
     ipc.send('show-prefs', 'img2gcode');
   }
 

@@ -259,6 +259,7 @@ ipcMain.on('original-values-prefs', (event, arg) => {
 });
 
 ipcMain.on('contextmenu-enabled', (event, arg) => {
+  //console.log('contextmenu-enabled', arg);
   event.sender.send('contextmenu-enabled-res', arg);
 });
 
