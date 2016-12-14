@@ -4,6 +4,9 @@
 .uk-modal-header {
   padding: 10px 20px 10px 20px;
 }
+input {
+  padding: 5px 5px 5px 5px !important;
+}
 button {
   -webkit-app-region: no-drag;
 }

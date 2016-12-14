@@ -271,18 +271,31 @@ Event: ‘on-battery’
 ipcMain.on('globalShortcut', (event, endable) => {
   if (endable) registerGlobalShortcut();
   else globalShortcut.unregisterAll();
+  globalShortcut.register('Space', () => {
+    globalShortcutSendComand('0,0,0');
+    console.log("SPACE key pressed and sent '0,0,0' command.");
+  });
 });
+
+function globalShortcutSendComand(cmd) {
+ try {
+   CNC.sendCommand(cmd, (dataReceived) => {
+     if (CNC.debug.arduino.sendCommand) { console.log(dataReceived); }
+     mainWindow.webContents.send('close-conex', dataReceived);
+   });
+  } catch (error) {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'error', buttons: ['Aceptar'],
+      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+    });
+  }
+ }
+
 function registerGlobalShortcut() {
   try {
     if (!CNC.Arduino.working) {
       CNC.configFile.read().then((file) => {
         let manalSteps = file.manalSteps;
-        function globalShortcutSendComand(cmd) {
-          CNC.sendCommand(cmd, (dataReceived) => {
-            if (CNC.debug.arduino.sendCommand) { console.log(dataReceived); }
-            mainWindow.webContents.send('close-conex', dataReceived);
-          });
-        }
         globalShortcut.register('q', () => {
           globalShortcutSendComand(`0,0,${manalSteps}`);
           console.log(`Q key pressed and sent 0,0,${manalSteps} command.`);
@@ -306,10 +319,6 @@ function registerGlobalShortcut() {
         globalShortcut.register('s', () => {
           globalShortcutSendComand(`0,${manalSteps},0`);
           console.log(`S key pressed and sent 0,${manalSteps},0 command.`);
-        });
-        globalShortcut.register('Space', () => {
-          globalShortcutSendComand('0,0,0');
-          console.log("SPACE key pressed and sent '0,0,0' command.");
         });
         //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
         //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
