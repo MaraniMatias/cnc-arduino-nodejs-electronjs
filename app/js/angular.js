@@ -63,7 +63,6 @@ angular
       }
     }
   })
-
   .directive('popupElement', function () {
     return {
       link: function (scope, element, attrs) {

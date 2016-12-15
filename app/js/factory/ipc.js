@@ -1,6 +1,6 @@
-angular.factory('ipc',  ['$rootScope','cnc',($rootScope,cnc) => {
+angular.factory('ipc',  ['$rootScope','cnc',function ($rootScope,cnc) {
   return {
-    startArd : (cmd) => {
+    startArd : function (cmd) {
       if(cmd !== null && cnc.arduino ){
         ipcRenderer.send('send-start',cmd);
         cnc.working = true;
@@ -10,7 +10,7 @@ angular.factory('ipc',  ['$rootScope','cnc',($rootScope,cnc) => {
         return false;
       }
     },
-    sendArd : (cmd,callback) => {
+    sendArd : function (cmd,callback) {
       if(cmd !== null && cnc.arduino ){
         ipcRenderer.send('send-command',cmd);
         cnc.working = true;
@@ -21,16 +21,16 @@ angular.factory('ipc',  ['$rootScope','cnc',($rootScope,cnc) => {
         return false;
       }
     },
-    on:  (eventName, callback) => {
-      ipcRenderer.on(eventName, (event, arg) => {
+    on: function  (eventName, callback) {
+      ipcRenderer.on(eventName, function (event, arg) {
         callback(event,arg);
         $rootScope.$apply();
       });
     },
-    send:  (eventName, data) => {
+    send: function (eventName, data) {
       ipcRenderer.send(eventName, data );
     },
-    sendSync: (eventName, data) => {
+    sendSync: function (eventName, data) {
       return ipcRenderer.sendSync (eventName, data );
     }
   }// return

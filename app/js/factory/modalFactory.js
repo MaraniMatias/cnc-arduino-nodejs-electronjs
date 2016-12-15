@@ -1,16 +1,16 @@
 angular
-  .factory('modalFactory', [() => {
-    return (id, clsbl) => {
-      let modal = {
+  .factory('modalFactory', [function () {
+    return function (id, clsbl) {
+      var modal = {
         $: $('#' + id).modal({ closable: clsbl || false }),
         isActive: false,
-        show: () => {
+        show: function () {
           if (!this.isActive) {
             modal.$.modal('show');
             this.isActive = true;
           }
         },
-        hide: () => {
+        hide: function () {
           modal.$.modal('hide');
           this.isActive = false;
         }

@@ -16,7 +16,7 @@ const cp = require('child_process'),
     },
     file: {},
     config: {},
-    ipc: { arduino: false, console: false, sendStart: false },
+    ipc: { arduino: false, console: true, sendStart: false },
     app: { prevent: false }
   }
   ;
@@ -141,13 +141,11 @@ function setGCode(dirfile, initialLine, cb) {
 function sendCommand(code, callback) {
   if (debug.arduino.sendCommand) { console.log(`${__filename} => sendCommand, code: ${code}`); }
   Arduino.send(code, (err, msg, data) => {
-    //callback({type: 'data',message:"message",data:{steps:['0','0','0']}});
     callback(factoryMsg(err ? 0 : data ? 4 : 3, err ? err.message : msg, data));
   });
 }
 
 function reSet(callback) {
-  //callback(factoryMsg(2, "Arduino detectado ''. Puerto: "));
   if (!Arduino.working) {
     Arduino.set((err, comName, manufacturer) => {
       if (!err) {
@@ -187,11 +185,11 @@ function start(arg, callback) {
     }).then((config) => {
       if (File.gcode.length > 0) {
         let cbAnswer = (err, msg, data) => {
-          console.log(`cbAnswer:\n\tdata: ${data},err: ${err}, msg: ${msg}`)
+          console.log(`cbAnswer: err: ${err}, msg: ${msg}`);
           let result = data.toString().split(',');
           lineRunning++;
           if (lineRunning < File.gcode.length) {
-            console.log("cbAnswer:", lineRunning, result);
+            console.log("line:", lineRunning);
             callback({ lineRunning, steps: result });
             Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
           } else {

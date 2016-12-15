@@ -270,10 +270,10 @@ Event: ‘on-ac’
 Event: ‘on-battery’
 */
 ipcMain.on('globalShortcut', (event, endable) => {
-  if (endable) registerGlobalShortcut();
-  else globalShortcut.unregisterAll();
+  if (endable) { registerGlobalShortcut(); }
+  else { globalShortcut.unregisterAll(); }
   globalShortcut.register('Space', () => {
-    globalShortcutSendComand('0,0,0,0');
+    globalShortcutSendComand('0,0,0');
     console.log("SPACE key pressed and sent '0,0,0 f:0' command.");
   });
 });

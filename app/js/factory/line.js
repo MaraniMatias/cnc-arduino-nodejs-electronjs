@@ -1,12 +1,12 @@
 /*
 xy
   steps   10000
-  advance 115.47 
+  advance 115.47
 z
   steps   2000
   advance 7.00
 */
-angular.factory('line', ['lineTable', 'config', '$rootScope', (lineTable, config, $rootScope) => {
+angular.factory('line', ['lineTable', 'config', '$rootScope', function (lineTable, config, $rootScope) {
   function toEjes(c) {
     return [
       c[0] * config.motor.xy.advance / config.motor.xy.steps,
@@ -22,13 +22,13 @@ angular.factory('line', ['lineTable', 'config', '$rootScope', (lineTable, config
     ]
   }
   return {
-    add: function (line) {
+    /*add: function (line) {
       if (lineTable.length > 10) {
         lineTable.shift();
       }
       lineTable.push(line);
       $rootScope.$apply();
-    },
+    },*/
     new: function (code, ejes, steps, travel, nro, type) {
       switch (type) { // in new css not working
         case 1: type = 'positive'; break;
@@ -56,7 +56,7 @@ angular.factory('line', ['lineTable', 'config', '$rootScope', (lineTable, config
           travel: '',
           nro: '',
           type: 'none',
-          code: `Comando manual: ${c}`,
+          code: 'Comando manual: '+c,
           steps: c.split(','),
           ejes: toEjes(c.split(','))
         }
@@ -65,19 +65,19 @@ angular.factory('line', ['lineTable', 'config', '$rootScope', (lineTable, config
           travel: '',
           nro: '',
           type: 'none',
-          code: `Comando manual: ${c} ${t}`,
+          code: 'Comando manual: '+ c +' '+ t,
           ejes: c.split(','),
           steps: toSteps(c.split(','))
         }
       } else {
         return {
-          code: `Comando manual ${t}: ${c}`,
+          code: 'Comando manual '+ t +': '+c,
           travel: '',
           nro: '',
           type: 'none'
         }
       }
-    },
+    }/*,
     addMsj: function (msg, type) {
       if (lineTable.length > 12) {
         lineTable.shift();
@@ -92,6 +92,6 @@ angular.factory('line', ['lineTable', 'config', '$rootScope', (lineTable, config
       }
       lineTable.push({ nro: '', ejes: [], type, code: msg, steps: [] });
       $rootScope.$apply();
-    }
+    }*/
   }// return
 }]);

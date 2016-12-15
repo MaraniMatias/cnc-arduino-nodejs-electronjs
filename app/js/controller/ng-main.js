@@ -29,10 +29,18 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
     }
   }
 
-  ipc.on('show-lineTable', function (event, obj) { $scope.lineTableShow = !$scope.lineTableShow; });
+  function addLine(line){
+  if ( $scope.lineTable.length > 10) {
+      $scope.lineTable.shift();
+    }
+    $scope.lineTable.push(line);
+  }
+  ipc.on('show-lineTable', function (event, obj) {
+    $scope.lineTableShow = !$scope.lineTableShow;
+  });
   ipc.send('arduino');
   ipc.on('arduino-res', function (event, obj) {
-    console.log(obj);
+    //console.log(obj);
     config = obj.config;
     notify(obj.message, obj.type);
     $scope.cnc.arduino = obj.type === 'success';
@@ -42,7 +50,11 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
   $scope.setFile = function (reSetFile) {
     notify('CNC-ino.', 'none');
     var initLine = $scope.initialLine.split(',');
-    var  initialLine = [parseInt(initLine[0]), parseInt(initLine[1]), parseInt(initLine[2])];
+    var  initialLine = [
+      parseInt(initLine[0]),
+      parseInt(initLine[1]),
+      parseInt(initLine[2])
+    ];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
   }
 
@@ -126,7 +138,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
     }
     var l = line.codeType(cmd, stepsmm);
     if (ipc.sendArd(l.steps.toString())) {
-      line.add(l);
+      addLine(l);
       $scope.comando = '';
     }
   }
@@ -135,7 +147,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
   */
   ipc.on('close-conex', function (event, obj) {
     modalProgress.hide();
-    console.log('close-conex', obj);
+    //console.log('close-conex', obj);
     ipc.send('contextmenu-enabled', false);
     ipc.send('globalShortcut', false);
     switch (obj.type) {
@@ -147,7 +159,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
       case "data":
         $scope.cnc.working = false;
         if (obj.data.steps[0] === '0' && obj.data.steps[1] === '0' && obj.data.steps[2] === '0') {
-          console.log('-->> Terminado <<--');
+          //console.log('-->> Terminado <<--');
           ipc.send('globalShortcut', true);
           ipc.send('contextmenu-enabled', true);
           notify(obj.message, 'success');
@@ -158,7 +170,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
             $scope.progressBar = 'indicating';
           }
         } else {//Pause
-          console.log('-->> Pausado <<--');
+          //console.log('-->> Pausado <<--');
           notify('Pausado en los pasos: ' + obj.data.steps, 'warning');
           $scope.progressBar = 'warning';
           cnc.pause.line = obj.data.line;
@@ -170,12 +182,12 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
         }
         break;
       case "error":
-        console.log('-->> Error <<--');
+        //console.log('-->> Error <<--');
         notify(obj.message, obj.type);
         $scope.cnc.working = false;
         break;
       default:
-        console.log('-->> Algo inesperado  <<--');
+        //console.log('-->> Algo inesperado  <<--');
         notify("Algo inesperado...", "question");
         $scope.progressBar = 'warning';
         $scope.cnc.working = false;
@@ -184,8 +196,10 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
 
   ipc.on('add-line', function (event, data) {
     ipc.send('contextmenu-enabled', false);
-    ipc.send('globalShortcut', true);
-    line.add(line.new(data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
+    ipc.send('globalShortcut', false);
+    addLine(
+     line.new(data.line.code, data.line.ejes, undefined, data.line.travel, data.nro) );
+
     notify('Trabajando con ' + data.line.code, 'info');
 
     if (data.nro && data.line.travel) {
