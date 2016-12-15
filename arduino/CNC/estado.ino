@@ -24,9 +24,7 @@ void sendData(){
   Serial.print(',');
   Serial.print(xyzp[1]);
   Serial.print(',');
-  Serial.print(xyzp[2]);
-  Serial.print(',');
-  Serial.println(xyzp[3]);
+  Serial.println(xyzp[2]);
 }
 
 void render(){

@@ -29,9 +29,9 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
     }
   }
 
-  ipc.on('show-lineTable', (event, obj) => { $scope.lineTableShow = !$scope.lineTableShow; });
+  ipc.on('show-lineTable', function (event, obj) { $scope.lineTableShow = !$scope.lineTableShow; });
   ipc.send('arduino');
-  ipc.on('arduino-res', (event, obj) => {
+  ipc.on('arduino-res', function (event, obj) {
     console.log(obj);
     config = obj.config;
     notify(obj.message, obj.type);
@@ -133,7 +133,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
   /**
   *  obj { type, message, data }
   */
-  ipc.on('close-conex', (event, obj) => {
+  ipc.on('close-conex', function (event, obj) {
     modalProgress.hide();
     console.log('close-conex', obj);
     ipc.send('contextmenu-enabled', false);
@@ -182,7 +182,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
     }
   });
 
-  ipc.on('add-line', (event, data) => {
+  ipc.on('add-line', function (event, data) {
     ipc.send('contextmenu-enabled', false);
     ipc.send('globalShortcut', true);
     line.add(line.new(data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));

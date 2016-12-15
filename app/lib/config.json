@@ -1,4 +1,7 @@
 {
+  "arduino": {
+    "version":"1.0.0"
+  },
   "feedSpeed": {
     "ignore": false,
     "value": 14
@@ -13,7 +16,7 @@
         "working": 20
       },
       "steps": 20000,
-      "time": 17
+      "time": 14
     },
     "y": {
       "advance": 126.52,
@@ -23,7 +26,7 @@
         "working": 20
       },
       "steps": 20000,
-      "time": 17
+      "time": 14
     },
     "z": {
       "advance": 14.18,

@@ -273,8 +273,8 @@ ipcMain.on('globalShortcut', (event, endable) => {
   if (endable) registerGlobalShortcut();
   else globalShortcut.unregisterAll();
   globalShortcut.register('Space', () => {
-    globalShortcutSendComand('0,0,0');
-    console.log("SPACE key pressed and sent '0,0,0' command.");
+    globalShortcutSendComand('0,0,0,0');
+    console.log("SPACE key pressed and sent '0,0,0 f:0' command.");
   });
 });
 
@@ -298,28 +298,28 @@ function registerGlobalShortcut() {
       CNC.configFile.read().then((file) => {
         let manalSteps = file.manalSteps;
         globalShortcut.register('q', () => {
-          globalShortcutSendComand(`0,0,${manalSteps}`);
-          console.log(`Q key pressed and sent 0,0,${manalSteps} command.`);
+          globalShortcutSendComand(`0,0,${manalSteps},0`);
+          console.log(`Q key pressed and sent 0,0,${manalSteps} f:0 command.`);
         });
         globalShortcut.register('e', () => {
-          globalShortcutSendComand(`0,0,-${manalSteps}`);
-          console.log(`E key pressed and sent 0,0,-${manalSteps} command.`);
+          globalShortcutSendComand(`0,0,-${manalSteps},0`);
+          console.log(`E key pressed and sent 0,0,-${manalSteps} f:0 command.`);
         });
         globalShortcut.register('d', () => {
-          globalShortcutSendComand(`-${manalSteps},0,0`);
-          console.log(`D key pressed and sent -${manalSteps},0,0 command.`);
+          globalShortcutSendComand(`-${manalSteps},0,0,0`);
+          console.log(`D key pressed and sent -${manalSteps},0,0 f:0 command.`);
         });
         globalShortcut.register('a', () => {
-          globalShortcutSendComand(`${manalSteps},0,0`);
-          console.log(`A key pressed and sent ${manalSteps},0,0 command.`);
+          globalShortcutSendComand(`${manalSteps},0,0,0`);
+          console.log(`A key pressed and sent ${manalSteps},0,0 f:0 command.`);
         });
         globalShortcut.register('w', () => {
-          globalShortcutSendComand(`0,-${manalSteps},0`);
-          console.log(`W key pressed and sent 0,-${manalSteps},0 command.`);
+          globalShortcutSendComand(`0,-${manalSteps},0,0`);
+          console.log(`W key pressed and sent 0,-${manalSteps},0 f:0 command.`);
         });
         globalShortcut.register('s', () => {
-          globalShortcutSendComand(`0,${manalSteps},0`);
-          console.log(`S key pressed and sent 0,${manalSteps},0 command.`);
+          globalShortcutSendComand(`0,${manalSteps},0,0`);
+          console.log(`S key pressed and sent 0,${manalSteps},0 f:0 command.`);
         });
         //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
         //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });

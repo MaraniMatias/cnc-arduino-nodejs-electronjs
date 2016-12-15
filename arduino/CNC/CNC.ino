@@ -7,6 +7,7 @@
 #include <math.h>
 
 // seting:START
+const String _version = "1.0.0";
 const int pinLED = 13,       // LED StatusLED indicator
     pinX[] = {0, 1, 3, 2},   // Motor pin X
     pinY[] = {4, 5, 7, 6},   // Motor pin Y
@@ -16,13 +17,13 @@ const int pinLED = 13,       // LED StatusLED indicator
 
 bool bStatusLED = true; // StatusLED indicator var
 
-long int xyzp[] = {0, 0, 0, 0},  // Steps to go
+long int xyzp[] = {0, 0, 0},  // Steps to go
     xp = 0, yp = 0, zp = 0, // Save last step used
     _delayX = 0, _delayY = 0, rx = 0, ry = 0,
     addX = 0, addY = 0, _saveAddX = 0, _saveAddY = 0; // when the angles are different from 90° or 45°
 int i = 0, inChar = 0, _time = 28;                    // Time between step //~14
 String inString = "";
-boolean start = false, pause = false;
+boolean start = false, cmd = false;
 
 void setup() {
   Serial.begin(9600);
@@ -132,38 +133,37 @@ void loop() {
   }
 
   while (Serial.available() > 0) {
-    //int
     inChar = Serial.read();
     if (inChar != ',') {
+      if (inChar == '-') { inString += '-'; }
+      if (isDigit(inChar)) { inString += (char)inChar; }
       if (inChar == 'p') {
         PauseStop();
-        pause = true;
+        cmd = true; // evita que se vuelva a mandar 0,0,0
       }
-      if (inChar == '-') {
-        inString += "-";
-      }
-      if (isDigit(inChar)) {
-        inString += (char)inChar;
+      if (inChar == 'v') { 
+        Serial.println(_version);
+        cmd = true;
       }
     } else {
-      pause = false;
-       // case 0 1 2
-      if (i < 3) {
-        xyzp[i] = inString.toInt();
-      }
+      //inChar == ','
       if (i == 3) {
         int f = inString.toInt();
         _time = f >= timeMin ? f : timeMin;
+      } else {
+        xyzp[i] = inString.toInt();
       }
       i++;
       inString = "";
+      cmd = false;
     }
-    if (pause == false && ( inChar == '\n' || inChar == ';') ){
-      i = 0;
-      inString = "";
+    if (cmd == false && ( inChar == '\n' || inChar == ';') ){
+      xyzp[i] = inString.toInt();
       render();
       start = true;
+      i = 0;
+      inString = "";
     }
-  } // leer entrada
+  } // read serial port
 
 } // loop

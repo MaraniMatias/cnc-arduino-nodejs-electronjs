@@ -10,7 +10,7 @@ const cp = require('child_process'),
   dirDefaultConfig = `${__dirname}/config.json`,
   debug = {
     arduino: {
-      start: true,
+      start: false,
       conect: false,
       sendCommand: true
     },
@@ -43,7 +43,7 @@ function getMiliSeg(config) {
 }
 
 function end() {
-  sendCommand('0,0,0', () => {
+  sendCommand('0,0,0,0', () => {
     console.log("Por cierre de programa, envio 0,0,0 para arduino");
   });
 }
@@ -86,6 +86,7 @@ function setFile(dir, initialLine, cb) {
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
           error: (child, error) => {
+            console.log(`${fileName} - ${error}`);
             cb.error(factoryMsg(0, `${fileName} - ${error}`));
             child.kill();
           },
@@ -185,28 +186,28 @@ function start(arg, callback) {
       });
     }).then((config) => {
       if (File.gcode.length > 0) {
-
-        let cbAnswer = (data) => {
+        let cbAnswer = (err, msg, data) => {
+          console.log(`cbAnswer:\n\tdata: ${data},err: ${err}, msg: ${msg}`)
           let result = data.toString().split(',');
           lineRunning++;
           if (lineRunning < File.gcode.length) {
-            if (debug.arduino.start) console.log("cbAnswer:", lineRunning, result);
+            console.log("cbAnswer:", lineRunning, result);
             callback({ lineRunning, steps: result });
             Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
           } else {
             console.log(lineRunning, "fin :D");
             lineRunning = 0;
             Arduino.close((err) => {
-              Arduino.working = false;
+            Arduino.working = false;
               callback({ lineRunning: false, steps: ['0', '0', '0'] });
             });
           }
         };
-        let cbWrite = (data) => { if (debug.arduino.start) console.log("cbWrite", lineRunning, data); }
+        let cbWrite = (err, msg, data) => { if (debug.arduino.start) console.log("cbWrite", lineRunning, data); }
 
         Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
 
-      }//  File.gcode.length > 0 
+      }//  File.gcode.length > 0
     });// then Promise
   } else {
     callback(factoryMsg(0, "Arduino trabajando. o error en comunicacion."));

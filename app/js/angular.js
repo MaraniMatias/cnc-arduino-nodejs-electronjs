@@ -8,7 +8,7 @@ angular
     pause: {
       line: 0,
       status: false,
-      steps: [0, 0, 0]
+      steps: [0, 0, 0, 0]
     },
     file: {
       //gcode : [],
@@ -46,9 +46,9 @@ angular
   .value('config', {
     "motor": {
       "xy": {
-        "time": 24,
+        "time": 15,
         "steps": 4000,
-        "advance": 29.37
+        "advance": 15.37
       },
       "z": {
         "steps": 2000,
