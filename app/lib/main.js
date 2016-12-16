@@ -7,18 +7,7 @@ const cp = require('child_process'),
     //gcode: `${__dirname}/gcode.js`,
     img2gcode: `${__dirname}/img2gcode.js`
   },
-  dirDefaultConfig = `${__dirname}/config.json`,
-  debug = {
-    arduino: {
-      start: false,
-      conect: false,
-      sendCommand: true
-    },
-    file: {},
-    config: {},
-    ipc: { arduino: false, console: true, sendStart: false },
-    app: { prevent: false }
-  }
+  dirDefaultConfig = `${__dirname}/config.json`
   ;
 
 var dirConfig = dirDefaultConfig;
@@ -35,6 +24,23 @@ var File = {
   segTotal: 0
 };
 
+/**
+ * Show consolo log
+ * 
+ * @param {any} function
+ * @param {any} value
+ * @param [log || error ] type
+ */
+function log(func, value, type) {
+  console[type || log](__filename+"\n -> " + func + ":\n*\t", value);
+}
+
+/**
+ * Get the average milliseconds between the X and Y motors in steps
+ * 
+ * @param {file config} config
+ * @returns
+ */
 function getMiliSeg(config) {
   let steps = (config.motor.x.steps + config.motor.y.steps) / 2;
   let time = (config.motor.x.time + config.motor.y.time) / 2;
@@ -42,6 +48,13 @@ function getMiliSeg(config) {
   return steps * time / advance;
 }
 
+/**
+ * Create child processes used to convert an image into g-code
+ * 
+ * @param {string} forkDir Module path
+ * @param { error:function, finished:function } cbMessage 
+ * @returns
+ */
 function childFactory(forkDir, cbMessage) {
   let fork = cp.fork(forkDir);
   fork.on('message', (m) => {
@@ -50,14 +63,17 @@ function childFactory(forkDir, cbMessage) {
   return fork;
 }
 
+/**
+ * Is img ?
+ * 
+ * @param {string} extension .png or .jpeg or .gif or .jpg
+ * @returns
+ */
 function isImg(extension) {
   switch (extension) {
     case '.png':
-      return true
     case '.jpeg':
-      return true
     case '.gif':
-      return true
     case '.jpg':
       return true
     default:
@@ -65,6 +81,14 @@ function isImg(extension) {
   }
 }
 
+/**
+ * If you receive an image it converts it into code g with the thickenings of the file config.json
+ * otherwise it passes it to 'setGCode'
+ * 
+ * @param {string} dir Path of the file
+ * @param {number[]} initialLine [0,0,0]
+ * @param {function} cb
+ */
 function setFile(dir, initialLine, cb) {
   if (dir) {
     if (typeof (dir) !== 'string') { dir = dir[0]; }
@@ -72,15 +96,15 @@ function setFile(dir, initialLine, cb) {
     let extension = path.extname(dirfile);
     let fileName = path.win32.basename(dirfile);
     if (extension === '.png' && os.platform() === 'linux') {
-      console.log("Con linux solo GIF , JPEG , JPG. lwip y electronjs en linux no se llevan :D.");
-      cb.error(factoryMsg(0, 'Por ahora solo leems GIF , JPEG , JPG'));
+      log('setFile',"With linux only GIF, JPEG, JPG. Lwip and electron js in linux are not carried: D.");
+      cb.error(factoryMsg(0, 'No podemos leer PNG. pruebe con GIF , JPEG , JPG.'));
     }
     else if (isImg(extension)) {
       cb.tick({ info: `Preparando... ${fileName}.` });
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
           error: (child, error) => {
-            console.log(`${fileName} - ${error}`);
+            log("setFile",`${fileName} - ${error}`);
             cb.error(factoryMsg(0, `${fileName} - ${error}`));
             child.kill();
           },
@@ -107,14 +131,21 @@ function setFile(dir, initialLine, cb) {
         });
       })
     } else { setGCode(dirfile, initialLine, cb); }
-  } else { cb.finished({ dir: null }); console.log('It isn\'t file.'); }
+  } else { cb.finished({ dir: null }); log("setFile",'It isn\'t file.'); }
 }
 
+/**
+ * recibe un archivo de codigo y lo prepara con la configuracion del archivo config.json
+ * 
+ * @param {string} dir Path of the file
+ * @param {number[]} initialLine [0,0,0]
+ * @param {function} cb
+ */
 function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
     File.name = path.win32.basename(dirfile);
     cb.tick(factoryMsg(3, `Preparando gcode desde ${File.name}...`));
-    console.log(`Preparando gcode desde ${File.name}...`);
+    log("setGCode",`Preparando gcode desde ${File.name}...`);
     readConfig().then((config) => {
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
@@ -128,34 +159,49 @@ function setGCode(dirfile, initialLine, cb) {
     });
   }
 }
+
 /**
- * @param  {String} code '0,0,0,14' or p or any
+ * Send command to Arduino
+ * @param  {String} code '0,0,0,14' or p or v or any
  * @param  {function} callback
  */
 function sendCommand(code, callback) {
-  if (debug.arduino.sendCommand) { console.log(`${__filename} => sendCommand, code: ${code}`); }
+  log("sendCommand",'code: '+code);
   Arduino.send(code, (err, msg, data) => {
     callback(factoryMsg(err ? 0 : data ? 4 : 3, err ? err.message : msg, data));
   });
 }
 
+/**
+ * Look for an arduino connected to the pc and informs if the connection could be made.
+ * 
+ * @param {function} callback
+ */
 function reSet(callback) {
   if (!Arduino.working) {
     Arduino.set((err, comName, manufacturer) => {
       if (!err) {
-        if (debug.arduino.conect) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
+        log('reSet',`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
         callback(factoryMsg(2, "Arduino detectado '" + manufacturer + "'. Puerto: " + comName));
       } else {
         callback(factoryMsg(comName ? 0 : 1, err && err.message || "Arduino conectado."));
-        if (debug.arduino.conect) console.warn('No Arduino.');
+        log('reSet','Arduino does not connected.','warn');
       }
     });
   } else {
     callback(factoryMsg(1, "Arduino trabajando " + Arduino.manufacturer));
-    if (debug.arduino.conect) console.log("Arduino working.");
+    log('reSet',"Arduino working.",'warn');
   }
 }
 
+/**
+ * Calculate the steps for the new line
+ * 
+ * @param {number} l line number
+ * @param {number[]} oldSteps Steps from the previous line
+ * @param {file config} config
+ * @returns number[]
+ */
 function getSteps(l, oldSteps, config) {
   let a = l !== 0 ? File.gcode[l - 1].ejes : File.gcode[l].ejes;
   let x = [0, 0, 0, 0];// [X, Y, Z, F]
@@ -167,11 +213,17 @@ function getSteps(l, oldSteps, config) {
   return x
 }
 
+/**
+ * Begins to interpret the g code
+ * 
+ * @param { follow : boolean , steps: number[] } arg : follow -> Resumes previous run
+ * @param {function} callback
+ */
 function start(arg, callback) {
-  if (debug.arduino.start) console.log(arg, "working: " + Arduino.working);
+  log('Start', arg + "working: " + Arduino.working);
   if (!Arduino.working) {
     if (!arg.follow) { lineRunning = 0; }
-    if (debug.arduino.start) console.log("lineRunning: " + lineRunning);
+    log('Start',"lineRunning: " + lineRunning);
     let fileRead = new Promise(function (resolve, reject) {
       fs.readFile(dirConfig, "utf8", function (error, data) {
         resolve(JSON.parse(data));
@@ -179,24 +231,25 @@ function start(arg, callback) {
     }).then((config) => {
       if (File.gcode.length > 0) {
         let cbAnswer = (err, msg, data) => {
-          console.log(`cbAnswer: err: ${err}, msg: ${msg}`);
+          log('Start',`cbAnswer: err: ${err}, msg: ${msg}`);
           let result = data.toString().split(',');
           lineRunning++;
           if (lineRunning < File.gcode.length) {
-            console.log("line:", lineRunning);
+            log('Start',"line:", lineRunning);
             callback({ lineRunning, steps: result });
             Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
           } else {
-            console.log(lineRunning, "fin :D");
+            log('Start',lineRunning, "fin :D");
             lineRunning = 0;
             Arduino.close((err) => {
-            Arduino.working = false;
+              Arduino.working = false;
               callback({ lineRunning: false, steps: ['0', '0', '0'] });
             });
           }
         };
-        let cbWrite = (err, msg, data) => { if (debug.arduino.start) console.log("cbWrite", lineRunning, data); }
-
+        let cbWrite = (err, msg, data) => {
+          log('Start', "cbWrite", lineRunning, data);
+        }
         Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
 
       }//  File.gcode.length > 0
@@ -206,11 +259,16 @@ function start(arg, callback) {
   }
 }
 
+/**
+ * Saves the json configuration file for the first time.
+ * 
+ * @param {string} dirUserData
+ */
 function setConfig(dirUserData) {
   let newDir = path.resolve(dirUserData, "config.json");
   fs.stat(newDir, (err, stats) => {
     if (err) {
-      console.log("File config isn't in userData.",dirUserData);
+      log("setConfig","File config isn't in userData.", dirUserData);
       fs.writeFile(newDir, JSON.stringify(require(dirConfig)), { encoding: 'utf8' }, (errW) => {
         if (errW) throw errW;
         dirConfig = newDir;
@@ -221,6 +279,12 @@ function setConfig(dirUserData) {
   })
 }
 
+/**
+ * Save a specified setting or default
+ * 
+ * @param {file config or undefined} data
+ * @param {function} cb
+ */
 function saveConfig(data, cb) {
   fs.writeFile(dirConfig, JSON.stringify(data || require(dirDefaultConfig)), { encoding: 'utf8' }, (err) => {
     if (err) throw err;
@@ -230,6 +294,11 @@ function saveConfig(data, cb) {
   });
 }
 
+/**
+ * Read configuration file from the user folder.
+ * 
+ * @returns file config
+ */
 function readConfig() {
   return new Promise(function (resolve, reject) {
     fs.readFile(dirConfig, "utf8", function (error, data) {
@@ -238,7 +307,9 @@ function readConfig() {
     });
   })
 }
+
 /**
+ * Message factory
  * 'e' -> 0, 'w' -> 1, 's' -> 2, 'i' -> 3, 'd' -> 4, 'n' -> 5
  * 
  * @param {number} type 
@@ -260,7 +331,7 @@ function factoryMsg(type, message, data) {
 }
 
 module.exports = {
-  debug,
+  log,
   File,
   start,
   setFile,

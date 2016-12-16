@@ -17,8 +17,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.5.8",
-    "vis": "~4.16.1",
-    "semantic": "semantic-ui#~2.2.4"
+    "angular": "~1.6.0",
+    "vis": "~4.17.0",
+    "semantic": "semantic-ui#~2.2.6"
   }
 }

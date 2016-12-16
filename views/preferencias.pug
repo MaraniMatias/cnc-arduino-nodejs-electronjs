@@ -33,13 +33,13 @@
               label
           .field(ng-show="!configModal.feedSpeed.ignore")
             label De Trabajo.
-            input( ng-model="configModal.toolConfig.feedrate.work" type="number" ng-min="14" ng-max="50")
-          .field(ng-show="!configModal.feedSpeed.ignore")
+            input( popup-element data-ng-popup-title="Valores entre 14 y 40." ng-model="configModal.toolConfig.feedrate.work" type="number" ng-min="14" ng-max="40")
+          .field( ng-show="!configModal.feedSpeed.ignore")
             label De Ocioso.
-            input(ng-model="configModal.toolConfig.feedrate.idle" type="number" ng-min="14" ng-max="50")
-          .field(ng-show="configModal.feedSpeed.ignore")
+            input( popup-element data-ng-popup-title="Valores entre 14 y 40." ng-model="configModal.toolConfig.feedrate.idle" type="number" min="14" max="40")
+          .field( ng-show="configModal.feedSpeed.ignore")
             label Unica.
-            input( ng-model="configModal.feedSpeed.value" type="number" ng-disabled="!configModal.feedSpeed.ignore")
+            input( popup-element data-ng-popup-title="Valores entre 14 y 40." ng-model="configModal.feedSpeed.value" ng-disabled="!configModal.feedSpeed.ignore" type="number" min="14" max="40")
 
     .ui.bottom.attached.tab.segment(data-tab='motorX' style="margin-bottom: 0px;")
       .ui.form.small

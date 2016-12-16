@@ -17,7 +17,7 @@ const dirBase = {
   ;
 app.setName('CNC-ino');
 
-// to not display the default menu to start
+// Do not display the default menu to start.
 Menu.setApplicationMenu(Menu.buildFromTemplate([]));
 
 /*
@@ -71,6 +71,9 @@ app.on('ready', () => {
     mainWindow.loadURL(dirBase.html + 'index.html');
 
     //mainWindow.on('page-title-updated',  () => { console.log('title'); });
+    /**
+     * Event that fires when the execution ends but can be stopped with the 'onbeforeunload' event in index.js.
+     */
     mainWindow.on('closed', () => {
       globalShortcut.unregisterAll();
       mainWindow = null;
@@ -91,6 +94,9 @@ app.on('ready', () => {
   }
 });//ready
 
+/*
+ * Is issued to search arduino
+ */
 ipcMain.on('arduino', (event, arg) => {
   try {
     CNC.Arduino.reSet((obj) => {
@@ -105,6 +111,9 @@ ipcMain.on('arduino', (event, arg) => {
   }
 });
 
+/*
+ * Is issued to choose a file.
+ */
 ipcMain.on('open-file', (event, data) => {
   try {
     if (!CNC.Arduino.working) {
@@ -151,6 +160,9 @@ ipcMain.on('open-file', (event, data) => {
   }
 });
 
+/**
+ * Is issued to send command
+ */
 ipcMain.on('send-command', (event, arg) => {
   try {
     CNC.sendCommand(arg, (data) => {
@@ -165,6 +177,9 @@ ipcMain.on('send-command', (event, arg) => {
   }
 });
 
+/**
+ * Is issued to send start to arduino
+ */
 ipcMain.on('send-start', (event, arg) => {
   try {
     if (!CNC.Arduino.working) {
@@ -241,7 +256,7 @@ ipcMain.on('config-save-send', (event, arg) => {
 ipcMain.on('original-values-prefs', (event, arg) => {
   try {
     dialog.showMessageBox(mainWindow, {
-      cancelId: 1, type: 'question', buttons: ['Aceptar','Canselar'],
+      cancelId: 1, type: 'question', buttons: ['Aceptar', 'Canselar'],
       title: app.getName(), message: 'Volver a los valores originales.',
       detail: 'Se perderan las configuraciones personalizadas generales y image to gcode.'
     }, (opt) => {
@@ -259,23 +274,32 @@ ipcMain.on('original-values-prefs', (event, arg) => {
   }
 });
 
+/**
+ * Disable menus.
+ */
 ipcMain.on('contextmenu-enabled', (event, arg) => {
-  //console.log('contextmenu-enabled', arg);
   event.sender.send('contextmenu-enabled-res', arg);
 });
 
+/**
+ * Is used to stop the execution of arduino when the program closes.
+ */
 ipcMain.on('close', (event, arg) => {
   console.log("Send '0,0,0' to Arduino to stop the job.");
   CNC.sendCommand('0,0,0', (data) => {
     event.returnValue = true;
   });
 });
+
 /*
 Event: ‘suspend’
 Event: ‘resume’
 Event: ‘on-ac’
 Event: ‘on-battery’
 */
+/**
+ * Settings for globalShortcut
+ */
 ipcMain.on('globalShortcut', (event, endable) => {
   if (endable) { registerGlobalShortcut(); }
   else { globalShortcut.unregisterAll(); }
@@ -286,18 +310,18 @@ ipcMain.on('globalShortcut', (event, endable) => {
 });
 
 function globalShortcutSendComand(cmd) {
- try {
-   CNC.sendCommand(cmd, (dataReceived) => {
-     if (CNC.debug.arduino.sendCommand) { console.log(dataReceived); }
-     mainWindow.webContents.send('close-conex', dataReceived);
-   });
+  try {
+    CNC.sendCommand(cmd, (dataReceived) => {
+      if (CNC.debug.arduino.sendCommand) { console.log(dataReceived); }
+      mainWindow.webContents.send('close-conex', dataReceived);
+    });
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
       title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
     });
   }
- }
+}
 
 function registerGlobalShortcut() {
   try {

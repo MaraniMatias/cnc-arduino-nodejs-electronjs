@@ -1,8 +1,11 @@
 var img2gcode = require('img2gcode');
-
+/**
+ * Interpret image to obtain g-code according to the specified configuration.
+ + Using a child process.
+ */
 process.on('message', (option) => {
   if (option.dirImg) {
-    console.log('Reading Image: ', option.dirImg);
+    console.log('img2gcode:\nReading Image: ', option.dirImg);
     img2gcode.start(option);
   }
   img2gcode.on('tick', (perc) => {

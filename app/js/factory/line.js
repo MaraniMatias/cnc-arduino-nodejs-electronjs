@@ -29,6 +29,9 @@ angular.factory('line', ['lineTable', 'config', '$rootScope', function (lineTabl
       lineTable.push(line);
       $rootScope.$apply();
     },*/
+    /**
+    * Normalizes the lines of code to show them in the table.
+    */
     new: function (code, ejes, steps, travel, nro, type) {
       switch (type) { // in new css not working
         case 1: type = 'positive'; break;
@@ -77,21 +80,6 @@ angular.factory('line', ['lineTable', 'config', '$rootScope', function (lineTabl
           type: 'none'
         }
       }
-    }/*,
-    addMsj: function (msg, type) {
-      if (lineTable.length > 12) {
-        lineTable.shift();
-      }
-      switch (type) {
-        case 1: type = 'positive'; break;
-        case 2: type = 'active'; break;
-        case 3: type = 'warning'; break;
-        case 4: type = 'negative'; break;
-        case 5: type = 'disabled'; break;
-        default: type = '';
-      }
-      lineTable.push({ nro: '', ejes: [], type, code: msg, steps: [] });
-      $rootScope.$apply();
-    }*/
+    }
   }// return
 }]);

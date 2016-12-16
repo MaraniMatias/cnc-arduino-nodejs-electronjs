@@ -7,17 +7,27 @@ var cMenu = Menu.buildFromTemplate(contextMenu);
 var mMenu = Menu.buildFromTemplate(mainMenu);
 Menu.setApplicationMenu(mMenu);
 
+/**
+ * Load context menu.
+ */
 window.addEventListener('contextmenu', (e) => {
   e.preventDefault();
   cMenu.popup(remote.getCurrentWindow());
 }, false);
 
+/**
+ * Is issued before closing the window.
+ * Call the 'close' event in the app to stop running on arduino.
+ */
 window.onbeforeunload = (e) => {
-  if( ipcRenderer.sendSync('close', null) ){
+  if (ipcRenderer.sendSync('close', null)) {
     e.returnnValue = undefined;
   }
 }
 
+/**
+ *  Serves to lock menus when arduino works.
+ */
 ipcRenderer.on('contextmenu-enabled-res', (event, enable) => {
   //let items = { main: { 0: [0, 1, 4] }, context: [0, 3] }
   let mm = mMenu.items[0].submenu.items;

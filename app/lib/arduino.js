@@ -1,14 +1,5 @@
 const
-  serialPort = require('serialport'),
-  debug = {
-    write: false,
-    sendGcode: false,
-    search: false,
-    isOpen: false,
-    comName: false,
-    send: false,
-    on: false
-  };
+  serialPort = require('serialport');
 var
   manufacturer = sp ? sp.manufacturer : "Sin Arduino.",
   comName = sp ? sp.comName : "",
@@ -40,8 +31,20 @@ var
   },
   cb = function (err, msg, data) { console.log("default:", data) }
   ;
+
 /**
- * Listado de puertos encontrados.
+ * Show consolo log
+ * 
+ * @param {any} function
+ * @param {any} value
+ * @param [log || error ] type
+ */
+function log(func, value, type) {
+  console[type || log](__filename + "\n -> " + func + ":\n*\t", value);
+}
+
+/**
+ * List of found ports.
  *
  * @param {function} callback: (ports: port[]) => void
  */
@@ -59,6 +62,11 @@ function list(callback) {
 }
 */
 
+/**
+ * Look for an arduino connected and test the connection and inform
+ * 
+ * @param {function} callback(err, port.comName, port.manufacturer) 
+ */
 function search(callback) {
   serialPort.list(function (err, ports) {
     if (err) throw new Error(err);
@@ -68,7 +76,7 @@ function search(callback) {
         answer = false;
         comName = port.comName;
         manufacturer = port.manufacturer;
-        if (debug.search) console.log(`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
+        log("search", `SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}`);
         callback(null, port.comName, port.manufacturer);
       }
     });
@@ -76,6 +84,12 @@ function search(callback) {
   });
 }
 
+/**
+ * Creates a serial port to work with arduino
+ * 
+ * @param {Path of Arduino} comName
+ * @param {function} callback
+ */
 function newArduino(comName, cb) {
   sp = new serialPort(comName, option);
   sp.on('open', onOpen);
@@ -110,14 +124,20 @@ function set(callback) {
   });
 }
 
+/**
+ * Close open connections before sending code.
+ * 
+ * @param {string} code
+ * @param {function} callback(err, msg)
+ */
 function send(code, callback) {
-  if (debug.send) console.log("send:\tCode:", code);
+  log("send", "send:\tCode: " + code);
   if (comName === "") {
     callback(new Error("Arduino no selectado."));
   } else {
     cb = callback;
     if (sp.isOpen()) {
-      if (debug.isOpen) console.log("Conexc open");
+      log("send", "Conexc open");
       sp.close((err) => {
         if (err) {
           callback(new Error('Error al cerrar el puerto.\n ' + err.message))
@@ -126,17 +146,24 @@ function send(code, callback) {
         }
       });
     } else {
-      if (debug.isOpen) console.log("Conexc No open.")
+      log("send", "Conexc No open.")
       write(code, callback);
     }
   }
 }
+
+/**
+ * Write in the port.
+ * 
+ * @param {string} code
+ * @param {function} callback(err, msg)
+ */
 function write(code, callback) {
   sp.open((err) => {
     if (err) {
       callback(err);
     } else {
-      if (debug.write) console.log("write:\tCode:", code);
+      log("write", "write:\tCode:", code);
       sp.write(new Buffer(code + '\n'), (err) => {
         if (err) {
           callback(err);
@@ -149,16 +176,23 @@ function write(code, callback) {
   });
 }
 
+/**
+ * Close open connections before sending code.
+ * 
+ * @param {string} code.
+ * @param {function} cbWrite callback Is executed when it finishes writing to the port.
+ * @param {function} cbAnswer callback Runs when Arduino answers.
+ */
 function sendGcode(code, cbWrite, cbAnswer) {
-  if (debug.sendGcode) console.log("send:\tCode:", code);
+  log("sendGcode", "send:\tCode:", code);
   if (comName === "") {
     callback(new Error("Arduino no selectado."));
   } else {
     if (sp.isOpen()) {
-      if (debug.sendGcode) console.log("Conexc open");
+      log("sendGcode", "Conexc open");
       writeGcode(code, cbWrite, cbAnswer);
     } else {
-      if (debug.sendGcode) console.log("Conexc No open.")
+      log("sendGcode", "Conexc No open.")
       sp.open((err) => {
         if (err) {
           cbWrite(err);
@@ -169,6 +203,14 @@ function sendGcode(code, cbWrite, cbAnswer) {
     }
   }
 }
+
+/**
+ * Write in the port.
+ * 
+ * @param {string} code.
+ * @param {function} cbWrite callback Is executed when it finishes writing to the port.
+ * @param {function} cbAnswer callback Runs when Arduino answers.
+ */
 function writeGcode(code, cbWrite, cbAnswer) {
   if (debug.write) console.log("write:\tCode:", code);
   cb = cbAnswer;
@@ -182,9 +224,14 @@ function writeGcode(code, cbWrite, cbAnswer) {
   });
 }
 
+/**
+ * Closes the connection with arduino.
+ * 
+ * @param {function} callback
+ */
 function close(callback) {
   if (sp.isOpen()) {
-    if (debug.sendGcode) console.log("Conexc open -> close");
+    log("close", "Conexc open -> close");
     sp.close((err) => {
       callback(err);
     });

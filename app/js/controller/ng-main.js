@@ -4,7 +4,7 @@
 angular.controller('main',
 ['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'statusBar', 'modalFactory',
 function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFactory) {
-'use strict'
+  'use strict'
   var modalProgress = modalFactory('modalProgress');
   var exceeds_x = false, exceeds_y = false;
   $scope.cnc = cnc;
@@ -13,6 +13,9 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
   $scope.statusBar = statusBar;
   $scope.initialLine = '0,0,0';
 
+  /**
+   * Definition for switching between start and end time.
+   */
   $scope.statisticHour = {
     option: true,
     label: "Hora Fin:",
@@ -29,35 +32,51 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
     }
   }
 
-  function addLine(line){
-  if ( $scope.lineTable.length > 10) {
-      $scope.lineTable.shift();
-    }
-    $scope.lineTable.push(line);
+  $scope.showPrefsImg2gcode = function () {
+    ipc.send('show-prefs', 'img2gcode');
   }
+  /**
+   *  Event called by the context menu
+   */
   ipc.on('show-lineTable', function (event, obj) {
     $scope.lineTableShow = !$scope.lineTableShow;
   });
+  /**
+   * Add up line in table.
+   */
+  function addLine(line) {
+    if ($scope.lineTable.length > 10) { $scope.lineTable.shift(); }
+    $scope.lineTable.push(line);
+  }
+
+  /**
+   * When the driver loads it asks it to look up arduino and informs.
+   * Receives the configuration saved in config.json.
+   */
   ipc.send('arduino');
   ipc.on('arduino-res', function (event, obj) {
-    //console.log(obj);
     config = obj.config;
     notify(obj.message, obj.type);
     $scope.cnc.arduino = obj.type === 'success';
     ipc.send('globalShortcut', obj.type === 'success');
   });
 
+  /**
+   * Send choose file or recalculate g code with other initial coordinates to app.
+   */
   $scope.setFile = function (reSetFile) {
     notify('CNC-ino.', 'none');
     var initLine = $scope.initialLine.split(',');
-    var  initialLine = [
+    var initialLine = [
       parseInt(initLine[0]),
       parseInt(initLine[1]),
       parseInt(initLine[2])
     ];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
   }
-
+  /**
+   * Response of the request to read file, receives the g code and important data.
+   */
   ipc.on('open-file-res', function (event, file) {
     if (file.dir) {
       exceeds_x = false; exceeds_y = false;
@@ -70,40 +89,42 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
       $scope.cnc.file.travel = file.travel;
 
       notify(file.name, 'info');
-
+      // Create the Vis DataSet to display the g-code
       viewsGCode = new vis.DataSet();
       for (let index = 0, x = file.gcode.length; index < x; index++) {
+        viewsGCode.add({ id: index, x: file.gcode[index].ejes[0], y: file.gcode[index].ejes[1], z: file.gcode[index].ejes[2] });
+        // Notices of measurement larger than the worktable.
         if (!exceeds_x && file.gcode[index].ejes[0] * file.scale > file.workpiece.x) { exceeds_x = true; }
         if (!exceeds_y && file.gcode[index].ejes[1] * file.scale > file.workpiece.y) { exceeds_y = true; }
-        viewsGCode.add({ id: index, x: file.gcode[index].ejes[0], y: file.gcode[index].ejes[1], z: file.gcode[index].ejes[2] });
       }
       drawVisualization(viewsGCode);
-    }else{ modalProgress.hide(); }
+    } else { modalProgress.hide(); }
   });
 
+  /**
+   * Send manual commands directly to arduino.
+   */
   $scope.enviarDatos = function (cmd) {
     if (ipc.sendArd(cmd)) {
       notify('Comando manual: ' + cmd, 'success');
       $scope.progressBar = 'indicating';
     }
   }
-  /*$scope.moverOrigen = function () {
-    if(ipc.sendArd('o') ){
-      notify( 'Comando mover al origen.' , 'success' );
-      $scope.progressBar = '';
-    }
-  }*/
+  /**
+   * Send 'p' to arduino.
+   */
   $scope.pausa = function () {
     $scope.cnc.time.pause = new Date();
     if (ipc.sendArd('p')) { notify('Orden de pausa', 'warning'); }
     if (cnc.file.line.run) { window.alert('No se recomienda pausar la ejecucion.'); }
   }
+  /**
+   * Send '0,0,0' to arduino.
+   */
   $scope.parar = function () {
     if (ipc.sendArd('0,0,0')) {
       $('title').text('CNC-ino');
-
       notify('Orden de parar', 'success');
-
       $scope.cnc.file.line.interpreted = 0;
       $scope.cnc.file.line.progress = 0;
       $scope.cnc.file.line.run = 0;
@@ -113,7 +134,9 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
       $scope.cnc.pause.status = false;
     }
   }
-
+  /**
+   * Builds commands from the X, Y, Z buttons.
+   */
   var stepsmm = 'steps';
   $scope.inputStepsmm = '200';
   $scope.btnStepsmm = 'Pasos';
@@ -127,7 +150,9 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
       $scope.btnStepsmm = 'Pasos';
     }
   };
-
+  /**
+   * Send orders from X, Y, Z buttons for arduino.
+   */
   $scope.moverManual = function (num, eje, sentido) {
     var cmd;
     switch (eje) {
@@ -142,8 +167,10 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
       $scope.comando = '';
     }
   }
+
   /**
-  *  obj { type, message, data }
+  * This event is triggered when you type a line in arduino to inform the result of the execution and to take necessary actions.
+  * obj { type, message, data }
   */
   ipc.on('close-conex', function (event, obj) {
     modalProgress.hide();
@@ -194,20 +221,24 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
     }
   });
 
+  /**
+   * This event is triggered when a gcode line is written in arduino to inform the state of the execution and to take necessary actions.
+   */
   ipc.on('add-line', function (event, data) {
+    // Disable command and menu keys that can interrupt execution
     ipc.send('contextmenu-enabled', false);
     ipc.send('globalShortcut', false);
-    addLine(
-     line.new(data.line.code, data.line.ejes, undefined, data.line.travel, data.nro) );
-
+    // Add up line in table.
+    addLine(line.new(data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
+    // Show info  on status bar.
     notify('Trabajando con ' + data.line.code, 'info');
 
     if (data.nro && data.line.travel) {
       $scope.cnc.Progress(data.line.travel);
       $('title').text('CNC-ino - ' + $scope.cnc.file.line.progress + "% - " + $scope.cnc.file.name);
-
+      // Sends percentage for counter in windows environment (In EletronJS app).
       ipc.send('taksBar-progress', $scope.cnc.file.line.progress / 100);
-
+      // Update end time.
       $scope.$watch('cnc.time.end', function () {
         if ($scope.statisticHour.option) {
           $scope.statisticHour.value = cnc.time.end;
@@ -216,7 +247,6 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
         }
       });
     }
-
   });
 
   $scope.start = function () {
@@ -226,13 +256,10 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
       $scope.cnc.time.start = new Date();
       $scope.cnc.time.end = new Date(new Date().getTime() + $scope.cnc.file.line.duration);
       ipc.startArd({ follow: false, steps: [0, 0, 0] });
-    } else { // pausa
+    } else { // pause
       if ($scope.cnc.file.line.run !== 0) {//si paras en linea 0 esto andaria mal
         ipc.startArd({ follow: true, steps: cnc.pause.steps });
-        // saber cunato tiempo estuvo parado y sumar
-        $scope.cnc.time.end = new Date(
-          $scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime()
-        );
+        $scope.cnc.time.end = new Date($scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime());
       } else {
         ipc.sendArd(cnc.pause.steps);
       }
@@ -243,11 +270,15 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
     $scope.progressBar = 'indicating';
   }
 
+  /**
+   *  Specifications to create the g-code view
+   */
   var viewsGCode = null, graph = null;
   function drawVisualization(data) {
+    // Notices of measurement larger than the worktable.
     if (exceeds_x) { notify('El modelo se excede en X.', 'warning'); }
     if (exceeds_y) { notify('El modelo se excede en Y.', 'warning'); }
-
+    // See grille when starting.
     if (data === undefined) {
       data = new vis.DataSet();
       data.add({ x: 0, y: 0, z: 0 });
@@ -262,21 +293,24 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
       keepAspectRatio: true,
       verticalRatio: 0.5
     };
-
     var container = document.getElementById('mygraph');
     graph = new vis.Graph3d(container, data, options);
     //graph.setCameraPosition(0.4, undefined, undefined);
+
+    // When the view is generated we remove the load dialog
     $("#loader").removeClass("active");
     modalProgress.hide();
   } drawVisualization();
 
+  /**
+   * Progress information when opening a file.
+   */
   ipc.on('open-file-tick', function (event, data) {
     modalProgress.show();
     $('#modalProgressInfo').text(data.info);
   });
-  $scope.showPrefsImg2gcode = function () {
-    ipc.send('show-prefs', 'img2gcode');
-  }
+
+
 
 }]);
 // para marcar el recorido usar dos grupos

@@ -82,7 +82,7 @@ module.exports = (grunt) => {
   grunt.loadNpmTasks('grunt-contrib-pug');
 
   //  grunt.registerTask('default', ['jshint','pug','docco-plus','shell:erun']);
-  grunt.registerTask('default', ['jshint', 'pug', 'shell:erun']);
+  grunt.registerTask('default', ['jshint', 'pug','docco-plus','shell:erun']);
 
   grunt.registerTask('test', ['jshint', 'mochaTest']);
   grunt.registerTask('run', ['pug', 'shell:erun']);

@@ -43,9 +43,15 @@ angular
     "type": "none",
     "time": 3000
   })
+// Used to save settings and calculations.
   .value('config', {
     "motor": {
-      "xy": {
+      "y": {
+        "time": 15,
+        "steps": 4000,
+        "advance": 15.37
+      },
+      "x": {
         "time": 15,
         "steps": 4000,
         "advance": 15.37
@@ -56,6 +62,10 @@ angular
       }
     }
   })
+
+/**
+ * Directives to integrate semantic-ui with angularjs
+ */
   .directive('checkbox', function () {
     return {
       link: function (scope, element, attrs) {

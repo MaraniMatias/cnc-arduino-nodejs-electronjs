@@ -1,3 +1,6 @@
+/**
+ * Displays messages in the status bar.
+ */
 angular.factory('notify', ['statusBar', function (statusBar) {
   return function (message,type) {
     statusBar.message = message;
@@ -5,4 +8,3 @@ angular.factory('notify', ['statusBar', function (statusBar) {
     //tatusBar.time = time?time:1000;
   };
 }])
-

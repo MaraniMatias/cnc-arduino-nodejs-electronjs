@@ -17,7 +17,7 @@ void MoveX(int sent){
       }else{
         xp=0;
       }
-          break;
+    break;
     case 0:
       StepX(xp);
       xyzp[0]--;
@@ -26,7 +26,7 @@ void MoveX(int sent){
       }else{
         xp=3;
       }
-          break;
+    break;
   }
 }
 void MoveY(int sent){
