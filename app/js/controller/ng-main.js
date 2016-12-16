@@ -209,8 +209,11 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
       ipc.send('taksBar-progress', $scope.cnc.file.line.progress / 100);
 
       $scope.$watch('cnc.time.end', function () {
-        if ($scope.statisticHour.option) { $scope.statisticHour.value = cnc.time.end; }
-        else { $scope.statisticHour.value = cnc.time.start; }
+        if ($scope.statisticHour.option) {
+          $scope.statisticHour.value = cnc.time.end;
+        } else {
+          $scope.statisticHour.value = cnc.time.start;
+        }
       });
     }
 

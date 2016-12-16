@@ -25,9 +25,9 @@ angular
       // this = cnc
       this.file.line.run++;
       this.file.line.progress = ((trvl * 100) / this.file.travel).toFixed(2);
-      if (this.file.line.progress > 16 || this.file.line.progress === 0) {
-        let time = new Date().getTime() - this.time.start.getTime();
-        let mileSecondsLeft = this.file.travel * time / trvl;
+      if ( trvl > 0 && this.file.line.progress > 15 ) {
+        var workTime = new Date().getTime() - this.time.start.getTime();
+        var mileSecondsLeft = this.file.travel * workTime / trvl;
         this.time.end = new Date(this.time.start.getTime() + mileSecondsLeft);
       }
     },

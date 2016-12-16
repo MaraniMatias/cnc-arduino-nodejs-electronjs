@@ -20,12 +20,13 @@ app.setName('CNC-ino');
 // to not display the default menu to start
 Menu.setApplicationMenu(Menu.buildFromTemplate([]));
 
+/*
 app.on('window-all-closed', () => {
-  CNC.end();
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
+*/
 
 var mainWindow = null;
 
@@ -73,7 +74,7 @@ app.on('ready', () => {
     mainWindow.on('closed', () => {
       globalShortcut.unregisterAll();
       mainWindow = null;
-      if (process.platform != 'darwin') {
+      if (process.platform !== 'darwin') {
         app.quit();
       }
     });
@@ -263,6 +264,12 @@ ipcMain.on('contextmenu-enabled', (event, arg) => {
   event.sender.send('contextmenu-enabled-res', arg);
 });
 
+ipcMain.on('close', (event, arg) => {
+  console.log("Send '0,0,0' to Arduino to stop the job.");
+  CNC.sendCommand('0,0,0', (data) => {
+    event.returnValue = true;
+  });
+});
 /*
 Event: ‘suspend’
 Event: ‘resume’

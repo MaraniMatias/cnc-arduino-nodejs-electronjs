@@ -33,10 +33,10 @@
               label
           .field(ng-show="!configModal.feedSpeed.ignore")
             label De Trabajo.
-            input( ng-model="configModal.toolConfig.feedrate.work" type="number" )
+            input( ng-model="configModal.toolConfig.feedrate.work" type="number" ng-min="14" ng-max="50")
           .field(ng-show="!configModal.feedSpeed.ignore")
             label De Ocioso.
-            input( ng-model="configModal.toolConfig.feedrate.idle" type="number" )
+            input(ng-model="configModal.toolConfig.feedrate.idle" type="number" ng-min="14" ng-max="50")
           .field(ng-show="configModal.feedSpeed.ignore")
             label Unica.
             input( ng-model="configModal.feedSpeed.value" type="number" ng-disabled="!configModal.feedSpeed.ignore")

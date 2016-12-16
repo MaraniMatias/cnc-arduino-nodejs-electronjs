@@ -42,12 +42,6 @@ function getMiliSeg(config) {
   return steps * time / advance;
 }
 
-function end() {
-  sendCommand('0,0,0,0', () => {
-    console.log("Por cierre de programa, envio 0,0,0 para arduino");
-  });
-}
-
 function childFactory(forkDir, cbMessage) {
   let fork = cp.fork(forkDir);
   fork.on('message', (m) => {
@@ -267,7 +261,6 @@ function factoryMsg(type, message, data) {
 
 module.exports = {
   debug,
-  end,
   File,
   start,
   setFile,

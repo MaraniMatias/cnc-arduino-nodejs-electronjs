@@ -12,6 +12,12 @@ window.addEventListener('contextmenu', (e) => {
   cMenu.popup(remote.getCurrentWindow());
 }, false);
 
+window.onbeforeunload = (e) => {
+  if( ipcRenderer.sendSync('close', null) ){
+    e.returnnValue = undefined;
+  }
+}
+
 ipcRenderer.on('contextmenu-enabled-res', (event, enable) => {
   //let items = { main: { 0: [0, 1, 4] }, context: [0, 3] }
   let mm = mMenu.items[0].submenu.items;
@@ -21,20 +27,4 @@ ipcRenderer.on('contextmenu-enabled-res', (event, enable) => {
   let cm = cMenu.items;
   cm[0].enabled = enable;
   cm[3].enabled = enable;
-
-  /*
-  let mm = mMenu.items;
-  for (let keyM in items.main) {
-    let menu = items.main[keyM];
-    if (typeof (menu) === 'object') {
-      for (let keySM in menu) {
-        let isubm = menu[keySM];
-        mm[keyM].submenu.items[isubm].enabled = !mm[keyM].submenu.items[isubm].enabled;
-      }
-    }
-  }
-  for (let i = 0, x = items.context.length; i < x; i++) {
-    cMenu.items[items.context[i]].enabled = !cMenu.items[items.context[i]].enabled;
-  }
-  */
 });

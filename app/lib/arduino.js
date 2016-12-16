@@ -1,7 +1,7 @@
 const
   serialPort = require('serialport'),
   debug = {
-    write: true,
+    write: false,
     sendGcode: false,
     search: false,
     isOpen: false,
