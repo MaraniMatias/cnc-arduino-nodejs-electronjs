@@ -1,13 +1,13 @@
 const
   serialPort = require('serialport');
 var
-  manufacturer = sp ? sp.manufacturer : "Sin Arduino.",
-  comName = sp ? sp.comName : "",
+  manufacturer = sp && sp.manufacturer || "Sin Arduino",
+  comName = sp && sp.comName || "",
   working = false,
   sp,
   workingGCode = false,
   onData = function (data) {
-    if (debug.on) console.log("Ardu. 'data':", data);
+    console.log("Ardu. 'onData':", data);
     working = false;
     if (typeof (cb) === 'function') {
       cb(null, "Respuesta Arduino: " + data, { steps: data.toString().split(',') });
@@ -15,11 +15,11 @@ var
   },
   onOpen = function (err) {
     if (err) console.log("Arduino detectado: " + manufacturer + ". No puedo abrir la conexión. Prueba con permisos de administrador (root en linux).");
-    if (debug.on) console.log("Open.");
+    console.log("onOpen.");
   },
-  onClose = function () { if (debug.on) console.log('Close.'); },
-  onError = function (err) { console.log('Error: ', err.message); },
-  onDisco = function () { if (debug.on) console.log('Disconnect.'); },
+  onClose = function () { console.log('onClose.'); },
+  onError = function (err) { console.log('onError: ', err.message); },
+  onDisco = function () { console.log('onDisconnect.'); },
   option = {
     parser: serialPort.parsers.readline('\r\n'),
     autoOpen: false,
@@ -40,7 +40,7 @@ var
  * @param [log || error ] type
  */
 function log(func, value, type) {
-  console[type || log](__filename + "\n -> " + func + ":\n*\t", value);
+  console.log(__filename + "\n -> " + func + ":\n*\t", value);
 }
 
 /**
@@ -76,7 +76,7 @@ function search(callback) {
         answer = false;
         comName = port.comName;
         manufacturer = port.manufacturer;
-        log("search", `SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}`);
+        log("search", `SerialPort:\nComName: ${port.comName}\nPnpId: ${port.pnpId}\nManufacturer: ${port.manufacturer}`);
         callback(null, port.comName, port.manufacturer);
       }
     });
@@ -110,15 +110,26 @@ function set(callback) {
     if (err) { callback(err); }
     else {
       newArduino(comName, () => {
+        // Ask for the version of the code installed in arduino.
+        cb =  (err, msg, data) => {
+          sp.close((err) => {
+            callback(err, comName, manufacturer, err ? '' : 'v'+data.steps[0])
+          });
+        };
         sp.open((err) => {
           if (err) {
             callback(new Error(process.platform !== "linux" ? "It needs to be administrator. puerto " + comName : "sudo chmod 0777 " + comName), comName, manufacturer);
           } else {
-            close((err) => {
-              callback(err, comName, manufacturer)
-            }); // sp.write(new Buffer('0,0,0,14\n'), (err) => {});
+            // sp.write(new Buffer('0,0,0,14\n'), (err) => {});
+            sp.write(new Buffer('v\n'), (err) => {
+              if (err) { if (typeof (callback) === 'function') callback(err);
+              } else {
+                working = true;
+                sp.drain();
+              }
+            });
           }
-        });
+        });// open
       });
     }
   });
@@ -133,14 +144,14 @@ function set(callback) {
 function send(code, callback) {
   log("send", "send:\tCode: " + code);
   if (comName === "") {
-    callback(new Error("Arduino no selectado."));
+    if (typeof (callback) === 'function') callback(new Error("Arduino no selectado."));
   } else {
-    cb = callback;
+    if (typeof (cb) === 'function') cb = callback;
     if (sp.isOpen()) {
       log("send", "Conexc open");
       sp.close((err) => {
         if (err) {
-          callback(new Error('Error al cerrar el puerto.\n ' + err.message))
+          if (typeof (callback) === 'function') callback(new Error('Error al cerrar el puerto.\n ' + err.message))
         } else {
           write(code, callback);
         }
@@ -161,15 +172,15 @@ function send(code, callback) {
 function write(code, callback) {
   sp.open((err) => {
     if (err) {
-      callback(err);
+      if (typeof (callback) === 'function') callback(err);
     } else {
       log("write", "write:\tCode:", code);
       sp.write(new Buffer(code + '\n'), (err) => {
         if (err) {
-          callback(err);
+          if (typeof (callback) === 'function') callback(err);
         } else {
           working = false;
-          sp.drain(callback(null, "Comando enviado: " + code));
+          if (typeof (callback) === 'function') sp.drain(callback(null, "Comando enviado: " + code));
         }
       });
     }
@@ -186,7 +197,7 @@ function write(code, callback) {
 function sendGcode(code, cbWrite, cbAnswer) {
   log("sendGcode", "send:\tCode:", code);
   if (comName === "") {
-    callback(new Error("Arduino no selectado."));
+    if (typeof (cbWrite) === 'function') cbAnswer(new Error("Arduino no selectado."));
   } else {
     if (sp.isOpen()) {
       log("sendGcode", "Conexc open");
@@ -195,7 +206,7 @@ function sendGcode(code, cbWrite, cbAnswer) {
       log("sendGcode", "Conexc No open.")
       sp.open((err) => {
         if (err) {
-          cbWrite(err);
+        if (typeof (cbWrite) === 'function') cbWrite(err);
         } else {
           writeGcode(code, cbWrite, cbAnswer);
         }
@@ -212,14 +223,14 @@ function sendGcode(code, cbWrite, cbAnswer) {
  * @param {function} cbAnswer callback Runs when Arduino answers.
  */
 function writeGcode(code, cbWrite, cbAnswer) {
-  if (debug.write) console.log("write:\tCode:", code);
-  cb = cbAnswer;
+  log("writeGcode","write:\tCode: "+code);
+  if (typeof (cbAnswer) === 'function') cb = cbAnswer;
   sp.write(new Buffer(code + '\n'), (err) => {
     if (err) {
       cbWrite(err)
     } else {
       working = false;
-      sp.drain(cbWrite(null, "Comando enviado: " + code));
+      if (typeof (cbWrite) === 'function') sp.drain(cbWrite(null, "Comando enviado: " + code));
     }
   });
 }
@@ -238,4 +249,4 @@ function close(callback) {
   }
 }
 
-module.exports = { set, send, sendGcode, close, working, manufacturer, comName }
+module.exports = { set, send, sendGcode, close, working }

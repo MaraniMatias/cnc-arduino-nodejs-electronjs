@@ -99,8 +99,8 @@ app.on('ready', () => {
  */
 ipcMain.on('arduino', (event, arg) => {
   try {
-    CNC.Arduino.reSet((obj) => {
-      if (CNC.debug.ipc.arduino) { console.log("send", 'arduino-res', obj); }
+    CNC.reSetArduino((obj) => {
+      CNC.log("send", 'arduino-res', obj);
       event.sender.send('arduino-res', obj);
     });
   } catch (error) {
@@ -117,7 +117,7 @@ ipcMain.on('arduino', (event, arg) => {
 ipcMain.on('open-file', (event, data) => {
   try {
     if (!CNC.Arduino.working) {
-      console.log("open-file", data);
+      CNC.log("open-file", data);
       globalShortcut.unregisterAll();
       event.sender.send('open-file-tick', { info: 'Abriendo archivo...' });
       CNC.setFile(
@@ -144,7 +144,7 @@ ipcMain.on('open-file', (event, data) => {
             event.sender.send('close-conex', data);
           },
           finished: (File) => {
-            console.log('File gcode loaded. and crate viwe por gcode...');
+            CNC.log("open-file", 'File gcode loaded. and crate viwe por gcode...');
             event.sender.send('open-file-res', File);
           }
         }
@@ -166,7 +166,7 @@ ipcMain.on('open-file', (event, data) => {
 ipcMain.on('send-command', (event, arg) => {
   try {
     CNC.sendCommand(arg, (data) => {
-      if (!CNC.debug.arduino.sendCommand) { console.log("sendCommand:", dataReceived); }
+      CNC.log("sendCommand:", data);
       event.sender.send('close-conex', data);
     });
   } catch (error) {
@@ -183,23 +183,23 @@ ipcMain.on('send-command', (event, arg) => {
 ipcMain.on('send-start', (event, arg) => {
   try {
     if (!CNC.Arduino.working) {
-      if (CNC.debug.ipc.sendStart) console.log('send-start', arg);
+      CNC.log("send-start", arg);
       //prevent-display-sleep
       //prevent-app-suspension
       var id = powerSaveBlocker.start('prevent-app-suspension');
-      if (CNC.debug.app.prevent) console.log('prevent-app-suspension', powerSaveBlocker.isStarted(id));
+      CNC.log('prevent-app-suspension', powerSaveBlocker.isStarted(id));
       CNC.start(arg, (data) => {
         if (data.lineRunning !== false) {
           event.sender.send('add-line', { nro: data.lineRunning, line: CNC.File.gcode[data.lineRunning] });
-          if (CNC.debug.ipc.console) console.log("I: %s - Ejes: %s - Result: %s", data.lineRunning, CNC.File.gcode[data.lineRunning].ejes, data.steps);
+          CNC.log('send-start', "I: " + data.lineRunning + " - Ejes: " + CNC.File.gcode[data.lineRunning].ejes + " - Result: " + data.steps);
         } else {
           powerSaveBlocker.stop(id);
           mainWindow.setProgressBar(0);
           event.sender.send('close-conex', { type: 'none', steps: data.steps });
-          if (CNC.debug.ipc.console) console.log("Finish.");
+          CNC.log('send-start', "Finish.");
         }
       });
-    } else { console.log('Working in other project.') }
+    } else { CNC.log('send-start', 'Working in other project.') }
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
@@ -210,16 +210,6 @@ ipcMain.on('send-start', (event, arg) => {
 
 ipcMain.on('taksBar-progress', (event, arg) => { mainWindow.setProgressBar(arg); });
 ipcMain.on('show-lineTable', (event, arg) => { event.sender.send('show-lineTable') });
-
-ipcMain.on('about', (event, arg) => {
-  event.sender.send('config-save-res', { type: 'none', message: 'CNC-ino.' });
-  console.log("App path:", app.getAppPath(), '\nRAM:', process.getProcessMemoryInfo());
-  let chosen = dialog.showMessageBox(mainWindow, {
-    cancelId: 0, type: 'info', buttons: ['Aceptar'],
-    title: 'Acerca De', message: 'CNC-ino, Arduino y NodeJS', detail: stringAbout
-  });
-  // if (chosen == 0)  mainWindow.destroy();
-});
 
 ipcMain.on('show-prefs', (event, argType) => {
   try {
@@ -285,7 +275,7 @@ ipcMain.on('contextmenu-enabled', (event, arg) => {
  * Is used to stop the execution of arduino when the program closes.
  */
 ipcMain.on('close', (event, arg) => {
-  console.log("Send '0,0,0' to Arduino to stop the job.");
+  CNC.log('close', "Send '0,0,0' to Arduino to stop the job.");
   CNC.sendCommand('0,0,0', (data) => {
     event.returnValue = true;
   });
@@ -305,16 +295,18 @@ ipcMain.on('globalShortcut', (event, endable) => {
   else { globalShortcut.unregisterAll(); }
   globalShortcut.register('Space', () => {
     globalShortcutSendComand('0,0,0');
-    console.log("SPACE key pressed and sent '0,0,0 f:0' command.");
+    if (CNC.Arduino.info.comName) CNC.log('globalShortcut', "SPACE key pressed and sent '0,0,0 f:0' command.");
   });
 });
 
 function globalShortcutSendComand(cmd) {
   try {
-    CNC.sendCommand(cmd, (dataReceived) => {
-      if (CNC.debug.arduino.sendCommand) { console.log(dataReceived); }
-      mainWindow.webContents.send('close-conex', dataReceived);
-    });
+    if (CNC.Arduino.info.comName) {
+      CNC.sendCommand(cmd, (dataReceived) => {
+        CNC.log('globalShortcut', dataReceived);
+        mainWindow.webContents.send('close-conex', dataReceived);
+      });
+    }
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
@@ -330,27 +322,27 @@ function registerGlobalShortcut() {
         let manalSteps = file.manalSteps;
         globalShortcut.register('q', () => {
           globalShortcutSendComand(`0,0,${manalSteps},0`);
-          console.log(`Q key pressed and sent 0,0,${manalSteps} f:0 command.`);
+          CNC.log('globalShortcut', `Q key pressed and sent 0,0,${manalSteps} f:0 command.`);
         });
         globalShortcut.register('e', () => {
           globalShortcutSendComand(`0,0,-${manalSteps},0`);
-          console.log(`E key pressed and sent 0,0,-${manalSteps} f:0 command.`);
+          CNC.log('globalShortcut', `E key pressed and sent 0,0,-${manalSteps} f:0 command.`);
         });
         globalShortcut.register('d', () => {
           globalShortcutSendComand(`-${manalSteps},0,0,0`);
-          console.log(`D key pressed and sent -${manalSteps},0,0 f:0 command.`);
+          CNC.log('globalShortcut', `D key pressed and sent -${manalSteps},0,0 f:0 command.`);
         });
         globalShortcut.register('a', () => {
           globalShortcutSendComand(`${manalSteps},0,0,0`);
-          console.log(`A key pressed and sent ${manalSteps},0,0 f:0 command.`);
+          CNC.log('globalShortcut', `A key pressed and sent ${manalSteps},0,0 f:0 command.`);
         });
         globalShortcut.register('w', () => {
           globalShortcutSendComand(`0,-${manalSteps},0,0`);
-          console.log(`W key pressed and sent 0,-${manalSteps},0 f:0 command.`);
+          CNC.log('globalShortcut', `W key pressed and sent 0,-${manalSteps},0 f:0 command.`);
         });
         globalShortcut.register('s', () => {
           globalShortcutSendComand(`0,${manalSteps},0,0`);
-          console.log(`S key pressed and sent 0,${manalSteps},0 f:0 command.`);
+          CNC.log('globalShortcut', `S key pressed and sent 0,${manalSteps},0 f:0 command.`);
         });
         //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });
         //globalShortcut.register('Down', () => { globalShortcutSendComand('0,-10,0'); });
@@ -366,11 +358,23 @@ function registerGlobalShortcut() {
   }
 }
 
-var stringAbout = `Proyecto de Router CNC casero con ideas, mano de obra y programacion propia dentro de lo posible.
-    \t${app.getName()} v${app.getVersion()}.
-    \tElectronJS: ${process.versions.electron}.
-    \tRenderer: ${process.versions.chrome}.
-    \tRAM: ${process.getProcessMemoryInfo().sharedBytes / 100}Mb.
-    Marani Cesar Juan.
-    Marani Matias Ezequiel.`
-  ;
+ipcMain.on('about', (event, arg) => {
+  event.sender.send('config-save-res', { type: 'none', message: 'CNC-ino.' });
+  let chosen = dialog.showMessageBox(mainWindow, {
+    cancelId: 0, type: 'info', buttons: ['Aceptar'],
+    title: 'Acerca De', message: app.getName() + ' , Arduino y NodeJS - v' + app.getVersion(), detail: stringAbout(CNC.Arduino)
+  });
+  // if (chosen == 0)  mainWindow.destroy();
+});
+var stringAbout = function (arduino) {
+  return `Proyecto de Router CNC casero con ideas, mano de obra y programacion propia.
+Use modulos como SerialPort y Framework AngularJS, VisJS, Semantic-UI.
+Información de la aplicación:
+\tElectronJS: v${process.versions.electron} - Chrome: v${process.versions.chrome}.
+\tRAM: Total: ${process.getProcessMemoryInfo().sharedBytes / 100}Mb. Solo app: ${process.getProcessMemoryInfo().privateBytes / 100}Mb.
+Información de Arduino (${CNC.Arduino.info.manufacturer}):
+\tPuerto: ${CNC.Arduino.info.comName}
+\tCodigo: ${CNC.Arduino.info.version}
+Autores:  Marani Cesar Juan, Marani Matias Ezequiel.`
+    ;
+}

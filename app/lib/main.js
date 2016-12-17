@@ -13,6 +13,11 @@ const cp = require('child_process'),
 var dirConfig = dirDefaultConfig;
 var lineRunning = 0;
 var Arduino = require("./arduino.js");
+var infoArduino = {
+  version: '',
+  comName: '',
+  manufacturer: "Sin Arduino"
+};
 var File = {
   workpiece: { x: 300, y: 400 },
   gcode: [],
@@ -31,8 +36,8 @@ var File = {
  * @param {any} value
  * @param [log || error ] type
  */
-function log(func, value, type) {
-  console[type || log](__filename+"\n -> " + func + ":\n*\t", value);
+function log(func, value) {
+  console.log(__filename + "\n -> " + func + ":\n*\t", value);
 }
 
 /**
@@ -96,7 +101,7 @@ function setFile(dir, initialLine, cb) {
     let extension = path.extname(dirfile);
     let fileName = path.win32.basename(dirfile);
     if (extension === '.png' && os.platform() === 'linux') {
-      log('setFile',"With linux only GIF, JPEG, JPG. Lwip and electron js in linux are not carried: D.");
+      log('setFile', "With linux only GIF, JPEG, JPG. Lwip and electron js in linux are not carried: D.");
       cb.error(factoryMsg(0, 'No podemos leer PNG. pruebe con GIF , JPEG , JPG.'));
     }
     else if (isImg(extension)) {
@@ -104,7 +109,7 @@ function setFile(dir, initialLine, cb) {
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
           error: (child, error) => {
-            log("setFile",`${fileName} - ${error}`);
+            log("setFile", `${fileName} - ${error}`);
             cb.error(factoryMsg(0, `${fileName} - ${error}`));
             child.kill();
           },
@@ -131,7 +136,7 @@ function setFile(dir, initialLine, cb) {
         });
       })
     } else { setGCode(dirfile, initialLine, cb); }
-  } else { cb.finished({ dir: null }); log("setFile",'It isn\'t file.'); }
+  } else { cb.finished({ dir: null }); log("setFile", 'It isn\'t file.'); }
 }
 
 /**
@@ -145,7 +150,7 @@ function setGCode(dirfile, initialLine, cb) {
   if (dirfile) {
     File.name = path.win32.basename(dirfile);
     cb.tick(factoryMsg(3, `Preparando gcode desde ${File.name}...`));
-    log("setGCode",`Preparando gcode desde ${File.name}...`);
+    log("setGCode", `Preparando gcode desde ${File.name}...`);
     readConfig().then((config) => {
       File.workpiece.x = config.workpiece.x;
       File.workpiece.y = config.workpiece.y;
@@ -166,7 +171,7 @@ function setGCode(dirfile, initialLine, cb) {
  * @param  {function} callback
  */
 function sendCommand(code, callback) {
-  log("sendCommand",'code: '+code);
+  log("sendCommand", 'code: ' + code);
   Arduino.send(code, (err, msg, data) => {
     callback(factoryMsg(err ? 0 : data ? 4 : 3, err ? err.message : msg, data));
   });
@@ -177,20 +182,26 @@ function sendCommand(code, callback) {
  * 
  * @param {function} callback
  */
-function reSet(callback) {
+function reSetArduino(callback) {
   if (!Arduino.working) {
-    Arduino.set((err, comName, manufacturer) => {
+    let infoArduinoSet =  (version, comName, manufacturer) => {
+      infoArduino.version = version;
+      infoArduino.comName = comName;
+      infoArduino.manufacturer = manufacturer;
+    };
+    Arduino.set((err, comName, manufacturer, version) => {
       if (!err) {
-        log('reSet',`SerialPort:\n\tComName: ${port.comName}\n\tPnpId: ${port.pnpId}\n\tManufacturer: ${port.manufacturer}\n`);
-        callback(factoryMsg(2, "Arduino detectado '" + manufacturer + "'. Puerto: " + comName));
+        log('reSetArduino', 'SerialPort:\n\tComName: ' + comName + '\n\tManufacturer: ' + manufacturer);
+        infoArduinoSet(version, comName, manufacturer);
+        callback(factoryMsg(2, "Arduino detectado '" + manufacturer + "'. Puerto: " + comName + " Ardu-Codigo: " + version));
       } else {
         callback(factoryMsg(comName ? 0 : 1, err && err.message || "Arduino conectado."));
-        log('reSet','Arduino does not connected.','warn');
+        log('reSetArduino', 'Arduino does not connected.');
       }
     });
   } else {
     callback(factoryMsg(1, "Arduino trabajando " + Arduino.manufacturer));
-    log('reSet',"Arduino working.",'warn');
+    log('reSetArduino', "Arduino working.");
   }
 }
 
@@ -223,7 +234,7 @@ function start(arg, callback) {
   log('Start', arg + "working: " + Arduino.working);
   if (!Arduino.working) {
     if (!arg.follow) { lineRunning = 0; }
-    log('Start',"lineRunning: " + lineRunning);
+    log('Start', "lineRunning: " + lineRunning);
     let fileRead = new Promise(function (resolve, reject) {
       fs.readFile(dirConfig, "utf8", function (error, data) {
         resolve(JSON.parse(data));
@@ -231,15 +242,15 @@ function start(arg, callback) {
     }).then((config) => {
       if (File.gcode.length > 0) {
         let cbAnswer = (err, msg, data) => {
-          log('Start',`cbAnswer: err: ${err}, msg: ${msg}`);
+          log('Start', `cbAnswer: err: ${err}, msg: ${msg}`);
           let result = data.toString().split(',');
           lineRunning++;
           if (lineRunning < File.gcode.length) {
-            log('Start',"line:", lineRunning);
+            log('Start', "line:", lineRunning);
             callback({ lineRunning, steps: result });
             Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
           } else {
-            log('Start',lineRunning, "fin :D");
+            log('Start', lineRunning, "fin :D");
             lineRunning = 0;
             Arduino.close((err) => {
               Arduino.working = false;
@@ -248,7 +259,7 @@ function start(arg, callback) {
           }
         };
         let cbWrite = (err, msg, data) => {
-          log('Start', "cbWrite", lineRunning, data);
+          log('Start', "cbWrite: \n\tLine" + lineRunning + "\n\tData: " + data);
         }
         Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
 
@@ -268,7 +279,7 @@ function setConfig(dirUserData) {
   let newDir = path.resolve(dirUserData, "config.json");
   fs.stat(newDir, (err, stats) => {
     if (err) {
-      log("setConfig","File config isn't in userData.", dirUserData);
+      log("setConfig", "File config isn't in userData: " + dirUserData);
       fs.writeFile(newDir, JSON.stringify(require(dirConfig)), { encoding: 'utf8' }, (errW) => {
         if (errW) throw errW;
         dirConfig = newDir;
@@ -335,11 +346,10 @@ module.exports = {
   File,
   start,
   setFile,
+  reSetArduino,
   Arduino: {
-    reSet,
     working: Arduino.working,
-    comName: Arduino.comName,
-    manufacturer: Arduino.manufacturer
+    info: infoArduino
   },
   sendCommand,
   configFile: {
