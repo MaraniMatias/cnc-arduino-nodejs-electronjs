@@ -174,10 +174,17 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
   */
   ipc.on('close-conex', function (event, obj) {
     modalProgress.hide();
-    //console.log('close-conex', obj);
+    console.log('close-conex', obj);
     ipc.send('contextmenu-enabled', false);
     ipc.send('globalShortcut', false);
     switch (obj.type) {
+      case "version":
+        $scope.cnc.working = false;
+        $scope.progressBar = 'success';
+        ipc.send('globalShortcut', true);
+        ipc.send('contextmenu-enabled', true);
+        notify(obj.message, "info");
+        break;
       case "info":
         $scope.cnc.working = true;
         $scope.progressBar = 'success';
@@ -205,7 +212,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
           cnc.pause.steps[1] = obj.data.steps[1];
           cnc.pause.steps[2] = obj.data.steps[2];
           cnc.pause.status = true;
-          $scope.comando = cnc.pause.steps.toString();
+          //$scope.comando = cnc.pause.steps.toString();
         }
         break;
       case "error":

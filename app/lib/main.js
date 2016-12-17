@@ -173,7 +173,12 @@ function setGCode(dirfile, initialLine, cb) {
 function sendCommand(code, callback) {
   log("sendCommand", 'code: ' + code);
   Arduino.send(code, (err, msg, data) => {
-    callback(factoryMsg(err ? 0 : data ? 4 : 3, err ? err.message : msg, data));
+    // /\d{1,}\.\d{1,}\.\d{1,}/.test(data) => 5
+    // /\d{1,},\d{1,},\d{1,}(,\d)?/.test(data) => 4
+    callback(factoryMsg(
+      err ? 0 : 
+        data ? ( /\d{1,}\.\d{1,}\.\d{1,}/.test(data) ? 'version' : 4 )
+          : 3, err ? err.message : msg, data));
   });
 }
 

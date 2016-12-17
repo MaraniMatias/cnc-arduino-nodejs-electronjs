@@ -10,7 +10,8 @@ var
     console.log("Ardu. 'onData':", data);
     working = false;
     if (typeof (cb) === 'function') {
-      cb(null, "Respuesta Arduino: " + data, { steps: data.toString().split(',') });
+      //console.log(/\d{1,}\.\d{1,}\.\d{1,}/.test(data));
+      cb(null, "Respuesta Arduino: " + data, /\d{1,}\.\d{1,}\.\d{1,}/.test(data) ? data :  { steps: data.toString().split(',') });
     }
   },
   onOpen = function (err) {
@@ -113,7 +114,7 @@ function set(callback) {
         // Ask for the version of the code installed in arduino.
         cb =  (err, msg, data) => {
           sp.close((err) => {
-            callback(err, comName, manufacturer, err ? '' : 'v'+data.steps[0])
+            callback(err, comName, manufacturer, err ? '' : 'v'+data)
           });
         };
         sp.open((err) => {
