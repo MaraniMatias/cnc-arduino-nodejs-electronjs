@@ -1,11 +1,3 @@
-/*
-xy
-  steps   10000
-  advance 115.47
-z
-  steps   2000
-  advance 7.00
-*/
 angular.factory('line', ['lineTable', 'config', '$rootScope', function (lineTable, config, $rootScope) {
   function toEjes(c) {
     return [
@@ -43,16 +35,16 @@ angular.factory('line', ['lineTable', 'config', '$rootScope', function (lineTabl
       }
       return {
         travel: travel || '',
-        steps: steps === undefined && ejes !== undefined ? toSteps(ejes) : steps,
+        steps: steps === undefined && ejes && toSteps(ejes) || steps,
         type,
-        ejes: ejes === undefined && steps !== undefined ? toEjes(steps) : ejes,
+        ejes: ejes === undefined && steps && toEjes(steps) || ejes,
         nro: nro || '',
         code
       }
-    },
+    }/*,
     /**
     * Using in ng-main for $scope.moverManual 
-    */
+    *//*
     codeType: function (c, t) {
       if (t === 'steps') {
         return {
@@ -80,6 +72,6 @@ angular.factory('line', ['lineTable', 'config', '$rootScope', function (lineTabl
           type: 'none'
         }
       }
-    }
+    }*/
   }// return
 }]);

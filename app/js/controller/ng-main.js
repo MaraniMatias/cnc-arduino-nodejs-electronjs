@@ -102,27 +102,18 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
   });
 
   /**
-   * Send manual commands directly to arduino.
-   */
-  $scope.enviarDatos = function (cmd) {
-    if (ipc.sendArd(cmd)) {
-      notify('Comando manual: ' + cmd, 'success');
-      $scope.progressBar = 'indicating';
-    }
-  }
-  /**
    * Send 'p' to arduino.
    */
   $scope.pausa = function () {
     $scope.cnc.time.pause = new Date();
-    if (ipc.sendArd('p')) { notify('Orden de pausa', 'warning'); }
+    if (ipc.sendArd({code:'p'})) { notify('Orden de pausa', 'warning'); }
     if (cnc.file.line.run) { window.alert('No se recomienda pausar la ejecucion.'); }
   }
   /**
    * Send '0,0,0' to arduino.
    */
   $scope.parar = function () {
-    if (ipc.sendArd('0,0,0')) {
+    if (ipc.sendArd({code:'0,0,0'})) {
       $('title').text('CNC-ino');
       notify('Orden de parar', 'success');
       $scope.cnc.file.line.interpreted = 0;
@@ -132,6 +123,15 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
       $scope.cnc.pause.steps[1] = 0;
       $scope.cnc.pause.steps[2] = 0;
       $scope.cnc.pause.status = false;
+    }
+  }
+  /**
+   * Send manual commands directly to arduino.
+   */
+  $scope.enviarDatos = function (cmd) {
+    if (ipc.sendArd({ code: cmd })) {
+      notify('Comando manual: ' + cmd, 'success');
+      $scope.progressBar = 'indicating';
     }
   }
   /**
@@ -154,18 +154,16 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
    * Send orders from X, Y, Z buttons for arduino.
    */
   $scope.moverManual = function (num, eje, sentido) {
-    var cmd;
+    var code;
     switch (eje) {
-      case "X": cmd = sentido + num + ",0,0"; break;
-      case "Y": cmd = "0," + sentido + num + ",0"; break;
-      case "Z": cmd = "0,0," + sentido + num; break;
-      default: cmd = "0,0,0"; break;
+      case "X": code = stepsmm === 'steps'? sentido + num : num + ",0,0"; break;
+      case "Y": code = "0,"+stepsmm === 'steps'? sentido + num : num + ",0"; break;
+      case "Z": code = "0,0,"+ stepsmm === 'steps'? sentido + num : num; break;
+      default: code = "0,0,0"; break;
     }
-    var l = line.codeType(cmd, stepsmm);
-    if (ipc.sendArd(l.steps.toString())) {
-      addLine(l);
-      $scope.comando = '';
-    }
+    // si son pasos pasan directo, los milimetros los tranformo
+    ipc.sendArd({ code: code, type: stepsmm, sentido: sentido })
+    notify("Enviado: "+code+" "+stepsmm, "question");
   }
 
   /**
@@ -268,7 +266,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
         ipc.startArd({ follow: true, steps: cnc.pause.steps });
         $scope.cnc.time.end = new Date($scope.cnc.time.end.getTime() + $scope.cnc.time.pause.getTime());
       } else {
-        ipc.sendArd(cnc.pause.steps);
+        ipc.sendArd({ code: cnc.pause.steps });
       }
       $scope.cnc.pause.status = false;
       $scope.cnc.time.pause = '--:--'

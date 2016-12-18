@@ -276,7 +276,7 @@ ipcMain.on('contextmenu-enabled', (event, arg) => {
  */
 ipcMain.on('close', (event, arg) => {
   CNC.log('close', "Send '0,0,0' to Arduino to stop the job.");
-  CNC.sendCommand('0,0,0', (data) => {
+  CNC.sendCommand({ code: '0,0,0' }, (data) => {
     event.returnValue = true;
   });
 });
@@ -302,7 +302,7 @@ ipcMain.on('globalShortcut', (event, endable) => {
 function globalShortcutSendComand(cmd) {
   try {
     if (CNC.Arduino.info.comName) {
-      CNC.sendCommand(cmd, (dataReceived) => {
+      CNC.sendCommand({ code: cmd }, (dataReceived) => {
         CNC.log('globalShortcut', dataReceived);
         mainWindow.webContents.send('close-conex', dataReceived);
       });

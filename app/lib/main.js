@@ -170,15 +170,18 @@ function setGCode(dirfile, initialLine, cb) {
  * @param  {String} code '0,0,0,14' or p or v or any
  * @param  {function} callback
  */
-function sendCommand(code, callback) {
-  log("sendCommand", 'code: ' + code);
-  Arduino.send(code, (err, msg, data) => {
-    // /\d{1,}\.\d{1,}\.\d{1,}/.test(data) => 5
-    // /\d{1,},\d{1,},\d{1,}(,\d)?/.test(data) => 4
-    callback(factoryMsg(
-      err ? 0 : 
-        data ? ( /\d{1,}\.\d{1,}\.\d{1,}/.test(data) ? 'version' : 4 )
-          : 3, err ? err.message : msg, data));
+function sendCommand(arg, callback) {
+  log("sendCommand", 'code: ' + arg.code + ' type: ' + arg.type + ' sentido: ' + arg.sentido);
+  readConfig().then((config) => {
+    Arduino.send((arg.type !== 'mm') ? arg.code : toSteps(config, arg.code, [0, 0, 0, 0], arg.sentido), (err, msg, data) => {
+      // /\d{1,}\.\d{1,}\.\d{1,}/.test(data) => 5
+      // /\d{1,},\d{1,},\d{1,}(,\d)?/.test(data) => 4
+      callback(factoryMsg(
+        err ? 0 :
+          data ? (/\d{1,}\.\d{1,}\.\d{1,}/.test(data) ? 'version' : 4)
+            : 3, err ? err.message : msg, data));
+      // code, ejes, steps
+    });
   });
 }
 
@@ -189,7 +192,7 @@ function sendCommand(code, callback) {
  */
 function reSetArduino(callback) {
   if (!Arduino.working) {
-    let infoArduinoSet =  (version, comName, manufacturer) => {
+    let infoArduinoSet = (version, comName, manufacturer) => {
       infoArduino.version = version;
       infoArduino.comName = comName;
       infoArduino.manufacturer = manufacturer;
@@ -210,23 +213,38 @@ function reSetArduino(callback) {
   }
 }
 
+
 /**
- * Calculate the steps for the new line
+ *  mm to steps
+ * 
+ * @param {file config} config
+ * @param {number[]} newMM
+ * @param {number[]} oldSteps
+ * @param {char} sentido '-' or '' or undefined
+ * @returns
+ */
+function toSteps(config, newMM, oldSteps, sentido) {
+  oldSteps = oldSteps || [0, 0, 0, 0];
+  sentido = sentido === '-' && -1 || 1;
+  let x = [0, 0, 0, 0];// [X, Y, Z, F];
+  x[0] = sentido * Math.round(newMM[0] * config.motor.x.steps / config.motor.x.advance) * config.scale - oldSteps[0];//* (config.motor.x.sense)? -1 : 1;
+  x[1] = sentido * Math.round(newMM[1] * config.motor.y.steps / config.motor.y.advance) * config.scale - oldSteps[1];//* (config.motor.y.sense)? -1 : 1;
+  x[2] = sentido * Math.round(newMM[2] * config.motor.z.steps / config.motor.z.advance) * config.scale - oldSteps[2];//* (config.motor.z.sense)? -1 : 1;
+  x[3] = config.feedSpeed.ignore && a.f || config.feedSpeed.value
+  return x
+}
+/**
+ * Calculate the steps for the new line.
  * 
  * @param {number} l line number
  * @param {number[]} oldSteps Steps from the previous line
- * @param {file config} config
  * @returns number[]
  */
 function getSteps(l, oldSteps, config) {
   let a = l !== 0 ? File.gcode[l - 1].ejes : File.gcode[l].ejes;
-  let x = [0, 0, 0, 0];// [X, Y, Z, F]
   let b = File.gcode[l].ejes;
-  x[0] = Math.round((b[0] - a[0]) * config.motor.x.steps / config.motor.x.advance) * config.scale - oldSteps[0];//* (config.motor.x.sense)? -1 : 1;
-  x[1] = Math.round((b[1] - a[1]) * config.motor.y.steps / config.motor.y.advance) * config.scale - oldSteps[1];//* (config.motor.y.sense)? -1 : 1;
-  x[2] = Math.round((b[2] - a[2]) * config.motor.z.steps / config.motor.z.advance) * config.scale - oldSteps[2];//* (config.motor.z.sense)? -1 : 1;
-  x[3] = config.feedSpeed.ignore && a.f || config.feedSpeed.value
-  return x
+  let deltaMM = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+  return toSteps(config, deltaMM, oldSteps)
 }
 
 /**
@@ -240,11 +258,7 @@ function start(arg, callback) {
   if (!Arduino.working) {
     if (!arg.follow) { lineRunning = 0; }
     log('Start', "lineRunning: " + lineRunning);
-    let fileRead = new Promise(function (resolve, reject) {
-      fs.readFile(dirConfig, "utf8", function (error, data) {
-        resolve(JSON.parse(data));
-      });
-    }).then((config) => {
+    readConfig().then((config) => {
       if (File.gcode.length > 0) {
         let cbAnswer = (err, msg, data) => {
           log('Start', `cbAnswer: err: ${err}, msg: ${msg}`);
@@ -344,6 +358,10 @@ function factoryMsg(type, message, data) {
     default: type = type; break;
   }
   return { type, message, data }
+}
+
+function factoryLine() {
+  
 }
 
 module.exports = {
