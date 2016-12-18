@@ -190,8 +190,10 @@ ipcMain.on('send-start', (event, arg) => {
       CNC.log('prevent-app-suspension', powerSaveBlocker.isStarted(id));
       CNC.start(arg, (data) => {
         if (data.lineRunning !== false) {
-          event.sender.send('add-line', { nro: data.lineRunning, line: CNC.File.gcode[data.lineRunning] });
-          CNC.log('send-start', "I: " + data.lineRunning + " - Ejes: " + CNC.File.gcode[data.lineRunning].ejes + " - Result: " + data.steps);
+          let line = CNC.File.gcode[data.lineRunning];
+              line.steps = data.steps;
+          event.sender.send('add-line', { nro: data.lineRunning, line });
+          CNC.log('send-start', "I: " + data.lineRunning + " - Ejes: " + line.ejes + " - Steps: " + line.steps);
         } else {
           powerSaveBlocker.stop(id);
           mainWindow.setProgressBar(0);

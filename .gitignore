@@ -29,6 +29,7 @@ dist/
 *.swo
 *.html
 *.asar
+*.html
 .directory
 typings.d.ts
 typings.json

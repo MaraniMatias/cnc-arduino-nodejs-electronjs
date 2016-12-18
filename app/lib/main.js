@@ -213,7 +213,6 @@ function reSetArduino(callback) {
   }
 }
 
-
 /**
  *  mm to steps
  * 
@@ -262,12 +261,12 @@ function start(arg, callback) {
       if (File.gcode.length > 0) {
         let cbAnswer = (err, msg, data) => {
           log('Start', `cbAnswer: err: ${err}, msg: ${msg}`);
-          let result = data.toString().split(',');
           lineRunning++;
           if (lineRunning < File.gcode.length) {
             log('Start', "line:", lineRunning);
-            callback({ lineRunning, steps: result });
-            Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
+            let steps = getSteps(lineRunning, arg.steps, config);
+            callback({ lineRunning, steps });
+            Arduino.sendGcode(steps, cbWrite, cbAnswer);
           } else {
             log('Start', lineRunning, "fin :D");
             lineRunning = 0;
@@ -361,8 +360,23 @@ function factoryMsg(type, message, data) {
 }
 
 function factoryLine() {
-  
+  //line.code, line.ejes, line.steps, line.travel, line.nro
+
+}/*
+function toEjes(c) {
+  return [
+    c[0] * config.motor.xy.advance / config.motor.xy.steps,
+    c[1] * config.motor.xy.advance / config.motor.xy.steps,
+    c[2] * config.motor.z.advance / config.motor.z.steps
+  ]
 }
+function toSteps(c) {
+  return [
+    Math.round(c[0] * (config.motor.xy.steps / config.motor.xy.advance)),
+    Math.round(c[1] * (config.motor.xy.steps / config.motor.xy.advance)),
+    Math.round(c[2] * (config.motor.z.steps / config.motor.z.advance))
+  ]
+}*/
 
 module.exports = {
   log,

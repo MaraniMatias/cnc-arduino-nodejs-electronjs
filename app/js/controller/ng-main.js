@@ -2,8 +2,8 @@
 /* global $ */
 /* global vis */
 angular.controller('main',
-['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'line', 'statusBar', 'modalFactory',
-function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFactory) {
+['notify', 'ipc', 'cnc', '$scope', 'lineTable', 'config', 'statusBar', 'modalFactory',
+function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) {
   'use strict'
   var modalProgress = modalFactory('modalProgress');
   var exceeds_x = false, exceeds_y = false;
@@ -155,15 +155,16 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
    */
   $scope.moverManual = function (num, eje, sentido) {
     var code;
+    num = stepsmm === 'steps' ? sentido + num : num;
     switch (eje) {
-      case "X": code = stepsmm === 'steps'? sentido + num : num + ",0,0"; break;
-      case "Y": code = "0,"+stepsmm === 'steps'? sentido + num : num + ",0"; break;
-      case "Z": code = "0,0,"+ stepsmm === 'steps'? sentido + num : num; break;
+      case "X": code = num + ",0,0"; break;
+      case "Y": code = "0," + num + ",0"; break;
+      case "Z": code = "0,0," + num; break;
       default: code = "0,0,0"; break;
     }
-    // si son pasos pasan directo, los milimetros los tranformo
-    ipc.sendArd({ code: code, type: stepsmm, sentido: sentido })
-    notify("Enviado: "+code+" "+stepsmm, "question");
+    // The mm will be converted into main.js
+    ipc.sendArd({ code: code, type: stepsmm, sentido: sentido });
+    notify("Enviado: " + code + " " + stepsmm, "question");
   }
 
   /**
@@ -182,11 +183,13 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
         ipc.send('globalShortcut', true);
         ipc.send('contextmenu-enabled', true);
         notify(obj.message, "info");
+        addLine({code:'Arduino Code v: '+obj.data });
         break;
       case "info":
         $scope.cnc.working = true;
         $scope.progressBar = 'success';
         notify(obj.message, obj.type);
+        addLine({code:obj.message});
         break;
       case "data":
         $scope.cnc.working = false;
@@ -204,6 +207,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
         } else {//Pause
           //console.log('-->> Pausado <<--');
           notify('Pausado en los pasos: ' + obj.data.steps, 'warning');
+          addLine({code:"Pausado: " + obj.data.steps});
           $scope.progressBar = 'warning';
           cnc.pause.line = obj.data.line;
           cnc.pause.steps[0] = obj.data.steps[0];
@@ -230,11 +234,18 @@ function (notify, ipc, cnc, $scope, lineTable, config, line, statusBar, modalFac
    * This event is triggered when a gcode line is written in arduino to inform the state of the execution and to take necessary actions.
    */
   ipc.on('add-line', function (event, data) {
+    console.log('add-line', data);
     // Disable command and menu keys that can interrupt execution
     ipc.send('contextmenu-enabled', false);
     ipc.send('globalShortcut', false);
     // Add up line in table.
-    addLine(line.new(data.line.code, data.line.ejes, undefined, data.line.travel, data.nro));
+    addLine({
+      code: data.line.code,
+      ejes: data.line.ejes  || [0,0,0],
+      steps :data.line.steps || [0,0,0],
+      travel: data.line.travel || '',
+      nro: data.nro  || ''
+    });
     // Show info  on status bar.
     notify('Trabajando con ' + data.line.code, 'info');
 
