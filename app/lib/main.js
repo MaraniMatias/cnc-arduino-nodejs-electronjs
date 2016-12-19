@@ -359,25 +359,6 @@ function factoryMsg(type, message, data) {
   return { type, message, data }
 }
 
-function factoryLine() {
-  //line.code, line.ejes, line.steps, line.travel, line.nro
-
-}/*
-function toEjes(c) {
-  return [
-    c[0] * config.motor.xy.advance / config.motor.xy.steps,
-    c[1] * config.motor.xy.advance / config.motor.xy.steps,
-    c[2] * config.motor.z.advance / config.motor.z.steps
-  ]
-}
-function toSteps(c) {
-  return [
-    Math.round(c[0] * (config.motor.xy.steps / config.motor.xy.advance)),
-    Math.round(c[1] * (config.motor.xy.steps / config.motor.xy.advance)),
-    Math.round(c[2] * (config.motor.z.steps / config.motor.z.advance))
-  ]
-}*/
-
 module.exports = {
   log,
   File,

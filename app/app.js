@@ -66,6 +66,7 @@ app.on('ready', () => {
       //maxHeight  :  600,
       width: 800,
       height: 600,
+      defaultFontSize: 16,
       title: fileConfig.name
     });
     mainWindow.loadURL(dirBase.html + 'index.html');
@@ -83,9 +84,15 @@ app.on('ready', () => {
     });
 
     //mainWindow.openDevTools(); // Open the devtools.
-    // Event -> unresponsive, responsive, show, hide
+    // Event -> unresponsive, responsive, show, hide, minimize, restore
     mainWindow.on('blur', () => { globalShortcut.unregisterAll(); });
-    mainWindow.on('focus', () => { if (CNC.Arduino.comName !== "") { registerGlobalShortcut(); } });
+    mainWindow.on('hide', () => { globalShortcut.unregisterAll(); });
+    mainWindow.on('minimize', () => { globalShortcut.unregisterAll(); });
+
+    mainWindow.on('focus', () => { registerGlobalShortcut(); });
+    mainWindow.on('show', () => {  registerGlobalShortcut(); });
+    mainWindow.on('restore', () => { registerGlobalShortcut(); });
+
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
       cancelId: 0, type: 'error', buttons: ['Aceptar'],
@@ -191,7 +198,7 @@ ipcMain.on('send-start', (event, arg) => {
       CNC.start(arg, (data) => {
         if (data.lineRunning !== false) {
           let line = CNC.File.gcode[data.lineRunning];
-              line.steps = data.steps;
+          line.steps = data.steps;
           event.sender.send('add-line', { nro: data.lineRunning, line });
           CNC.log('send-start', "I: " + data.lineRunning + " - Ejes: " + line.ejes + " - Steps: " + line.steps);
         } else {
@@ -319,7 +326,7 @@ function globalShortcutSendComand(cmd) {
 
 function registerGlobalShortcut() {
   try {
-    if (!CNC.Arduino.working) {
+    if (!CNC.Arduino.working && CNC.Arduino.comName) {
       CNC.configFile.read().then((file) => {
         let manalSteps = file.manalSteps;
         globalShortcut.register('q', () => {

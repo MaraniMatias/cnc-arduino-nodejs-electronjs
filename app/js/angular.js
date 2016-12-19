@@ -82,7 +82,8 @@ angular
           content: attrs.ngPopup,
           title: attrs.ngPopupTitle,
           delay: {
-            hide: 450
+            show: 150,
+            hide: 0
           }
         });
       }
