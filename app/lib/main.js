@@ -207,7 +207,7 @@ function reSetArduino(callback) {
           callback(factoryMsg(arduino.version !== config.arduino.version ? 2 : 1, "Arduino detectado '" + arduino.manufacturer + "'. Puerto: " + arduino.comName + " Ardu-Codigo: " + arduino.version));
         })
       } else {
-        callback(factoryMsg(arduino.comName !== ''? 0 : 1, err && err.message || "Arduino conectado."));
+        callback(factoryMsg(arduino ? 0 : 1, err && err.message || "Arduino conectado."));
         log('reSetArduino', err.message);
       }
     });
