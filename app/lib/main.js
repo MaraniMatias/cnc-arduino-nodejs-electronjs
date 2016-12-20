@@ -350,6 +350,12 @@ function readConfig() {
   })
 }
 
+/**
+ * Save the CNC code for Arduino.
+ *
+ * @param {String} folder dir for save CNC code.
+ * @param {function} cb
+ */
 function saveArduinoCode(dir, callback) {
   if (dir) {
     let fileDir = dir[0];
