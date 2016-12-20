@@ -9,12 +9,31 @@ module.exports = [
           ipcRenderer.send('open-file', { initialLine: undefined, fileDir: undefined });
         }
       },
+      /*
+      {
+        label: 'Arduino',
+        submenu: [
+          {
+            label: 'Buscar Arduino..',
+            click: (item, focusedWindow) => {
+              ipcRenderer.send('arduino');
+            }
+          }, {
+            label: 'Progrma para Arduino.',
+            click: (item, focusedWindow) => {
+              ipcRenderer.send('', null);
+            }
+          }
+        ]
+      },
+      */
       {
         label: 'Buscar Arduino',
         click: (item, focusedWindow) => {
           ipcRenderer.send('arduino');
         }
       },
+
       { type: 'separator' },
       {
         label: 'Ver Tabla de Lineas',
