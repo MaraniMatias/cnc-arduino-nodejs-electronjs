@@ -78,6 +78,8 @@ block contentMain
       .statusbar-item.left(ng-show="lineTable[lineTable.length-1].nro >= 0" ng-popup data-id="#statusBarLine") X: {{ lineTable[lineTable.length-1].ejes[0] | number : 2}}
       .statusbar-item.left(ng-show="lineTable[lineTable.length-1].nro >= 0" ng-popup data-id="#statusBarLine") Y: {{ lineTable[lineTable.length-1].ejes[1] | number : 2}}
       .statusbar-item.left(ng-show="lineTable[lineTable.length-1].nro >= 0" ng-popup data-id="#statusBarLine") Z: {{ lineTable[lineTable.length-1].ejes[2] | number : 2}}
+      .statusbar-item.left
+        spam
       .statusbar-item.right(ng-popup data-id="#statusBarRighr") Lineas interpetadas: {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
     //popup
     #popupLabelTool.ui.fluid.popup.hidden.huge
@@ -99,7 +101,7 @@ block contentMain
         p Z: {{ lineTable[lineTable.length-1].ejes[2] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[2]}}
     #statusBarRighr.ui.flowing.popup.hidden.huge
       .ui.header  Lineas interpetadas 
-      p {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}
+      spam {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%
   #modalProgress.ui.basic.modal
     .ui.inverted.active(style="background-color: #F0F0F0;")
       #modalProgressInfo.ui.text.loader Cargando...

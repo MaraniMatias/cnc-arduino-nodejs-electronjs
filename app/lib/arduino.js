@@ -114,7 +114,7 @@ function set(callback) {
         // Ask for the version of the code installed in arduino.
         cb =  (err, msg, data) => {
           sp.close((err) => {
-            callback(err, comName, manufacturer, err ? '' : 'v'+data)
+            callback(err, {comName, manufacturer, version : err ? '' : 'v'+data, working})
           });
         };
         sp.open((err) => {
@@ -180,7 +180,7 @@ function write(code, callback) {
         if (err) {
           if (typeof (callback) === 'function') callback(err);
         } else {
-          working = false;
+          working = true;
           if (typeof (callback) === 'function') sp.drain(callback(null, "Comando enviado: " + code));
         }
       });
@@ -230,7 +230,7 @@ function writeGcode(code, cbWrite, cbAnswer) {
     if (err) {
       cbWrite(err)
     } else {
-      working = false;
+      working = true;
       if (typeof (cbWrite) === 'function') sp.drain(cbWrite(null, "Comando enviado: " + code));
     }
   });
@@ -245,9 +245,10 @@ function close(callback) {
   if (sp.isOpen()) {
     log("close", "Conexc open -> close");
     sp.close((err) => {
+      working = false;
       callback(err);
     });
   }
 }
 
-module.exports = { set, send, sendGcode, close, working }
+module.exports = { set, send, sendGcode, close }

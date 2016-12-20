@@ -15,8 +15,7 @@
         "idle": 14,
         "working": 20
       },
-      "steps": 20000,
-      "time": 14
+      "steps": 20000
     },
     "y": {
       "advance": 126.52,
@@ -25,8 +24,7 @@
         "idle": 14,
         "working": 20
       },
-      "steps": 20000,
-      "time": 14
+      "steps": 20000
     },
     "z": {
       "advance": 14.18,

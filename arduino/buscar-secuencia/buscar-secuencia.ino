@@ -44,4 +44,3 @@ void paso(int i){
 // Eje Z
 // pines 8 9 10 11
 // secuencia 8 10 9 11
-

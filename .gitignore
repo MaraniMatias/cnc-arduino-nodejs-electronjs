@@ -33,3 +33,4 @@ dist/
 .directory
 typings.d.ts
 typings.json
+*.gcode

@@ -14,12 +14,13 @@ var dirConfig = dirDefaultConfig;
 var lineRunning = 0;
 var Arduino = require("./arduino.js");
 var infoArduino = {
+  isWorking: false, //mas adelante lo veo mejor
   version: '',
   comName: '',
   manufacturer: "Sin Arduino"
 };
 var File = {
-  workpiece: { x: 300, y: 400 },
+  workpiece: { x: 200, y: 200 },
   gcode: [],
   dir: '',
   name: 'Sin Archivo',
@@ -174,6 +175,7 @@ function sendCommand(arg, callback) {
   log("sendCommand", 'code: ' + arg.code + ' type: ' + arg.type + ' sentido: ' + arg.sentido);
   readConfig().then((config) => {
     Arduino.send((arg.type !== 'mm') ? arg.code : toSteps(config, arg.code, [0, 0, 0, 0], arg.sentido), (err, msg, data) => {
+      infoArduino.isWorking = false;
       // /\d{1,}\.\d{1,}\.\d{1,}/.test(data) => 5
       // /\d{1,},\d{1,},\d{1,}(,\d)?/.test(data) => 4
       callback(factoryMsg(
@@ -191,24 +193,26 @@ function sendCommand(arg, callback) {
  * @param {function} callback
  */
 function reSetArduino(callback) {
-  if (!Arduino.working) {
-    let infoArduinoSet = (version, comName, manufacturer) => {
-      infoArduino.version = version;
-      infoArduino.comName = comName;
-      infoArduino.manufacturer = manufacturer;
+  if (!infoArduino.isWorking) {
+    let infoArduinoSet = (arduino) => {
+      infoArduino.version = arduino.version;
+      infoArduino.comName = arduino.comName;
+      infoArduino.manufacturer = arduino.manufacturer;
     };
-    Arduino.set((err, comName, manufacturer, version) => {
+    Arduino.set((err, arduino) => {
       if (!err) {
-        log('reSetArduino', 'SerialPort:\n\tComName: ' + comName + '\n\tManufacturer: ' + manufacturer);
-        infoArduinoSet(version, comName, manufacturer);
-        callback(factoryMsg(2, "Arduino detectado '" + manufacturer + "'. Puerto: " + comName + " Ardu-Codigo: " + version));
+        log('reSetArduino', 'SerialPort:\n\tComName: ' + arduino.comName + '\n\tManufacturer: ' + arduino.manufacturer);
+        infoArduinoSet(arduino);
+        readConfig().then((config) => {
+          callback(factoryMsg(arduino.version !== config.arduino.version ? 2 : 1, "Arduino detectado '" + arduino.manufacturer + "'. Puerto: " + arduino.comName + " Ardu-Codigo: " + arduino.version));
+        })
       } else {
-        callback(factoryMsg(comName ? 0 : 1, err && err.message || "Arduino conectado."));
-        log('reSetArduino', 'Arduino does not connected.');
+        callback(factoryMsg(arduino.comName !== ''? 0 : 1, err && err.message || "Arduino conectado."));
+        log('reSetArduino', err.message);
       }
     });
   } else {
-    callback(factoryMsg(1, "Arduino trabajando " + Arduino.manufacturer));
+    callback(factoryMsg(1, "Arduino trabajando " + arduino.manufacturer));
     log('reSetArduino', "Arduino working.");
   }
 }
@@ -253,13 +257,14 @@ function getSteps(l, oldSteps, config) {
  * @param {function} callback
  */
 function start(arg, callback) {
-  log('Start', arg + "working: " + Arduino.working);
-  if (!Arduino.working) {
+  log('Start', arg + "working: " + infoArduino.isWorking);
+  if (!infoArduino.isWorking) {
     if (!arg.follow) { lineRunning = 0; }
     log('Start', "lineRunning: " + lineRunning);
     readConfig().then((config) => {
       if (File.gcode.length > 0) {
         let cbAnswer = (err, msg, data) => {
+          infoArduino.isWorking = true;
           log('Start', `cbAnswer: err: ${err}, msg: ${msg}`);
           lineRunning++;
           if (lineRunning < File.gcode.length) {
@@ -271,12 +276,13 @@ function start(arg, callback) {
             log('Start', lineRunning, "fin :D");
             lineRunning = 0;
             Arduino.close((err) => {
-              Arduino.working = false;
+              infoArduino.isWorking = false;
               callback({ lineRunning: false, steps: ['0', '0', '0'] });
             });
           }
         };
         let cbWrite = (err, msg, data) => {
+          infoArduino.isWorking = true;
           log('Start', "cbWrite: \n\tLine" + lineRunning + "\n\tData: " + data);
         }
         Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
@@ -365,10 +371,7 @@ module.exports = {
   start,
   setFile,
   reSetArduino,
-  Arduino: {
-    working: Arduino.working,
-    info: infoArduino
-  },
+  Arduino: infoArduino,
   sendCommand,
   configFile: {
     set: setConfig,
