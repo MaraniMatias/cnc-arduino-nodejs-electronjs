@@ -31,9 +31,9 @@ window.onbeforeunload = (e) => {
 ipcRenderer.on('contextmenu-enabled-res', (event, enable) => {
   //let items = { main: { 0: [0, 1, 4] }, context: [0, 3] }
   let mm = mMenu.items[0].submenu.items;
-  mm[0].enabled = enable;
-  mm[1].enabled = enable;
-  mm[4].enabled = enable;
+  mm[0].enabled = enable; // open file
+  mm[1].submenu.items[0].enabled = enable; // Arduino
+  mm[4].enabled = enable; // Preferancia
   let cm = cMenu.items;
   cm[0].enabled = enable;
   cm[3].enabled = enable;

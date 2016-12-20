@@ -123,7 +123,7 @@ ipcMain.on('open-file', (event, data) => {
       event.sender.send('open-file-tick', { info: 'Abriendo archivo...' });
       CNC.setFile(
         data.fileDir || dialog.showOpenDialog({
-          title: fileConfig.name,
+          title: app.getName(),
           filters: [
             { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg', 'png', 'nc'] },
             { name: 'G-Code', extensions: ['gcode'] },
@@ -165,7 +165,6 @@ ipcMain.on('send-command', (event, arg) => {
   try {
     CNC.sendCommand(arg, (data) => {
       CNC.log("sendCommand:", data);
-      
       event.sender.send('close-conex', data);
     });
   } catch (error) {
@@ -253,6 +252,23 @@ ipcMain.on('original-values-prefs', (event, arg) => {
   }
 });
 
+ipcMain.on('save-ArduinoCode-prefs', (event, arg) => {
+  try {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 0, type: 'info', buttons: ['Aceptar'],
+      title: app.getName(), message: 'Guardar Codigo para Arduino.',
+      detail: 'Elija la ubicacion del codigo para después abrir con IDE de Arduino y grabarlo en Arduino.'
+    });
+    CNC.saveArduinoCode(dialog.showOpenDialog({
+      title: app.getName() + ' - Elejir una ubicacion.', properties: ['openDirectory']
+    }), (msg) => {
+      event.sender.send('config-save-res', msg);
+    })
+  } catch (error) {
+    tryCatch(error);
+  }
+});
+
 /**
  * Disable menus.
  */
@@ -282,10 +298,12 @@ Event: ‘on-battery’
 ipcMain.on('globalShortcut', (event, endable) => {
   if (endable) { registerGlobalShortcut(); }
   else { globalShortcut.unregisterAll(); }
-  globalShortcut.register('Space', () => {
-    globalShortcutSendComand('0,0,0');
-    if (CNC.Arduino.comName) CNC.log('globalShortcut', "SPACE key pressed and sent '0,0,0 f:0' command.");
-  });
+  if (CNC.Arduino.comName) {
+    globalShortcut.register('Space', () => {
+      globalShortcutSendComand('0,0,0');
+      CNC.log('globalShortcut', "SPACE key pressed and sent '0,0,0 f:0' command.");
+    });
+  }
 });
 
 function globalShortcutSendComand(cmd) {
@@ -342,7 +360,7 @@ function registerGlobalShortcut() {
 }
 
 function tryCatch(error) {
-  console.error('tryCatch:\n',error);
+  console.error('tryCatch:\n', error);
   dialog.showMessageBox(mainWindow, {
     cancelId: 0, type: 'error', buttons: ['Aceptar'],
     title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`

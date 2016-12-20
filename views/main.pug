@@ -96,9 +96,10 @@ block contentMain
     #statusBarLine.ui.flowing.popup.hidden.huge
       .ui.header Linea: {{lineTable[lineTable.length-1].nro}} - {{lineTable[lineTable.length-1].code}}
       .ui.content
-        p X: {{ lineTable[lineTable.length-1].ejes[0] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[0]}}
-        p Y: {{ lineTable[lineTable.length-1].ejes[1] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[1]}}
-        p Z: {{ lineTable[lineTable.length-1].ejes[2] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[2]}}
+        p(ng-show="lineTable[lineTable.length-1].steps[0]>0") X: {{ lineTable[lineTable.length-1].ejes[0] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[0]}}
+        p(ng-show="lineTable[lineTable.length-1].steps[1]>0") Y: {{ lineTable[lineTable.length-1].ejes[1] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[1]}}
+        p(ng-show="lineTable[lineTable.length-1].steps[2]>0") Z: {{ lineTable[lineTable.length-1].ejes[2] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[2]}}
+        p(ng-show="lineTable[lineTable.length-1].steps[3]>0") F: {{ lineTable[lineTable.length-1].ejes[3] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[3]}}
     #statusBarRighr.ui.flowing.popup.hidden.huge
       .ui.header  Lineas interpetadas 
       spam {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%

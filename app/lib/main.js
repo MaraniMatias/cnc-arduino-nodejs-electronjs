@@ -7,7 +7,11 @@ const cp = require('child_process'),
     //gcode: `${__dirname}/gcode.js`,
     img2gcode: `${__dirname}/img2gcode.js`
   },
-  dirDefaultConfig = `${__dirname}/config.json`
+  dirDefaultConfig = `${__dirname}/config.json`,
+  ArduinoCode = {
+    dir: path.resolve(path.join(__dirname, '../arduino', '/CNCino')),
+    file: ['CNCino.ino', 'mover.ino', 'estado.ino']
+  }
   ;
 
 var dirConfig = dirDefaultConfig;
@@ -343,6 +347,21 @@ function readConfig() {
   })
 }
 
+function saveArduinoCode(dir, callback) {
+  if (dir) {
+    let fileDir = dir[0];
+  fs.mkdir(path.resolve(path.join(fileDir, '/CNCino')), () => {
+    ArduinoCode.file.forEach(function (file) {
+      let from = path.resolve(path.join(__dirname, '../arduino', '/CNCino', file)),
+        to = path.resolve(path.join(fileDir, '/CNCino', file));
+      console.log('Saving from', from, 'to', to);
+      fs.createReadStream(from).pipe(fs.createWriteStream(to));
+    }, this);
+    callback(factoryMsg(2, 'Grabe en Arduino el progrma guardado en ' + fileDir, fileDir));
+  })
+  }
+}
+
 /**
  * Message factory
  * 'e' -> 0, 'w' -> 1, 's' -> 2, 'i' -> 3, 'd' -> 4, 'n' -> 5
@@ -373,6 +392,7 @@ module.exports = {
   reSetArduino,
   Arduino: infoArduino,
   sendCommand,
+  saveArduinoCode,
   configFile: {
     set: setConfig,
     dir: dirConfig,
