@@ -85,9 +85,9 @@ function isImg(extension) {
     case '.jpeg':
     case '.gif':
     case '.jpg':
-      return true
+      return true;
     default:
-      return false
+      return false;
   }
 }
 
@@ -108,6 +108,9 @@ function setFile(dir, initialLine, cb) {
     if (extension === '.png' && os.platform() === 'linux') {
       log('setFile', "With linux only GIF, JPEG, JPG. Lwip and electron js in linux are not carried: D.");
       cb.error(factoryMsg(0, 'No podemos leer PNG. pruebe con GIF , JPEG , JPG.'));
+    }
+    if (extension === '.bmp') {
+      cb.error(factoryMsg(0, 'No podemos leer BMP. pruebe con GIF , JPEG , JPG.'));
     }
     else if (isImg(extension)) {
       cb.tick({ info: `Preparando... ${fileName}.` });
