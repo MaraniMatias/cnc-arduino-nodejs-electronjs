@@ -35,8 +35,8 @@ block contentMain
                   thead
                   tbody
                     tr( ng-repeat="line in lineTable" ng-class="line.type" style="padding-bottom: 0px; padding-top: 0px;")
-                      td.collapsing {{line.nro}}
-                      td {{line.code}}
+                      td.collapsing(style="padding-left: 1px; padding-right: 1px") {{line.nro}}
+                      td(style="padding-left: 1px; padding-right: 1px") {{line.code}}
           .six.wide.column(style="padding-left: 3px;")
             .ui.segment.center.aligned(ng-click="statisticHour.click()" style="padding-bottom: 12px; padding-top: 12px; cursor: pointer;")
               .ui.statistic.small

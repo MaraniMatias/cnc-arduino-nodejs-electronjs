@@ -65,7 +65,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
    * Send choose file or recalculate g code with other initial coordinates to app.
    */
   $scope.setFile = function (reSetFile) {
-    notify('CNC-ino.', 'none');
+    notify('CNCino.', 'none');
     var initLine = $scope.initialLine.split(',');
     var initialLine = [
       parseInt(initLine[0]),
@@ -81,7 +81,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
     if (file.dir) {
       exceeds_x = false; exceeds_y = false;
       //console.log(file)
-      $('title').text('CNC-ino - ' + file.name);
+      $('title').text('CNCino - ' + file.name);
       $scope.cnc.file.name = file.name;
       $scope.cnc.file.dir = file.dir;
       $scope.cnc.file.line.total = file.lines;
@@ -114,7 +114,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
    */
   $scope.parar = function () {
     if (ipc.sendArd({code:'0,0,0'})) {
-      $('title').text('CNC-ino');
+      $('title').text('CNCino');
       notify('Orden de parar', 'success');
       $scope.cnc.file.line.interpreted = 0;
       $scope.cnc.file.line.progress = 0;
@@ -200,7 +200,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
           notify(obj.message, 'success');
           if (obj.data.line) {
             $scope.progressBar = 'success';
-            $('title').text('CNC-ino' + $scope.cnc.file.name ? ' - ' + $scope.cnc.file.name : '');
+            $('title').text('CNCino' + $scope.cnc.file.name ? ' - ' + $scope.cnc.file.name : '');
           } else {
             $scope.progressBar = 'indicating';
           }
@@ -251,7 +251,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
 
     if (data.nro && data.line.travel) {
       $scope.cnc.Progress(data.line.travel);
-      $('title').text('CNC-ino - ' + $scope.cnc.file.line.progress + "% - " + $scope.cnc.file.name);
+      $('title').text('CNCino - ' + $scope.cnc.file.line.progress + "% - " + $scope.cnc.file.name);
       // Sends percentage for counter in windows environment (In EletronJS app).
       ipc.send('taksBar-progress', $scope.cnc.file.line.progress / 100);
       // Update end time.

@@ -39,7 +39,7 @@ angular
   })
   .value('lineTable', [])
   .value('statusBar', {
-    "message": "CNC-ino.",
+    "message": "CNCino.",
     "type": "none",
     "time": 3000
   })

@@ -15,7 +15,7 @@ const dirBase = {
   powerSaveBlocker = electron.powerSaveBlocker,
   globalShortcut = electron.globalShortcut
   ;
-app.setName('CNC-ino');
+app.setName(fileConfig.productName);
 
 // Do not display the default menu to start.
 Menu.setApplicationMenu(Menu.buildFromTemplate([]));
