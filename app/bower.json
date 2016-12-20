@@ -1,7 +1,7 @@
 {
   "name": "router-cnc-nodejs-arduino",
   "description": "cnc realizado con nodejs express.io serialport arduino",
-  "main": "index.js",
+  "main": "",
   "authors": [
     "Marani Matias Ezequiel"
   ],
@@ -17,8 +17,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "1.5.7",
-    "vis": "^4.16.1",
-    "semantic": "semantic-ui#^2.2.2"
+    "angular": "~1.6.0",
+    "vis": "~4.17.0",
+    "semantic": "semantic-ui#~2.2.6"
   }
 }

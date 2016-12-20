@@ -1,38 +1,28 @@
 /* global angular */
 /* global $ */
-angular.controller('prefs',
-[ 'notify','ipc','cnc','$scope','lineTable','config','line',
-( notify,ipc,cnc,$scope,lineTable,config,line) => {
+angular.controller('modalprefs',
+['notify', 'ipc', '$scope', 'modalFactory',
+function (notify, ipc, $scope, modalFactory) {
 
-  var modal = { 
-    $: $('.ui.modal').modal({closable  : false}),
-    isActive:false,
-    show:()=>{
-      modal.$.modal('show');
-      this.isActive=true;
-    },
-    hide:()=>{
-      modal.$.modal('hide');
-      this.isActive=false;
-    }
-  };
-  
-  ipc.on('show-prefs-res', (event, config) => {
-    if( modal.isActive ){  modal.hide();  }
-    else{  modal.show();  }
-    $scope.configModal = config ;
+  var modal = modalFactory('modalprefs');
+  /**
+   *  Receive the configuration file and show the modal.
+   */
+  ipc.on('show-prefs-general-res', function (event, argConfig) {
+    if (modal.isActive) { modal.hide(); }
+    else { modal.show(); }
+    $scope.configModal = argConfig;
   });
-  
-  $scope.cancel = () => { modal.hide(); }
-  $scope.save = () => {
-    modal.hide();
-    ipc.send('config-save-send', $scope.configModal);
-  }
-
-  ipc.on('config-save-res', (event, config) => {
-    if(config.file){ $scope.configModal = config.file; }
-    if(config.message){ notify( config.message, config.type ); }
+  // Button actions
+  $scope.cancel = function () { modal.hide(); }
+  $scope.save = function () { ipc.send('config-save-send', $scope.configModal); }
+  /**
+   * 'Config-save-send' response.
+   */
+  ipc.on('config-save-res', function (event, config) {
+    if (config.file) { $scope.configModal = config.file; }
+    if (config.message) { notify(config.message, config.type); }
     modal.hide();
   });
-    
+
 }]);

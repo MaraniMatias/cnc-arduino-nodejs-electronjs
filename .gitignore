@@ -9,12 +9,18 @@ lib-cov
 coverage
 .grunt
 .lock-wscript
+<<<<<<< HEAD
 #.vscode/
+=======
+build/Release
+build/
+.vscode/
+>>>>>>> dev
 app/node_modules/
 node_modules/
 typings/
 app/components/
-*.png
+#*.png
 *.svg
 *.tap
 *.old.*
@@ -22,3 +28,14 @@ dist/
 old/
 docs/
 g-code/**/*
+dist/
+*.swp
+*.swi
+*.swo
+*.html
+*.asar
+*.html
+.directory
+typings.d.ts
+typings.json
+*.gcode

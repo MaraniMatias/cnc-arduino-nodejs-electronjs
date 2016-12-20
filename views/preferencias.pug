@@ -1,0 +1,92 @@
+#modalprefs.ui.modal.small(ng-controller="modalprefs" style='-webkit-user-select: none;')
+  //.header.small Header
+  .content
+    .ui.top.attached.tabular.menu.four.item
+      a.active.item(data-tab='setting') Generales
+      a.item(data-tab='motorX') Motor X
+      a.item(data-tab='motorY') Motor Y
+      a.item(data-tab='motorZ') Motor Z
+
+    .ui.bottom.attached.active.tab.segment(data-tab='setting' style="margin-bottom: 0px;")
+      .ui.form.small
+        .two.fields
+          .field
+            label Escala:
+            input(type='number' ng-model="configModal.scale" )
+          .field
+            label Movimiento manual (Pasos):
+            input(type='number' ng-model="configModal.manalSteps" )
+        h4.ui.dividing.header(style="margin-top: 10px;margin-bottom: 10px;") Medidas de la mesa de trabajo.
+        .two.fields
+          .field
+            label X (mm).
+            input( ng-model="configModal.workpiece.x" type="number")
+          .field
+            label Y (mm).
+            input( ng-model="configModal.workpiece.y" type="number")
+        h4.ui.dividing.header(style="margin-top: 10px;margin-bottom: 10px;") Velocidad de avance mm por minuto.
+        .fields(ng-class="{ three : !configModal.feedSpeed.ignore , two : configModal.feedSpeed.ignore }")
+          .field
+            label Ignorar Velocidad.
+            .ui.toggle.checkbox
+              input(checkbox type="checkbox" ng-model="configModal.feedSpeed.ignore")
+              label
+          .field(ng-show="!configModal.feedSpeed.ignore")
+            label De Trabajo.
+            input( popup-element data-ng-popup-title="Valores entre 14 y 40." ng-model="configModal.toolConfig.feedrate.work" type="number" ng-min="14" ng-max="40")
+          .field( ng-show="!configModal.feedSpeed.ignore")
+            label De Ocioso.
+            input( popup-element data-ng-popup-title="Valores entre 14 y 40." ng-model="configModal.toolConfig.feedrate.idle" type="number" min="14" max="40")
+          .field( ng-show="configModal.feedSpeed.ignore")
+            label Unica.
+            input( popup-element data-ng-popup-title="Valores entre 14 y 40." ng-model="configModal.feedSpeed.value" ng-disabled="!configModal.feedSpeed.ignore" type="number" min="14" max="40")
+
+    .ui.bottom.attached.tab.segment(data-tab='motorX' style="margin-bottom: 0px;")
+      .ui.form.small
+        h4.ui.dividing.header Milimetros por pasos.
+        .two.fields
+          .field
+            label mm.
+            input( ng-model="configModal.motor.x.advance" type="number")
+          .field
+            label Pasos.
+            input( ng-model="configModal.motor.x.steps" type="number")
+        .field
+          .ui.toggle.checkbox
+            input(checkbox type="checkbox" ng-model="configModal.motor.x.sense")
+            label Sentido Invertido.
+        //label Sacar de mm/min y el avance {{configModal.motor.x.time}}
+
+    .ui.bottom.attached.tab.segment(data-tab='motorY' style="margin-bottom: 0px;")
+      .ui.form.small
+        h4.ui.dividing.header Milimetros por pasos.
+        .two.fields
+          .field
+            label mm.
+            input( ng-model="configModal.motor.y.advance" type="number")
+          .field
+            label Pasos.
+            input( ng-model="configModal.motor.y.steps" type="number")
+        .field
+          .ui.toggle.checkbox
+            input(checkbox type="checkbox" ng-model="configModal.motor.y.sense")
+            label Sentido Invertido.
+        //label Sacar de mm/min y el avance {{configModal.motor.y.time}}
+
+    .ui.bottom.attached.tab.segment(data-tab='motorZ')
+      .ui.form.small
+        h4.ui.dividing.header Milimetros por pasos.
+        .two.fields
+          .field
+            label mm.
+            input( ng-model="configModal.motor.z.advance" type="number")
+          .field
+            label Pasos.
+            input( ng-model="configModal.motor.z.steps" type="number")
+        .field
+          .ui.toggle.checkbox
+            input(checkbox type="checkbox" ng-model="configModal.motor.z.sense")
+            label Sentido Invertido.
+  .actions
+    button.ui.approve.button.primary( ng-click='save()' ) Guardar
+    button.ui.cancel.button( ng-click='cancel()' ) Cancelar

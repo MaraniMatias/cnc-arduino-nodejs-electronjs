@@ -1,1 +1,57 @@
-{"manalSteps":5,"motor":{"x":{"advance":29.3,"sense":false,"speed":{"idle":4,"working":4},"steps":4000,"time":22},"y":{"advance":29.3,"sense":false,"speed":{"idle":4,"working":4},"steps":4000,"time":22},"z":{"advance":14.18,"sense":false,"speed":{"idle":1000,"working":1000},"steps":2000}},"scale":1,"workpiece":{"x":200,"y":200}}
+{
+  "arduino": {
+    "version":"1.0.0"
+  },
+  "feedSpeed": {
+    "ignore": false,
+    "value": 14
+  },
+  "manalSteps": 5,
+  "motor": {
+    "x": {
+      "advance": 126.52,
+      "sense": false,
+      "speed": {
+        "idle": 14,
+        "working": 20
+      },
+      "steps": 20000
+    },
+    "y": {
+      "advance": 126.52,
+      "sense": false,
+      "speed": {
+        "idle": 14,
+        "working": 20
+      },
+      "steps": 20000
+    },
+    "z": {
+      "advance": 14.18,
+      "sense": false,
+      "speed": {
+        "idle": 17,
+        "working": 20
+      },
+      "steps": 2000
+    }
+  },
+  "scale": 1,
+  "toolConfig": {
+    "heightImage":true,
+    "blackZ": -1,
+    "deepStep": -0.23,
+    "feedrate": {
+      "idle": 15,
+      "work": 30
+    },
+    "safeZ": 1,
+    "scaleAxes": 500,
+    "toolDiameter": 3,
+    "whiteZ": 0
+  },
+  "workpiece": {
+    "x": 200,
+    "y": 200
+  }
+}
