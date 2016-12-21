@@ -208,7 +208,7 @@ ipcMain.on('show-lineTable', (event, arg) => { event.sender.send('show-lineTable
 ipcMain.on('show-prefs', (event, argType) => {
   try {
     if (!CNC.Arduino.isWorking) {
-      event.sender.send('config-save-res', { type: 'none', message: 'CNC-ino.' });
+      event.sender.send('config-save-res', { type: 'none', message: 'CNCino.' });
       globalShortcut.unregisterAll();
       CNC.configFile.read().then((data) => {
         event.sender.send(`show-prefs-${argType}-res`, data);
@@ -368,7 +368,7 @@ function tryCatch(error) {
 }
 
 ipcMain.on('about', (event, arg) => {
-  event.sender.send('config-save-res', { type: 'none', message: 'CNC-ino.' });
+  event.sender.send('config-save-res', { type: 'none', message: 'CNCino.' });
   let chosen = dialog.showMessageBox(mainWindow, {
     cancelId: 0, type: 'info', buttons: ['Aceptar'],
     title: 'Acerca De', message: app.getName() + ' , Arduino y NodeJS - v' + app.getVersion(), detail: stringAbout(CNC.Arduino)

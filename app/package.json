@@ -1,7 +1,7 @@
 {
   "name": "cncino",
   "desktopName": "CNCino",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "productName": "CNCino",
   "description": "cnc realizado con nodejs electron serialport arduino.",
   "main": "app.js",
