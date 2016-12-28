@@ -9,7 +9,7 @@
   "manalSteps": 5,
   "motor": {
     "x": {
-      "advance": 126.52,
+      "advance": 130,
       "sense": false,
       "speed": {
         "idle": 14,
@@ -18,7 +18,7 @@
       "steps": 20000
     },
     "y": {
-      "advance": 126.52,
+      "advance": 122,
       "sense": false,
       "speed": {
         "idle": 14,
@@ -27,23 +27,23 @@
       "steps": 20000
     },
     "z": {
-      "advance": 14.18,
+      "advance": 19,
       "sense": false,
       "speed": {
         "idle": 17,
         "working": 20
       },
-      "steps": 2000
+      "steps": 3000
     }
   },
   "scale": 1,
   "toolConfig": {
     "heightImage":true,
-    "blackZ": -1,
-    "deepStep": -0.23,
+    "blackZ": -2,
+    "deepStep": -0.5,
     "feedrate": {
       "idle": 15,
-      "work": 30
+      "work": 27
     },
     "safeZ": 1,
     "scaleAxes": 500,
