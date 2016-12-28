@@ -4,6 +4,7 @@
 # Notas
   Desactiva los menus al procesar un archivo
   al terminar aduino no check de foco .. y toma letas
+  muestra NAN con +y
 # Tooltip
   * Ocultar tooltip cuando los otrones esten desactivados
   * no me convencen
