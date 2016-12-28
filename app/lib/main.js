@@ -80,15 +80,7 @@ function childFactory(forkDir, cbMessage) {
  * @returns
  */
 function isImg(extension) {
-  switch (extension) {
-    case '.png':
-    case '.jpeg':
-    case '.gif':
-    case '.jpg':
-      return true;
-    default:
-      return false;
-  }
+  return /\.(png|jpe{0,1}g|gif)/i.test(extension);
 }
 
 /**
@@ -105,11 +97,11 @@ function setFile(dir, initialLine, cb) {
     let dirfile = path.resolve(dir);
     let extension = path.extname(dirfile);
     let fileName = path.win32.basename(dirfile);
-    if (extension === '.png' && os.platform() === 'linux') {
+    if ( /\.png/i.test(extension) && os.platform() === 'linux') {
       log('setFile', "With linux only GIF, JPEG, JPG. Lwip and electron js in linux are not carried: D.");
       cb.error(factoryMsg(0, 'No podemos leer PNG. pruebe con GIF , JPEG , JPG.'));
     }
-    if (extension === '.bmp') {
+    if (/\.bmp/i.test(extension)) {
       cb.error(factoryMsg(0, 'No podemos leer BMP. pruebe con GIF , JPEG , JPG.'));
     }
     else if (isImg(extension)) {
@@ -121,11 +113,12 @@ function setFile(dir, initialLine, cb) {
             cb.error(factoryMsg(0, `${fileName} - ${error}`));
             child.kill();
           },
-          /*tick: (child, arg) => {
+          tick: (child, arg) => {
+            console.log("Img:",fileName,"Progres:",arg.perc);
             // progresBar
             // perc: arg.perc,
             // imgName: fileName,
-          },*/
+          },
           finished: (child, data) => {
             child.kill();
             cb.tick(factoryMsg(3, `GCode creado con ${fileName}.\nGuardado en ${data.dirgcode}.`));
