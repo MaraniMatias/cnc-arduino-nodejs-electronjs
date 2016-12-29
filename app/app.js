@@ -84,11 +84,11 @@ app.on('ready', () => {
     });
 
     //mainWindow.openDevTools(); // Open the devtools.
-    // Event -> unresponsive, responsive, show, hide, minimize, restore
+    // Event ->  blur,  minimize, hide
     mainWindow.on('blur', () => { globalShortcut.unregisterAll(); });
     mainWindow.on('hide', () => { globalShortcut.unregisterAll(); });
     mainWindow.on('minimize', () => { globalShortcut.unregisterAll(); });
-
+    // Event -> focus show restore
     mainWindow.on('focus', () => { registerGlobalShortcut(); });
     mainWindow.on('show', () => { registerGlobalShortcut(); });
     mainWindow.on('restore', () => { registerGlobalShortcut(); });
@@ -297,12 +297,9 @@ Event: ‘on-battery’
  */
 ipcMain.on('globalShortcut', (event, endable) => {
   if (endable) { registerGlobalShortcut(); }
-  else { globalShortcut.unregisterAll(); }
-  if (CNC.Arduino.comName) {
-    globalShortcut.register('Space', () => {
-      globalShortcutSendComand('0,0,0');
-      CNC.log('globalShortcut', "SPACE key pressed and sent '0,0,0 f:0' command.");
-    });
+  else {
+    globalShortcut.unregisterAll();
+    registerGlobalShortcutSpace();
   }
 });
 
@@ -319,9 +316,23 @@ function globalShortcutSendComand(cmd) {
   }
 }
 
+function registerGlobalShortcutSpace(){
+  try{
+    if(mainWindow.isFocused() && mainWindow.isVisible() && CNC.Arduino.comName) {
+      globalShortcut.register('Space', () => {
+        globalShortcutSendComand('0,0,0');
+        CNC.log('globalShortcut', "SPACE key pressed and sent '0,0,0 f:0' command.");
+      });
+    }
+  } catch (error) {
+    tryCatch(error);
+  }
+}
+
 function registerGlobalShortcut() {
   try {
-    if (!CNC.Arduino.isWorking && CNC.Arduino.comName) {
+    if (mainWindow.isFocused() && mainWindow.isVisible() && !CNC.Arduino.isWorking && CNC.Arduino.comName) {
+      registerGlobalShortcutSpace();
       CNC.configFile.read().then((file) => {
         let manalSteps = file.manalSteps;
         globalShortcut.register('q', () => {

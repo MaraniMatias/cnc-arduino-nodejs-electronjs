@@ -2,9 +2,7 @@
   - mostrar comentarios de g code ??
   - jugar con sha4 convinando tamaño y datoas imgtocode en gcode para evitar calcular uno ya echo
 # Notas
-  Desactiva los menus al procesar un archivo
   al terminar aduino no check de foco .. y toma letas
-  muestra NAN con +y
   en alguna convinacion peride deja de tomar las teclas
 # Tooltip
   * Ocultar tooltip cuando los otrones esten desactivados
