@@ -153,9 +153,9 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
   /**
    * Send orders from X, Y, Z buttons for arduino.
    */
-  $scope.moverManual = function (num, eje, sentido) {
+  $scope.moverManual = function (num, eje, sense) {
     var code;
-    num = stepsmm === 'steps' ? sentido + num : num;
+    num = stepsmm === 'steps' ? sense + num : num;
     switch (eje) {
       case "X": code = num + ",0,0"; break;
       case "Y": code = "0," + num + ",0"; break;
@@ -163,7 +163,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
       default: code = "0,0,0"; break;
     }
     // The mm will be converted into main.js
-    ipc.sendArd({ code: code, type: stepsmm, sentido: sentido });
+    ipc.sendArd({ code: code, type: stepsmm, sense: sense });
     notify("Enviado: " + code + " " + stepsmm, "question");
   }
 

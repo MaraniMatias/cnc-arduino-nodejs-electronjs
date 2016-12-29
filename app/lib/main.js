@@ -39,7 +39,6 @@ var File = {
  * 
  * @param {any} function
  * @param {any} value
- * @param [log || error ] type
  */
 function log(func, value) {
   console.log(__filename + "\n -> " + func + ":\n*\t", value);
@@ -172,9 +171,10 @@ function setGCode(dirfile, initialLine, cb) {
  * @param  {function} callback
  */
 function sendCommand(arg, callback) {
-  log("sendCommand", 'code: ' + arg.code + ' type: ' + arg.type + ' sentido: ' + arg.sentido);
+  log("sendCommand", 'code: ' + arg.code + ' type: ' + arg.type + ' sentido: ' + arg.sense);
+  let code =  String(arg.code).split(',') ;
   readConfig().then((config) => {
-    Arduino.send((arg.type !== 'mm') ? arg.code : toSteps(config, arg.code, [0, 0, 0, 0], arg.sentido), (err, msg, data) => {
+    Arduino.send((arg.type !== 'mm') ? arg.code : toSteps(config, code, [0, 0, 0, 0], arg.sense), (err, msg, data) => {
       infoArduino.isWorking = false;
       // /\d{1,}\.\d{1,}\.\d{1,}/.test(data) => 5
       // /\d{1,},\d{1,},\d{1,}(,\d)?/.test(data) => 4
@@ -223,16 +223,16 @@ function reSetArduino(callback) {
  * @param {file config} config
  * @param {number[]} newMM
  * @param {number[]} oldSteps
- * @param {char} sentido '-' or '' or undefined
+ * @param {char} sense '-' or '' or undefined
  * @returns
  */
-function toSteps(config, newMM, oldSteps, sentido) {
+function toSteps(config, newMM, oldSteps, sense) {
   oldSteps = oldSteps || [0, 0, 0, 0];
-  sentido = sentido === '-' && -1 || 1;
+  sense = sense === '-' && -1 || 1;
   let x = [0, 0, 0, 0];// [X, Y, Z, F];
-  x[0] = sentido * Math.round(newMM[0] * config.motor.x.steps / config.motor.x.advance) * config.scale - oldSteps[0];//* (config.motor.x.sense)? -1 : 1;
-  x[1] = sentido * Math.round(newMM[1] * config.motor.y.steps / config.motor.y.advance) * config.scale - oldSteps[1];//* (config.motor.y.sense)? -1 : 1;
-  x[2] = sentido * Math.round(newMM[2] * config.motor.z.steps / config.motor.z.advance) * config.scale - oldSteps[2];//* (config.motor.z.sense)? -1 : 1;
+  x[0] = sense * Math.round( newMM[0] * config.motor.x.steps / config.motor.x.advance) * config.scale - oldSteps[0];//* (config.motor.x.sense)? -1 : 1;
+  x[1] = sense * Math.round( newMM[1] * config.motor.y.steps / config.motor.y.advance) * config.scale - oldSteps[1];//* (config.motor.y.sense)? -1 : 1;
+  x[2] = sense * Math.round( newMM[2] * config.motor.z.steps / config.motor.z.advance) * config.scale - oldSteps[2];//* (config.motor.z.sense)? -1 : 1;
   x[3] = config.feedSpeed.ignore && a.f || config.feedSpeed.value
   return x
 }
