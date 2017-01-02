@@ -7,7 +7,7 @@
 #include <math.h>
 
 // seting:START
-const String _version = "1.0.0";
+const String _version = "1.0.1";
 const int pinLED = 13,       // LED StatusLED indicator
     pinX[] = {0, 1, 3, 2},   // Motor pin X
     pinY[] = {4, 5, 7, 6},   // Motor pin Y

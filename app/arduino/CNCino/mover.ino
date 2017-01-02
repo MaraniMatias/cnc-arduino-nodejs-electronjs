@@ -9,15 +9,6 @@
 void MoveX(int sent){
   StatusLED();
   switch (sent) {
-    case 1:
-      StepX(xp);
-      xyzp[0]++;
-      if(xp<3){
-        xp++;
-      }else{
-        xp=0;
-      }
-    break;
     case 0:
       StepX(xp);
       xyzp[0]--;
@@ -27,6 +18,15 @@ void MoveX(int sent){
         xp=3;
       }
     break;
+    case 1:
+      StepX(xp);
+      xyzp[0]++;
+      if(xp<3){
+        xp++;
+      }else{
+        xp=0;
+      }
+    break;
   }
 }
 void MoveY(int sent){
@@ -34,7 +34,7 @@ void MoveY(int sent){
   switch (sent) {
     case 0:
       StepY(yp);
-      xyzp[1]--;
+      xyzp[1]++;
       if(yp<3){
         yp++;
       }else{
@@ -43,7 +43,7 @@ void MoveY(int sent){
           break;
     case 1:
       StepY(yp);
-      xyzp[1]++;
+      xyzp[1]--;
       if(yp>0){
         yp--;
       }else{
