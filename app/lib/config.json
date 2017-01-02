@@ -9,7 +9,7 @@
   "manalSteps": 5,
   "motor": {
     "x": {
-      "advance": 130,
+      "advance": 126,
       "sense": false,
       "speed": {
         "idle": 14,
@@ -18,7 +18,7 @@
       "steps": 20000
     },
     "y": {
-      "advance": 122,
+      "advance": 126,
       "sense": false,
       "speed": {
         "idle": 14,
