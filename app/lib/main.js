@@ -124,7 +124,7 @@ function setFile(dir, initialLine, cb) {
             setGCode(data.dirgcode, initialLine, cb);
           }
         }).send({ // It is mm
-          toolDiameter: fileConfig.toolConfig.toolDiameter,
+          toolDiameter: fileConfig.toolConfig.toolDiameter || 1,
           scaleAxes: !fileConfig.toolConfig.heightImage && fileConfig.toolConfig.scaleAxes || undefined,
           deepStep: fileConfig.toolConfig.deepStep,
           feedrate: fileConfig.toolConfig.feedrate,
