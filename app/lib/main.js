@@ -96,12 +96,8 @@ function setFile(dir, initialLine, cb) {
     let dirfile = path.resolve(dir);
     let extension = path.extname(dirfile);
     let fileName = path.win32.basename(dirfile);
-    if ( /\.png/i.test(extension) && os.platform() === 'linux') {
-      log('setFile', "With linux only GIF, JPEG, JPG. Lwip and electron js in linux are not carried: D.");
-      cb.error(factoryMsg(0, 'No podemos leer PNG. pruebe con GIF , JPEG , JPG.'));
-    }
     if (/\.bmp/i.test(extension)) {
-      cb.error(factoryMsg(0, 'No podemos leer BMP. pruebe con GIF , JPEG , JPG.'));
+      cb.error(factoryMsg(0, 'No podemos leer BMP. pruebe con GIF , JPEG , JPG or PNG.'));
     }
     else if (isImg(extension)) {
       cb.tick({ info: `Preparando... ${fileName}.` });
