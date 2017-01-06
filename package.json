@@ -6,7 +6,7 @@
   "devDependencies": {
     "electron-builder": "~10.17.3",
     "electron-packager": "~8.4.0",
-    "electron-prebuilt": "~1.4.13",
+    "electron-prebuilt": "1.4.13",
     "electron-rebuild": "~1.5.5",
     "grunt": "~1.0.1",
     "grunt-contrib-pug": "~1.0.0",
