@@ -7,9 +7,7 @@ var cMenu = Menu.buildFromTemplate(contextMenu);
 var mMenu = Menu.buildFromTemplate(mainMenu);
 Menu.setApplicationMenu(mMenu);
 
-/**
- * Load context menu.
- */
+//  Load context menu.
 window.addEventListener('contextmenu', (e) => {
   e.preventDefault();
   cMenu.popup(remote.getCurrentWindow());
@@ -25,9 +23,12 @@ window.onbeforeunload = (e) => {
   }
 }
 
-/**
- *  Serves to lock menus when arduino works.
- */
+//
+ipcRenderer.on('progres-res', (event, data) => {
+  $('#modalProgressInfo').text("Procesando: "+data.info+ " - "+(data.perc*100).toFixed(2)+"%" );
+})
+
+// Serves to lock menus when arduino works.
 ipcRenderer.on('contextmenu-enabled-res', (event, enable) => {
   //let items = { main: { 0: [0, 1, 4] }, context: [0, 3] }
   let mm = mMenu.items[0].submenu.items;
