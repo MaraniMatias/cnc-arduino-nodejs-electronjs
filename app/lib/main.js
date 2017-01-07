@@ -12,7 +12,7 @@ const cp = require('child_process'),
     dir: path.resolve(path.join(__dirname, '../arduino', '/CNCino')),
     file: ['CNCino.ino', 'mover.ino', 'estado.ino']
   }
-  ;
+;
 
 var dirConfig = dirDefaultConfig;
 var lineRunning = 0;
@@ -36,7 +36,7 @@ var File = {
 
 /**
  * Show consolo log
- * 
+ *
  * @param {any} function
  * @param {any} value
  */
@@ -46,7 +46,7 @@ function log(func, value) {
 
 /**
  * Get the average milliseconds between the X and Y motors in steps
- * 
+ *
  * @param {file config} config
  * @returns
  */
@@ -59,9 +59,9 @@ function getMiliSeg(config) {
 
 /**
  * Create child processes used to convert an image into g-code
- * 
+ *
  * @param {string} forkDir Module path
- * @param { error:function, finished:function } cbMessage 
+ * @param { error:function, finished:function } cbMessage
  * @returns
  */
 function childFactory(forkDir, cbMessage) {
@@ -74,7 +74,7 @@ function childFactory(forkDir, cbMessage) {
 
 /**
  * Is img ?
- * 
+ *
  * @param {string} extension .png or .jpeg or .gif or .jpg
  * @returns
  */
@@ -85,7 +85,7 @@ function isImg(extension) {
 /**
  * If you receive an image it converts it into code g with the thickenings of the file config.json
  * otherwise it passes it to 'setGCode'
- * 
+ *
  * @param {string} dir Path of the file
  * @param {number[]} initialLine [0,0,0]
  * @param {function} cb
@@ -110,9 +110,7 @@ function setFile(dir, initialLine, cb) {
           },
           tick: (child, arg) => {
             console.log("Img:",fileName,"Progres:",arg.perc);
-            // progresBar
-            // perc: arg.perc,
-            // imgName: fileName,
+            cb.perc({perc:arg.perc,info:fileName });
           },
           finished: (child, data) => {
             child.kill();
@@ -137,7 +135,7 @@ function setFile(dir, initialLine, cb) {
 
 /**
  * recibe un archivo de codigo y lo prepara con la configuracion del archivo config.json
- * 
+ *
  * @param {string} dir Path of the file
  * @param {number[]} initialLine [0,0,0]
  * @param {function} cb
@@ -176,8 +174,8 @@ function sendCommand(arg, callback) {
       // /\d{1,},\d{1,},\d{1,}(,\d)?/.test(data) => 4
       callback(factoryMsg(
         err ? 0 :
-          data ? (/\d{1,}\.\d{1,}\.\d{1,}/.test(data) ? 'version' : 4)
-            : 3, err ? err.message : msg, data));
+        data ? (/\d{1,}\.\d{1,}\.\d{1,}/.test(data) ? 'version' : 4)
+        : 3, err ? err.message : msg, data));
       // code, ejes, steps
     });
   });
@@ -185,7 +183,7 @@ function sendCommand(arg, callback) {
 
 /**
  * Look for an arduino connected to the pc and informs if the connection could be made.
- * 
+ *
  * @param {function} callback
  */
 function reSetArduino(callback) {
@@ -215,7 +213,7 @@ function reSetArduino(callback) {
 
 /**
  *  mm to steps
- * 
+ *
  * @param {file config} config
  * @param {number[]} newMM
  * @param {number[]} oldSteps
@@ -234,7 +232,7 @@ function toSteps(config, newMM, oldSteps, sense) {
 }
 /**
  * Calculate the steps for the new line.
- * 
+ *
  * @param {number} l line number
  * @param {number[]} oldSteps Steps from the previous line
  * @returns number[]
@@ -248,7 +246,7 @@ function getSteps(l, oldSteps, config) {
 
 /**
  * Begins to interpret the g code
- * 
+ *
  * @param { follow : boolean , steps: number[] } arg : follow -> Resumes previous run
  * @param {function} callback
  */
@@ -292,7 +290,7 @@ function start(arg, callback) {
 
 /**
  * Saves the json configuration file for the first time.
- * 
+ *
  * @param {string} dirUserData
  */
 function setConfig(dirUserData) {
@@ -312,7 +310,7 @@ function setConfig(dirUserData) {
 
 /**
  * Save a specified setting or default
- * 
+ *
  * @param {file config or undefined} data
  * @param {function} cb
  */
@@ -327,7 +325,7 @@ function saveConfig(data, cb) {
 
 /**
  * Read configuration file from the user folder.
- * 
+ *
  * @returns file config
  */
 function readConfig() {
@@ -348,23 +346,23 @@ function readConfig() {
 function saveArduinoCode(dir, callback) {
   if (dir) {
     let fileDir = dir[0];
-  fs.mkdir(path.resolve(path.join(fileDir, '/CNCino')), () => {
-    ArduinoCode.file.forEach(function (file) {
-      let from = path.resolve(path.join(__dirname, '../arduino', '/CNCino', file)),
-        to = path.resolve(path.join(fileDir, '/CNCino', file));
-      console.log('Saving from', from, 'to', to);
-      fs.createReadStream(from).pipe(fs.createWriteStream(to));
-    }, this);
-    callback(factoryMsg(2, 'Grabe en Arduino el progrma guardado en ' + fileDir, fileDir));
-  })
+    fs.mkdir(path.resolve(path.join(fileDir, '/CNCino')), () => {
+      ArduinoCode.file.forEach(function (file) {
+        let from = path.resolve(path.join(__dirname, '../arduino', '/CNCino', file)),
+          to = path.resolve(path.join(fileDir, '/CNCino', file));
+        console.log('Saving from', from, 'to', to);
+        fs.createReadStream(from).pipe(fs.createWriteStream(to));
+      }, this);
+      callback(factoryMsg(2, 'Grabe en Arduino el progrma guardado en ' + fileDir, fileDir));
+    })
   }
 }
 
 /**
  * Message factory
  * 'e' -> 0, 'w' -> 1, 's' -> 2, 'i' -> 3, 'd' -> 4, 'n' -> 5
- * 
- * @param {number} type 
+ *
+ * @param {number} type
  * @param {String} message
  * @param {any} data
  * @returns { type, message, data }

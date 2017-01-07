@@ -138,6 +138,9 @@ ipcMain.on('open-file', (event, data) => {
             console.log('Config for img2gcode.');
             event.sender.send('show-prefs-img2gcode-res', config);
           },*/
+          perc: (data) => {
+            event.sender.send("progres-res", data);
+          },
           tick: (data) => {
             event.sender.send('open-file-tick', data);
           },
