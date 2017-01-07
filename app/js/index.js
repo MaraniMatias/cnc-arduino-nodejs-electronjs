@@ -25,7 +25,6 @@ window.onbeforeunload = (e) => {
 
 //
 ipcRenderer.on('progres-res', (event, data) => {
-  console.log(data.info,data.perc);
   $('#modalProgressInfo').text("Procesando: "+data.info+ " - "+(data.perc*100).toFixed(2)+"%" );
 })
 
