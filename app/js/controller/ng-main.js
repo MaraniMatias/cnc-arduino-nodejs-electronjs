@@ -230,9 +230,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
     }
   });
 
-  /**
-   * This event is triggered when a gcode line is written in arduino to inform the state of the execution and to take necessary actions.
-   */
+  // This event is triggered when a gcode line is written in arduino to inform the state of the execution and to take necessary actions.
   ipc.on('add-line', function (event, data) {
     console.log('add-line', data);
     // Disable command and menu keys that can interrupt execution
@@ -286,9 +284,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
     $scope.progressBar = 'indicating';
   }
 
-  /**
-   *  Specifications to create the g-code view
-   */
+  // Specifications to create the g-code view
   var viewsGCode = null, graph = null;
   function drawVisualization(data) {
     // Notices of measurement larger than the worktable.
