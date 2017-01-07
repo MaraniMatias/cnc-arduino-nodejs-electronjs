@@ -4,6 +4,8 @@
 # Notas
   suspender cuando arduino trabaja con comando manuales
   mostrar tiempo de duración de la orden
+  Si carga primero un archivo no podes buscar arduino
+  Hora fin creo que se calcula mal
 # Tooltip
   * Ocultar tooltip cuando los otrones esten desactivados
   * no me convencen
