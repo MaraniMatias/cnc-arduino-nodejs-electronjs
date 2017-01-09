@@ -19,6 +19,6 @@
   "dependencies": {
     "angular": "~1.6.0",
     "vis": "~4.17.0",
-    "semantic": "semantic-ui#~2.2.6"
+    "semantic": "semantic-ui#~2.2.7"
   }
 }
