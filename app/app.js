@@ -166,9 +166,12 @@ ipcMain.on('open-file', (event, data) => {
  */
 ipcMain.on('send-command', (event, arg) => {
   try {
+    var id = powerSaveBlocker.start('prevent-app-suspension');
+    CNC.log('prevent-app-suspension', powerSaveBlocker.isStarted(id));
     CNC.sendCommand(arg, (data) => {
       CNC.log("sendCommand:", data);
       event.sender.send('close-conex', data);
+      powerSaveBlocker.stop(id);
     });
   } catch (error) {
     tryCatch(error);
@@ -347,19 +350,19 @@ function registerGlobalShortcut() {
           CNC.log('globalShortcut', `E key pressed and sent 0,0,-${manalSteps} f:0 command.`);
         });
         globalShortcut.register('d', () => {
-          globalShortcutSendComand(`-${manalSteps},0,0,0`);
+          globalShortcutSendComand(`${manalSteps},0,0,0`);
           CNC.log('globalShortcut', `D key pressed and sent -${manalSteps},0,0 f:0 command.`);
         });
         globalShortcut.register('a', () => {
-          globalShortcutSendComand(`${manalSteps},0,0,0`);
+          globalShortcutSendComand(`-${manalSteps},0,0,0`);
           CNC.log('globalShortcut', `A key pressed and sent ${manalSteps},0,0 f:0 command.`);
         });
         globalShortcut.register('w', () => {
-          globalShortcutSendComand(`0,-${manalSteps},0,0`);
+          globalShortcutSendComand(`0,+${manalSteps},0,0`);
           CNC.log('globalShortcut', `W key pressed and sent 0,-${manalSteps},0 f:0 command.`);
         });
         globalShortcut.register('s', () => {
-          globalShortcutSendComand(`0,${manalSteps},0,0`);
+          globalShortcutSendComand(`0,-${manalSteps},0,0`);
           CNC.log('globalShortcut', `S key pressed and sent 0,${manalSteps},0 f:0 command.`);
         });
         //globalShortcut.register('Up', () => { globalShortcutSendComand('0,10,0'); });

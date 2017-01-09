@@ -221,6 +221,8 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
         //console.log('-->> Error <<--');
         notify(obj.message, obj.type);
         $scope.cnc.working = false;
+        ipc.send('globalShortcut', false);
+        ipc.send('contextmenu-enabled', true);
         break;
       default:
         //console.log('-->> Algo inesperado  <<--');

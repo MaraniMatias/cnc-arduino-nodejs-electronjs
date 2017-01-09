@@ -25,7 +25,7 @@ angular
       // this = cnc
       this.file.line.run++;
       this.file.line.progress = ((trvl * 100) / this.file.travel).toFixed(2);
-      if ( trvl > 0 /* && this.file.line.progress > 15 */) {
+      if ( trvl > 0  && this.file.line.progress > 1) {
         var workTime = new Date().getTime() - this.time.start.getTime();
         var mileSecondsLeft = this.file.travel * workTime / trvl;
         this.time.end = new Date(this.time.start.getTime() + mileSecondsLeft);
@@ -47,18 +47,18 @@ angular
   .value('config', {
     "motor": {
       "y": {
-        "time": 15,
-        "steps": 4000,
-        "advance": 15.37
+        "time": 17,
+        "steps": 10000,
+        "advance": 63
       },
       "x": {
-        "time": 15,
-        "steps": 4000,
-        "advance": 15.37
+        "time": 17,
+        "steps": 10000,
+        "advance": 63
       },
       "z": {
         "steps": 2000,
-        "advance": 14
+        "advance": 19
       }
     }
   })

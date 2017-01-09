@@ -1,28 +1,28 @@
 {
   "arduino": {
-    "version":"1.0.1"
+    "version":"1.0.3"
   },
   "feedSpeed": {
     "ignore": false,
-    "value": 14
+    "value": 15
   },
   "manalSteps": 5,
   "motor": {
     "x": {
-      "advance": 126,
+      "advance": 128,
       "sense": false,
       "speed": {
         "idle": 14,
-        "working": 20
+        "working": 15
       },
       "steps": 20000
     },
     "y": {
-      "advance": 126,
+      "advance": 128,
       "sense": false,
       "speed": {
         "idle": 14,
-        "working": 20
+        "working": 15
       },
       "steps": 20000
     },
@@ -30,8 +30,8 @@
       "advance": 19,
       "sense": false,
       "speed": {
-        "idle": 17,
-        "working": 20
+        "idle": 14,
+        "working": 15
       },
       "steps": 3000
     }
@@ -40,10 +40,10 @@
   "toolConfig": {
     "heightImage":true,
     "blackZ": -3,
-    "deepStep": -0.5,
+    "deepStep": -1,
     "feedrate": {
-      "idle": 15,
-      "work": 27
+      "idle": 14,
+      "work": 16
     },
     "safeZ": 1,
     "scaleAxes": 500,

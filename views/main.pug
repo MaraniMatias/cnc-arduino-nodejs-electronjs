@@ -6,7 +6,7 @@ block contentMain
         .ui.text.loader Cargando...
       #mygraph
       .ui.left.internal.attached.rail.graph(style="width: 420px;")
-        .ui.grid
+        .ui.grid(style="height: 0px;")
           // elejir archivo
           .ten.wide.column(style="padding-right: 3px;")
             .ui.segment.center.aligned
@@ -37,7 +37,7 @@ block contentMain
                     tr( ng-repeat="line in lineTable" ng-class="line.type" style="padding-bottom: 0px; padding-top: 0px;")
                       td.collapsing(style="padding-left: 1px; padding-right: 1px") {{line.nro}}
                       td(style="padding-left: 1px; padding-right: 1px") {{line.code}}
-          .six.wide.column(style="padding-left: 3px;")
+          .six.wide.column(style="padding-left: 3px;padding-bottom: 0px;padding-right: 0px;height: 14px;width: 3px;")
             .ui.segment.center.aligned(ng-click="statisticHour.click()" style="padding-bottom: 12px; padding-top: 12px; cursor: pointer;")
               .ui.statistic.small
                 .label {{statisticHour.label}}
@@ -65,12 +65,12 @@ block contentMain
                   button.ui.button.primary( ng-disabled="cnc.working" ng-click="showPrefsImg2gcode()" style="margin-right: 0px; margin-right: 0px;padding-left: 5px;padding-right: 5px;" ) img to gcode.
             .column.compact
               .six.ui.buttons.compact
-                button.ui.button.red(popup-element data-ng-popup-title="A" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+ 
-                button.ui.button(popup-element data-ng-popup-title="D" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")' ) X- 
-                button.ui.button.blue(popup-element data-ng-popup-title="W" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' ) Y+ 
-                button.ui.button(popup-element data-ng-popup-title="S" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' ) Y- 
-                button.ui.button.green(popup-element data-ng-popup-title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+ 
-                button.ui.button(popup-element data-ng-popup-title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z- 
+                button.ui.button.red(popup-element data-ng-popup-title="D" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' ) X+
+                button.ui.button(popup-element data-ng-popup-title="A" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")' ) X-
+                button.ui.button.blue(popup-element data-ng-popup-title="W" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' ) Y+
+                button.ui.button(popup-element data-ng-popup-title="S" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' ) Y-
+                button.ui.button.green(popup-element data-ng-popup-title="Q" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' ) Z+
+                button.ui.button(popup-element data-ng-popup-title="E" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' ) Z-
     #statusbar.statusbar(ng-class="statusBar.type" role='contentinfo')
       .statusbar-item.left(ng-popup data-id="#statusBarMsg") {{statusBar.message}}
       //.statusbar-item.left(ng-show="lineTable[lineTable.length-1].nro >= 0" ng-popup data-id="#statusBarLine") Nro: {{lineTable[lineTable.length-1].nro}}
@@ -96,10 +96,10 @@ block contentMain
     #statusBarLine.ui.flowing.popup.hidden.huge
       .ui.header Linea: {{lineTable[lineTable.length-1].nro}} - {{lineTable[lineTable.length-1].code}}
       .ui.content
-        p(ng-show="lineTable[lineTable.length-1].steps[0]>0") X: {{ lineTable[lineTable.length-1].ejes[0] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[0]}}
-        p(ng-show="lineTable[lineTable.length-1].steps[1]>0") Y: {{ lineTable[lineTable.length-1].ejes[1] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[1]}}
-        p(ng-show="lineTable[lineTable.length-1].steps[2]>0") Z: {{ lineTable[lineTable.length-1].ejes[2] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[2]}}
-        p(ng-show="lineTable[lineTable.length-1].steps[3]>0") F: {{ lineTable[lineTable.length-1].ejes[3] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[3]}}
+        p(ng-show="lineTable[lineTable.length-1].ejes[0]") X: {{ lineTable[lineTable.length-1].ejes[0] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[0]}}
+        p(ng-show="lineTable[lineTable.length-1].ejes[1]") Y: {{ lineTable[lineTable.length-1].ejes[1] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[1]}}
+        p(ng-show="lineTable[lineTable.length-1].ejes[2]") Z: {{ lineTable[lineTable.length-1].ejes[2] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[2]}}
+        p(ng-show="lineTable[lineTable.length-1].ejes[3]") F: {{ lineTable[lineTable.length-1].ejes[3] | number : 2}} - Pasos: {{lineTable[lineTable.length-1].steps[3]}}
     #statusBarRighr.ui.flowing.popup.hidden.huge
       .ui.header  Lineas interpetadas 
       spam {{cnc.file.line.run}} de {{cnc.file.line.total}} - {{cnc.file.line.progress}}%

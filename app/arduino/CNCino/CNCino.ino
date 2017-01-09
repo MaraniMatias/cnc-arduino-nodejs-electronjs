@@ -1,4 +1,4 @@
-/* 
+/*
   Please use IDE Arduino 1.6.5 or 1.6.13 with versions 1.6.6 and 1.6.7 code behaves not expected.
   Por favor utilice el IDE Arduino 1.6.5 o 1.6.13, para un correcto funcionamiento.
   Author: Marani Matias Ezequiel
@@ -7,7 +7,7 @@
 #include <math.h>
 
 // seting:START
-const String _version = "1.0.1";
+const String _version = "1.0.3";
 const int pinLED = 13,       // LED StatusLED indicator
     pinX[] = {0, 1, 3, 2},   // Motor pin X
     pinY[] = {4, 5, 7, 6},   // Motor pin Y
@@ -18,10 +18,10 @@ const int pinLED = 13,       // LED StatusLED indicator
 bool bStatusLED = true; // StatusLED indicator var
 
 long int xyzp[] = {0, 0, 0},  // Steps to go
-    xp = 0, yp = 0, zp = 0, // Save last step used
-    _delayX = 0, _delayY = 0, rx = 0, ry = 0,
-    addX = 0, addY = 0, _saveAddX = 0, _saveAddY = 0; // when the angles are different from 90° or 45°
-int i = 0, inChar = 0, _time = 28;                    // Time between step //~14
+                  xp = 0, yp = 0, zp = 0, // Save last step used
+                  _delayX = 0, _delayY = 0, rx = 0, ry = 0,
+                  addX = 0, addY = 0, _saveAddX = 0, _saveAddY = 0; // when the angles are different from 90° or 45°
+int i = 0, inChar = 0, _time = 15;                    // Time between step //~14
 String inString = "";
 boolean start = false, cmd = false;
 
@@ -48,82 +48,60 @@ void setup() {
 }
 
 void loop() {
-  if (start){
+  if (start) {
 
-    if (_delayX == 0){
+    if (_delayX == 0) {
       _delayX = rx;
-      if (_delayY > 0){
-        _delayY--;
-      } else {
-        _delayY = 0;
-      }
-      if (0 < xyzp[0]){
-        MoveX(0);
-      }
-      if (0 > xyzp[0]){
-        MoveX(1);
-      }
+      if (_delayY > 0) { _delayY--; }
+      else { _delayY = 0; }
+      if (0 < xyzp[0]){ MoveX(true); }
+      if (0 > xyzp[0]){ MoveX(false); }
 
-      //Insert X
-      if (addX == xyzp[0] && _saveAddX != 0){
-        if (0 < xyzp[0]){
-          MoveX(0);
+      //Insert X:START
+      if (addX == xyzp[0] && _saveAddX != 0) {
+        if (0 < xyzp[0]) {
+          MoveX(true);
           addX = xyzp[0] - _saveAddX;
         }
-        if (0 > xyzp[0]){
-          MoveX(1);
+        if (0 > xyzp[0]) {
+          MoveX(false);
           addX = xyzp[0] + _saveAddX;
         }
       }
-      //Insert X
+      //Insert X:END
 
-      if (ry == 0){
-        render();
-      }
+      if (ry == 0){ render(); }
     }
 
-    if (_delayY == 0){
+    if (_delayY == 0) {
       _delayY = ry;
-      if (_delayX > 0) {
-        _delayX--;
-      } else {
-        _delayX = 0;
-      }
-      if (0 < xyzp[1]) {
-        MoveY(0);
-      }
-      if (xyzp[1] < 0){
-        MoveY(1);
-      }
+      if (_delayX > 0) { _delayX--; }
+      else { _delayX = 0; }
+      if (0 < xyzp[1]){ MoveY(true); }
+      if (0 > xyzp[1]){ MoveY(false); }
 
-      //Insert Y
-      if (addY == xyzp[1] && _saveAddY != 0){
+      //Insert Y :START
+      if (addY == xyzp[1] && _saveAddY != 0) {
         if (0 < xyzp[1]) {
-          MoveY(0);
+          MoveY(true);
           addY = xyzp[1] - _saveAddY;
         }
-        if (0 > xyzp[1] ) {
-          MoveY(1);
+        if (0 > xyzp[1]) {
+          MoveY(false);
           addY = xyzp[1] + _saveAddY;
         }
       }
-      //Insert Y
+      //Insert Y :END
 
-      if (rx == 0) {
-        render();
-      }
+      if (rx == 0){ render(); }
     }
 
-    if (0 < xyzp[2]) {
-      MoveZ(0);
-    }
-    if (xyzp[2] < 0) {
-      MoveZ(1);
-    }
+    if (0 < xyzp[2]){ MoveZ(true); }
+    if (0 > xyzp[2]){ MoveZ(false); }
 
-// debug:START
-//sendData();
-// debug:END
+    // debug:START
+    // sendData();
+    // debug:END
 
     if (start == true && xyzp[0] == 0 && xyzp[1] == 0 && xyzp[2] == 0) {
       start = false;
@@ -141,7 +119,7 @@ void loop() {
         PauseStop();
         cmd = true; // evita que se vuelva a mandar 0,0,0
       }
-      if (inChar == 'v') { 
+      if (inChar == 'v') {
         Serial.println(_version);
         cmd = true;
       }
@@ -157,7 +135,7 @@ void loop() {
       inString = "";
       cmd = false;
     }
-    if (cmd == false && ( inChar == '\n' || inChar == ';') ){
+    if (cmd == false && ( inChar == '\n' || inChar == ';') ) {
       xyzp[i] = inString.toInt();
       render();
       start = true;
