@@ -27,7 +27,7 @@ block contentMain
                     button.ui.icon.button(ng-disabled="cnc.working" ng-click="setFile(true)")
                       i.repeat.icon.green
               .ui.progress.indicating.bottom.attached(ng-popup data-id="#popupBar" ng-class='progressBar' data-percent='{{cnc.file.line.progress}}')
-                .bar(style='transition-duration: 300ms; width: {{cnc.file.line.progress}}%;')
+                .bar(style='transition-duration: 0ms; width: {{cnc.file.line.progress}}%;')
                   //.progress(style="color: rgba(255, 255, 255, 1);") {{cnc.file.line.progress}}%
             // tabla
             .ui.segment.mini.center.aligned(ng-show="lineTableShow" style="padding-left: 5px;padding-right: 5px;padding-bottom: 5px;padding-top: 5px;")
@@ -70,9 +70,9 @@ block contentMain
                 button.ui.button(popup-element data-ng-popup-title="A X-" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' )
                   i.arrow.right.icon
                 button.ui.button.blue(popup-element data-ng-popup-title="W X+" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' )
-                  i.arrow.down.icon
-                button.ui.button(popup-element data-ng-popup-title="S Y-" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' )
                   i.arrow.up.icon
+                button.ui.button(popup-element data-ng-popup-title="S Y-" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' )
+                  i.arrow.down.icon
                 button.ui.button.green(popup-element data-ng-popup-title="Q Z+" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' )
                   i.plus.icon
                 button.ui.button(popup-element data-ng-popup-title="E Z-" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' )

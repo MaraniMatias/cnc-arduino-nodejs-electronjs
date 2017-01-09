@@ -13,7 +13,7 @@
       "sense": false,
       "speed": {
         "idle": 14,
-        "working": 15
+        "working": 17
       },
       "steps": 20000
     },
@@ -22,7 +22,7 @@
       "sense": false,
       "speed": {
         "idle": 14,
-        "working": 15
+        "working": 17
       },
       "steps": 20000
     },
@@ -39,14 +39,14 @@
   "scale": 1,
   "toolConfig": {
     "heightImage":true,
-    "blackZ": -3,
+    "blackZ": -1,
     "deepStep": -1,
     "feedrate": {
       "idle": 14,
-      "work": 16
+      "work": 17
     },
     "safeZ": 1,
-    "scaleAxes": 500,
+    "scaleAxes": 80,
     "toolDiameter": 3,
     "whiteZ": 0
   },

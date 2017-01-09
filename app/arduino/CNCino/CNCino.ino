@@ -21,7 +21,7 @@ long int xyzp[] = {0, 0, 0},  // Steps to go
                   xp = 0, yp = 0, zp = 0, // Save last step used
                   _delayX = 0, _delayY = 0, rx = 0, ry = 0,
                   addX = 0, addY = 0, _saveAddX = 0, _saveAddY = 0; // when the angles are different from 90° or 45°
-int i = 0, inChar = 0, _time = 15;                    // Time between step //~14
+int i = 0, inChar = 0, _time = 17;                    // Time between step //~14
 String inString = "";
 boolean start = false, cmd = false;
 
