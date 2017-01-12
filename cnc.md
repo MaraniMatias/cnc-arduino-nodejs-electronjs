@@ -3,6 +3,7 @@
   - mostrar tiempo de duración de la orden
   - suspender cuando arduino trabaja con comando manuales
 # Notas
+  Calcular duracion del progrma y mosrar en hora fin
 # Tooltip
   * Ocultar tooltip cuando los otrones esten desactivados
   * no me convencen
