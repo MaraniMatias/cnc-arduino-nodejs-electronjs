@@ -52,7 +52,7 @@ function log(func, value) {
  */
 function getMiliSeg(config) {
   let steps = (config.motor.x.steps + config.motor.y.steps) / 2;
-  let time = (config.motor.x.time + config.motor.y.time) / 2;
+  let time = ( config.motor.x.speed.working + config.motor.y.speed.working ) / 2;
   let advance = (config.motor.x.advance + config.motor.y.advance) / 2;
   return steps * time / advance;
 }
