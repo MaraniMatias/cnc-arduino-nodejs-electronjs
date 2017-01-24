@@ -9,13 +9,9 @@ lib-cov
 coverage
 .grunt
 .lock-wscript
-<<<<<<< HEAD
-#.vscode/
-=======
 build/Release
 build/
 .vscode/
->>>>>>> dev
 app/node_modules/
 node_modules/
 typings/
