@@ -25,7 +25,7 @@ window.onbeforeunload = (e) => {
 
 //
 ipcRenderer.on('progres-res', (event, data) => {
-  $('#modalProgressInfo').text("Procesando: "+data.info+ " - "+(data.perc*100).toFixed(2)+"%" );
+  $('#modalProgressInfo').text("Procesando: "+data.info+ ": "+(data.perc*100).toFixed(2)+"%" );
 })
 
 // Serves to lock menus when arduino works.
