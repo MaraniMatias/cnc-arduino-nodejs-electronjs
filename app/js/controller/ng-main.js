@@ -41,9 +41,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
   ipc.on('show-lineTable', function (event, obj) {
     $scope.lineTableShow = !$scope.lineTableShow;
   });
-  /**
-   * Add up line in table.
-   */
+  // Add up line in table.
   function addLine(line) {
     if ($scope.lineTable.length > 10) { $scope.lineTable.shift(); }
     $scope.lineTable.push(line);
@@ -61,9 +59,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
     ipc.send('globalShortcut', obj.type === 'success');
   });
 
-  /**
-   * Send choose file or recalculate g code with other initial coordinates to app.
-   */
+  // Send choose file or recalculate g code with other initial coordinates to app.
   $scope.setFile = function (reSetFile) {
     notify('CNCino.', 'none');
     var initLine = $scope.initialLine.split(',');
@@ -74,9 +70,7 @@ function (notify, ipc, cnc, $scope, lineTable, config, statusBar, modalFactory) 
     ];
     ipc.send('open-file', { initialLine, fileDir: reSetFile ? cnc.file.dir : undefined });
   }
-  /**
-   * Response of the request to read file, receives the g code and important data.
-   */
+  // Response of the request to read file, receives the g code and important data.
   ipc.on('open-file-res', function (event, file) {
     if (file.dir) {
       exceeds_x = false; exceeds_y = false;

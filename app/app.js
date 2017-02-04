@@ -1,7 +1,7 @@
 const dirBase = {
-  html: `file://${__dirname}/html/`,
-  icon: __dirname + "/recursos/app-icon/png/512.png"// "mac-win/app"
-},
+    html: `file://${__dirname}/html/`,
+    icon: __dirname + "/recursos/app-icon/png/512.png" // "mac-win/app"
+  },
   fileConfig = require('./package.json'),
   CNC = require('./lib/main.js'),
   electron = require('electron'),
@@ -13,8 +13,7 @@ const dirBase = {
   Menu = electron.Menu,
   Tray = electron.Tray,
   powerSaveBlocker = electron.powerSaveBlocker,
-  globalShortcut = electron.globalShortcut
-  ;
+  globalShortcut = electron.globalShortcut;
 app.setName(fileConfig.productName);
 
 // Do not display the default menu to start.
@@ -32,11 +31,15 @@ var mainWindow = null;
 
 const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
   if (mainWindow) {
-    if (mainWindow.isMinimized()) { mainWindow.restore(); }
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
     mainWindow.focus()
   }
 })
-if (shouldQuit) { app.quit() }
+if (shouldQuit) {
+  app.quit()
+}
 
 app.on('ready', () => {
   try {
@@ -85,18 +88,30 @@ app.on('ready', () => {
 
     //mainWindow.openDevTools(); // Open the devtools.
     // Event ->  blur,  minimize, hide
-    mainWindow.on('blur', () => { globalShortcut.unregisterAll(); });
-    mainWindow.on('hide', () => { globalShortcut.unregisterAll(); });
-    mainWindow.on('minimize', () => { globalShortcut.unregisterAll(); });
+    mainWindow.on('blur', () => {
+      globalShortcut.unregisterAll();
+    });
+    mainWindow.on('hide', () => {
+      globalShortcut.unregisterAll();
+    });
+    mainWindow.on('minimize', () => {
+      globalShortcut.unregisterAll();
+    });
     // Event -> focus show restore
-    mainWindow.on('focus', () => { registerGlobalShortcut(); });
-    mainWindow.on('show', () => { registerGlobalShortcut(); });
-    mainWindow.on('restore', () => { registerGlobalShortcut(); });
+    mainWindow.on('focus', () => {
+      registerGlobalShortcut();
+    });
+    mainWindow.on('show', () => {
+      registerGlobalShortcut();
+    });
+    mainWindow.on('restore', () => {
+      registerGlobalShortcut();
+    });
 
   } catch (error) {
     tryCatch(error);
   }
-});//ready
+}); //ready
 
 /*
  * Is issued to search arduino
@@ -123,20 +138,32 @@ ipcMain.on('open-file', (event, data) => {
     if (!CNC.Arduino.isWorking) {
       CNC.log("open-file", data);
       globalShortcut.unregisterAll();
-      event.sender.send('open-file-tick', { info: 'Abriendo archivo...' });
+      event.sender.send('open-file-tick', {
+        info: 'Abriendo archivo...'
+      });
       CNC.setFile(
         data.fileDir || dialog.showOpenDialog({
           title: app.getName(),
-          filters: [
-            { name: 'File CNC', extensions: ['gcode', 'gif', 'jpg', 'jpeg', 'png', 'nc'] },
-            { name: 'G-Code', extensions: ['gcode'] },
-            { name: 'Imagen', extensions: ['gif', 'jpg', 'jpeg', 'png'] },
-            { name: 'All Files', extensions: ['*'] }
+          filters: [{
+              name: 'File CNC',
+              extensions: ['gcode', 'gif', 'jpg', 'jpeg', 'png', 'nc']
+            },
+            {
+              name: 'G-Code',
+              extensions: ['gcode']
+            },
+            {
+              name: 'Imagen',
+              extensions: ['gif', 'jpg', 'jpeg', 'png']
+            },
+            {
+              name: 'All Files',
+              extensions: ['*']
+            }
           ],
           properties: ['openFile']
         }),
-        data.initialLine = data.initialLine || [0, 0, 0],
-        { // CallBack
+        data.initialLine = data.initialLine || [0, 0, 0], { // CallBack
           /*fileImg: (config) => {
             console.log('Config for img2gcode.');
             event.sender.send('show-prefs-img2gcode-res', config);
@@ -157,16 +184,17 @@ ipcMain.on('open-file', (event, data) => {
         }
       ) // CNC.setFile
     } else {
-      event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
+      event.sender.send('config-save-res', {
+        type: 'error',
+        message: 'Esta tabajando.'
+      });
     }
   } catch (error) {
     tryCatch(error);
   }
 });
 
-/**
- * Is issued to send command
- */
+// Is issued to send command
 ipcMain.on('send-command', (event, arg) => {
   try {
     var id = powerSaveBlocker.start('prevent-app-suspension');
@@ -181,9 +209,7 @@ ipcMain.on('send-command', (event, arg) => {
   }
 });
 
-/**
- * Is issued to send start to arduino
- */
+// Is issued to send start to arduino
 ipcMain.on('send-start', (event, arg) => {
   try {
     if (!CNC.Arduino.isWorking) {
@@ -196,34 +222,52 @@ ipcMain.on('send-start', (event, arg) => {
         if (data.lineRunning !== false) {
           let line = CNC.File.gcode[data.lineRunning];
           line.steps = data.steps;
-          event.sender.send('add-line', { nro: data.lineRunning, line });
+          event.sender.send('add-line', {
+            nro: data.lineRunning,
+            line
+          });
           CNC.log('send-start', "I: " + data.lineRunning + " - Ejes: " + line.ejes + " - Steps: " + line.steps);
         } else {
           powerSaveBlocker.stop(id);
           mainWindow.setProgressBar(0);
-          event.sender.send('close-conex', { type: 'none', steps: data.steps });
+          event.sender.send('close-conex', {
+            type: 'none',
+            steps: data.steps
+          });
           CNC.log('send-start', "Finish.");
         }
       });
-    } else { CNC.log('send-start', 'Working in other project.') }
+    } else {
+      CNC.log('send-start', 'Working in other project.')
+    }
   } catch (error) {
     tryCatch(error);
   }
 });
 
-ipcMain.on('taksBar-progress', (event, arg) => { mainWindow.setProgressBar(arg); });
-ipcMain.on('show-lineTable', (event, arg) => { event.sender.send('show-lineTable') });
+ipcMain.on('taksBar-progress', (event, arg) => {
+  mainWindow.setProgressBar(arg);
+});
+ipcMain.on('show-lineTable', (event, arg) => {
+  event.sender.send('show-lineTable')
+});
 
 ipcMain.on('show-prefs', (event, argType) => {
   try {
     if (!CNC.Arduino.isWorking) {
-      event.sender.send('config-save-res', { type: 'none', message: 'CNCino.' });
+      event.sender.send('config-save-res', {
+        type: 'none',
+        message: 'CNCino.'
+      });
       globalShortcut.unregisterAll();
       CNC.configFile.read().then((data) => {
         event.sender.send(`show-prefs-${argType}-res`, data);
       });
     } else {
-      event.sender.send('config-save-res', { type: 'error', message: 'Esta tabajando.' });
+      event.sender.send('config-save-res', {
+        type: 'error',
+        message: 'Esta tabajando.'
+      });
     }
   } catch (error) {
     tryCatch(error);
@@ -237,8 +281,12 @@ ipcMain.on('config-save-send', (event, arg) => {
     });
   } catch (error) {
     dialog.showMessageBox(mainWindow, {
-      cancelId: 0, type: 'error', buttons: ['Aceptar'],
-      title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+      cancelId: 0,
+      type: 'error',
+      buttons: ['Aceptar'],
+      title: app.getName(),
+      message: 'Algo salio mal :(',
+      detail: `Error:\n${error.message}`
     });
   }
 });
@@ -246,8 +294,11 @@ ipcMain.on('config-save-send', (event, arg) => {
 ipcMain.on('original-values-prefs', (event, arg) => {
   try {
     dialog.showMessageBox(mainWindow, {
-      cancelId: 1, type: 'question', buttons: ['Aceptar', 'Canselar'],
-      title: app.getName(), message: 'Volver a los valores originales.',
+      cancelId: 1,
+      type: 'question',
+      buttons: ['Aceptar', 'Canselar'],
+      title: app.getName(),
+      message: 'Volver a los valores originales.',
       detail: 'Se perderan las configuraciones personalizadas generales y image to gcode.'
     }, (opt) => {
       if (opt === 0) {
@@ -264,12 +315,16 @@ ipcMain.on('original-values-prefs', (event, arg) => {
 ipcMain.on('save-ArduinoCode-prefs', (event, arg) => {
   try {
     dialog.showMessageBox(mainWindow, {
-      cancelId: 0, type: 'info', buttons: ['Aceptar'],
-      title: app.getName(), message: 'Guardar Codigo para Arduino.',
+      cancelId: 0,
+      type: 'info',
+      buttons: ['Aceptar'],
+      title: app.getName(),
+      message: 'Guardar Codigo para Arduino.',
       detail: 'Elija la ubicacion del codigo para después abrir con IDE de Arduino y grabarlo en Arduino.'
     });
     CNC.saveArduinoCode(dialog.showOpenDialog({
-      title: app.getName() + ' - Elejir una ubicacion.', properties: ['openDirectory']
+      title: app.getName() + ' - Elejir una ubicacion.',
+      properties: ['openDirectory']
     }), (msg) => {
       event.sender.send('config-save-res', msg);
     })
@@ -278,21 +333,41 @@ ipcMain.on('save-ArduinoCode-prefs', (event, arg) => {
   }
 });
 
-/**
- * Disable menus.
- */
+// Disable menus.
 ipcMain.on('contextmenu-enabled', (event, arg) => {
   event.sender.send('contextmenu-enabled-res', arg);
 });
 
-/**
- * Is used to stop the execution of arduino when the program closes.
- */
+// Is used to stop the execution of arduino when the program closes.
 ipcMain.on('close', (event, arg) => {
-  CNC.sendCommand({ code: '0,0,0' }, (data) => {
+  CNC.sendCommand({
+    code: '0,0,0'
+  }, (data) => {
     CNC.log('close', "Send '0,0,0' to Arduino to stop the job.");
     event.returnValue = true;
   });
+});
+
+// Run the serialPort's test
+ipcMain.on('serialPortTest', (event, arg) => {
+  try {
+    dialog.showMessageBox(mainWindow, {
+      cancelId: 1,
+      type: 'question',
+      buttons: ['Aceptar', 'Canselar'],
+      title: app.getName(),
+      message: 'Probar Arduino.',
+      detail: "Las pruebas de Arduino ejecutan comandos unas 100 veces, se recomineda desconectar/apagar los motores del cnc para evitar problemas. ¿Desea continuar?"
+    }, (opt) => {
+      if (opt === 0) {
+        CNC.serialPortTest((msg) => {
+          event.sender.send('close-conex', msg);
+        });
+      }
+    });
+  } catch (error) {
+    tryCatch(error);
+  }
 });
 
 /*
@@ -301,12 +376,12 @@ Event: ‘resume’
 Event: ‘on-ac’
 Event: ‘on-battery’
 */
-/**
- * Settings for globalShortcut
- */
+
+// Settings for globalShortcut
 ipcMain.on('globalShortcut', (event, endable) => {
-  if (endable) { registerGlobalShortcut(); }
-  else {
+  if (endable) {
+    registerGlobalShortcut();
+  } else {
     globalShortcut.unregisterAll();
     registerGlobalShortcutSpace();
   }
@@ -315,7 +390,9 @@ ipcMain.on('globalShortcut', (event, endable) => {
 function globalShortcutSendComand(cmd) {
   try {
     if (CNC.Arduino.comName) {
-      CNC.sendCommand({ code: cmd }, (dataReceived) => {
+      CNC.sendCommand({
+        code: cmd
+      }, (dataReceived) => {
         CNC.log('globalShortcut', dataReceived);
         mainWindow.webContents.send('close-conex', dataReceived);
       });
@@ -325,9 +402,9 @@ function globalShortcutSendComand(cmd) {
   }
 }
 
-function registerGlobalShortcutSpace(){
-  try{
-    if(mainWindow.isFocused() && mainWindow.isVisible() && CNC.Arduino.comName) {
+function registerGlobalShortcutSpace() {
+  try {
+    if (mainWindow.isFocused() && mainWindow.isVisible() && CNC.Arduino.comName) {
       globalShortcut.register('Space', () => {
         globalShortcutSendComand('0,0,0');
         CNC.log('globalShortcut', "SPACE key pressed and sent '0,0,0 f:0' command.");
@@ -382,20 +459,31 @@ function registerGlobalShortcut() {
 function tryCatch(error) {
   console.error('tryCatch:\n', error);
   dialog.showMessageBox(mainWindow, {
-    cancelId: 0, type: 'error', buttons: ['Aceptar'],
-    title: app.getName(), message: 'Algo salio mal :(', detail: `Error:\n${error.message}`
+    cancelId: 0,
+    type: 'error',
+    buttons: ['Aceptar'],
+    title: app.getName(),
+    message: 'Algo salio mal :(',
+    detail: `Error:\n${error.message}`
   });
 }
 
 ipcMain.on('about', (event, arg) => {
-  event.sender.send('config-save-res', { type: 'none', message: 'CNCino.' });
+  event.sender.send('config-save-res', {
+    type: 'none',
+    message: 'CNCino.'
+  });
   let chosen = dialog.showMessageBox(mainWindow, {
-    cancelId: 0, type: 'info', buttons: ['Aceptar'],
-    title: 'Acerca De', message: app.getName() + ' , Arduino y NodeJS - v' + app.getVersion(), detail: stringAbout(CNC.Arduino)
+    cancelId: 0,
+    type: 'info',
+    buttons: ['Aceptar'],
+    title: 'Acerca De',
+    message: app.getName() + ' , Arduino y NodeJS - v' + app.getVersion(),
+    detail: stringAbout(CNC.Arduino)
   });
   // if (chosen == 0)  mainWindow.destroy();
 });
-var stringAbout = function (arduino) {
+var stringAbout = function(arduino) {
   return `Proyecto de Router CNC casero con ideas, mano de obra y programacion propia.
 Use modulos como SerialPort y Framework AngularJS, VisJS, Semantic-UI.
 Información de la aplicación:
@@ -404,6 +492,5 @@ Información de la aplicación:
 Información de Arduino (${CNC.Arduino.manufacturer}):
 \tPuerto: ${CNC.Arduino.comName}
 \tCodigo: ${CNC.Arduino.version}
-Autores:  Marani Cesar Juan, Marani Matias Ezequiel.`
-    ;
+Autores:  Marani Cesar Juan, Marani Matias Ezequiel.`;
 }

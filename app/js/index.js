@@ -1,5 +1,11 @@
-const {remote, ipcRenderer} = require('electron');
-const {Menu, MenuItem} = remote;
+const {
+  remote,
+  ipcRenderer
+} = require('electron');
+const {
+  Menu,
+  MenuItem
+} = remote;
 const mainMenu = require('./../lib/menuMain.js');
 const contextMenu = require('./../lib/menuContext.js');
 
@@ -25,7 +31,7 @@ window.onbeforeunload = (e) => {
 
 //
 ipcRenderer.on('progres-res', (event, data) => {
-  $('#modalProgressInfo').text("Procesando: "+data.info+ ": "+(data.perc*100).toFixed(2)+"%" );
+  $('#modalProgressInfo').text("Archivo: " + data.info + " " + (data.perc * 100).toFixed(2) + "%");
 })
 
 // Serves to lock menus when arduino works.
@@ -34,6 +40,7 @@ ipcRenderer.on('contextmenu-enabled-res', (event, enable) => {
   let mm = mMenu.items[0].submenu.items;
   mm[0].enabled = enable; // open file
   mm[1].submenu.items[0].enabled = enable; // Arduino
+  mm[5].enabled = enable; // test
   mm[4].enabled = enable; // Preferancia
   let cm = cMenu.items;
   cm[0].enabled = enable;

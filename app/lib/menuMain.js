@@ -1,31 +1,32 @@
-module.exports = [
-  {
+module.exports = [{
     label: 'Archivo',
-    submenu: [
-      {
+    submenu: [{
         label: 'Abrir G-Code...',
         accelerator: 'CmdOrCtrl+F',
         click: () => {
-          ipcRenderer.send('open-file', { initialLine: undefined, fileDir: undefined });
+          ipcRenderer.send('open-file', {
+            initialLine: undefined,
+            fileDir: undefined
+          });
         }
       },
       {
         label: 'Arduino',
-        submenu: [
-          {
-            label: 'Buscar Arduino...',
-            click: (item, focusedWindow) => {
-              ipcRenderer.send('arduino');
-            }
-          }, {
-            label: 'Progrma para Arduino.',
-            click: (item, focusedWindow) => {
-              ipcRenderer.send('save-ArduinoCode-prefs', null);
-            }
+        submenu: [{
+          label: 'Buscar Arduino...',
+          click: (item, focusedWindow) => {
+            ipcRenderer.send('arduino');
           }
-        ]
+        }, {
+          label: 'Progrma para Arduino.',
+          click: (item, focusedWindow) => {
+            ipcRenderer.send('save-ArduinoCode-prefs', null);
+          }
+        }]
       },
-      { type: 'separator' },
+      {
+        type: 'separator'
+      },
       {
         label: 'Ver Tabla de Lineas',
         click: (item, focusedWindow) => {
@@ -34,10 +35,9 @@ module.exports = [
       },
       {
         label: 'Preferancia',
-        submenu: [
-          {
+        submenu: [{
             label: 'Generales',
-            click: (item, focusedWindow) => {
+            click: (item, focusedwindow) => {
               ipcRenderer.send('show-prefs', 'general');
             }
           },
@@ -47,7 +47,9 @@ module.exports = [
               ipcRenderer.send('show-prefs', 'img2gcode');
             }
           },
-          { type: 'separator' },
+          {
+            type: 'separator'
+          },
           {
             label: 'Valores originales.',
             click: (item, focusedWindow) => {
@@ -56,7 +58,15 @@ module.exports = [
           }
         ]
       },
-      { type: 'separator' },
+      {
+        label: 'Probar el puerto serie',
+        click: (item, focusedwindow) => {
+          ipcRenderer.send('serialPortTest', null);
+        }
+      },
+      {
+        type: 'separator'
+      },
       {
         label: 'Salir',
         role: 'close'
@@ -65,8 +75,7 @@ module.exports = [
   },
   {
     label: 'Ayuda',
-    submenu: [
-      {
+    submenu: [{
         label: 'Recargar Ventana',
         accelerator: 'CmdOrCtrl+R',
         click: (item, focusedWindow) => {

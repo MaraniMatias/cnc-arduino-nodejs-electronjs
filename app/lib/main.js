@@ -11,8 +11,7 @@ const cp = require('child_process'),
   ArduinoCode = {
     dir: path.resolve(path.join(__dirname, '../arduino', '/CNCino')),
     file: ['CNCino.ino', 'mover.ino', 'estado.ino']
-  }
-;
+  };
 
 var dirConfig = dirDefaultConfig;
 var lineRunning = 0;
@@ -24,7 +23,10 @@ var infoArduino = {
   manufacturer: "Sin Arduino"
 };
 var File = {
-  workpiece: { x: 200, y: 200 },
+  workpiece: {
+    x: 200,
+    y: 200
+  },
   gcode: [],
   dir: '',
   name: 'Sin Archivo',
@@ -52,7 +54,7 @@ function log(func, value) {
  */
 function getMiliSeg(config) {
   let steps = (config.motor.x.steps + config.motor.y.steps) / 2;
-  let time = ( config.motor.x.speed.working + config.motor.y.speed.working ) / 2;
+  let time = (config.motor.x.speed.working + config.motor.y.speed.working) / 2;
   let advance = (config.motor.x.advance + config.motor.y.advance) / 2;
   return steps * time / advance;
 }
@@ -67,7 +69,7 @@ function getMiliSeg(config) {
 function childFactory(forkDir, cbMessage) {
   let fork = cp.fork(forkDir);
   fork.on('message', (m) => {
-    if (typeof (cbMessage[m.msj]) === 'function') cbMessage[m.msj](fork, m.data);
+    if (typeof(cbMessage[m.msj]) === 'function') cbMessage[m.msj](fork, m.data);
   });
   return fork;
 }
@@ -92,15 +94,18 @@ function isImg(extension) {
  */
 function setFile(dir, initialLine, cb) {
   if (dir) {
-    if (typeof (dir) !== 'string') { dir = dir[0]; }
+    if (typeof(dir) !== 'string') {
+      dir = dir[0];
+    }
     let dirfile = path.resolve(dir);
     let extension = path.extname(dirfile);
     let fileName = path.win32.basename(dirfile);
     if (/\.bmp/i.test(extension)) {
       cb.error(factoryMsg(0, 'No podemos leer BMP. pruebe con GIF , JPEG , JPG or PNG.'));
-    }
-    else if (isImg(extension)) {
-      cb.tick({ info: `Preparando... ${fileName}.` });
+    } else if (isImg(extension)) {
+      cb.tick({
+        info: `Preparando... ${fileName}.`
+      });
       readConfig().then((fileConfig) => {
         childFactory(childDir.img2gcode, {
           error: (child, error) => {
@@ -109,8 +114,11 @@ function setFile(dir, initialLine, cb) {
             child.kill();
           },
           tick: (child, arg) => {
-            console.log("Img:",fileName,"Progres:",arg.perc);
-            cb.perc({perc:arg.perc,info:fileName });
+            console.log("Img:", fileName, "Progres:", arg.perc);
+            cb.perc({
+              perc: arg.perc,
+              info: fileName
+            });
           },
           finished: (child, data) => {
             child.kill();
@@ -129,8 +137,15 @@ function setFile(dir, initialLine, cb) {
           info: "emitter"
         });
       })
-    } else { setGCode(dirfile, initialLine, cb); }
-  } else { cb.finished({ dir: null }); log("setFile", 'It isn\'t file.'); }
+    } else {
+      setGCode(dirfile, initialLine, cb);
+    }
+  } else {
+    cb.finished({
+      dir: null
+    });
+    log("setFile", 'It isn\'t file.');
+  }
 }
 
 /**
@@ -166,7 +181,7 @@ function setGCode(dirfile, initialLine, cb) {
  */
 function sendCommand(arg, callback) {
   log("sendCommand", 'code: ' + arg.code + ' type: ' + arg.type + ' sentido: ' + arg.sense);
-  let code =  String(arg.code).split(',') ;
+  let code = String(arg.code).split(',');
   readConfig().then((config) => {
     Arduino.send((arg.type !== 'mm') ? arg.code : toSteps(config, code, [0, 0, 0, 0], arg.sense), (err, msg, data) => {
       infoArduino.isWorking = false;
@@ -174,8 +189,8 @@ function sendCommand(arg, callback) {
       // /\d{1,},\d{1,},\d{1,}(,\d)?/.test(data) => 4
       callback(factoryMsg(
         err ? 0 :
-        data ? (/\d{1,}\.\d{1,}\.\d{1,}/.test(data) ? 'version' : 4)
-        : 3, err ? err.message : msg, data));
+        data ? (/\d{1,}\.\d{1,}\.\d{1,}/.test(data) ? 'version' : 4) :
+        3, err ? err.message : msg, data));
       // code, ejes, steps
     });
   });
@@ -193,7 +208,7 @@ function reSetArduino(onDesconect, callback) {
       infoArduino.comName = arduino.comName;
       infoArduino.manufacturer = arduino.manufacturer;
     };
-    Arduino.set(onDesconect,(err, arduino) => {
+    Arduino.set(onDesconect, (err, arduino) => {
       if (!err) {
         log('reSetArduino', 'SerialPort:\n\tComName: ' + arduino.comName + '\n\tManufacturer: ' + arduino.manufacturer);
         infoArduinoSet(arduino);
@@ -223,10 +238,10 @@ function reSetArduino(onDesconect, callback) {
 function toSteps(config, newMM, oldSteps, sense) {
   oldSteps = oldSteps || [0, 0, 0, 0];
   sense = sense === '-' && -1 || 1;
-  let x = [0, 0, 0, 0];// [X, Y, Z, F];
-  x[0] = sense * Math.round( newMM[0] * config.motor.x.steps / config.motor.x.advance) * config.scale - oldSteps[0];//* (config.motor.x.sense)? -1 : 1;
-  x[1] = sense * Math.round( newMM[1] * config.motor.y.steps / config.motor.y.advance) * config.scale - oldSteps[1];//* (config.motor.y.sense)? -1 : 1;
-  x[2] = sense * Math.round( newMM[2] * config.motor.z.steps / config.motor.z.advance) * config.scale - oldSteps[2];//* (config.motor.z.sense)? -1 : 1;
+  let x = [0, 0, 0, 0]; // [X, Y, Z, F];
+  x[0] = sense * Math.round(newMM[0] * config.motor.x.steps / config.motor.x.advance) * config.scale - oldSteps[0]; //* (config.motor.x.sense)? -1 : 1;
+  x[1] = sense * Math.round(newMM[1] * config.motor.y.steps / config.motor.y.advance) * config.scale - oldSteps[1]; //* (config.motor.y.sense)? -1 : 1;
+  x[2] = sense * Math.round(newMM[2] * config.motor.z.steps / config.motor.z.advance) * config.scale - oldSteps[2]; //* (config.motor.z.sense)? -1 : 1;
   x[3] = config.feedSpeed.ignore && a.f || config.feedSpeed.value
   return x
 }
@@ -253,7 +268,9 @@ function getSteps(l, oldSteps, config) {
 function start(arg, callback) {
   log('Start', arg + "working: " + infoArduino.isWorking);
   if (!infoArduino.isWorking) {
-    if (!arg.follow) { lineRunning = 0; }
+    if (!arg.follow) {
+      lineRunning = 0;
+    }
     log('Start', "lineRunning: " + lineRunning);
     readConfig().then((config) => {
       if (File.gcode.length > 0) {
@@ -264,14 +281,20 @@ function start(arg, callback) {
           if (lineRunning < File.gcode.length) {
             log('Start', "line:", lineRunning);
             let steps = getSteps(lineRunning, arg.steps, config);
-            callback({ lineRunning, steps });
+            callback({
+              lineRunning,
+              steps
+            });
             Arduino.sendGcode(steps, cbWrite, cbAnswer);
           } else {
             log('Start', lineRunning, "fin :D");
             lineRunning = 0;
             Arduino.close((err) => {
               infoArduino.isWorking = false;
-              callback({ lineRunning: false, steps: ['0', '0', '0'] });
+              callback({
+                lineRunning: false,
+                steps: ['0', '0', '0']
+              });
             });
           }
         };
@@ -281,11 +304,30 @@ function start(arg, callback) {
         }
         Arduino.sendGcode(getSteps(lineRunning, arg.steps, config), cbWrite, cbAnswer);
 
-      }//  File.gcode.length > 0
-    });// then Promise
+      } //  File.gcode.length > 0
+    }); // then Promise
   } else {
     callback(factoryMsg(0, "Arduino trabajando. o error en comunicacion."));
   }
+}
+
+function serialPortTest(callback) {
+  let i = 0;
+  let cbwrite = (err) => {
+    callback(factoryMsg((err && 0) || 3, err || "Prueba: " + i + "%", null));
+  };
+  let cbanswer = (err, msg, data) => {
+    callback(factoryMsg((err && 0) || 4, err || "Termine",{
+      steps: ['0','0','0','0']
+    }));
+    if (i < 100) {
+      Arduino.sendGcode("20,20,20,14", cbwrite, cbanswer);
+      i++;
+    } else {
+      Arduino.close();
+    }
+  };
+  Arduino.sendGcode("20,20,20,14", cbwrite, cbanswer);
 }
 
 /**
@@ -298,7 +340,9 @@ function setConfig(dirUserData) {
   fs.stat(newDir, (err, stats) => {
     if (err) {
       log("setConfig", "File config isn't in userData: " + dirUserData);
-      fs.writeFile(newDir, JSON.stringify(require(dirConfig)), { encoding: 'utf8' }, (errW) => {
+      fs.writeFile(newDir, JSON.stringify(require(dirConfig)), {
+        encoding: 'utf8'
+      }, (errW) => {
         if (errW) throw errW;
         dirConfig = newDir;
       })
@@ -315,7 +359,9 @@ function setConfig(dirUserData) {
  * @param {function} cb
  */
 function saveConfig(data, cb) {
-  fs.writeFile(dirConfig, JSON.stringify(data || require(dirDefaultConfig)), { encoding: 'utf8' }, (err) => {
+  fs.writeFile(dirConfig, JSON.stringify(data || require(dirDefaultConfig)), {
+    encoding: 'utf8'
+  }, (err) => {
     if (err) throw err;
     readConfig().then((file) => {
       cb(factoryMsg(2, 'Cambios guardados.', file));
@@ -329,8 +375,8 @@ function saveConfig(data, cb) {
  * @returns file config
  */
 function readConfig() {
-  return new Promise(function (resolve, reject) {
-    fs.readFile(dirConfig, "utf8", function (error, data) {
+  return new Promise(function(resolve, reject) {
+    fs.readFile(dirConfig, "utf8", function(error, data) {
       if (error) throw error;
       resolve(JSON.parse(data));
     });
@@ -347,7 +393,7 @@ function saveArduinoCode(dir, callback) {
   if (dir) {
     let fileDir = dir[0];
     fs.mkdir(path.resolve(path.join(fileDir, '/CNCino')), () => {
-      ArduinoCode.file.forEach(function (file) {
+      ArduinoCode.file.forEach(function(file) {
         let from = path.resolve(path.join(__dirname, '../arduino', '/CNCino', file)),
           to = path.resolve(path.join(fileDir, '/CNCino', file));
         console.log('Saving from', from, 'to', to);
@@ -369,15 +415,33 @@ function saveArduinoCode(dir, callback) {
  */
 function factoryMsg(type, message, data) {
   switch (type) {
-    case 0: type = 'error'; break;
-    case 1: type = 'warning'; break;
-    case 2: type = 'success'; break;
-    case 3: type = 'info'; break;
-    case 4: type = 'data'; break;
-    case 5: type = 'none'; break;
-    default: type = type; break;
+    case 0:
+      type = 'error';
+      break;
+    case 1:
+      type = 'warning';
+      break;
+    case 2:
+      type = 'success';
+      break;
+    case 3:
+      type = 'info';
+      break;
+    case 4:
+      type = 'data';
+      break;
+    case 5:
+      type = 'none';
+      break;
+    default:
+      type = type;
+      break;
   }
-  return { type, message, data }
+  return {
+    type,
+    message,
+    data
+  }
 }
 
 module.exports = {
@@ -388,6 +452,7 @@ module.exports = {
   reSetArduino,
   Arduino: infoArduino,
   sendCommand,
+  serialPortTest,
   saveArduinoCode,
   configFile: {
     set: setConfig,
