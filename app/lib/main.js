@@ -186,16 +186,13 @@ function sendCommand(arg, callback) {
  *
  * @param {function} callback
  */
-function reSetArduino(callback) {
+function reSetArduino(onDesconect, callback) {
   if (!infoArduino.isWorking) {
     let infoArduinoSet = (arduino) => {
       infoArduino.version = arduino.version;
       infoArduino.comName = arduino.comName;
       infoArduino.manufacturer = arduino.manufacturer;
     };
-    let onDesconect = () =>{
-      callback(factoryMsg(0,"Arduino desconectado."));
-    }
     Arduino.set(onDesconect,(err, arduino) => {
       if (!err) {
         log('reSetArduino', 'SerialPort:\n\tComName: ' + arduino.comName + '\n\tManufacturer: ' + arduino.manufacturer);

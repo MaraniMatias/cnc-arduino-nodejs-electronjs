@@ -103,7 +103,10 @@ app.on('ready', () => {
  */
 ipcMain.on('arduino', (event, arg) => {
   try {
-    CNC.reSetArduino((obj) => {
+    let onDesconnect = () => {
+      tryCatch(new Error('Arduino desconectado.'));
+    }
+    CNC.reSetArduino(onDesconnect, (obj) => {
       CNC.log("send", 'arduino-res', obj);
       event.sender.send('arduino-res', obj);
     });
