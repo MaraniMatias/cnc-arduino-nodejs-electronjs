@@ -66,17 +66,17 @@ block contentMain
             .column.compact
               .six.ui.buttons.compact.center.aligned
                 button.ui.button.red(popup-element data-ng-popup-title="D X+" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","-")' )
-                  i.arrow.left.icon
+                  i.arrow.left.icon(style="margin-left: 0px;margin-right: 0px;")
                 button.ui.button(popup-element data-ng-popup-title="A X-" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"X","")' )
-                  i.arrow.right.icon
-                button.ui.button.blue(popup-element data-ng-popup-title="W Y+" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' )
-                  i.arrow.up.icon
+                  i.arrow.right.icon(style="margin-left: 0px;margin-right: 0px;")
+                button.ui.button.blue(popup-element data-ng-popup-title="W X+" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","")' )
+                  i.arrow.up.icon(style="margin-left: 0px;margin-right: 0px;")
                 button.ui.button(popup-element data-ng-popup-title="S Y-" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Y","-")' )
-                  i.arrow.down.icon
+                  i.arrow.down.icon(style="margin-left: 0px;margin-right: 0px;")
                 button.ui.button.green(popup-element data-ng-popup-title="Q Z+" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","")' )
-                  i.plus.icon
+                  i.plus.icon(style="margin-left: 0px;margin-right: 0px;")
                 button.ui.button(popup-element data-ng-popup-title="E Z-" ng-disabled=" !cnc.arduino || cnc.working " ng-click='moverManual(inputStepsmm,"Z","-")' )
-                  i.minus.icon
+                  i.minus.icon(style="margin-left: 0px;margin-right: 0px;")
     #statusbar.statusbar(ng-class="statusBar.type" role='contentinfo')
       .statusbar-item.left(ng-popup data-id="#statusBarMsg") {{statusBar.message}}
       //.statusbar-item.left(ng-show="lineTable[lineTable.length-1].nro >= 0" ng-popup data-id="#statusBarLine") Nro: {{lineTable[lineTable.length-1].nro}}
