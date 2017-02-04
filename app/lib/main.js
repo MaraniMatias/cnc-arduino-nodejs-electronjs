@@ -313,15 +313,13 @@ function start(arg, callback) {
 
 function serialPortTest(callback) {
   let i = 0;
-  let cbwrite = (err) => {
-    callback(factoryMsg((err && 0) || 3, err || "Prueba: " + i + "%", null));
+  let cbwrite = (err,data) => {
+    callback(factoryMsg((err && 0) || 3, err || "Prueba: " + i + "%", data));
   };
   let cbanswer = (err, msg, data) => {
-    callback(factoryMsg((err && 0) || 4, err || "Termine",{
-      steps: ['0','0','0','0']
-    }));
+    callback(factoryMsg((err && 0) || 4, err || i >= 100 && "Termine" || "Respuesta: " + data, data));
     if (i < 100) {
-      Arduino.sendGcode("20,20,20,14", cbwrite, cbanswer);
+      Arduino.sendGcode("0,0,-316,15", cbwrite, cbanswer);
       i++;
     } else {
       Arduino.close();
