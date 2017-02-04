@@ -10,7 +10,6 @@ var
     console.log("Ardu. 'onData':", data);
     working = false;
     if (typeof (cb) === 'function') {
-      //console.log(/\d{1,}\.\d{1,}\.\d{1,}/.test(data));
       cb(null, "Respuesta Arduino: " + data, /\d{1,}\.\d{1,}\.\d{1,}/.test(data) ? data :  { steps: data.toString().split(',') });
     }
   },
@@ -24,11 +23,11 @@ var
   option = {
     parser: serialPort.parsers.readline('\r\n'),
     autoOpen: false,
-    baudrate: 9600,
-    parity: 'none',
-    flowControl: false,
+    //baudrate: 9600,
+    //parity: 'none',
+    //flowControl: false,
     lock: true, // Impedir que otros procesos de abrir el puerto
-    bufferSize: 65536
+    bufferSize: 132096
   },
   cb = function (err, msg, data) { console.log("default:", data) }
   ;
@@ -91,13 +90,13 @@ function search(callback) {
  * @param {Path of Arduino} comName
  * @param {function} callback
  */
-function newArduino(comName, cb) {
+function newArduino(comName, onDesconect, cb) {
   sp = new serialPort(comName, option);
   sp.on('open', onOpen);
   sp.on('error', onError);
   sp.on('data', onData);
   sp.on('close', onClose);
-  sp.on('disconnect', onDisco);
+  sp.on('disconnect', ( typeof(onDesconect) === 'function' && onDesconect ) || onDisco );
   cb();
 }
 
@@ -106,11 +105,11 @@ function newArduino(comName, cb) {
  * Y prueba la conexión, then run callback(err,comName,manufacturer)
  * @param {function} callback:(err:Error,comName:String,manufacturer:String)=>void
  */
-function set(callback) {
+function set(onDesconect, callback) {
   search((err, comName, manufacturer) => {
     if (err) { callback(err); }
     else {
-      newArduino(comName, () => {
+      newArduino(comName, onDesconect, () => {
         // Ask for the version of the code installed in arduino.
         cb =  (err, msg, data) => {
           sp.close((err) => {
