@@ -155,7 +155,7 @@ function set(onDesconect, callback) {
  * @param {function} callback(err, msg)
  */
 function send(code, callback) {
-  log("send", "Code: " + code);
+  log("send","Code: " + code);
   if (comName === "") {
     if (typeof(callback) === 'function') callback(new Error("Arduino no selectado."));
   } else {
@@ -187,8 +187,8 @@ function write(code, callback) {
     if (err) {
       if (typeof(callback) === 'function') callback(err);
     } else {
-      log("write", "write:\tCode:", code);
-      sp.write(new Buffer(code + '\n'), (err) => {
+      log("write", "Code:", code);
+      sp.write(new Buffer(code + '\n\r'), (err) => {
         if (err) {
           if (typeof(callback) === 'function') callback(err);
         } else {
@@ -236,9 +236,9 @@ function sendGcode(code, cbWrite, cbAnswer) {
  * @param {function} cbAnswer callback Runs when Arduino answers.
  */
 function writeGcode(code, cbWrite, cbAnswer) {
-  log("writeGcode", "write:\tCode: " + code);
+  log("writeGcode", "Code: " + code);
   if (typeof(cbAnswer) === 'function') cb = cbAnswer;
-  sp.write(new Buffer(code + '\n'), (err) => {
+  sp.write(new Buffer(code + '\n\r'), (err) => {
     if (err) {
       cbWrite(err)
     } else {

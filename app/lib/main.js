@@ -317,7 +317,7 @@ function serialPortTest(callback) {
   }
 
   function getCode() {
-    return [getRandom(-50, 50), getRandom(-50, 50), 0, getRandom(0, 25)]
+    return getRandom(-50, 50) + "," + getRandom(-50, 50) + ",0," + getRandom(0, 25);
   }
   let i = 0;
   let cbwrite = (err, data) => {
