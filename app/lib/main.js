@@ -312,20 +312,28 @@ function start(arg, callback) {
 }
 
 function serialPortTest(callback) {
+  function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+
+  function getCode() {
+    return [getRandom(-50, 50), getRandom(-50, 50), 0, getRandom(0, 25)]
+  }
   let i = 0;
-  let cbwrite = (err,data) => {
-    callback(factoryMsg((err && 0) || 3, err || "Prueba: " + i + "%", data));
+  let cbwrite = (err, data) => {
+    callback(factoryMsg((err && 0) || 3, err || i + "% " + data, data));
   };
   let cbanswer = (err, msg, data) => {
-    callback(factoryMsg((err && 0) || 4, err || i >= 100 && "Termine" || "Respuesta: " + data, data));
+    err = err || data.steps[0] === '0' && data.steps[1] === '0' && data.steps[2] === '0' && "Respuesta incorecta.";
+    callback(factoryMsg((err && 0) || 4, err || i >= 100 && "Termine" || i + "% " + msg, data));
     if (i < 100) {
-      Arduino.sendGcode("0,0,-316,15", cbwrite, cbanswer);
+      Arduino.sendGcode(getCode(), cbwrite, cbanswer);
       i++;
     } else {
       Arduino.close();
     }
   };
-  Arduino.sendGcode("20,20,20,14", cbwrite, cbanswer);
+  Arduino.sendGcode("0,0,0,0", cbwrite, cbanswer);
 }
 
 /**

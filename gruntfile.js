@@ -64,7 +64,7 @@ module.exports = (grunt) => {
         src: ['./tests/**/*.js']
       }
     },
-    'docco-plus': {
+    docco: {
       debug: {
         src: ['./tests/**/*.js', './app/app.js', './app/lib/**/*.js', './app/js/**/*.js', '!node_modules/**/*.js', '!app/node_modules/**/*.js', '!app/components/**/*.js'],
         options: {
@@ -82,7 +82,7 @@ module.exports = (grunt) => {
   grunt.loadNpmTasks('grunt-contrib-pug');
 
   //  grunt.registerTask('default', ['jshint','pug','docco-plus','shell:erun']);
-  grunt.registerTask('default', ['jshint', 'pug','docco-plus','shell:erun']);
+  grunt.registerTask('default', ['jshint', 'pug','docco','shell:erun']);
 
   grunt.registerTask('test', ['jshint', 'mochaTest']);
   grunt.registerTask('run', ['pug', 'shell:erun']);
