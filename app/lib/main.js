@@ -324,9 +324,9 @@ function serialPortTest(callback) {
     callback(factoryMsg((err && 0) || 3, err || i + "% " + data, data));
   };
   let cbanswer = (err, msg, data) => {
-    err = err || data.steps[0] === '0' && data.steps[1] === '0' && data.steps[2] === '0' && "Respuesta incorecta.";
+    err = err || !(data.steps[0] === '0' && data.steps[1] === '0' && data.steps[2] === '0') && "Respuesta incorecta.";
     callback(factoryMsg((err && 0) || 4, err || i >= 100 && "Termine" || i + "% " + msg, data));
-    if (i < 100) {
+    if (!err && i < 100) {
       Arduino.sendGcode(getCode(), cbwrite, cbanswer);
       i++;
     } else {
