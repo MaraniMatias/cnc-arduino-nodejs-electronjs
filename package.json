@@ -5,7 +5,7 @@
   "dependencies": {
   },
   "devDependencies": {
-    "electron-builder": "^14.5.1",
+    "electron-builder": "^14.5.3",
     "electron-packager": "^8.5.2",
     "electron-prebuilt": "1.4.13",
     "electron-rebuild": "1.5.7",

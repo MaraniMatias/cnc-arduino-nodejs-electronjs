@@ -492,5 +492,5 @@ Información de la aplicación:
 Información de Arduino (${CNC.Arduino.manufacturer}):
 \tPuerto: ${CNC.Arduino.comName}
 \tCodigo: ${CNC.Arduino.version}
-Autores:  Marani Cesar Juan, Marani Matias Ezequiel.`;
+Autores: Marani Matias Ezequiel.`;
 }
