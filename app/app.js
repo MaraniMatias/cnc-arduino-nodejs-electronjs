@@ -1,7 +1,7 @@
 const dirBase = {
-    html: `file://${__dirname}/html/`,
-    icon: __dirname + "/recursos/app-icon/png/512.png" // "mac-win/app"
-  },
+  html: `file://${__dirname}/html/`,
+  icon: __dirname + "/recursos/app-icon/png/512.png" // "mac-win/app"
+},
   fileConfig = require('./package.json'),
   CNC = require('./lib/main.js'),
   electron = require('electron'),
@@ -76,8 +76,8 @@ app.on('ready', () => {
 
     //mainWindow.on('page-title-updated',  () => { console.log('title'); });
     /**
-     * Event that fires when the execution ends but can be stopped with the 'onbeforeunload' event in index.js.
-     */
+    * Event that fires when the execution ends but can be stopped with the 'onbeforeunload' event in index.js.
+    */
     mainWindow.on('closed', () => {
       globalShortcut.unregisterAll();
       mainWindow = null;
@@ -121,7 +121,7 @@ ipcMain.on('arduino', (event, arg) => {
     let onDesconnect = () => {
       tryCatch(new Error('Arduino desconectado.'));
     }
-    CNC.reSetArduino(onDesconnect, (obj) => {
+    CNC.reSetArduino(null, (obj) => {
       CNC.log("send", 'arduino-res', obj);
       event.sender.send('arduino-res', obj);
     });
@@ -145,21 +145,21 @@ ipcMain.on('open-file', (event, data) => {
         data.fileDir || dialog.showOpenDialog({
           title: app.getName(),
           filters: [{
-              name: 'File CNC',
-              extensions: ['gcode', 'gif', 'jpg', 'jpeg', 'png', 'nc']
-            },
-            {
-              name: 'G-Code',
-              extensions: ['gcode']
-            },
-            {
-              name: 'Imagen',
-              extensions: ['gif', 'jpg', 'jpeg', 'png']
-            },
-            {
-              name: 'All Files',
-              extensions: ['*']
-            }
+            name: 'File CNC',
+            extensions: ['gcode', 'gif', 'jpg', 'jpeg', 'png', 'nc']
+          },
+          {
+            name: 'G-Code',
+            extensions: ['gcode']
+          },
+          {
+            name: 'Imagen',
+            extensions: ['gif', 'jpg', 'jpeg', 'png']
+          },
+          {
+            name: 'All Files',
+            extensions: ['*']
+          }
           ],
           properties: ['openFile']
         }),
@@ -483,7 +483,7 @@ ipcMain.on('about', (event, arg) => {
   });
   // if (chosen == 0)  mainWindow.destroy();
 });
-var stringAbout = function(arduino) {
+var stringAbout = function (arduino) {
   return `Proyecto de Router CNC casero con ideas, mano de obra y programacion propia.
 Use modulos como SerialPort y Framework AngularJS, VisJS, Semantic-UI.
 Información de la aplicación:
@@ -492,5 +492,5 @@ Información de la aplicación:
 Información de Arduino (${CNC.Arduino.manufacturer}):
 \tPuerto: ${CNC.Arduino.comName}
 \tCodigo: ${CNC.Arduino.version}
-Autores: Marani Matias Ezequiel.`;
+Autor del software: Marani Matias Ezequiel.`;
 }
