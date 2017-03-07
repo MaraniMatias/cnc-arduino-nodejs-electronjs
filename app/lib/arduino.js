@@ -85,7 +85,7 @@ function search(callback) {
       }
     });
     if (answer) {
-      callback(new Error('No encuentro Arduino conectado.'));
+      callback(new Error('No encuentro Arduino.'));
     }
   });
 }

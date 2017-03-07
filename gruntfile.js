@@ -12,6 +12,22 @@ module.exports = (grunt) => {
 
   grunt.initConfig({
     pckg: grunt.file.readJSON('./package.json'),
+    'electron-packager': {
+      build: {
+        options: function (platform,arch) {
+          return {
+            platform ,
+            arch,
+            dir       : path.resolve(appPath),
+            out       : path.resolve(outPath),
+            icon      : path.resolve(iconPath),
+            name:grunt.file.readJSON(path.resolve(appPath + '/package.json')).productName,
+            asar      : true,
+            overwrite : true
+          }
+        }
+      }
+    },
     shell: {
       ebuild: {
         // platform ["mac", "osx", "win", "linux", "darwin", "win32", "all"]
@@ -80,6 +96,7 @@ module.exports = (grunt) => {
 
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-pug');
+  grunt.loadNpmTasks('grunt-electron-packager');
 
   //  grunt.registerTask('default', ['jshint','pug','docco-plus','shell:erun']);
   grunt.registerTask('default', ['jshint', 'pug','docco','shell:erun']);
@@ -87,6 +104,6 @@ module.exports = (grunt) => {
   grunt.registerTask('test', ['jshint', 'mochaTest']);
   grunt.registerTask('run', ['pug', 'shell:erun']);
   grunt.registerTask('buildmodule', ['shell:rebuidserialport', 'shell:rebuidimg2gcode']);
-  grunt.registerTask('pack', ['pug', 'shell:epack:win32:x64']);
-  //  grunt.registerTask('build'    , ['pug','shell:ebuild:win32:x64']);
+  grunt.registerTask('pack', ['pug', 'electron-packager:build:win32:x64']);
+  //grunt.registerTask('pack', ['pug', 'shell:epack:win32:x64']);
 };

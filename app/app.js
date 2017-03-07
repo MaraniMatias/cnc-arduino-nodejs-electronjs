@@ -351,20 +351,24 @@ ipcMain.on('close', (event, arg) => {
 // Run the serialPort's test
 ipcMain.on('serialPortTest', (event, arg) => {
   try {
-    dialog.showMessageBox(mainWindow, {
-      cancelId: 1,
-      type: 'question',
-      buttons: ['Aceptar', 'Canselar'],
-      title: app.getName(),
-      message: 'Probar Arduino.',
-      detail: "Las pruebas de Arduino ejecutan comandos unas 100 veces, se recomineda desconectar/apagar los motores del cnc para evitar problemas. ¿Desea continuar?"
-    }, (opt) => {
-      if (opt === 0) {
-        CNC.serialPortTest((msg) => {
-          event.sender.send('close-conex', msg);
-        });
-      }
-    });
+    if (CNC.Arduino.comName) {
+      dialog.showMessageBox(mainWindow, {
+        cancelId: 1,
+        type: 'question',
+        buttons: ['Aceptar', 'Canselar'],
+        title: app.getName(),
+        message: 'Probar Arduino.',
+        detail: "Las pruebas de Arduino ejecutan comandos unas 100 veces, se recomineda desconectar/apagar los motores del cnc para evitar problemas. ¿Desea continuar?"
+      }, (opt) => {
+        if (opt === 0) {
+          CNC.serialPortTest((msg) => {
+            event.sender.send('close-conex', msg);
+          });
+        }
+      });
+    } else {
+      throw new Error("No encuentro Arduino.");
+    }
   } catch (error) {
     tryCatch(error);
   }
