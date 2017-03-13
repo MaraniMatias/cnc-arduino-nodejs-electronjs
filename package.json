@@ -2,11 +2,10 @@
   "name": "router-cnc-nodejs-arduino",
   "version": "0.3.0",
   "description": "cnc realizado con nodejs electron serialport arduino.",
-  "dependencies": {
-    "pug": "^2.0.0-beta9"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "electron": "1.6.1",
+    "pug": "^2.0.0-beta11",
+    "electron": "1.6.2",
     "electron-packager": "^8.5.2",
     "grunt": "^1.0.1",
     "grunt-electron-packager": "0.1.0",
