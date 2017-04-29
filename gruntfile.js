@@ -5,7 +5,7 @@ module.exports = (grunt) => {
     outPath = './dist',
     electronPath = './node_modules/.bin/electron',
     electronPackagerPath = './node_modules/.bin/electron-packager',
-    node_modules = ['serialport', 'lwip'],
+    node_modules = ['serialport', 'jimp'],
     iconPath = appPath + '/recursos/icon'
     ;
   require('load-grunt-tasks')(grunt);
