@@ -4,10 +4,10 @@
   "description": "cnc realizado con nodejs electron serialport arduino.",
   "dependencies": {},
   "devDependencies": {
-    "electron": "1.6.2",
+    "electron": "1.6.6",
     "electron-packager": "^8.6.0",
     "grunt": "^1.0.1",
-    "grunt-electron-packager": "0.1.0",
+    "grunt-electron-packager": "0.1.1",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-pug": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
