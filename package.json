@@ -4,21 +4,21 @@
   "description": "cnc realizado con nodejs electron serialport arduino.",
   "dependencies": {},
   "devDependencies": {
-    "electron": "1.6.8",
-    "electron-packager": "^8.7.0",
+    "electron": "1.7.5",
+    "electron-packager": "^9.0.0",
     "grunt": "^1.0.1",
-    "grunt-electron-packager": "0.1.1",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-pug": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-docco": "^0.5.0",
+    "grunt-electron-packager": "0.1.1",
     "grunt-mocha-test": "^0.13.2",
     "grunt-shell": "^2.1.0",
     "jshint": "^2.9.4",
     "jshint-stylish": "^2.2.1",
     "load-grunt-tasks": "^3.5.2",
-    "mocha": "^3.4.1",
-    "pug": "^2.0.0-rc.1"
+    "mocha": "^3.5.0",
+    "pug": "^2.0.0-rc.3"
   },
   "scripts": {
     "postinstall": "cd ./app/ ; npm install",

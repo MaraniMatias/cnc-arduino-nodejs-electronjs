@@ -7,7 +7,7 @@
   "main": "app.js",
   "dependencies": {
     "img2gcode": "1.0.1",
-    "serialport": "4.0.7"
+    "serialport": "^4.0.7"
   },
   "scripts": {
     "postinstall": "bower install",
@@ -18,7 +18,7 @@
     "email": "maranimatias@gmail.com"
   },
   "engines": {
-    "electron:":"~1.6.6",
+    "electron:": "~1.6.6",
     "node": "~7.9.0",
     "npm": "~4.5.0"
   },
