@@ -10,7 +10,7 @@
     "serialport": "^4.0.7"
   },
   "scripts": {
-    "postinstall": "bower install",
+    "postinstall": "./node_modules/.bin/electron-rebuild  && bower install",
     "start": "../node_modules/.bin/electron ."
   },
   "author": {
@@ -27,5 +27,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/MaraniMatias/router-cnc-nodejs-arduino"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.7.3"
   }
 }
