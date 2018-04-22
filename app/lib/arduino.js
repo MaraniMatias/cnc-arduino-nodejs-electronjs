@@ -1,5 +1,5 @@
-const
-  serialPort = require('serialport');
+const  serialPort = require('serialport');
+const Readline = serialPort.parsers.Readline;
 var
   manufacturer = sp && sp.manufacturer || "Sin Arduino",
   comName = sp && sp.comName || "",
@@ -29,11 +29,10 @@ var
     console.log('onDisconnect.');
   },
   option = {
-    parser: serialPort.parsers.readline('\r\n'),
     autoOpen: false,
-    //baudrate: 9600,
-    //parity: 'none',
-    //flowControl: false,
+    // baudrate: 9600,
+    // parity: 'none',
+    // flowControl: false,
     lock: true, // Impedir que otros procesos de abrir el puerto
     bufferSize: 132096
   },
@@ -43,7 +42,7 @@ var
 
 /**
  * Show consolo log
- * 
+ *
  * @param {any} function
  * @param {any} value
  * @param [log || error ] type
@@ -68,8 +67,8 @@ function list(callback) {
 
 /**
  * Look for an arduino connected and test the connection and inform
- * 
- * @param {function} callback(err, port.comName, port.manufacturer) 
+ *
+ * @param {function} callback(err, port.comName, port.manufacturer)
  */
 function search(callback) {
   serialPort.list(function(err, ports) {
@@ -92,17 +91,18 @@ function search(callback) {
 
 /**
  * Creates a serial port to work with arduino
- * 
+ *
  * @param {Path of Arduino} comName
  * @param {function} callback
  */
 function newArduino(comName, onDesconect, cb) {
   sp = new serialPort(comName, option);
-  sp.on('open', onOpen);
-  sp.on('error', onError);
-  sp.on('data', onData);
-  sp.on('close', onClose);
-  sp.on('disconnect', (typeof(onDesconect) === 'function' && onDesconect) || onDisco);
+  const parser = sp.pipe(new Readline({ delimiter: '\r\n' }));
+  parser.on('open', onOpen);
+  parser.on('error', onError);
+  parser.on('data', onData);
+  parser.on('close', onClose);
+  parser.on('disconnect', (typeof(onDesconect) === 'function' && onDesconect) || onDisco);
   cb();
 }
 
@@ -150,7 +150,7 @@ function set(onDesconect, callback) {
 
 /**
  * Close open connections before sending code.
- * 
+ *
  * @param {string} code
  * @param {function} callback(err, msg)
  */
@@ -160,7 +160,7 @@ function send(code, callback) {
     if (typeof(callback) === 'function') callback(new Error("Arduino no selectado."));
   } else {
     if (typeof(cb) === 'function') cb = callback;
-    if (sp.isOpen()) {
+    if (sp.isOpen) {
       log("send", "Conexc open");
       sp.close((err) => {
         if (err) {
@@ -178,7 +178,7 @@ function send(code, callback) {
 
 /**
  * Write in the port.
- * 
+ *
  * @param {string} code
  * @param {function} callback(err, msg)
  */
@@ -202,7 +202,7 @@ function write(code, callback) {
 
 /**
  * Close open connections before sending code.
- * 
+ *
  * @param {string} code.
  * @param {function} cbWrite callback Is executed when it finishes writing to the port.
  * @param {function} cbAnswer callback Runs when Arduino answers.
@@ -212,7 +212,7 @@ function sendGcode(code, cbWrite, cbAnswer) {
   if (comName === "") {
     if (typeof(cbWrite) === 'function') cbAnswer(new Error("Arduino no selectado."));
   } else {
-    if (sp.isOpen()) {
+    if (sp.isOpen) {
       log("sendGcode", "Conexc open");
       writeGcode(code, cbWrite, cbAnswer);
     } else {
@@ -230,7 +230,7 @@ function sendGcode(code, cbWrite, cbAnswer) {
 
 /**
  * Write in the port.
- * 
+ *
  * @param {string} code.
  * @param {function} cbWrite callback Is executed when it finishes writing to the port.
  * @param {function} cbAnswer callback Runs when Arduino answers.
@@ -250,11 +250,11 @@ function writeGcode(code, cbWrite, cbAnswer) {
 
 /**
  * Closes the connection with arduino.
- * 
+ *
  * @param {function} callback
  */
 function close(callback) {
-  if (sp.isOpen()) {
+  if (sp.isOpen) {
     log("close", "Conexc open -> close");
     sp.close((err) => {
       working = false;
